@@ -1,0 +1,113 @@
+
+Type: Application
+Name: agentcraft
+Provider:
+  - 阿里云
+Version: dev
+Description: 快速构建agent 应用的中间层服务，兼容openai规范
+HomePage: 项目首页地址
+Tags: #标签详情
+  - 部署函数
+Category: Web框架
+Parameters:
+  type: object
+  additionalProperties: false # 不允许增加其他属性
+  required: # 必填项
+    - region
+    - REDIS_HOST  # Redis地址
+    - REDIS_PASSWORD #Redis密码
+    - REDIS_USER #Redis用户名
+    - POSTGRES_HOST  # Postgresql host
+    - POSTGRES_DATABASE  # Postgresql 数据库
+    - POSTGRES_PASSWORD # Postgresql 密码
+    - JWT_SECRET #后端服务的认证秘钥
+    - EMBEDDING_URL # embedding的访问地址
+    - EMBEDDING_TIMEOUT # embedding 服务访问超时时间
+    - EMBEDDING_DIM  # embedding 向量维度
+  properties:
+    region:
+      title: 地域
+      type: string
+      default: cn-hangzhou
+      description: 创建应用所在的地区
+      enum:
+        - cn-beijing
+        - cn-hangzhou
+        - cn-shanghai
+        - cn-shenzhen
+    serviceName:
+      title: 服务名
+      type: string
+      default: fc-llm
+      pattern: "^[a-zA-Z_][a-zA-Z0-9-_:/.]{0,127}$"
+      description: 您可以根据需要设置不同的服务名，同一个服务会共享部分第三方云产品资源
+    REDIS_HOST:
+      title: redis服务地址
+      type: string
+      default: 
+      pattern: "^[a-zA-Z_][a-zA-Z0-9-_:/.]{0,127}$"
+      description: redis服务地址
+    REDIS_USER:
+      title: redis用户名
+      type: string
+      default: 
+      pattern: "^[a-zA-Z_][a-zA-Z0-9-_:/.]{0,127}$"
+      description: redis用户名
+    REDIS_PASSWORD:
+      title: redis密码
+      type: string
+      default: 
+      pattern: "^[a-zA-Z_][a-zA-Z0-9-_:/.]{0,127}$"
+      description: redis密码
+    JWT_SECRET:
+      title: api访问秘钥
+      type: string
+      default: 
+      pattern: "^[a-zA-Z_][a-zA-Z0-9-_:/.]{0,127}$"
+      description: api访问秘钥
+    EMBEDDING_URL:
+      title: embedding服务地址
+      type: string
+      default: 
+      pattern: "^[a-zA-Z_][a-zA-Z0-9-_:/.]{0,127}$"
+      description: embedding服务地址
+    EMBEDDING_DIM:
+      title: 向量维度
+      type: string
+      default: 
+      pattern: "^[a-zA-Z_][a-zA-Z0-9-_:/.]{0,127}$"
+      description: 注意该维度跟模型算法以及数据库有关，创建后不可修改
+    POSTGRES_HOST:
+      title: postgresql 服务地址
+      type: string
+      default: 
+      pattern: "^[a-zA-Z_][a-zA-Z0-9-_:/.]{0,127}$"
+      description: postgresql 服务地址
+    POSTGRES_DATABASE:
+      title: postgresql 数据库名
+      type: string
+      default: 
+      pattern: "^[a-zA-Z_][a-zA-Z0-9-_:/.]{0,127}$"
+      description: postgresql 数据库名
+    POSTGRES_PASSWORD:
+      title: postgresql 数据密码
+      type: string
+      default: 
+      pattern: "^[a-zA-Z_][a-zA-Z0-9-_:/.]{0,127}$"
+      description: postgresql 数据库密码
+    roleArn:
+      title: RAM 角色 ARN
+      type: string
+      default: ''
+      pattern: '^acs:ram::[0-9]*:role/.*$'
+      description: |
+        函数计算访问云服务时使用的服务角色，需要填写具体的角色ARN，格式为acs:ram::$account-id>:role/$role-name。例如：acs:ram::14310000000:role/aliyunfcdefaultrole。
+        如果您没有特殊要求，可以使用函数计算提供的默认的服务角色，即AliyunFCDefaultRole, 并增加 AliyunFCFullAccess 权限。如果您首次使用函数计算，可以访问 https://fcnext.console.aliyun.com 进行授权。
+        详细文档参考 https://help.aliyun.com/document_detail/181589.html#section-o93-dbr-z6o"
+      required: true
+      x-role:
+        name: fcdeployrole
+        service: fc
+        authorities:
+          - AliyunFCDefaultRolePolicy
+          - AliyunFCFullAccess

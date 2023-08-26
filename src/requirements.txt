@@ -1,0 +1,21 @@
+--extra-index-url https://download.pytorch.org/whl/cpu
+torch
+transformers
+sentence-transformers
+
+fastapi
+uvicorn
+requests
+bcrypt
+sqlalchemy
+PyJWT
+protobuf
+grpcio
+alibabacloud_green20220302
+redis[hiredis]>=4.5.5
+psycopg[binary,pool]
+pypdf
+markdown
+beautifulsoup4
+sse_starlette
+gunicorn
