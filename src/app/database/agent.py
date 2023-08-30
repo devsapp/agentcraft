@@ -71,6 +71,7 @@ def _bulk_insert_dataset(
                                    "dataset_id": dataset_id,
                                    "dataset_type": dataset_type}
                                   for dataset_id in datasets])
+    session.commit()
 
 
 def add_agent(exact_datasets: list[int], fuzzy_datasets: list[int], **kwargs):
@@ -81,9 +82,10 @@ def add_agent(exact_datasets: list[int], fuzzy_datasets: list[int], **kwargs):
         session.commit()
         session.refresh(agent)
         if exact_datasets:
-            _bulk_insert_dataset(session, agent.id, exact_datasets, DatasetType.EXACT_SEARCH)
+            _bulk_insert_dataset(session, agent.id, exact_datasets, DatasetType.EXACT_SEARCH.value)
         if fuzzy_datasets:
-            _bulk_insert_dataset(session, agent.id, fuzzy_datasets, DatasetType.FUZZY_SEARCH)
+            _bulk_insert_dataset(session, agent.id, fuzzy_datasets, DatasetType.FUZZY_SEARCH.value)
+
 
 
 def check_user_has_agent(user_id: int, agent_id: int):
