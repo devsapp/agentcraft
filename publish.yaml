@@ -74,9 +74,8 @@ Parameters:
       description: embedding服务地址，通过【开源Bert模型服务】应用模板获得
     EMBEDDING_DIM:
       title: 向量维度
-      type: string
+      type: int
       default: 1024
-      pattern: "^[a-zA-Z_][a-zA-Z0-9-_:/.]{0,127}$"
       description: 注意该维度跟模型算法以及数据库有关，创建后不可修改
     POSTGRES_HOST:
       title: postgresql 服务地址
