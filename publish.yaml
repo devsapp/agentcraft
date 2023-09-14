@@ -14,11 +14,12 @@ Parameters:
   additionalProperties: false # 不允许增加其他属性
   required: # 必填项
     - region
-    - REDIS_HOST  # Redis地址
-    - REDIS_PASSWORD #Redis密码
-    - REDIS_USER #Redis用户名
+    # - REDIS_HOST  # Redis地址
+    # - REDIS_PASSWORD #Redis密码
+    # - REDIS_USER #Redis用户名
     - POSTGRES_HOST  # Postgresql host
     - POSTGRES_DATABASE  # Postgresql 数据库
+    - POSTGRES_USER # Postgresql 用户名
     - POSTGRES_PASSWORD # Postgresql 密码
     - JWT_SECRET #后端服务的认证秘钥
     - EMBEDDING_URL # embedding的访问地址
@@ -89,6 +90,12 @@ Parameters:
       default: 
       pattern: "^[a-zA-Z_][a-zA-Z0-9-_:/.]{0,127}$"
       description: postgresql 数据库名
+    POSTGRES_USER:
+      title: postgresql 用户名
+      type: string
+      default: 
+      pattern: "^[a-zA-Z_][a-zA-Z0-9-_:/.]{0,127}$"
+      description: postgresql 用户名
     POSTGRES_PASSWORD:
       title: postgresql 数据密码
       type: string

@@ -36,12 +36,13 @@ services:
           PYTHONPATH: /opt/python:/code
           # AK: ${env.AK}
           # SK: ${env.SK}
-          POSTGRES_USER: '{{POSTGRES_USER}}'
+          
           # REDIS_HOST: '{{REDIS_HOST}}'
           EMBEDDING_TIMEOUT: '600'
-          POSTGRES_HOST: '{{POSTGRES_HOST}}'
           WORKERS: '1'
+          POSTGRES_HOST: '{{POSTGRES_HOST}}'
           POSTGRES_DATABASE: '{{POSTGRES_DATABASE}}'
+          POSTGRES_USER: '{{POSTGRES_USER}}'
           POSTGRES_PASSWORD: '{{POSTGRES_PASSWORD}}'
           EMBEDDING_TOKEN: ''
           CREATE_TABLES: '1' # 是否建表
