@@ -46,8 +46,7 @@ services:
           POSTGRES_PASSWORD: '{{POSTGRES_PASSWORD}}'
           EMBEDDING_TOKEN: ''
           CREATE_TABLES: '1' # 是否建表
-          EMBEDDING_URL: >-  # embedding 服务地址
-            '{{EMBEDDING_URL}}' 
+          EMBEDDING_URL: '{{EMBEDDING_URL}}' # embedding 服务地址
           EMBEDDING_DIM: '{{EMBEDDING_DIM}}' # 向量维度
           JWT_SECRET: {{JWT_SECRET}}
           # REDIS_PASSWORD: {{REDIS_PASSWORD}}
