@@ -41,28 +41,28 @@ Parameters:
       default: fc-llm
       pattern: "^[a-zA-Z_][a-zA-Z0-9-_:/.]{0,127}$"
       description: 您可以根据需要设置不同的服务名，同一个服务会共享部分第三方云产品资源
-    REDIS_HOST:
-      title: redis服务地址
-      type: string
-      default: 
-      pattern: "^[a-zA-Z_][a-zA-Z0-9-_:/.]{0,127}$"
-      description: redis服务地址
-    REDIS_USER:
-      title: redis用户名
-      type: string
-      default: 
-      pattern: "^[a-zA-Z_][a-zA-Z0-9-_:/.]{0,127}$"
-      description: redis用户名
-    REDIS_PASSWORD:
-      title: redis密码
-      type: string
-      default: 
-      pattern: "^[a-zA-Z_][a-zA-Z0-9-_:/.]{0,127}$"
-      description: redis密码
+    # REDIS_HOST:
+    #   title: redis服务地址
+    #   type: string
+    #   default: 
+    #   pattern: "^[a-zA-Z_][a-zA-Z0-9-_:/.]{0,127}$"
+    #   description: redis服务地址
+    # REDIS_USER:
+    #   title: redis用户名
+    #   type: string
+    #   default: 
+    #   pattern: "^[a-zA-Z_][a-zA-Z0-9-_:/.]{0,127}$"
+    #   description: redis用户名
+    # REDIS_PASSWORD:
+    #   title: redis密码
+    #   type: string
+    #   default: 
+    #   pattern: "^[a-zA-Z_][a-zA-Z0-9-_:/.]{0,127}$"
+    #   description: redis密码
     JWT_SECRET:
       title: api访问秘钥
       type: string
-      default: 
+      default: 'fc-${default-suffix}'
       pattern: "^[a-zA-Z_][a-zA-Z0-9-_:/.]{0,127}$"
       description: api访问秘钥
     EMBEDDING_URL:
@@ -70,11 +70,11 @@ Parameters:
       type: string
       default: 
       pattern: "^[a-zA-Z_][a-zA-Z0-9-_:/.]{0,127}$"
-      description: embedding服务地址
+      description: embedding服务地址，通过【开源Bert模型服务】应用模板获得
     EMBEDDING_DIM:
       title: 向量维度
       type: string
-      default: 
+      default: 1024
       pattern: "^[a-zA-Z_][a-zA-Z0-9-_:/.]{0,127}$"
       description: 注意该维度跟模型算法以及数据库有关，创建后不可修改
     POSTGRES_HOST:

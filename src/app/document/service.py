@@ -92,7 +92,7 @@ def extract_text(file: BinaryIO, ext: str) -> str:
     else:
         reader = codecs.getreader("utf-8")
         text = reader(file).read()
-        text = extract_structured_text(text, ext)
+        # text = extract_structured_text(text, ext)
     return text
 
 
@@ -110,7 +110,7 @@ def embed_chunks(title: str, url: str, tag: int, chunks: list[tuple]):
 def add_document(title: str, url: str, tag: int, ext: str, content: str, user_id: int,
                  chunk_size: int):
     """更新文档embedding"""
-    text = extract_structured_text(content, ext)
+    text = content #extract_structured_text(content, ext)
     if not text:
         raise RuntimeError("ERROR: text is empty or cannot be parsed")
     lines = process_text(text, chunk_size)

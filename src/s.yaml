@@ -37,7 +37,7 @@ services:
           # AK: ${env.AK}
           # SK: ${env.SK}
           POSTGRES_USER: '{{POSTGRES_USER}}'
-          REDIS_HOST: '{{REDIS_HOST}}'
+          # REDIS_HOST: '{{REDIS_HOST}}'
           EMBEDDING_TIMEOUT: '600'
           POSTGRES_HOST: '{{POSTGRES_HOST}}'
           WORKERS: '1'
@@ -49,8 +49,8 @@ services:
             '{{EMBEDDING_URL}}' 
           EMBEDDING_DIM: '{{EMBEDDING_DIM}}' # 向量维度
           JWT_SECRET: {{JWT_SECRET}}
-          REDIS_PASSWORD: {{REDIS_PASSWORD}}
-          REDIS_USER: {{REDIS_USER}}
+          # REDIS_PASSWORD: {{REDIS_PASSWORD}}
+          # REDIS_USER: {{REDIS_USER}}
           # USE_GREEN_CLIENT: 1
         name: agentcraft
         asyncConfiguration: {}

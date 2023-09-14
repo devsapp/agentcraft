@@ -196,7 +196,41 @@ class DatasetType(Enum):
 </appdetail>
 
 ## 使用文档
-
+### agent 参数
+```json
+{
+  "name": "mse-opensource", 
+  "description": "微服务开源", 
+  "prompt_template": "已知信息：{context}。你需要积极，简洁和专业地来回答```中的问题。如果问题和RocketMQ没有关系，或者问题存在争议性，请说 “抱歉，无法回答该问题”，不允许编造。问题是：```{query}```", 
+  "app_id": 3, 
+  "exact_datasets": [  
+    
+  ],
+  "fuzzy_datasets": [
+    4
+  ],
+  "exact_search_similarity": 0.9,  
+  "fuzzy_search_similarity": 0.6, 
+  "temperature": 0.5,  
+  "top_p": 1, 
+  "n_sequences": 1, 
+  "max_tokens": 1024, 
+  "stop": [ 
+  
+  ],
+  "presence_penalty": 0, 
+  "frequency_penalty": 0,
+  "logit_bias": "",
+  "model_id": 4,  
+  "redis_ip_ex": 10, 
+  "redis_history_ex": 10, 
+  "model_ip_limit": 10000,
+  "llm_history_len": 1, 
+  "system_message": "你是一个已知问题领域的专家", 
+  "exact_search_limit": 1, 
+  "fuzzy_search_limit": 1  
+}
+```
 <usedetail id="flushContent">
 
 ### 常见问题

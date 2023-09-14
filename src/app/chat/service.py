@@ -7,12 +7,12 @@ import json
 import codecs
 import requests
 from app.common import utils
-from app.database.redis import redis_db
+# from app.database.redis import redis_db
 import app.database.chat as database
 import app.database.agent as agent_database
 import app.database.agent_dataset as agent_dataset_database
 import app.database.model as model_database
-import app.database.redis as redis
+# import app.database.redis as redis
 from app.common.logger import logger
 from app.chat.green_client import is_legal
 from app.config import common as config
@@ -39,12 +39,12 @@ def sanitize_text(text: str) -> str:
     return text.replace("```", "")
 
 
-def get_history(ip_addr: str):
-    """获取历史回答"""
-    history_key = f"history:{ip_addr}"
-    if redis_db.exists(history_key):
-        return json.loads(redis_db.get(history_key))
-    return None
+# def get_history(ip_addr: str):
+#     """获取历史回答"""
+#     history_key = f"history:{ip_addr}"
+#     if redis_db.exists(history_key):
+#         return json.loads(redis_db.get(history_key))
+#     return None
 
 
 def generate_prompt(search_res: list, query: str, prompt_template: str) -> str:
@@ -145,7 +145,7 @@ def chat(query: str, ip_addr: str, agent_id: int):
         "fuzzy_search_limit": agent.fuzzy_search_limit
     }
     similarity_search_res, use_model = agent_dataset_database.similarity_search(**search_args)
-    history = get_history(ip_addr)
+    history = [] #get_history(ip_addr)
     if not use_model:
         choices, answer = convert_exact_search_res(similarity_search_res)
         resp = {
@@ -170,35 +170,35 @@ def chat(query: str, ip_addr: str, agent_id: int):
     search_res = rank_search_res(similarity_search_res)
     search_choices = convert_fuzzy_search_res(search_res)
     prompt = generate_prompt(search_res, query, agent.prompt_template)
-    ip_key = f"ip:{ip_addr}"
-    if redis_db.exists(ip_key):
-        redis_db.incr(ip_key)
-    else:
-        redis_db.set(ip_key, 1, ex=agent.redis_ip_ex)
-    if int(redis_db.get(ip_key)) > agent.model_ip_limit:
-        answer = "您的提问过于频繁，可以先看看相关资料，稍后再试。"
-        resp_obj = "chat.limit.exceeded"
-        add_args = {
-            "query": query,
-            "prompt": prompt,
-            "answer": [answer],
-            "history": history,
-            "source": search_choices,
-            "chat_type": 0,
-            "ip_addr": ip_addr,
-            "agent": agent,
-            "uid": uid
-        }
-        add_chat(**add_args)
-        return {
-            "id": uid,
-            "object": resp_obj,
-            "message": [{
-                "content": answer,
-                "role": "assistant"
-            }]+choices,
-            "created": created
-        }
+    # ip_key = f"ip:{ip_addr}"
+    # if redis_db.exists(ip_key):
+    #     redis_db.incr(ip_key)
+    # else:
+    #     redis_db.set(ip_key, 1, ex=agent.redis_ip_ex)
+    # if int(redis_db.get(ip_key)) > agent.model_ip_limit:
+    #     answer = "您的提问过于频繁，可以先看看相关资料，稍后再试。"
+    #     resp_obj = "chat.limit.exceeded"
+    #     add_args = {
+    #         "query": query,
+    #         "prompt": prompt,
+    #         "answer": [answer],
+    #         "history": history,
+    #         "source": search_choices,
+    #         "chat_type": 0,
+    #         "ip_addr": ip_addr,
+    #         "agent": agent,
+    #         "uid": uid
+    #     }
+    #     add_chat(**add_args)
+    #     return {
+    #         "id": uid,
+    #         "object": resp_obj,
+    #         "message": [{
+    #             "content": answer,
+    #             "role": "assistant"
+    #         }]+choices,
+    #         "created": created
+    #     }
     if config.USE_GREEN_CLIENT and not is_legal(query):
         answer = "抱歉，根据已知信息无法回答该问题。"
         resp_obj = "chat.illegal"
@@ -254,7 +254,7 @@ def chat_stream(query: str, ip_addr: str, agent_id: int):
         "fuzzy_search_limit": agent.fuzzy_search_limit
     }
     similarity_search_res, use_model = agent_dataset_database.similarity_search(**search_args)
-    history = get_history(ip_addr)
+    history = [] #get_history(ip_addr)
     if not use_model:
         choices, answer = convert_exact_search_res(similarity_search_res)
         resp = {
@@ -288,37 +288,37 @@ def chat_stream(query: str, ip_addr: str, agent_id: int):
     }
     yield json.dumps(search_resp)
     prompt = generate_prompt(search_res, query, agent.prompt_template)
-    ip_key = f"ip:{ip_addr}"
-    if redis_db.exists(ip_key):
-        redis_db.incr(ip_key)
-    else:
-        redis_db.set(ip_key, 1, ex=agent.redis_ip_ex)
-    if int(redis_db.get(ip_key)) > agent.model_ip_limit:
-        answer = "您的提问过于频繁，可以先看看相关资料，稍后再试。"
-        resp_obj = "chat.limit.exceeded"
-        yield json.dumps({
-            "id": uid,
-            "object": resp_obj,
-            "message": [{
-                "content": answer,
-                "role": "assistant"
-            }],
-            "created": created
-        })
-        add_args = {
-            "query": query,
-            "prompt": prompt,
-            "answer": [answer],
-            "history": history,
-            "source": search_choices,
-            "chat_type": 0,
-            "ip_addr": ip_addr,
-            "agent": agent,
-            "uid": uid
-        }
-        add_chat(**add_args)
-        yield DONE
-        return
+    # ip_key = f"ip:{ip_addr}"
+    # if redis_db.exists(ip_key):
+    #     redis_db.incr(ip_key)
+    # else:
+    #     redis_db.set(ip_key, 1, ex=agent.redis_ip_ex)
+    # if int(redis_db.get(ip_key)) > agent.model_ip_limit:
+    #     answer = "您的提问过于频繁，可以先看看相关资料，稍后再试。"
+    #     resp_obj = "chat.limit.exceeded"
+    #     yield json.dumps({
+    #         "id": uid,
+    #         "object": resp_obj,
+    #         "message": [{
+    #             "content": answer,
+    #             "role": "assistant"
+    #         }],
+    #         "created": created
+    #     })
+    #     add_args = {
+    #         "query": query,
+    #         "prompt": prompt,
+    #         "answer": [answer],
+    #         "history": history,
+    #         "source": search_choices,
+    #         "chat_type": 0,
+    #         "ip_addr": ip_addr,
+    #         "agent": agent,
+    #         "uid": uid
+    #     }
+    #     add_chat(**add_args)
+    #     yield DONE
+    #     return
     if config.USE_GREEN_CLIENT and not is_legal(query):
         answer = "抱歉，根据已知信息无法回答该问题。"
         resp_obj = "chat.illegal"
@@ -407,7 +407,7 @@ def model_chat(
         "stop": agent.stop,
         "presence_penalty": agent.presence_penalty,
         "frequency_penalty": agent.frequency_penalty,
-        "logit_bias": json.loads(agent.logit_bias) if agent.logit_bias else None
+        "logit_bias": json.loads(agent.logit_bias) if agent.logit_bias else {}
     })
     logger.info(request_data)
     resp = requests.post(model.url, headers=headers, data=request_data, timeout=model.timeout)
@@ -462,7 +462,7 @@ def model_chat_stream(
         "stop": agent.stop,
         "presence_penalty": agent.presence_penalty,
         "frequency_penalty": agent.frequency_penalty,
-        "logit_bias": json.loads(agent.logit_bias) if agent.logit_bias else None
+        "logit_bias": json.loads(agent.logit_bias) if agent.logit_bias else {}
     })
     logger.info(request_data)
     req = requests.post(model.url, headers=headers, data=request_data,
@@ -515,7 +515,7 @@ def add_chat(
             history = history[:-(agent.llm_history_len-1)*2]
         history.append(query)
         history.append(answer)
-    redis_db.set(history_key, json.dumps(history), ex=agent.redis_history_ex)
+    # redis_db.set(history_key, json.dumps(history), ex=agent.redis_history_ex)
     add_args = {
         "question": query,
         "prompt": prompt,
@@ -542,8 +542,8 @@ def zero_out_sensitive(fields: int, description: dict[str, Any]) -> int:
     return fields
 
 
-def get_redis_ip() -> tuple[list[str], list[int]]:
-    """获取redis中的ip和访问次数"""
-    _, ip_addrs = redis.redis_db.scan(0, "ip:*")
-    counts = redis.redis_db.mget(ip_addrs)
-    return ip_addrs, counts
+# def get_redis_ip() -> tuple[list[str], list[int]]:
+#     """获取redis中的ip和访问次数"""
+#     _, ip_addrs = redis.redis_db.scan(0, "ip:*")
+#     counts = redis.redis_db.mget(ip_addrs)
+#     return ip_addrs, counts
