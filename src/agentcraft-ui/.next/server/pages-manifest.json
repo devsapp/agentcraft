@@ -2,5 +2,11 @@
   "/_app": "pages/_app.js",
   "/_error": "pages/_error.js",
   "/_document": "pages/_document.js",
-  "/app": "pages/app.js"
+  "/dataset": "pages/dataset.js",
+  "/api/dataset/list": "pages/api/dataset/list.js",
+  "/dataset/[id]/datasource": "pages/dataset/[id]/datasource.js",
+  "/app/[id]/agent": "pages/app/[id]/agent.js",
+  "/api/application/list": "pages/api/application/list.js",
+  "/app": "pages/app.js",
+  "/api/agent/list": "pages/api/agent/list.js"
 }
