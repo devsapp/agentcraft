@@ -1,8 +1,8 @@
 
-import { Dataset } from "@/components/dataset";
+import { DataSetPage } from "@/feature/dataset";
 export default function IndexPage() {
 
     return (
-        <Dataset />
+        <DataSetPage />
     );
 }

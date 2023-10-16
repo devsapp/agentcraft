@@ -31,7 +31,7 @@ async def update_question(question_id: int, req: UpsertQuestionRequest, token: J
 
 
 @router.delete('/{question_id}', response_model=BasicResponse)
-async def delete_question(question_id, token: JWTData = Depends(validate_token)):
+async def delete_question(question_id: int, token: JWTData = Depends(validate_token)):
     """删除问题"""
     service.delete_question(question_id, token.user_id)
     return {"code": 200, "msg": "success"}

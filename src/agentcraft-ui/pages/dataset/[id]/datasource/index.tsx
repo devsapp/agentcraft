@@ -1,5 +1,5 @@
 
-import { Datasource } from "@/components/datasource";
+import { Datasource } from "@/feature/datasource";
 
 
 
@@ -13,9 +13,9 @@ export function getServerSideProps(context: any) {
   }
 }
 
-export default function IndexPage({ datasetId }:any) {
+export default function IndexPage() {
 
   return (
-    <Datasource datasetId={datasetId} />
+    <Datasource  />
   );
 }

@@ -1,8 +1,8 @@
 
-import { Model } from "../components/model";
+import { ModelPage } from "@/feature/model";
 export default function IndexPage() {
 
   return (
-    <Model />
+    <ModelPage />
   );
 }

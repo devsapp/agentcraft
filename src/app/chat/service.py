@@ -93,6 +93,23 @@ def rank_search_res(search_res: list) -> list[tuple[str, str, str, float]]:
     results.sort(key=lambda x: x[2], reverse=True)  # FIXME: may not be necessary
     return results
 
+def convert_exact_search_res_stream(search_res: list):
+    """转换精确搜索结果以流式响应"""
+    choices = []
+    answer = []
+    for i, (chunk, title, url, similarity) in enumerate(search_res):
+        choice = {"index": i,
+                  "delta": {
+                      "content": chunk,
+                      "role": "assistant",
+                      "title": title,
+                      "url": url,
+                      "similarity": similarity,
+                      "finish_reason": "stop"
+                  }}
+        choices.append(choice)
+        answer.append(chunk)
+    return choices, answer
 
 def convert_exact_search_res(search_res: list):
     """转换精确搜索结果"""
@@ -234,6 +251,8 @@ def chat(query: str, ip_addr: str, agent_id: int):
         "uid": uid,
         "created": created
     }
+
+    print(f"chat_args: {chat_args}")
     return model_chat(**chat_args)
 
 
@@ -254,9 +273,11 @@ def chat_stream(query: str, ip_addr: str, agent_id: int):
         "fuzzy_search_limit": agent.fuzzy_search_limit
     }
     similarity_search_res, use_model = agent_dataset_database.similarity_search(**search_args)
+    print(f"similarity_search_res{similarity_search_res}")
+    print(f"use_model{use_model}")
     history = [] #get_history(ip_addr)
     if not use_model:
-        choices, answer = convert_exact_search_res(similarity_search_res)
+        choices, answer = convert_exact_search_res_stream(similarity_search_res)
         resp = {
             "id": uid,
             "object": "chat.search.exact",
@@ -264,6 +285,7 @@ def chat_stream(query: str, ip_addr: str, agent_id: int):
             "created": created
         }
         yield json.dumps(resp)
+        print(f"resp{resp}")
         add_args = {
             "query": query,
             "prompt": "",
@@ -410,6 +432,7 @@ def model_chat(
         "logit_bias": json.loads(agent.logit_bias) if agent.logit_bias else {}
     })
     logger.info(request_data)
+    print(f"model.url:{model.url}")
     resp = requests.post(model.url, headers=headers, data=request_data, timeout=model.timeout)
     if resp.status_code != 200:
         logger.error(resp.text)
@@ -479,6 +502,7 @@ def model_chat_stream(
                     chunk["id"] = uid
                     chunk["created"] = created
                     chunk["model"] = model.name_alias
+                    print(f"hello{json.dumps(chunk)}")
                     yield json.dumps(chunk)
                     if "choices" in chunk and len(
                             chunk["choices"]) > 0 and "delta" in chunk["choices"][0] and "content" in chunk["choices"][0]["delta"]:

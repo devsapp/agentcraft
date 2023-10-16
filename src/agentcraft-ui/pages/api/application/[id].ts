@@ -10,6 +10,6 @@ export default function handler(
   res: NextApiResponse<Data>
 ) {
   const postUrl = (process.env.postUrl || '') + '/chat' ;
-  const token = process.env.token || 'a66e78e6dadf45e689d11de2621e458a';
+  const token = process.env.token || '';
   res.status(200).json({ postUrl,token })
 }

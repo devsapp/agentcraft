@@ -46,8 +46,10 @@ class Agent(postgresql.BaseModel):
 
 def list_agents(app_id: int, user_id: int, page: int = 0, limit: int = 3000) -> tuple[list[Agent], int]:
     """获取agent列表"""
+    print(f"appid:{app_id},user_id:{user_id}")
     with Session(postgresql.postgres) as session:
-        data = session.query(Agent).order_by(
+        data = session.query(Agent).filter(
+            Agent.app_id == app_id, Agent.user_id == user_id).order_by(
             Agent.modified.desc()).offset(
             page * limit).limit(limit).all()
         total = session.query(Agent).filter(

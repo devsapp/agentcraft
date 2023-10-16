@@ -8,6 +8,7 @@ import { IconCopy, IconCheck } from '@tabler/icons-react';
 type CopyToClipboardProps = {
     value: string
 }
+
 export function useClipboard({ timeout = 2000 } = {}) {
     // @ts-ignore
     const [error, setError] = useState<Error>(null);
@@ -29,11 +30,8 @@ export function useClipboard({ timeout = 2000 } = {}) {
                 .then(() => handleCopyResult(true))
                 .catch((err) => setError(err));
         } else {
-            // Use the 'out of viewport hidden text area' trick
             const textArea = document.createElement("textarea");
             textArea.value = valueToCopy;
-
-            // Move textarea out of the viewport so it's not visible
             textArea.style.position = "absolute";
             textArea.style.left = "-999999px";
 

@@ -14,12 +14,15 @@
     "@mantine/core": "6.0.0",
     "@mantine/form": "^6.0.19",
     "@mantine/hooks": "^6.0.0",
+    "@mantine/modals": "^6.0.21",
     "@mantine/next": "6.0.0",
     "@tabler/icons-react": "^2.32.0",
     "autoprefixer": "^10.4.15",
     "axios": "^1.5.0",
+    "multer": "^1.4.5-lts.1",
     "nanoid": "^4.0.2",
     "next": "13.2.3",
+    "next-connect": "^1.0.0-next.4",
     "react": "18.2.0",
     "react-dom": "18.2.0",
     "react-markdown": "^8.0.7",
@@ -31,6 +34,7 @@
     "zustand": "^4.4.1"
   },
   "devDependencies": {
+    "@types/multer": "^1.4.8",
     "@types/node": "18.14.4",
     "@types/react": "18.0.28",
     "@types/react-dom": "18.0.11",

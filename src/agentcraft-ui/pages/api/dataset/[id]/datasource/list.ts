@@ -1,22 +1,21 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
 import request from '@/util/request';
-type Data = {
-    name: string
-}
+import { DataSetType } from '@/types/dataset';
 
 export default async function handler(
     req: NextApiRequest,
-    res: NextApiResponse<Data>
+    res: NextApiResponse
 ) {
 
-    const { page = 0, limit = 200, datasetId } = req.query;
-    const datasetType: any = req.query.datasetType;
+    const { page = 0, limit = 200, id } = req.query;
+    const dataSetType:any = req.query.dataSetType;
+
     let result: any = {};
-    if (datasetType === 1) {
-        result = await request.get(`/question/list/${datasetId}`, { params: { page, limit } });
+    if (dataSetType == DataSetType.QUESTION) {
+        result = await request.get(`/question/list/${id}`, { params: { page, limit } });
     } else {
-        result = await request.get(`/document/list/${datasetId}`, { params: { page, limit } });
+        result = await request.get(`/document/list/${id}`, { params: { page, limit } });
     }
 
-    res.status(200).json(result.data.data)
+    res.status(result.status).json(result.data)
 }

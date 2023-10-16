@@ -1,8 +1,8 @@
 
-import { Application } from "@/components/application";
+import { ApplicationPage } from "@/feature/application";
 export default function IndexPage() {
 
   return (
-    <Application />
+    <ApplicationPage />
   );
 }

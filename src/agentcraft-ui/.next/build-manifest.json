@@ -25,10 +25,10 @@
       "static/chunks/main.js",
       "static/chunks/pages/_error.js"
     ],
-    "/app": [
+    "/dataset/[id]/datasource": [
       "static/chunks/webpack.js",
       "static/chunks/main.js",
-      "static/chunks/pages/app.js"
+      "static/chunks/pages/dataset/[id]/datasource.js"
     ]
   },
   "ampFirstPages": []

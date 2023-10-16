@@ -2,7 +2,8 @@ import { useState, useEffect } from 'react';
 import { AppProps } from "next/app";
 import Head from "next/head";
 import { MantineProvider } from "@mantine/core";
-import { Shell } from '../components/shell';
+import { ModalsProvider } from '@mantine/modals';
+import { Shell } from '@/layout/shell';
 
 import '../styles/global.scss';
 
@@ -31,9 +32,11 @@ export default function App(props: AppProps) {
       >
 
         {render ?
-          <Shell >
-            <Component {...pageProps} />
-          </Shell> : null}
+          <ModalsProvider>
+            <Shell >
+              <Component {...pageProps} />
+            </Shell>
+          </ModalsProvider> : null}
       </MantineProvider>
     </>
   );

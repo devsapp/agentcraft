@@ -2,36 +2,67 @@
 import { create } from "zustand";
 import { devtools } from "zustand/middleware";
 
+import { DataSetRequestPayload, DataSet } from '@/types/dataset'
 
-export interface DatasetResponseData {
-    id: number,
-    description: string,
-    created: string,
-    user_id: number,
-    name: string,
-    dataset_type: number, // 1 question 精确数据集 2 document 模糊数据集
-    modified: string
+
+interface DataSetStore {
+    loading: boolean,
+    dataSetList: DataSet[],
+    open: boolean,
+    setLoading: (loading: boolean) => void;
+    updateDataSetList: (_: DataSet[]) => void;
+    setOpen: (open: boolean) => void;
 }
 
-interface DatasetStore {
-    datasetList: DatasetResponseData[],
-    updateDatasetList: (_: DatasetResponseData[]) => void;
-}
-
-
-export const useGlobalStore = create<DatasetStore>()(devtools((set) => ({
-    datasetList: [],
-
-    updateDatasetList: (datasetList: DatasetResponseData[]) => set((_state: any) => ({ datasetList })),
-
+export const useGlobalStore = create<DataSetStore>()(devtools((set) => ({
+    dataSetList: [],
+    open: false,
+    loading: false,
+    updateDataSetList: (dataSetList: DataSet[]) => set((_state: any) => ({ dataSetList })),
+    setLoading: (status: boolean) => set((_state) => {
+        return ({ loading: status })
+    }),
+    setOpen: (status: boolean) => set((_state) => {
+        return ({ open: status })
+    }),
 
 })))
 
-export async function getDatasetList() {
+
+
+/**
+ * 获取数据集列表
+ */
+export async function getDataSetList() {
     const state = useGlobalStore.getState();
-    const updateDatasetList = state.updateDatasetList;
+    const updatedataSetList = state.updateDataSetList;
     const res = await fetch("/api/dataset/list");
-    const datasetList = await res.json();
-    updateDatasetList(datasetList);
+    const data = (await res.json()).data;
+    updatedataSetList(data);
 
 }
+
+export async function deleteDataSet(id: number) {
+    const res = await fetch(`/api/dataset/delete?id=${id}`, {
+        method: "DELETE",
+        headers: {
+            "Content-Type": "application/json",
+        },
+    });
+    await res.json();
+}
+
+export async function addDataSet(payload: DataSetRequestPayload) {
+
+    const res = await fetch("/api/dataset/create", {
+        method: "POST",
+        body: JSON.stringify(payload),
+        headers: {
+            "Content-Type": "application/json",
+        },
+    });
+    await res.json();
+
+}
+
+

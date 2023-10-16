@@ -63,9 +63,10 @@ def get_model_by_id(model_id: int) -> Model:
             Model.id == model_id).order_by(Model.modified.desc()).first()
 
 
-def update_model(model_id: int, user_id: int, **kwargs):
+def update_model(model_id: int, user_id: int,**kwargs):
     """更新模型信息"""
     with Session(postgresql.postgres) as session:
+        model1 = session.query(Model).filter(Model.id == model_id, Model.user_id == user_id).first()
         session.query(Model).filter(
-            Model.id == model_id, Model.user_id == user_id).update(**kwargs)
+            Model.id == model_id, Model.user_id == user_id).update({Model.name:kwargs.get('name'),Model.name_alias:kwargs.get('name_alias'),Model.description: kwargs.get('description'),Model.token: kwargs.get('token'),Model.timeout: kwargs.get('timeout')},synchronize_session=False)
         session.commit()
