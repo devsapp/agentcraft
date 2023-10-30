@@ -39,7 +39,7 @@ Parameters:
     serviceName:
       title: 服务名
       type: string
-      default: fc-llm
+      default: AgentCraftAll
       pattern: "^[a-zA-Z_][a-zA-Z0-9-_:/.]{0,127}$"
       description: 您可以根据需要设置不同的服务名，同一个服务会共享部分第三方云产品资源
     # REDIS_HOST:

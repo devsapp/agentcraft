@@ -1,19 +1,22 @@
 edition: 1.0.0
 name: agentcraft
+vars:
+  region: '{{ region }}'
+  service:
+    name: '{{ serviceName }}'
+    description: '部署AgentCraft到函数计算'
+    internetAccess: true
+    logConfig: auto
+    nasConfig: auto
 services:
-  aigc-admin-py:
+  agentcraft-backend:
     component: fc
     props:
-      region: '{{region}}'
-      service:
-        logConfig: auto
-        nasConfig: auto
-        description: chat service middleware
-        internetAccess: true
-        name: '{{serviceName}}'
+      region: ${vars.region}
+      service: ${vars.service}
       function:
         handler: index.handler
-        description: admin service middleware
+        description: AgentCraft后端API服务
         timeout: 7200
         caPort: 8000
         layers:
@@ -52,9 +55,9 @@ services:
           # REDIS_PASSWORD: {{REDIS_PASSWORD}}
           # REDIS_USER: {{REDIS_USER}}
           # USE_GREEN_CLIENT: 1
-        name: agentcraft
+        name: agentcraft-backend
         asyncConfiguration: {}
-        codeUri: '.'
+        codeUri: './agentcraft-all/agentcraft-be'
       triggers:
         - name: httpTrigger
           description: ''
@@ -67,6 +70,51 @@ services:
               - DELETE
               - HEAD
               - OPTIONS
+            authType: anonymous
+            disableURLInternet: false
+      customDomains:
+        - domainName: auto
+          protocol: HTTP
+          routeConfigs:
+            - path: /*
+  agentcraft-frontend:
+    component: fc
+    props:
+      region: ${vars.region}
+      service: ${vars.service}
+      function:
+        name: agentcraft-frontend
+        description: AgentCraft前端服务
+        handler: index.handler
+        timeout: 600
+        diskSize: 512
+        caPort: 8000
+        instanceType: c1
+        runtime: custom.debian10
+        cpu: 1
+        instanceConcurrency: 100
+        memorySize: 1024
+        layers:
+          - acs:fc:${vars.region}:official:layers/Python310/versions/2
+          - acs:fc:${vars.region}:official:layers/Python310-Package-Collection/versions/2
+          - acs:fc:${vars.region}:official:layers/Python3-Flask2x/versions/2
+        environmentVariables:
+          baseUrl: '${agentcraft-backend.output.url.system_intranet_url}'
+          PYTHONPATH: /opt/python:/code:/code/python
+          LD_LIBRARY_PATH: /code:/code/lib:/usr/local/lib:/opt/lib:/opt/php8.1/lib:/opt/php8.0/lib:/opt/php7.2/lib
+          PATH: /opt/python3.10/bin:/usr/local/bin/apache-maven/bin:/usr/local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/local/ruby/bin:/opt/bin:/code:/code/bin
+        codeUri: ./agentcraft-all/agentcraft-fe
+      triggers:
+        - name: defaultTrigger
+          description: ''
+          type: http
+          qualifier: LATEST
+          config:
+            methods:
+              - GET
+              - POST
+              - PUT
+              - DELETE
             authType: anonymous
             disableURLInternet: false
       customDomains:
