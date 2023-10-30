@@ -469,7 +469,7 @@ function APIAccess() {
                             /*#__PURE__*/ (0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsxs)("div", {
                                 children: [
                                     /*#__PURE__*/ react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsx("span", {
-                                        children: "API访问地址：http://agentcraft.agentcraft.1767215449378635.cn-hangzhou.fc.devsapp.net"
+                                        children: "API访问地址："
                                     }),
                                     /*#__PURE__*/ react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsx("span", {})
                                 ]

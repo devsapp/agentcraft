@@ -221,7 +221,7 @@ export function APIAccess() {
             <Title order={5} size="h5">API访问</Title>
             <Box maw={FORM_WIDTH_1280} pl={4} pr={4} >
                <div>
-                    <span>API访问地址：http://agentcraft.agentcraft.1767215449378635.cn-hangzhou.fc.devsapp.net</span>
+                    <span>API访问地址：</span>
                     <span></span>
                </div>
                <div>
