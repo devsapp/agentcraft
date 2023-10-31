@@ -101,7 +101,7 @@ services:
         cpu: 2.0
         environmentVariables:
           baseUrl: '${agentcraft-backend.output.url.system_intranet_url}'
-          openApiUrl: '${agentcraft-backend.output.url.system_url}'
+          openApiUrl: '${agentcraft-backend.output.url.custom_domain[0].domain}'
           NODE_PATH: /opt/nodejs/node_modules
           PATH: >-
             /opt/nodejs18/bin::/usr/local/bin/apache-maven/bin:/usr/local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/local/ruby/bin:/opt/bin:/code:/code/bin
