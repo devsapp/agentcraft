@@ -7,6 +7,7 @@ vars:
     description: '部署AgentCraft到函数计算'
     internetAccess: true
     logConfig: auto
+    vpcConfig: auto
 services:
   agentcraft-backend:
     component: fc
