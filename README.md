@@ -42,7 +42,7 @@
 
 | 服务 |  备注  |
 | --- |  --- |
-| 函数计算 FC |  部署agentcraft |
+| 函数计算 FC |  托管核心的AgentCraft服务以及基础模型服务 |
 
 </service>
 
@@ -53,15 +53,14 @@
 <remark>
 
 您还需要注意：   
-本项目的构建需要依赖 postgresql进行向量化存储，redis 进行历史记忆以及限流等工作，以及需要提前部署好 bert算法的模型服务以及 大语言模型服务
+该项目需要前置依赖RDS PostgreSQL 作为关系型数据库和向量数据库，因此需要提前准备好相应的资源，同时需要依赖向量的算法服务，该服务可以在函数计算的应用市场获得
+该项目目前还在beta开发阶段，上生产需谨慎
 
 </remark>
 
 <disclaimers>
 
-免责声明：   
 
-1. 该项目的构建镜像及应用模板完全开源，由社区开发者贡献，阿里云仅提供了算力支持；
 
 </disclaimers>
 
@@ -86,154 +85,112 @@
 
 <appdetail id="flushContent">
 
-# Agent Craft
+**AgentCraft** 是一个基于Serverless架构的面向大语言模型开发应用的LLMOps平台,提供了标准的API服务和一个可视化操作的后台系统，可以进行基础模型管理，数据集管理， 以及知识库的快速构建
+
+![AgentCraft Structer](https://img.alicdn.com/imgextra/i4/O1CN01O9AyfH1MtqDgPLsL1_!!6000000001493-0-tps-2448-1314.jpg)
+![AgentCraft APPs](https://img.alicdn.com/imgextra/i4/O1CN01buPNco1T8qtV4xewI_!!6000000002338-1-tps-1777-893.gif)
+![AgentCraft KnowledgeBase](https://img.alicdn.com/imgextra/i1/O1CN01yvWBWA29BKu5EZgtW_!!6000000008029-1-tps-1777-893.gif)
+## 使用场景
+
++ 开发者可以直接AgentCraft作为独立的知识库服务，管理相关的知识体系，也可以基于此作为AI能力的交付中心，快速开发以及对外提供AI的服务
++ 企业可以基于此进行AI能力的整合沉淀，探索AI转型
+
+## 核心能力
+
+### 1基础模型
+依托于阿里云Serverless产品函数计算，提供海量的基础模型构建托管服务，依托于基础的模型服务您可以用来构建更加丰富的AI应用形态
+![AgentCraft FoundationModel](https://img.alicdn.com/imgextra/i3/O1CN01tp5Mtm1lnlM8Z6IKN_!!6000000004864-1-tps-1777-867.gif)
+#### 大语言模型系列
+
++ **通义千问** ： qwen-plus、qwen-turbo
++ **通义千问开源**
++ **ChatGLM** 
++ **Llama2**
++ **Intern**
++ **OpenAI** : GPT4、GPT3.5-turbo
+
+基础模型部分支持基于Hugging Face，ModelScope等开源模型的开放模型进行微调和部署
+
+#### 文生图系列
++ **通义万相**
++ **StableDiffusion** 
+
+#### 自然语言处理
+**Bert算法模型**：text2vec-large-chinese、bge-large-zh
+
+### 2.数据集
+可视化的数据集托管和处理，支持自动和手动文本数据处理功能，支持PDF,txt，html等格式数据源，支持模糊文档类数据源以及精准QA类的数据源处理操作，为实现更加准确知识问答效果提供支持
+![AgentCraft DataSet](https://img.alicdn.com/imgextra/i4/O1CN01FqjAaP1e9H1uFhHzY_!!6000000003828-1-tps-1777-893.gif)
+### 3.提供API服务
+每个知识库、Agent都提供独立的鉴权能力，可以方便的集成到应用之中，另外支持使用阿里云微服务网关进行更加专业的API管理
+
+### 4.便捷的端侧接入
+支持 web网站、钉钉机器人、站点嵌入等接入业务端侧的能力，提供一站式的引导服务，基于ServerlessDevs， Eventbridge等Serverless+EDA等云原生产品架构可以快速实现端侧的接入
+
+### 5. 极速的工具开发和集成
+基于阿里云Serverless开发工具可以快速进行工具函数的构建和托管以及LLM Agent的安全集成
+
+## 快速开始
+### 云服务直接部署
 
 
-步入 AI 时代，我们的世界正以前所未有的速度发展和变化。在这个瞬息万变的时代，你是否曾想过拥有一款可以让你自由创造、定制你的 AI 代理的工具？
 
-这就是 AgentCraft，一个创新的 AI 代理创建平台，它将创造 AI 代理的能力赋予每一个人。无论你是初探 AI 的新手，还是富有经验的专业人士，AgentCraft 都能满足你的需求。
+## RoadMAP
+正在进行中的开发：
++ **客户端集成** 支持 NextGpt 快速独立站点部署，钉钉机器人的一站式接入以及网站嵌入能力的生成
++ **Agent 能力** 集成主流Agent Framework 完成快速的Agent交付
++ **工具扩展** 快速的工具构建及交付，供给给Agent更丰富的场景
 
-这是一个应用&数据集&模型管理平台，支持用户创建应用，上传数据集，调用兼容 OpenAI API 的模型。通过应用的方式，连接起模型和数据集。结合模型服务可以实现私域智能问答部署，一键打造智能小二。
 
-AgentCraft 的特点：
 
-- 多样性：我们提供各种预设模板，你可以根据需要自由选择和定制，无论是聊天机器人，智能助手，还是复杂的预测系统，AgentCraft 都可以帮你轻松实现。
-- 易用性：我们专注于用户体验，无需编程知识，你就可以通过简单的拖拉操作创建你的 AI 代理。
-  开放性：我们支持用户分享和交流他们的 AI 代理，你可以从社区中获取灵感，也可以将你的创新分享给世界。
-- 安全性：我们重视你的数据安全，所有的数据都将被严格保护，你可以放心使用。
-  AgentCraft，让你的想象力飞翔，塑造你的 AI 未来。现在就加入我们，开始你的 AI 创造之旅吧！
-- 入参和出参与 OpenAI 完全一致，可以无缝切换
-- 服务端缓存历史上下文，防止前端请求恶意注入信息
-- 支持向量近似值匹配返回预先定义的回答与大模型整理相关文档再返回给用户两种模式
+## 贡献
+欢迎为AgentCraft贡献，一起推进AI应用的落地。  欢迎各种方式的贡献，提交代码、问题、新想法、或者分享你的AI应用
 
-现已在[RocketMQ 中文社区](https://rocketmq-learning.com/)上线使用，欢迎体验智能问答。
+## 联系我们
 
-## 使用流程
+如果您有任何问题、建议或合作意向，可以用以下方式联系我们：
++ GithubRepo 提交 Issue 或 PR
++ 加入Serverless+ AIGC 钉群讨论 
 
-请求
+![dingtalk](https://img.alicdn.com/imgextra/i2/O1CN01zGJ4fS21GMJy6Okd8_!!6000000006957-0-tps-470-472.jpg)
 
-```bash
-curl https://{YOUR_URL}/chat/completions \
-  -H "Content-Type: application/json" \
-  -H "Authorization: Bearer $AGENT_TOKEN" \
-  -d '{
-     "messages": [{"role": "user", "content": "Say this is a test!"}],
-   }'
-```
+## Citation
 
-响应
+本软件使用以下开源软件
++ Nextjs  [nodejs]
++ FastApi [python]
++ LangChain
 
-```json
-{
-  "id": "{ID}",
-  "object": "chat.completion",
-  "created": 1677858242,
-  "model": "{YOUR_MODEL}",
-  "choices": [
-    {
-      "delta": {
-        "role": "assistant",
-        "content": "\n\nThis is a test!"
-      },
-      "finish_reason": "stop",
-      "index": 0
-    }
-  ]
-}
-```
-
-/chat/completions 的请求只需要包含 messages，而且只有最后一条 message 会被使用，目的是为了防止恶意注入信息，结果会以 EventSourceResponse(media_type=text/event-stream)的形式返回。
-
-## 配置参数
-
-### 应用启动配置参数
-
-```bash
-CREATE_TABLES=1 # 是否创建表，如果不需要的话可以不配置
-REDIS_HOST=REDIS_URL # Redis的地址
-REDIS_PORT=REDIS_PORT # Redis的端口
-REDIS_USER=REDIS_USER # Redis的用户名
-REDIS_PASSWORD=REDIS_PASSWORD # Redis的密码
-REDIS_SOCKET_CONNECT_TIMEOUT=REDIS_SOCKET_CONNECT_TIMEOUT # Redis的超时时间
-REDIS_SOCKET_TIMEOUT=REDIS_SOCKET_TIMEOUT # Redis的超时时间
-POSTGRES_HOST=POSTGRES_URL # Postgres的地址
-POSTGRES_PORT=POSTGRES_PORT # Postgres的端口
-POSTGRES_USER=POSTGRES_USER # Postgres的用户名
-POSTGRES_PASSWORD=POSTGRES_PASSWORD # Postgres的密码
-POSTGRES_DATABASE=POSTGRES_DATABASE # Postgres的数据库名
-JWT_SECRET=JWT_SECRET # JWT的密钥，用于生成和验证token
-EMBEDDING_URL=EMBEDDING_URL # Embedding服务的地址，例如https://openai.com/v1/embeddings
-EMBEDDING_TOKEN=EMBEDDING_TOKEN # Embedding服务的token
-EMBEDDING_TIMEOUT=EMBEDDING_TIMEOUT # Embedding服务的超时时间
-EMBEDDING_DIM=EMBEDDING_DIM # Embedding服务的向量维度
-USE_GREEN_CLIENT=1 # 使用阿里云的内容审核服务，如果不需要可以不配置
-AK=YOUR_AK # 阿里云的 Access Key，仅使用内容审核服务时需要
-SK=YOUR_SK # 阿里云的 Secret Key，仅使用内容审核服务时需要
-```
-
-### 最佳实践
-
-- 建议在创建应用的时候，数据库和应用处于同一个 VPC 内，这样可以降低网络延迟，同时避免产生公网流量，提高安全性。
-
-## 重要信息
-
-- 请注意 Embedding 服务返回的向量维度，[fc-embedding-api](https://github.com/devsapp/fc-embedding-api)返回的向量是 1024 维，OpenAI 是 1536 维，目前默认是 1024，如果需要使用 OpenAI 的模型，请在创建应用的时候，将向量维度设置为 1536。数据库创建表之后，向量维度无法变更。
-- 请求字段里的 message，只有最后一条会被使用。
-- 在创建应用之前，需要先录入模型信息。
-- 所有的分页请求从 0 开始计数。
-- 目前支持的文档类型有：HTML, PDF, TXT, Markdown。
-
-### 常数说明
-
-```python
-class DatasetType(Enum):
-    """Dataset Type"""
-    EXACT_SEARCH = 1 # 用于精确搜索的数据集
-    FUZZY_SEARCH = 2 # 用于模糊搜索的数据集
-```
+## License
+Apache2.0协议
 
 
 </appdetail>
 
 ## 使用文档
-### agent 参数
-```json
-{
-  "name": "mse-opensource", 
-  "description": "微服务开源", 
-  "prompt_template": "已知信息：{context}。你需要积极，简洁和专业地来回答```中的问题。如果问题和RocketMQ没有关系，或者问题存在争议性，请说 “抱歉，无法回答该问题”，不允许编造。问题是：```{query}```", 
-  "app_id": 3, 
-  "exact_datasets": [  
-    
-  ],
-  "fuzzy_datasets": [
-    4
-  ],
-  "exact_search_similarity": 0.9,  
-  "fuzzy_search_similarity": 0.6, 
-  "temperature": 0.5,  
-  "top_p": 1, 
-  "n_sequences": 1, 
-  "max_tokens": 1024, 
-  "stop": [ 
-  
-  ],
-  "presence_penalty": 0, 
-  "frequency_penalty": 0,
-  "logit_bias": "",
-  "model_id": 4,  
-  "redis_ip_ex": 10, 
-  "redis_history_ex": 10, 
-  "model_ip_limit": 10000,
-  "llm_history_len": 1, 
-  "system_message": "你是一个已知问题领域的专家", 
-  "exact_search_limit": 1, 
-  "fuzzy_search_limit": 1  
-}
-```
+
 <usedetail id="flushContent">
 
 ### 常见问题
+#### 数据库连接不上？
+请检查vpc网络环境，保证部署到FC 的AgentCraft服务跟数据库实例在同一个网络环境，设置数据库密码的时候请不要使用@符号
+
+#### 基础模型如何自定义
+可以基于我们提供的基础镜像进行调整，使用FC托管模型服务
+
+#### 问答结果不准
+AgentCraft 提供基本的RAG能力支持，但是详细的优化依然需要开发者自己调试，比如对数据进行更精准的切片处理，
+对结果检索精度进行调整，优化模型本身，以及人工反馈优化结果
+
+#### 如何对接业务的系统
+
+可以使用AgentCraft生成的API token 进行外部访问，目前对接客户端的准备有 钉钉，web，正在进行建设
+
+#### 如何加强内容安全
+确保您使用的基础模型已经经过安全的评审，此外可以使用绿网等安全内容过滤服务进行内容输入输出处理
+
+
+
 
 </usedetail>
 
