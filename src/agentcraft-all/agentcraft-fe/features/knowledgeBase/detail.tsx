@@ -1,15 +1,17 @@
 import React, { useEffect, useState } from "react";
-import { Breadcrumbs, Anchor, Button, Box, Table, Modal, Text, TextInput, Group, Divider, Title, Paper, Flex, Badge, LoadingOverlay, Textarea, MultiSelect, NumberInput, Select, Drawer } from '@mantine/core';
+import { Breadcrumbs, Anchor, Button, Box, Table, Modal, Text, TextInput, Group, Divider, Title, Paper, Flex, Badge, Tooltip, LoadingOverlay, Textarea, MultiSelect, NumberInput, Select, Drawer } from '@mantine/core';
 import { useForm } from '@mantine/form';
-
+import Chat from 'features/chat';
 import { getModelList, useGlobalStore as modelUseGlobalStore } from '@/store/model';
 import { getDataSetList, useGlobalStore as dataSetUseGlobalStore } from '@/store/dataset';
 import { Model } from '@/types/model';
 import { DataSet, DataSetType } from '@/types/dataset';
-import {  useGlobalStore,  updateKnowledgeBase, getKnowledgeBase, } from '@/store/knowledgeBase';
+import { useGlobalStore, updateKnowledgeBase, getKnowledgeBase, getAccessUrl } from '@/store/knowledgeBase';
 import { Dataset } from '@/types/knowledgeBase';
 import { FORM_WIDTH_1280 } from 'constants/index';
 import FeatureDescription from '@/components/FeatureDescription';
+import CopyToClipboard from '@/components/CopyToClipboard';
+import MarkdownContent from "@/components/MarkdownContent";
 
 // import styles from './index.module.scss';
 
@@ -212,30 +214,82 @@ export function KnowledgeBaseForm({ appId, containerType }: { appId: any, contai
         </div>
     </>
 }
+
+function ChatDrawer() {
+    const chatDrawer = useGlobalStore().chatDrawer;
+    const setChatDrawer = useGlobalStore().setChatDrawer;
+    return <Drawer
+        opened={chatDrawer}
+        onClose={() => { setChatDrawer(false) }}
+        title={<div><Text fz="xl" >知识库调试</Text><Text fz="sm">您可以通过提示词调整，数据集切换，模型服务，以及切换模型参数来调整知识库问答的效果</Text></div>}
+        position="right"
+        size="30%"
+        overlayProps={{ opacity: 0.5, blur: 4 }}
+    >
+        <Flex
+            mih={50}
+            direction="row"
+        >
+            <div >
+                <div><Badge color="orange" size="lg" radius="xs" variant="filled">知识库问答</Badge></div>
+                <Chat />
+            </div>
+        </Flex>
+    </Drawer>
+}
 export function APIAccess() {
     const currentKnowledgeBase = useGlobalStore().currentKnowledgeBase;
+    const accessUrl = useGlobalStore().accessUrl;
+    const setAccessUrl = useGlobalStore().setAccessUrl;
+    const setChatDrawer = useGlobalStore().setChatDrawer;
+    useEffect(() => {
+        (async () => {
+            const result = await getAccessUrl();
+            const data = result.data || { openApiUrl: '', innerApiUrl: '' }
+            setAccessUrl(data);
+        })()
+
+    }, [])
+    const curlExample = `curl -X 'POST' \
+    '${accessUrl.openApiUrl}/v1/chat/completions' \
+    -H 'accept: application/json' \
+    -H 'Authorization: Bearer ${currentKnowledgeBase?.token}' \
+    -H 'Content-Type: application/json' \
+    -d '{
+      "messages":[
+          {
+              "role": "user",
+              "content": "请问世界最高峰是什么？"
+          }
+      ],
+      "stream": false,
+      "max_tokens": 1024
+  }'`
     return <div style={{ width: '33%' }}>
         <Title order={4} mb={8}>访问接入</Title>
         <Paper shadow="xs" p="md" withBorder >
 
             <Title order={5} size="h5">API访问</Title>
             <Box maw={FORM_WIDTH_1280} pl={4} pr={4} >
-               <div>
-                    <span>API访问地址：</span>
+                <div>
+                    <span><Text color="cyan" weight={700}>公网API访问地址：</Text><CopyToClipboard value={accessUrl.openApiUrl} content={accessUrl.openApiUrl} /> </span>
                     <span></span>
-               </div>
-               <div>
-                    <span style={{wordBreak:'break-all'}}>API访问token：{currentKnowledgeBase?.token}</span>
+                </div>
+                <div>
+                    <span style={{ wordBreak: 'break-all' }}><Text color="cyan" weight={700}>API访问token：</Text><CopyToClipboard value={currentKnowledgeBase?.token} content={currentKnowledgeBase?.token} /></span>
                     <span></span>
-               </div>
-
+                </div>
+                <div>
+                    <span style={{ wordBreak: 'break-all' }}><Text color="cyan" weight={700}>API文档访问：</Text><a href={`${accessUrl.openApiUrl}/docs`} target="_blank">{`${accessUrl.openApiUrl}/docs`}</a></span>
+                    <span></span>
+                </div>
             </Box>
             <Divider my="sm" />
 
 
             <Title order={5} size="h5">API调用示例</Title>
             <Box maw={FORM_WIDTH_1280} pl={4} pr={4} >
-
+                <MarkdownContent textContent={`\`\`\`shell\n${curlExample}`} value={curlExample} />
 
             </Box>
             <Divider my="sm" />
@@ -243,7 +297,22 @@ export function APIAccess() {
             <Title order={5} size="h5">效果测试</Title>
             <Box maw={FORM_WIDTH_1280} pl={4} pr={4} >
                 <Group grow>
-
+                    {!currentKnowledgeBase?.token ? <Tooltip label="需要成访问令牌才可以访问此能力" >
+                        <Button
+                            color="grape"
+                            variant="filled"
+                            size="xs"
+                            mr={4} >问答测试</Button>
+                    </Tooltip> : <Button
+                        color="grape"
+                        variant="filled"
+                        size="xs"
+                        onClick={() => {
+                            setChatDrawer(true);
+                        }}
+                        mr={4} >
+                        问答测试
+                    </Button>}
                 </Group>
             </Box>
         </Paper>
@@ -280,6 +349,7 @@ export function DetailPage({ appId, knowledgeBaseId }: DetailPageProps) {
             <LoadingOverlay visible={loading} overlayOpacity={0.3} />
             <Breadcrumbs>{items}</Breadcrumbs>
             <FeatureDescription title="知识库详情" description="您可以查看修改知识库内容，以及查看API调用" />
+            <ChatDrawer />
             <Flex
                 mih={50}
                 gap="md"

@@ -4,14 +4,21 @@ import { devtools } from "zustand/middleware";
 import { KnowledgeBaseRequestPayload, KnowledgeBaseResponseData, KnowledgeBase } from '@/types/knowledgeBase';
 import { request } from '@/utils/clientRequest';
 
-
+interface AccessUrl {
+    openApiUrl: string
+    innerApiUrl: string
+}
 interface KnowledgeBaseStore {
     knowledgeBaseList: KnowledgeBaseResponseData[],
     open: boolean,
+    chatDrawer: boolean,
     loading: boolean,
     isEdit: boolean,
+    accessUrl: AccessUrl,
     currentKnowledgeBase?: KnowledgeBase,
     knowledgeBaseChatList: any[],
+    setAccessUrl: (accessUrl: AccessUrl) => void;
+    setChatDrawer: (chatDrawer: boolean) => void;
     setLoading: (loading: boolean) => void;
     setOpen: (open: boolean) => void;
     setEditStatus: (isEdit: boolean) => void;
@@ -24,10 +31,23 @@ export const useGlobalStore = create<KnowledgeBaseStore>()(devtools((set) => ({
     knowledgeBaseList: [],
     knowledgeBaseChatList: [],
     open: false,
+    chatDrawer: false,
     loading: false,
     isEdit: false,
+    accessUrl: {
+        openApiUrl: '',
+        innerApiUrl: ''
+    },
+    currentKnowledgeBase: undefined,
+    // 知识库列表
     updateCurrentKnowledgeBase: (currentKnowledgeBase: KnowledgeBase) => set((_state) => {
         return ({ currentKnowledgeBase })
+    }),
+    setChatDrawer: (chatDrawer: boolean) => set((_state) => {
+        return ({ chatDrawer })
+    }),
+    setAccessUrl: (accessUrl: AccessUrl) => set((_state) => {
+        return ({ accessUrl })
     }),
     setEditStatus: (isEdit: boolean) => set((_state) => {
         return ({ isEdit })
@@ -39,7 +59,7 @@ export const useGlobalStore = create<KnowledgeBaseStore>()(devtools((set) => ({
         return ({ open: status })
     }),
     updateKnowledgeBaseList: (knowledgeBaseList: KnowledgeBaseResponseData[]) => set((_state: any) => ({ knowledgeBaseList })),
-   
+
 
 
 })))
@@ -111,6 +131,18 @@ export async function chat(payload: any) {
 
         },
         body: JSON.stringify(payload),
+    });
+    return res;
+}
+
+
+export async function getAccessUrl() {
+    const res = await request(`/api/knowledgeBase/getAccessUrl`, {
+        method: "GET",
+        headers: {
+            "Content-Type": "application/json",
+
+        }
     });
     return res;
 }

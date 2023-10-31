@@ -7,17 +7,19 @@ import styles from '@/styles/chat.module.scss';
 type tProps = {
   className?: string;
   textContent: string;
+  value?: string,
   darkMode?: boolean; // markdown文本
 };
 
 
 
 const MarkdownContent = (props: tProps) => {
-  const { textContent, darkMode, className } = props;
+  const { textContent, darkMode, className, value } = props;
   const [showCopy, setShowCopy] = useState(false);
   const copy2Clipboard = async (text: string) => {
     try {
       await navigator.clipboard.writeText(text);
+      alert('复制成功')
     } catch (error) {
       const textArea = document.createElement("textarea");
       textArea.value = text;
@@ -30,6 +32,7 @@ const MarkdownContent = (props: tProps) => {
         console.log(error);
       }
       document.body.removeChild(textArea);
+      alert('复制成功')
     }
   };
   return (
@@ -41,7 +44,7 @@ const MarkdownContent = (props: tProps) => {
           const match = /language-(\w+)/.exec(className || "");
           return !inline && match ? (
             <div className={styles['code-container']} onMouseEnter={() => setShowCopy(true)} onMouseLeave={() => setShowCopy(false)}>
-              <button className={styles['copy-btn']} style={{ visibility: showCopy ? 'visible' : 'hidden' }} onClick={() => copy2Clipboard(textContent)}>Copy</button>
+              <button className={styles['copy-btn']} style={{ visibility: showCopy ? 'visible' : 'hidden' }} onClick={() => copy2Clipboard(value || textContent)}>Copy</button>
               <Suspense>
                 <CodeHighlight
                   darkMode={darkMode}

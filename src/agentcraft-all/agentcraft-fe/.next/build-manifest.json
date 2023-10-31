@@ -5,8 +5,8 @@
   "devFiles": [],
   "ampDevFiles": [],
   "lowPriorityFiles": [
-    "static/VCcdcQbFAaH1AXvKS6m0F/_buildManifest.js",
-    "static/VCcdcQbFAaH1AXvKS6m0F/_ssgManifest.js"
+    "static/C4_JgO01uyg04qUBOfei5/_buildManifest.js",
+    "static/C4_JgO01uyg04qUBOfei5/_ssgManifest.js"
   ],
   "rootMainFiles": [],
   "pages": {
@@ -24,7 +24,7 @@
       "static/chunks/webpack-880e48e2fc817058.js",
       "static/chunks/framework-73b8966a3c579ab0.js",
       "static/chunks/main-e4be697f641c1f12.js",
-      "static/css/3c82c389206aef61.css",
+      "static/css/9e8c7f4e9a0799c4.css",
       "static/chunks/pages/_app-63dd9ae765b83309.js"
     ],
     "/_error": [
@@ -60,10 +60,10 @@
       "static/chunks/664-02873554afdb1aa3.js",
       "static/chunks/946-441e7c24f08e079b.js",
       "static/chunks/855-4f13a25842e85a3a.js",
-      "static/chunks/194-095b0d4fb21acd2a.js",
-      "static/chunks/775-5c236ccaef5daabc.js",
+      "static/chunks/683-7ca6ab554abebfab.js",
+      "static/chunks/862-f5c07ce41a02c2af.js",
       "static/css/121542e099652ce7.css",
-      "static/chunks/pages/app/[id]/knowledgeBase-220bdf4254bfdef4.js"
+      "static/chunks/pages/app/[id]/knowledgeBase-e58aaffb1878e575.js"
     ],
     "/app/[id]/knowledgeBase/[knowledgeBaseId]/chatlist": [
       "static/chunks/webpack-880e48e2fc817058.js",
@@ -81,8 +81,10 @@
       "static/chunks/871-20c603137bb7aac6.js",
       "static/chunks/946-441e7c24f08e079b.js",
       "static/chunks/855-4f13a25842e85a3a.js",
-      "static/chunks/194-095b0d4fb21acd2a.js",
-      "static/chunks/pages/app/[id]/knowledgeBase/[knowledgeBaseId]/detail-0d9c9b3d7d04b95d.js"
+      "static/chunks/683-7ca6ab554abebfab.js",
+      "static/chunks/862-f5c07ce41a02c2af.js",
+      "static/css/9568f0844bd0ffed.css",
+      "static/chunks/pages/app/[id]/knowledgeBase/[knowledgeBaseId]/detail-cae36440b644003b.js"
     ],
     "/clientAccess": [
       "static/chunks/webpack-880e48e2fc817058.js",
@@ -138,7 +140,7 @@
       "static/chunks/871-20c603137bb7aac6.js",
       "static/chunks/855-4f13a25842e85a3a.js",
       "static/chunks/827-1b35f254b0a4f367.js",
-      "static/chunks/pages/foundationModel/create-0f8011ec85e60d62.js"
+      "static/chunks/pages/foundationModel/create-251e578d06c2a3a1.js"
     ],
     "/login": [
       "static/chunks/webpack-880e48e2fc817058.js",

@@ -21,14 +21,20 @@ __webpack_require__.a(module, async (__webpack_handle_async_dependencies__, __we
 /* harmony import */ var _mantine_core__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(_mantine_core__WEBPACK_IMPORTED_MODULE_2__);
 /* harmony import */ var _mantine_form__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(9445);
 /* harmony import */ var _mantine_form__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(_mantine_form__WEBPACK_IMPORTED_MODULE_3__);
-/* harmony import */ var _store_model__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(4350);
-/* harmony import */ var _store_dataset__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(5417);
-/* harmony import */ var _types_dataset__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(7194);
-/* harmony import */ var _store_knowledgeBase__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(3483);
-/* harmony import */ var constants_index__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(1407);
-/* harmony import */ var _components_FeatureDescription__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(3658);
-var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_store_model__WEBPACK_IMPORTED_MODULE_4__, _store_dataset__WEBPACK_IMPORTED_MODULE_5__, _store_knowledgeBase__WEBPACK_IMPORTED_MODULE_7__]);
-([_store_model__WEBPACK_IMPORTED_MODULE_4__, _store_dataset__WEBPACK_IMPORTED_MODULE_5__, _store_knowledgeBase__WEBPACK_IMPORTED_MODULE_7__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
+/* harmony import */ var features_chat__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(2041);
+/* harmony import */ var _store_model__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(4350);
+/* harmony import */ var _store_dataset__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(5417);
+/* harmony import */ var _types_dataset__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(7194);
+/* harmony import */ var _store_knowledgeBase__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(3483);
+/* harmony import */ var constants_index__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(1407);
+/* harmony import */ var _components_FeatureDescription__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(3658);
+/* harmony import */ var _components_CopyToClipboard__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(372);
+/* harmony import */ var _components_MarkdownContent__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(7511);
+var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([features_chat__WEBPACK_IMPORTED_MODULE_4__, _store_model__WEBPACK_IMPORTED_MODULE_5__, _store_dataset__WEBPACK_IMPORTED_MODULE_6__, _store_knowledgeBase__WEBPACK_IMPORTED_MODULE_8__, _components_MarkdownContent__WEBPACK_IMPORTED_MODULE_11__]);
+([features_chat__WEBPACK_IMPORTED_MODULE_4__, _store_model__WEBPACK_IMPORTED_MODULE_5__, _store_dataset__WEBPACK_IMPORTED_MODULE_6__, _store_knowledgeBase__WEBPACK_IMPORTED_MODULE_8__, _components_MarkdownContent__WEBPACK_IMPORTED_MODULE_11__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
+
+
+
 
 
 
@@ -46,12 +52,12 @@ ContainerType;
     ContainerType[ContainerType["CHAT"] = 2] = "CHAT";
 })(ContainerType || (ContainerType = {}));
 function KnowledgeBaseForm({ appId , containerType  }) {
-    const setOpen = (0,_store_knowledgeBase__WEBPACK_IMPORTED_MODULE_7__/* .useGlobalStore */ .s6)().setOpen;
+    const setOpen = (0,_store_knowledgeBase__WEBPACK_IMPORTED_MODULE_8__/* .useGlobalStore */ .s6)().setOpen;
     // const isEdit = useGlobalStore().isEdit;
-    const currentKnowledgeBase = (0,_store_knowledgeBase__WEBPACK_IMPORTED_MODULE_7__/* .useGlobalStore */ .s6)().currentKnowledgeBase;
-    const setLoading = (0,_store_knowledgeBase__WEBPACK_IMPORTED_MODULE_7__/* .useGlobalStore */ .s6)().setLoading;
-    const modelList = (0,_store_model__WEBPACK_IMPORTED_MODULE_4__/* .useGlobalStore */ .s6)().modelList;
-    const dataSetList = (0,_store_dataset__WEBPACK_IMPORTED_MODULE_5__/* .useGlobalStore */ .s6)().dataSetList;
+    const currentKnowledgeBase = (0,_store_knowledgeBase__WEBPACK_IMPORTED_MODULE_8__/* .useGlobalStore */ .s6)().currentKnowledgeBase;
+    const setLoading = (0,_store_knowledgeBase__WEBPACK_IMPORTED_MODULE_8__/* .useGlobalStore */ .s6)().setLoading;
+    const modelList = (0,_store_model__WEBPACK_IMPORTED_MODULE_5__/* .useGlobalStore */ .s6)().modelList;
+    const dataSetList = (0,_store_dataset__WEBPACK_IMPORTED_MODULE_6__/* .useGlobalStore */ .s6)().dataSetList;
     const form = (0,_mantine_form__WEBPACK_IMPORTED_MODULE_3__.useForm)({
         initialValues: {
             name: "",
@@ -84,8 +90,8 @@ function KnowledgeBaseForm({ appId , containerType  }) {
         }
     });
     (0,react__WEBPACK_IMPORTED_MODULE_1__.useEffect)(()=>{
-        (0,_store_model__WEBPACK_IMPORTED_MODULE_4__/* .getModelList */ .fZ)();
-        (0,_store_dataset__WEBPACK_IMPORTED_MODULE_5__/* .getDataSetList */ .ln)();
+        (0,_store_model__WEBPACK_IMPORTED_MODULE_5__/* .getModelList */ .fZ)();
+        (0,_store_dataset__WEBPACK_IMPORTED_MODULE_6__/* .getDataSetList */ .ln)();
         const datasets = currentKnowledgeBase?.datasets;
         form.setValues({
             id: currentKnowledgeBase?.id,
@@ -93,8 +99,8 @@ function KnowledgeBaseForm({ appId , containerType  }) {
             description: currentKnowledgeBase?.description,
             prompt_template: currentKnowledgeBase?.prompt_template,
             app_id: currentKnowledgeBase?.app_id,
-            exact_datasets: datasets?.filter((item)=>item.dataset_type === _types_dataset__WEBPACK_IMPORTED_MODULE_6__/* .DataSetType.QUESTION */ .I.QUESTION).map((item)=>item.dataset_id),
-            fuzzy_datasets: datasets?.filter((item)=>item.dataset_type === _types_dataset__WEBPACK_IMPORTED_MODULE_6__/* .DataSetType.DOCUMENT */ .I.DOCUMENT).map((item)=>item.dataset_id),
+            exact_datasets: datasets?.filter((item)=>item.dataset_type === _types_dataset__WEBPACK_IMPORTED_MODULE_7__/* .DataSetType.QUESTION */ .I.QUESTION).map((item)=>item.dataset_id),
+            fuzzy_datasets: datasets?.filter((item)=>item.dataset_type === _types_dataset__WEBPACK_IMPORTED_MODULE_7__/* .DataSetType.DOCUMENT */ .I.DOCUMENT).map((item)=>item.dataset_id),
             exact_search_similarity: currentKnowledgeBase?.exact_search_limit,
             fuzzy_search_similarity: currentKnowledgeBase?.fuzzy_search_similarity,
             temperature: currentKnowledgeBase?.temperature,
@@ -123,13 +129,13 @@ function KnowledgeBaseForm({ appId , containerType  }) {
             value: item.id
         };
     });
-    const documentSelectData = dataSetList.filter((item)=>item.dataset_type == _types_dataset__WEBPACK_IMPORTED_MODULE_6__/* .DataSetType.DOCUMENT */ .I.DOCUMENT).map((item)=>{
+    const documentSelectData = dataSetList.filter((item)=>item.dataset_type == _types_dataset__WEBPACK_IMPORTED_MODULE_7__/* .DataSetType.DOCUMENT */ .I.DOCUMENT).map((item)=>{
         return {
             label: item.name,
             value: item.id
         };
     });
-    const qaSelectData = dataSetList.filter((item)=>item.dataset_type == _types_dataset__WEBPACK_IMPORTED_MODULE_6__/* .DataSetType.QUESTION */ .I.QUESTION).map((item)=>{
+    const qaSelectData = dataSetList.filter((item)=>item.dataset_type == _types_dataset__WEBPACK_IMPORTED_MODULE_7__/* .DataSetType.QUESTION */ .I.QUESTION).map((item)=>{
         return {
             label: item.name,
             value: item.id
@@ -160,7 +166,7 @@ function KnowledgeBaseForm({ appId , containerType  }) {
                                         children: "知识库"
                                     }),
                                     /*#__PURE__*/ (0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsxs)(_mantine_core__WEBPACK_IMPORTED_MODULE_2__.Box, {
-                                        maw: constants_index__WEBPACK_IMPORTED_MODULE_9__/* .FORM_WIDTH_1280 */ .cy,
+                                        maw: constants_index__WEBPACK_IMPORTED_MODULE_12__/* .FORM_WIDTH_1280 */ .cy,
                                         pl: 4,
                                         pr: 4,
                                         children: [
@@ -188,7 +194,7 @@ function KnowledgeBaseForm({ appId , containerType  }) {
                                 children: "提示词"
                             }),
                             /*#__PURE__*/ (0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsxs)(_mantine_core__WEBPACK_IMPORTED_MODULE_2__.Box, {
-                                maw: constants_index__WEBPACK_IMPORTED_MODULE_9__/* .FORM_WIDTH_1280 */ .cy,
+                                maw: constants_index__WEBPACK_IMPORTED_MODULE_12__/* .FORM_WIDTH_1280 */ .cy,
                                 pl: 4,
                                 pr: 4,
                                 children: [
@@ -217,7 +223,7 @@ function KnowledgeBaseForm({ appId , containerType  }) {
                                 children: "数据集"
                             }),
                             /*#__PURE__*/ react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsx(_mantine_core__WEBPACK_IMPORTED_MODULE_2__.Box, {
-                                maw: constants_index__WEBPACK_IMPORTED_MODULE_9__/* .FORM_WIDTH_1280 */ .cy,
+                                maw: constants_index__WEBPACK_IMPORTED_MODULE_12__/* .FORM_WIDTH_1280 */ .cy,
                                 pl: 4,
                                 pr: 4,
                                 children: /*#__PURE__*/ (0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsxs)(_mantine_core__WEBPACK_IMPORTED_MODULE_2__.Group, {
@@ -249,7 +255,7 @@ function KnowledgeBaseForm({ appId , containerType  }) {
                                 children: "模型"
                             }),
                             /*#__PURE__*/ react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsx(_mantine_core__WEBPACK_IMPORTED_MODULE_2__.Box, {
-                                maw: constants_index__WEBPACK_IMPORTED_MODULE_9__/* .FORM_WIDTH_1280 */ .cy,
+                                maw: constants_index__WEBPACK_IMPORTED_MODULE_12__/* .FORM_WIDTH_1280 */ .cy,
                                 pl: 4,
                                 pr: 4,
                                 mb: 12,
@@ -290,7 +296,7 @@ function KnowledgeBaseForm({ appId , containerType  }) {
                                 children: "答案召回"
                             }),
                             /*#__PURE__*/ (0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsxs)(_mantine_core__WEBPACK_IMPORTED_MODULE_2__.Box, {
-                                maw: constants_index__WEBPACK_IMPORTED_MODULE_9__/* .FORM_WIDTH_1280 */ .cy,
+                                maw: constants_index__WEBPACK_IMPORTED_MODULE_12__/* .FORM_WIDTH_1280 */ .cy,
                                 pl: 4,
                                 pr: 4,
                                 children: [
@@ -343,7 +349,7 @@ function KnowledgeBaseForm({ appId , containerType  }) {
                                 children: "大语言模型参数"
                             }),
                             /*#__PURE__*/ (0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsxs)(_mantine_core__WEBPACK_IMPORTED_MODULE_2__.Box, {
-                                maw: constants_index__WEBPACK_IMPORTED_MODULE_9__/* .FORM_WIDTH_1280 */ .cy,
+                                maw: constants_index__WEBPACK_IMPORTED_MODULE_12__/* .FORM_WIDTH_1280 */ .cy,
                                 pl: 4,
                                 pr: 4,
                                 children: [
@@ -412,7 +418,7 @@ function KnowledgeBaseForm({ appId , containerType  }) {
                         ]
                     }),
                     /*#__PURE__*/ react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsx(_mantine_core__WEBPACK_IMPORTED_MODULE_2__.Box, {
-                        maw: constants_index__WEBPACK_IMPORTED_MODULE_9__/* .FORM_WIDTH_1280 */ .cy,
+                        maw: constants_index__WEBPACK_IMPORTED_MODULE_12__/* .FORM_WIDTH_1280 */ .cy,
                         pt: 24,
                         style: {
                             textAlign: "center",
@@ -427,7 +433,7 @@ function KnowledgeBaseForm({ appId , containerType  }) {
                                 if (form.isValid()) {
                                     setLoading(true);
                                     const values = form.values;
-                                    await (0,_store_knowledgeBase__WEBPACK_IMPORTED_MODULE_7__/* .updateKnowledgeBase */ .CH)(values.id, values);
+                                    await (0,_store_knowledgeBase__WEBPACK_IMPORTED_MODULE_8__/* .updateKnowledgeBase */ .CH)(values.id, values);
                                     setLoading(false);
                                 }
                             },
@@ -439,8 +445,82 @@ function KnowledgeBaseForm({ appId , containerType  }) {
         ]
     });
 }
+function ChatDrawer() {
+    const chatDrawer = (0,_store_knowledgeBase__WEBPACK_IMPORTED_MODULE_8__/* .useGlobalStore */ .s6)().chatDrawer;
+    const setChatDrawer = (0,_store_knowledgeBase__WEBPACK_IMPORTED_MODULE_8__/* .useGlobalStore */ .s6)().setChatDrawer;
+    return /*#__PURE__*/ react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsx(_mantine_core__WEBPACK_IMPORTED_MODULE_2__.Drawer, {
+        opened: chatDrawer,
+        onClose: ()=>{
+            setChatDrawer(false);
+        },
+        title: /*#__PURE__*/ (0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsxs)("div", {
+            children: [
+                /*#__PURE__*/ react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsx(_mantine_core__WEBPACK_IMPORTED_MODULE_2__.Text, {
+                    fz: "xl",
+                    children: "知识库调试"
+                }),
+                /*#__PURE__*/ react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsx(_mantine_core__WEBPACK_IMPORTED_MODULE_2__.Text, {
+                    fz: "sm",
+                    children: "您可以通过提示词调整，数据集切换，模型服务，以及切换模型参数来调整知识库问答的效果"
+                })
+            ]
+        }),
+        position: "right",
+        size: "30%",
+        overlayProps: {
+            opacity: 0.5,
+            blur: 4
+        },
+        children: /*#__PURE__*/ react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsx(_mantine_core__WEBPACK_IMPORTED_MODULE_2__.Flex, {
+            mih: 50,
+            direction: "row",
+            children: /*#__PURE__*/ (0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsxs)("div", {
+                children: [
+                    /*#__PURE__*/ react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsx("div", {
+                        children: /*#__PURE__*/ react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsx(_mantine_core__WEBPACK_IMPORTED_MODULE_2__.Badge, {
+                            color: "orange",
+                            size: "lg",
+                            radius: "xs",
+                            variant: "filled",
+                            children: "知识库问答"
+                        })
+                    }),
+                    /*#__PURE__*/ react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsx(features_chat__WEBPACK_IMPORTED_MODULE_4__/* ["default"] */ .Z, {})
+                ]
+            })
+        })
+    });
+}
 function APIAccess() {
-    const currentKnowledgeBase = (0,_store_knowledgeBase__WEBPACK_IMPORTED_MODULE_7__/* .useGlobalStore */ .s6)().currentKnowledgeBase;
+    const currentKnowledgeBase = (0,_store_knowledgeBase__WEBPACK_IMPORTED_MODULE_8__/* .useGlobalStore */ .s6)().currentKnowledgeBase;
+    const accessUrl = (0,_store_knowledgeBase__WEBPACK_IMPORTED_MODULE_8__/* .useGlobalStore */ .s6)().accessUrl;
+    const setAccessUrl = (0,_store_knowledgeBase__WEBPACK_IMPORTED_MODULE_8__/* .useGlobalStore */ .s6)().setAccessUrl;
+    const setChatDrawer = (0,_store_knowledgeBase__WEBPACK_IMPORTED_MODULE_8__/* .useGlobalStore */ .s6)().setChatDrawer;
+    (0,react__WEBPACK_IMPORTED_MODULE_1__.useEffect)(()=>{
+        (async ()=>{
+            const result = await (0,_store_knowledgeBase__WEBPACK_IMPORTED_MODULE_8__/* .getAccessUrl */ .Sk)();
+            const data = result.data || {
+                openApiUrl: "",
+                innerApiUrl: ""
+            };
+            setAccessUrl(data);
+        })();
+    }, []);
+    const curlExample = `curl -X 'POST' \
+    '${accessUrl.openApiUrl}/v1/chat/completions' \
+    -H 'accept: application/json' \
+    -H 'Authorization: Bearer ${currentKnowledgeBase?.token}' \
+    -H 'Content-Type: application/json' \
+    -d '{
+      "messages":[
+          {
+              "role": "user",
+              "content": "请问世界最高峰是什么？"
+          }
+      ],
+      "stream": false,
+      "max_tokens": 1024
+  }'`;
     return /*#__PURE__*/ (0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsxs)("div", {
         style: {
             width: "33%"
@@ -462,14 +542,25 @@ function APIAccess() {
                         children: "API访问"
                     }),
                     /*#__PURE__*/ (0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsxs)(_mantine_core__WEBPACK_IMPORTED_MODULE_2__.Box, {
-                        maw: constants_index__WEBPACK_IMPORTED_MODULE_9__/* .FORM_WIDTH_1280 */ .cy,
+                        maw: constants_index__WEBPACK_IMPORTED_MODULE_12__/* .FORM_WIDTH_1280 */ .cy,
                         pl: 4,
                         pr: 4,
                         children: [
                             /*#__PURE__*/ (0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsxs)("div", {
                                 children: [
-                                    /*#__PURE__*/ react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsx("span", {
-                                        children: "API访问地址："
+                                    /*#__PURE__*/ (0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsxs)("span", {
+                                        children: [
+                                            /*#__PURE__*/ react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsx(_mantine_core__WEBPACK_IMPORTED_MODULE_2__.Text, {
+                                                color: "cyan",
+                                                weight: 700,
+                                                children: "公网API访问地址："
+                                            }),
+                                            /*#__PURE__*/ react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsx(_components_CopyToClipboard__WEBPACK_IMPORTED_MODULE_10__/* ["default"] */ .Z, {
+                                                value: accessUrl.openApiUrl,
+                                                content: accessUrl.openApiUrl
+                                            }),
+                                            " "
+                                        ]
                                     }),
                                     /*#__PURE__*/ react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsx("span", {})
                                 ]
@@ -481,8 +572,37 @@ function APIAccess() {
                                             wordBreak: "break-all"
                                         },
                                         children: [
-                                            "API访问token：",
-                                            currentKnowledgeBase?.token
+                                            /*#__PURE__*/ react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsx(_mantine_core__WEBPACK_IMPORTED_MODULE_2__.Text, {
+                                                color: "cyan",
+                                                weight: 700,
+                                                children: "API访问token："
+                                            }),
+                                            /*#__PURE__*/ react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsx(_components_CopyToClipboard__WEBPACK_IMPORTED_MODULE_10__/* ["default"] */ .Z, {
+                                                value: currentKnowledgeBase?.token,
+                                                content: currentKnowledgeBase?.token
+                                            })
+                                        ]
+                                    }),
+                                    /*#__PURE__*/ react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsx("span", {})
+                                ]
+                            }),
+                            /*#__PURE__*/ (0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsxs)("div", {
+                                children: [
+                                    /*#__PURE__*/ (0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsxs)("span", {
+                                        style: {
+                                            wordBreak: "break-all"
+                                        },
+                                        children: [
+                                            /*#__PURE__*/ react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsx(_mantine_core__WEBPACK_IMPORTED_MODULE_2__.Text, {
+                                                color: "cyan",
+                                                weight: 700,
+                                                children: "API文档访问："
+                                            }),
+                                            /*#__PURE__*/ react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsx("a", {
+                                                href: `${accessUrl.openApiUrl}/docs`,
+                                                target: "_blank",
+                                                children: `${accessUrl.openApiUrl}/docs`
+                                            })
                                         ]
                                     }),
                                     /*#__PURE__*/ react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsx("span", {})
@@ -499,9 +619,13 @@ function APIAccess() {
                         children: "API调用示例"
                     }),
                     /*#__PURE__*/ react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsx(_mantine_core__WEBPACK_IMPORTED_MODULE_2__.Box, {
-                        maw: constants_index__WEBPACK_IMPORTED_MODULE_9__/* .FORM_WIDTH_1280 */ .cy,
+                        maw: constants_index__WEBPACK_IMPORTED_MODULE_12__/* .FORM_WIDTH_1280 */ .cy,
                         pl: 4,
-                        pr: 4
+                        pr: 4,
+                        children: /*#__PURE__*/ react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsx(_components_MarkdownContent__WEBPACK_IMPORTED_MODULE_11__/* ["default"] */ .Z, {
+                            textContent: `\`\`\`shell\n${curlExample}`,
+                            value: curlExample
+                        })
                     }),
                     /*#__PURE__*/ react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsx(_mantine_core__WEBPACK_IMPORTED_MODULE_2__.Divider, {
                         my: "sm"
@@ -512,11 +636,30 @@ function APIAccess() {
                         children: "效果测试"
                     }),
                     /*#__PURE__*/ react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsx(_mantine_core__WEBPACK_IMPORTED_MODULE_2__.Box, {
-                        maw: constants_index__WEBPACK_IMPORTED_MODULE_9__/* .FORM_WIDTH_1280 */ .cy,
+                        maw: constants_index__WEBPACK_IMPORTED_MODULE_12__/* .FORM_WIDTH_1280 */ .cy,
                         pl: 4,
                         pr: 4,
                         children: /*#__PURE__*/ react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsx(_mantine_core__WEBPACK_IMPORTED_MODULE_2__.Group, {
-                            grow: true
+                            grow: true,
+                            children: !currentKnowledgeBase?.token ? /*#__PURE__*/ react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsx(_mantine_core__WEBPACK_IMPORTED_MODULE_2__.Tooltip, {
+                                label: "需要成访问令牌才可以访问此能力",
+                                children: /*#__PURE__*/ react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsx(_mantine_core__WEBPACK_IMPORTED_MODULE_2__.Button, {
+                                    color: "grape",
+                                    variant: "filled",
+                                    size: "xs",
+                                    mr: 4,
+                                    children: "问答测试"
+                                })
+                            }) : /*#__PURE__*/ react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsx(_mantine_core__WEBPACK_IMPORTED_MODULE_2__.Button, {
+                                color: "grape",
+                                variant: "filled",
+                                size: "xs",
+                                onClick: ()=>{
+                                    setChatDrawer(true);
+                                },
+                                mr: 4,
+                                children: "问答测试"
+                            })
                         })
                     })
                 ]
@@ -525,8 +668,8 @@ function APIAccess() {
     });
 }
 function DetailPage({ appId , knowledgeBaseId  }) {
-    const loading = (0,_store_knowledgeBase__WEBPACK_IMPORTED_MODULE_7__/* .useGlobalStore */ .s6)().loading;
-    const updateCurrentKnowledgeBase = (0,_store_knowledgeBase__WEBPACK_IMPORTED_MODULE_7__/* .useGlobalStore */ .s6)().updateCurrentKnowledgeBase;
+    const loading = (0,_store_knowledgeBase__WEBPACK_IMPORTED_MODULE_8__/* .useGlobalStore */ .s6)().loading;
+    const updateCurrentKnowledgeBase = (0,_store_knowledgeBase__WEBPACK_IMPORTED_MODULE_8__/* .useGlobalStore */ .s6)().updateCurrentKnowledgeBase;
     const items = [
         {
             title: "应用列表",
@@ -546,7 +689,7 @@ function DetailPage({ appId , knowledgeBaseId  }) {
         }, index));
     (0,react__WEBPACK_IMPORTED_MODULE_1__.useEffect)(()=>{
         (async ()=>{
-            const knowledgeBase = await (0,_store_knowledgeBase__WEBPACK_IMPORTED_MODULE_7__/* .getKnowledgeBase */ .IV)(knowledgeBaseId);
+            const knowledgeBase = await (0,_store_knowledgeBase__WEBPACK_IMPORTED_MODULE_8__/* .getKnowledgeBase */ .IV)(knowledgeBaseId);
             updateCurrentKnowledgeBase(knowledgeBase);
         })();
     }, [
@@ -562,10 +705,11 @@ function DetailPage({ appId , knowledgeBaseId  }) {
             /*#__PURE__*/ react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsx(_mantine_core__WEBPACK_IMPORTED_MODULE_2__.Breadcrumbs, {
                 children: items
             }),
-            /*#__PURE__*/ react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsx(_components_FeatureDescription__WEBPACK_IMPORTED_MODULE_8__/* ["default"] */ .Z, {
+            /*#__PURE__*/ react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsx(_components_FeatureDescription__WEBPACK_IMPORTED_MODULE_9__/* ["default"] */ .Z, {
                 title: "知识库详情",
                 description: "您可以查看修改知识库内容，以及查看API调用"
             }),
+            /*#__PURE__*/ react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsx(ChatDrawer, {}),
             /*#__PURE__*/ (0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsxs)(_mantine_core__WEBPACK_IMPORTED_MODULE_2__.Flex, {
                 mih: 50,
                 gap: "md",
@@ -649,6 +793,13 @@ module.exports = require("@mantine/hooks");
 
 /***/ }),
 
+/***/ 2236:
+/***/ ((module) => {
+
+module.exports = require("@tabler/icons-react");
+
+/***/ }),
+
 /***/ 1853:
 /***/ ((module) => {
 
@@ -663,10 +814,38 @@ module.exports = require("react");
 
 /***/ }),
 
+/***/ 727:
+/***/ ((module) => {
+
+module.exports = require("react-syntax-highlighter");
+
+/***/ }),
+
+/***/ 4794:
+/***/ ((module) => {
+
+module.exports = require("react-syntax-highlighter/dist/cjs/styles/prism");
+
+/***/ }),
+
 /***/ 997:
 /***/ ((module) => {
 
 module.exports = require("react/jsx-runtime");
+
+/***/ }),
+
+/***/ 4827:
+/***/ ((module) => {
+
+module.exports = import("@fortaine/fetch-event-source");;
+
+/***/ }),
+
+/***/ 3135:
+/***/ ((module) => {
+
+module.exports = import("react-markdown");;
 
 /***/ }),
 
@@ -691,7 +870,7 @@ module.exports = import("zustand/middleware");;
 var __webpack_require__ = require("../../../../../webpack-runtime.js");
 __webpack_require__.C(exports);
 var __webpack_exec__ = (moduleId) => (__webpack_require__(__webpack_require__.s = moduleId))
-var __webpack_exports__ = __webpack_require__.X(0, [6766,3658,4350,4082,3483], () => (__webpack_exec__(389)));
+var __webpack_exports__ = __webpack_require__.X(0, [6766,3658,372,2788,4350,4082,2041], () => (__webpack_exec__(389)));
 module.exports = __webpack_exports__;
 
 })();

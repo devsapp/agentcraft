@@ -257,7 +257,32 @@ function AddOrUpdate({ appId }: any) {
     );
 }
 
-
+export function ChatDrawer({ appId }: KnowledgeBaseProps) {
+    const chatDrawer = useGlobalStore().chatDrawer;
+    const setChatDrawer = useGlobalStore().setChatDrawer;
+    return <Drawer
+        opened={chatDrawer}
+        onClose={() => { setChatDrawer(false) }}
+        title={<div><Text fz="xl" >知识库调试</Text><Text fz="sm">您可以通过提示词调整，数据集切换，模型服务，以及切换模型参数来调整知识库问答的效果</Text></div>}
+        position="right"
+        size="90%"
+        overlayProps={{ opacity: 0.5, blur: 4 }}
+    >
+        <Flex
+            mih={50}
+            direction="row"
+        >
+            <div style={{ width: '60%' }}>
+                <div style={{ marginBottom: 12 }}><Badge color="orange" size="lg" radius="xs" variant="filled">知识库参数设置</Badge></div>
+                <KnowledgeBaseForm appId={appId} containerType={ContainerType.CHAT} />
+            </div>
+            <div style={{ marginLeft: 12, borderLeft: '1px solid #eee', paddingLeft: 8, width: '40%' }}>
+                <div><Badge color="orange" size="lg" radius="xs" variant="filled">知识库问答</Badge></div>
+                <Chat />
+            </div>
+        </Flex>
+    </Drawer>
+}
 
 function List({ appId }: KnowledgeBaseProps) {
     const knowledgeBaseList: KnowledgeBaseResponseData[] = useGlobalStore().knowledgeBaseList;
@@ -265,7 +290,7 @@ function List({ appId }: KnowledgeBaseProps) {
     const updateCurrentKnowledgeBase = useGlobalStore().updateCurrentKnowledgeBase;
     const setEditStatus = useGlobalStore().setEditStatus;
     const setOpen = useGlobalStore().setOpen;
-    const [opened, { open, close }] = useDisclosure(false);
+    const setChatDrawer = useGlobalStore().setChatDrawer;
     const generateToken = async (agentId: number) => {
         try {
             setLoading(true);
@@ -302,7 +327,7 @@ function List({ appId }: KnowledgeBaseProps) {
                         setEditStatus(true);
                         const knowledgeBase = await getKnowledgeBase(element.id);
                         updateCurrentKnowledgeBase(knowledgeBase);
-                        open();
+                        setChatDrawer(true);
                     }}
                     mr={4} >
                     问答测试
@@ -326,7 +351,7 @@ function List({ appId }: KnowledgeBaseProps) {
         try {
             await getKnowledgeBaseList(appId);
         } catch (e) {
-
+            console.log(e);
         }
         setLoading(false);
     }
@@ -336,29 +361,8 @@ function List({ appId }: KnowledgeBaseProps) {
 
     return (
         <>
-            <Drawer
-                opened={opened}
-                onClose={close}
-                title={<div><Text fz="xl" >知识库调试</Text><Text fz="sm">您可以通过提示词调整，数据集切换，模型服务，以及切换模型参数来调整知识库问答的效果</Text></div>}
-                position="right"
-                size="90%"
-                overlayProps={{ opacity: 0.5, blur: 4 }}
-            >
-                <Flex
-                    mih={50}
-                    direction="row"
-                >
-                    <div style={{ width: '60%' }}>
-                        <div style={{ marginBottom: 12 }}><Badge color="orange" size="lg" radius="xs" variant="filled">知识库参数设置</Badge></div>
-                        <KnowledgeBaseForm appId={appId} containerType={ContainerType.CHAT} />
-                    </div>
-                    <div style={{ marginLeft: 12, borderLeft: '1px solid #eee', paddingLeft: 8, width: '40%' }}>
-                        <div><Badge color="orange" size="lg" radius="xs" variant="filled">知识库问答</Badge></div>
-                        <Chat />
-                    </div>
-                </Flex>
-            </Drawer>
 
+            <ChatDrawer appId={appId}/>
             <Table striped withBorder withColumnBorders mt={12}  >
                 <thead>
                     <tr>
