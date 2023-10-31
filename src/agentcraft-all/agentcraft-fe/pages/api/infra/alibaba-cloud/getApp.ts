@@ -11,7 +11,19 @@ export default async function handler(
 ) {
     const appName: any = req.query.appName;
 
-    const serverlessBridgeService = new ServerlessBridgeService();
+    const headers = req.headers;
+    const accessKeyId: any = headers['x-fc-access-key-id'];
+    const accessKeySecret: any = headers['x-fc-access-key-secret'];
+    const securityToken: any = headers['x-fc-security-token'];
+    let credential = undefined;
+    if (accessKeyId) {
+        credential = {
+            accessKeyId,
+            accessKeySecret,
+            securityToken
+        }
+    }
+    const serverlessBridgeService = new ServerlessBridgeService(credential);
 
     let status = 200;
     let data: any = {

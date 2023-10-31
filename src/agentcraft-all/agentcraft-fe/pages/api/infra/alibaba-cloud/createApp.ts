@@ -28,8 +28,20 @@ export default async function handler(
 ) {
     const template: any = req.query.template;
     const parameters = req.body;
-    const mainAccountId = req.headers['x-fc-account-id'] || process.env.MAIN_ACCOUNT_ID;
-    const serverlessBridgeService = new ServerlessBridgeService();
+    const headers = req.headers;
+    const mainAccountId = headers['x-fc-account-id'] || process.env.MAIN_ACCOUNT_ID;
+    const accessKeyId: any = headers['x-fc-access-key-id'];
+    const accessKeySecret: any = headers['x-fc-access-key-secret'];
+    const securityToken: any = headers['x-fc-security-token'];
+    let credential = undefined;
+    if (accessKeyId) {
+        credential = {
+            accessKeyId,
+            accessKeySecret,
+            securityToken
+        }
+    }
+    const serverlessBridgeService = new ServerlessBridgeService(credential);
     const appName = `AgentCraft_${nanoid()}`;
     const appData: ServerlessAppRequestBody = {
         name: appName,
@@ -49,7 +61,7 @@ export default async function handler(
         const result = await serverlessBridgeService.createMainAccountApplication(appData);
         console.log(result)
         data.data = result.body;
-        
+
     } catch (e: any) {
         status = 500;
         data.error = e.message

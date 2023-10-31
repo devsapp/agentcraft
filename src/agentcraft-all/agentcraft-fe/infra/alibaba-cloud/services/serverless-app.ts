@@ -7,26 +7,33 @@ import { OpenApiConfig } from '@/infra/alibaba-cloud/open-apis//types';
 
 export class ServerlessBridgeService {
   serverlessBridgeRam: ServerlessBridgeRam;
-  
+  serverlessBridgeSts: ServerlessBridgeSts;
+  serverlessBridgeServerlessDevs: ServerlessBridgeServerlessDevs;
+  config: OpenApiConfig | undefined;
   constructor(config?: OpenApiConfig) {
-    this.serverlessBridgeRam =  new ServerlessBridgeRam(config);
+    this.config = config;
+    this.serverlessBridgeRam = new ServerlessBridgeRam(config);
+    this.serverlessBridgeSts = new ServerlessBridgeSts(config);
+    this.serverlessBridgeServerlessDevs = new ServerlessBridgeServerlessDevs(config);
   }
-  getServerlessBridgeRam(config?: OpenApiConfig): ServerlessBridgeRam {
-    if (!this.serverlessBridgeRam) {
-      this.serverlessBridgeRam = new ServerlessBridgeRam(config);
-    }
+  getServerlessBridgeRam(): ServerlessBridgeRam {
     return this.serverlessBridgeRam;
   }
 
-  getServerlessBridgeSts(config?: OpenApiConfig): ServerlessBridgeSts {
-    return new ServerlessBridgeSts(config);
+  getServerlessBridgeSts(): ServerlessBridgeSts {
+    return this.serverlessBridgeSts;
   }
 
-  getServerlessBridgFc(accountId: string, config?: OpenApiConfig): ServerlessBridgeFc {
+  getServerlessBridgeFc(accountId: string, config?: OpenApiConfig): ServerlessBridgeFc {
     return new ServerlessBridgeFc(accountId, config);
   }
 
-  getServerlessBridgeServerlessDevs(config?: OpenApiConfig): ServerlessBridgeServerlessDevs {
+  getServerlessBridgeServerlessDevs(): ServerlessBridgeServerlessDevs {
+    return this.serverlessBridgeServerlessDevs;
+  }
+
+
+  getServerlessSubBridgeServerlessDevs(config?: OpenApiConfig): ServerlessBridgeServerlessDevs {
 
     return new ServerlessBridgeServerlessDevs(config);
   }
@@ -39,10 +46,10 @@ export class ServerlessBridgeService {
     try {
       const serverlessBridgeRam = this.getServerlessBridgeRam();
       const roleInfo = await serverlessBridgeRam.getRole(FC_DEFAULT_ROLE_NAME);
-   
+
       return roleInfo;
     } catch (e) {
-     
+
       await this.createServerlessDevsRoleAndAttactPolicy();
     }
 
@@ -85,7 +92,7 @@ export class ServerlessBridgeService {
       // for (const policyName of SERVERLESS_DEVS_POLICIES) {
       //   roleAttachResult[policyName] = await serverlessBridgeRam.attachPolicyToUser({ policyType: 'System', policyName, userName });
       // }
-   
+
       return roleAttachResult;
     } catch (e) {
 
@@ -94,7 +101,7 @@ export class ServerlessBridgeService {
 
   }
 
-  async reAttachSubAccountPolicy(userName: string, region:string) {
+  async reAttachSubAccountPolicy(userName: string, region: string) {
     const policyDocument = `{
       "Version": "1",
       "Statement": [
@@ -228,7 +235,7 @@ export class ServerlessBridgeService {
    */
   async createSubAccountApplication(accessKeyId: string, accessKeySecret: string, appPayload: any) {
     try {
-      const serverlessDevsClient = this.getServerlessBridgeServerlessDevs({
+      const serverlessDevsClient = this.getServerlessSubBridgeServerlessDevs({
         accessKeyId,
         accessKeySecret,
       })
@@ -264,8 +271,8 @@ export class ServerlessBridgeService {
    * @param appName 
    * @returns 
    */
-  async getApplication(appName: string, credentials?: OpenApiConfig): Promise<any> {
-    const serverlessDevsClient = this.getServerlessBridgeServerlessDevs(credentials);
+  async getApplication(appName: string): Promise<any> {
+    const serverlessDevsClient = this.getServerlessBridgeServerlessDevs();
     return await serverlessDevsClient.getApplication(appName);
   }
 
@@ -274,8 +281,8 @@ export class ServerlessBridgeService {
    * @param appName 
    * @returns 
    */
-  async listApplications(credentials?: OpenApiConfig): Promise<any> {
-    const serverlessDevsClient = this.getServerlessBridgeServerlessDevs(credentials);
+  async listApplications(): Promise<any> {
+    const serverlessDevsClient = this.getServerlessBridgeServerlessDevs();
     return await serverlessDevsClient.listApplications();
   }
   /**
@@ -284,8 +291,8 @@ export class ServerlessBridgeService {
    * @param credentials 
    * @returns 
    */
-  async subAccountAssumeRole(payload: any, credentials?: OpenApiConfig): Promise<any> {
-    const stsClient = this.getServerlessBridgeSts(credentials);
+  async subAccountAssumeRole(payload: any): Promise<any> {
+    const stsClient = this.getServerlessBridgeSts();
     return await stsClient.assumeRole(payload);
   }
 
@@ -297,9 +304,9 @@ export class ServerlessBridgeService {
    * @param payload 执行函数的请求数据
    * @returns 
    */
-  async invokeFunction(accountId: string, stsConfig: any, fcInvokeData:any, payload:any): Promise<any> {
+  async invokeFunction(accountId: string, stsConfig: any, fcInvokeData: any, payload: any): Promise<any> {
 
-    const fcClient = this.getServerlessBridgFc(accountId, stsConfig);
+    const fcClient = this.getServerlessBridgeFc(accountId, stsConfig);
     return await fcClient.invokeFunction(fcInvokeData, payload);
   }
 
@@ -309,9 +316,9 @@ export class ServerlessBridgeService {
    * @param payload 
    * @returns 
    */
-  async listFunctions(accountId: string, stsConfig: any, payload:any): Promise<any> {
+  async listFunctions(accountId: string, stsConfig: any, payload: any): Promise<any> {
 
-    const fcClient = this.getServerlessBridgFc(accountId, stsConfig);
+    const fcClient = this.getServerlessBridgeFc(accountId, stsConfig);
     return await fcClient.listFunctions(payload);
   }
 }

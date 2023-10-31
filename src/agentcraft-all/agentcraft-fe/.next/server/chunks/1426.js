@@ -343,21 +343,24 @@ const SERVERLESS_DEVS_POLICIES = [
 
 class ServerlessBridgeService {
     constructor(config){
+        this.config = config;
         this.serverlessBridgeRam = new ServerlessBridgeRam(config);
+        this.serverlessBridgeSts = new ServerlessBridgeSts(config);
+        this.serverlessBridgeServerlessDevs = new ServerlessBridgeServerlessDevs(config);
     }
-    getServerlessBridgeRam(config) {
-        if (!this.serverlessBridgeRam) {
-            this.serverlessBridgeRam = new ServerlessBridgeRam(config);
-        }
+    getServerlessBridgeRam() {
         return this.serverlessBridgeRam;
     }
-    getServerlessBridgeSts(config) {
-        return new ServerlessBridgeSts(config);
+    getServerlessBridgeSts() {
+        return this.serverlessBridgeSts;
     }
-    getServerlessBridgFc(accountId, config) {
+    getServerlessBridgeFc(accountId, config) {
         return new ServerlessBridgeFc(accountId, config);
     }
-    getServerlessBridgeServerlessDevs(config) {
+    getServerlessBridgeServerlessDevs() {
+        return this.serverlessBridgeServerlessDevs;
+    }
+    getServerlessSubBridgeServerlessDevs(config) {
         return new ServerlessBridgeServerlessDevs(config);
     }
     /**
@@ -589,7 +592,7 @@ class ServerlessBridgeService {
    * @returns 
    */ async createSubAccountApplication(accessKeyId, accessKeySecret, appPayload) {
         try {
-            const serverlessDevsClient = this.getServerlessBridgeServerlessDevs({
+            const serverlessDevsClient = this.getServerlessSubBridgeServerlessDevs({
                 accessKeyId,
                 accessKeySecret
             });
@@ -615,16 +618,16 @@ class ServerlessBridgeService {
    * 查询应用信息
    * @param appName 
    * @returns 
-   */ async getApplication(appName, credentials) {
-        const serverlessDevsClient = this.getServerlessBridgeServerlessDevs(credentials);
+   */ async getApplication(appName) {
+        const serverlessDevsClient = this.getServerlessBridgeServerlessDevs();
         return await serverlessDevsClient.getApplication(appName);
     }
     /**
    * 查询所有应用信息
    * @param appName 
    * @returns 
-   */ async listApplications(credentials) {
-        const serverlessDevsClient = this.getServerlessBridgeServerlessDevs(credentials);
+   */ async listApplications() {
+        const serverlessDevsClient = this.getServerlessBridgeServerlessDevs();
         return await serverlessDevsClient.listApplications();
     }
     /**
@@ -632,8 +635,8 @@ class ServerlessBridgeService {
    * @param payload 
    * @param credentials 
    * @returns 
-   */ async subAccountAssumeRole(payload, credentials) {
-        const stsClient = this.getServerlessBridgeSts(credentials);
+   */ async subAccountAssumeRole(payload) {
+        const stsClient = this.getServerlessBridgeSts();
         return await stsClient.assumeRole(payload);
     }
     /**
@@ -644,7 +647,7 @@ class ServerlessBridgeService {
    * @param payload 执行函数的请求数据
    * @returns 
    */ async invokeFunction(accountId, stsConfig, fcInvokeData, payload) {
-        const fcClient = this.getServerlessBridgFc(accountId, stsConfig);
+        const fcClient = this.getServerlessBridgeFc(accountId, stsConfig);
         return await fcClient.invokeFunction(fcInvokeData, payload);
     }
     /**
@@ -653,7 +656,7 @@ class ServerlessBridgeService {
    * @param payload 
    * @returns 
    */ async listFunctions(accountId, stsConfig, payload) {
-        const fcClient = this.getServerlessBridgFc(accountId, stsConfig);
+        const fcClient = this.getServerlessBridgeFc(accountId, stsConfig);
         return await fcClient.listFunctions(payload);
     }
 }

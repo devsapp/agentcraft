@@ -71,8 +71,20 @@ nanoid__WEBPACK_IMPORTED_MODULE_0__ = (__webpack_async_dependencies__.then ? (aw
 async function handler(req, res) {
     const template = req.query.template;
     const parameters = req.body;
-    const mainAccountId = req.headers["x-fc-account-id"] || process.env.MAIN_ACCOUNT_ID;
-    const serverlessBridgeService = new _infra_alibaba_cloud_services_serverless_app__WEBPACK_IMPORTED_MODULE_1__/* .ServerlessBridgeService */ .G();
+    const headers = req.headers;
+    const mainAccountId = headers["x-fc-account-id"] || process.env.MAIN_ACCOUNT_ID;
+    const accessKeyId = headers["x-fc-access-key-id"];
+    const accessKeySecret = headers["x-fc-access-key-secret"];
+    const securityToken = headers["x-fc-security-token"];
+    let credential = undefined;
+    if (accessKeyId) {
+        credential = {
+            accessKeyId,
+            accessKeySecret,
+            securityToken
+        };
+    }
+    const serverlessBridgeService = new _infra_alibaba_cloud_services_serverless_app__WEBPACK_IMPORTED_MODULE_1__/* .ServerlessBridgeService */ .G(credential);
     const appName = `AgentCraft_${(0,nanoid__WEBPACK_IMPORTED_MODULE_0__.nanoid)()}`;
     const appData = {
         name: appName,

@@ -58,7 +58,19 @@ __webpack_require__.r(__webpack_exports__);
 
 async function handler(req, res) {
     const appName = req.query.appName;
-    const serverlessBridgeService = new _infra_alibaba_cloud_services_serverless_app__WEBPACK_IMPORTED_MODULE_0__/* .ServerlessBridgeService */ .G();
+    const headers = req.headers;
+    const accessKeyId = headers["x-fc-access-key-id"];
+    const accessKeySecret = headers["x-fc-access-key-secret"];
+    const securityToken = headers["x-fc-security-token"];
+    let credential = undefined;
+    if (accessKeyId) {
+        credential = {
+            accessKeyId,
+            accessKeySecret,
+            securityToken
+        };
+    }
+    const serverlessBridgeService = new _infra_alibaba_cloud_services_serverless_app__WEBPACK_IMPORTED_MODULE_0__/* .ServerlessBridgeService */ .G(credential);
     let status = 200;
     let data = {
         code: 200
