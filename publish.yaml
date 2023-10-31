@@ -71,7 +71,7 @@ Parameters:
       type: string
       default: 
       pattern: "^[a-zA-Z_][a-zA-Z0-9-_:/.]{0,127}$"
-      description: embedding服务地址，通过【开源Bert模型服务】应用模板获得
+      description: embedding服务地址，通过【开源Bert模型服务】https://fcnext.console.aliyun.com/applications/create?template=fc-embedding-api 应用模板获得
     EMBEDDING_DIM:
       title: 向量维度
       type: int

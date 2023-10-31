@@ -94,14 +94,13 @@ async function handler(req, res) {
         roleArn: `acs:ram::${mainAccountId}:role/aliyunfcserverlessdevsrole`,
         autoDeploy: true
     };
-    await serverlessBridgeService.getMainOrCreateAccountRole();
+    // await serverlessBridgeService.getMainOrCreateAccountRole();
     let status = 200;
     let data = {
         code: 200
     };
     try {
         const result = await serverlessBridgeService.createMainAccountApplication(appData);
-        console.log(result);
         data.data = result.body;
     } catch (e) {
         status = 500;

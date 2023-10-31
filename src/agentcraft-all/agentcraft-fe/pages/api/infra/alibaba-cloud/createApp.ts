@@ -52,14 +52,13 @@ export default async function handler(
         autoDeploy: true,
 
     }
-    await serverlessBridgeService.getMainOrCreateAccountRole();
+    // await serverlessBridgeService.getMainOrCreateAccountRole();
     let status = 200;
     let data: any = {
         code: 200,
     }
     try {
         const result = await serverlessBridgeService.createMainAccountApplication(appData);
-        console.log(result)
         data.data = result.body;
 
     } catch (e: any) {
