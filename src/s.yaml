@@ -85,24 +85,21 @@ services:
       function:
         name: agentcraft-frontend
         description: AgentCraft前端服务
-        handler: index.handler
         timeout: 600
         diskSize: 512
-        caPort: 8000
+        caPort: 3000
+        layers:
+          - acs:fc:${vars.region}:official:layers/Nodejs18/versions/1
         instanceType: c1
         runtime: custom.debian10
-        cpu: 1
-        instanceConcurrency: 100
-        memorySize: 1024
-        layers:
-          - acs:fc:${vars.region}:official:layers/Python310/versions/2
-          - acs:fc:${vars.region}:official:layers/Python310-Package-Collection/versions/2
-          - acs:fc:${vars.region}:official:layers/Python3-Flask2x/versions/2
+        instanceConcurrency: 5
+        memorySize: 3072
+        cpu: 2.0
         environmentVariables:
           baseUrl: '${agentcraft-backend.output.url.system_intranet_url}'
-          PYTHONPATH: /opt/python:/code:/code/python
-          LD_LIBRARY_PATH: /code:/code/lib:/usr/local/lib:/opt/lib:/opt/php8.1/lib:/opt/php8.0/lib:/opt/php7.2/lib
-          PATH: /opt/python3.10/bin:/usr/local/bin/apache-maven/bin:/usr/local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/local/ruby/bin:/opt/bin:/code:/code/bin
+          NODE_PATH: /opt/nodejs/node_modules
+          PATH: >-
+            /opt/nodejs18/bin::/usr/local/bin/apache-maven/bin:/usr/local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/local/ruby/bin:/opt/bin:/code:/code/bin
         codeUri: ./agentcraft-all/agentcraft-fe
       triggers:
         - name: defaultTrigger
