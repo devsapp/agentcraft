@@ -79,6 +79,10 @@ services:
             - path: /*
   agentcraft-frontend:
     component: fc
+    actions:
+       pre-deploy:
+        - run: npm i
+          path: ./agentcraft-all/agentcraft-fe
     props:
       region: ${vars.region}
       service: ${vars.service}

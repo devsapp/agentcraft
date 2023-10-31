@@ -61,11 +61,11 @@ Parameters:
     #   pattern: "^[a-zA-Z_][a-zA-Z0-9-_:/.]{0,127}$"
     #   description: redis密码
     JWT_SECRET:
-      title: api访问秘钥
+      title: AgentCraft的JWT认证秘钥
       type: string
-      default: 'fc-${default-suffix}'
+      default: ''
       pattern: "^[a-zA-Z_][a-zA-Z0-9-_:/.]{0,127}$"
-      description: api访问秘钥
+      description: AgentCraft访问API时作为JWT认证秘钥，可以随机设置
     EMBEDDING_URL:
       title: embedding服务地址
       type: string
