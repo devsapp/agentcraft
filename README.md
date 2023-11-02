@@ -1,28 +1,14 @@
-
-> 注：当前项目为 Serverless Devs 应用，由于应用中会存在需要初始化才可运行的变量（例如应用部署地区、服务名、函数名等等），所以**不推荐**直接 Clone 本仓库到本地进行部署或直接复制 s.yaml 使用，**强烈推荐**通过 `s init ` 的方法或应用中心进行初始化，详情可参考[部署 & 体验](#部署--体验) 。
-
-# AgentCraft 帮助文档
-<p align="center" class="flex justify-center">
-    <a href="https://www.serverless-devs.com" class="ml-1">
-    <img src="http://editor.devsapp.cn/icon?package=agentcraft&type=packageType">
-  </a>
-  <a href="http://www.devsapp.cn/details.html?name=agentcraft" class="ml-1">
-    <img src="http://editor.devsapp.cn/icon?package=agentcraft&type=packageVersion">
-  </a>
-  <a href="http://www.devsapp.cn/details.html?name=agentcraft" class="ml-1">
-    <img src="http://editor.devsapp.cn/icon?package=agentcraft&type=packageDownload">
-  </a>
-</p>
-
+# AgentCraft
+## 简介
 <description>
 
-快速构建agent 应用的中间层服务，兼容openai规范
+基于Serverless架构的LLMOps平台，提供便捷的AI应用交付能力
 
-</description>
+</description> 
 
 <codeUrl>
 
-- [:smiley_cat: 代码](https://github.com/devsapp/agentcraft)
+[:smiley_cat: 代码](https://github.com/devsapp/agentcraft)
 
 </codeUrl>
 <preview>
@@ -32,54 +18,6 @@
 </preview>
 
 
-## 前期准备
-
-使用该项目，您需要有开通以下服务：
-
-<service>
-
-
-
-| 服务 |  备注  |
-| --- |  --- |
-| 函数计算 FC |  托管核心的AgentCraft服务以及基础模型服务 |
-
-</service>
-
-推荐您拥有以下的产品权限 / 策略：
-<auth>
-</auth>
-
-<remark>
-
-您还需要注意：   
-该项目需要前置依赖RDS PostgreSQL 作为关系型数据库和向量数据库，因此需要提前准备好相应的资源，同时需要依赖向量的算法服务，该服务可以在函数计算的应用市场获得
-该项目目前还在beta开发阶段，上生产需谨慎
-
-</remark>
-
-<disclaimers>
-
-
-
-</disclaimers>
-
-## 部署 & 体验
-
-<appcenter>
-   
-- :fire: 通过 [Serverless 应用中心](https://fcnext.console.aliyun.com/applications/create?template=agentcraft) ，
-  [![Deploy with Severless Devs](https://img.alicdn.com/imgextra/i1/O1CN01w5RFbX1v45s8TIXPz_!!6000000006118-55-tps-95-28.svg)](https://fcnext.console.aliyun.com/applications/create?template=agentcraft) 该应用。
-   
-</appcenter>
-<deploy>
-    
-- 通过 [Serverless Devs Cli](https://www.serverless-devs.com/serverless-devs/install) 进行部署：
-  - [安装 Serverless Devs Cli 开发者工具](https://www.serverless-devs.com/serverless-devs/install) ，并进行[授权信息配置](https://docs.serverless-devs.com/fc/config) ；
-  - 初始化项目：`s init agentcraft -d agentcraft `
-  - 进入项目，并进行项目部署：`cd agentcraft && s deploy - y`
-   
-</deploy>
 
 ## 应用详情
 
@@ -139,8 +77,8 @@
 
 ## 快速开始
 
-### 本地开发
-#### 后端工程 agentcraft-be
+
+### 后端工程 agentcraft-be
 
 + 配置准备：修改.env.example -> .env
 填写好相关的配置，主要依赖  EMBEDDING_URL 和 数据库的配置，其中EMBEDDING_URL 可以访问
@@ -154,7 +92,7 @@ https://fcnext.console.aliyun.com/applications/create?template=fc-embedding-api�
 export PYTHONPATH="${PYTHONPATH}:<your project path>"
 python3 -u app/main.py
 ```
-#### 前端工程 agentcraft-fe
+### 前端工程 agentcraft-fe
 + 配置准备：修改.env.example -> .env，将后端服务的域名填写为baseUrl的值，获得阿里云的AK,SK并填写为.env中的值（该配置在操作云资源的时候需要，如管理基础模型服务）
 + 依赖安装：
 **npm install -f**
@@ -163,8 +101,55 @@ python3 -u app/main.py
 npm run dev
 ```
 
-### 云服务部署
+## 云服务部署
+### 前期准备
 
+使用该项目，您需要有开通以下服务：
+
+<service>
+
+
+
+| 服务 |  备注  |
+| --- |  --- |
+| 函数计算 FC |  托管核心的AgentCraft服务以及基础模型服务 |
+
+</service>
+
+推荐您拥有以下的产品权限 / 策略：
+<auth>
+</auth>
+
+<remark>
+
+您还需要注意：   
+该项目需要前置依赖RDS PostgreSQL 作为关系型数据库和向量数据库，因此需要提前准备好相应的资源，同时需要依赖向量的算法服务，该服务可以在函数计算的应用市场获得
+该项目目前还在beta开发阶段，上生产需谨慎
+
+</remark>
+
+<disclaimers>
+
+
+
+</disclaimers>
+
+### 部署 & 体验
+
+<appcenter>
+   
+- :fire: 通过 [Serverless 应用中心](https://fcnext.console.aliyun.com/applications/create?template=agentcraft) ，
+  [![Deploy with Severless Devs](https://img.alicdn.com/imgextra/i1/O1CN01w5RFbX1v45s8TIXPz_!!6000000006118-55-tps-95-28.svg)](https://fcnext.console.aliyun.com/applications/create?template=agentcraft) 该应用。
+   
+</appcenter>
+<deploy>
+    
+- 通过 [Serverless Devs Cli](https://www.serverless-devs.com/serverless-devs/install) 进行部署：
+  - [安装 Serverless Devs Cli 开发者工具](https://www.serverless-devs.com/serverless-devs/install) ，并进行[授权信息配置](https://docs.serverless-devs.com/fc/config) ；
+  - 初始化项目：`s init agentcraft -d agentcraft `
+  - 进入项目，并进行项目部署：`cd agentcraft && s deploy - y`
+   
+</deploy>
 
 ## RoadMAP
 正在进行中的开发：
