@@ -144,7 +144,8 @@
 
 + 配置准备：修改.env.example -> .env
 填写好相关的配置，主要依赖  EMBEDDING_URL 和 数据库的配置，其中EMBEDDING_URL 可以访问
-https://fcnext.console.aliyun.com/applications/create?template=fc-embedding-api，创建后获取，
+https://fcnext.console.aliyun.com/applications/create?template=fc-embedding-api，
+创建后获取，
 数据库可以创建一个RDS PostgreSQL实例 https://rdsbuy.console.aliyun.com/create/rds/mysql?spm=5176.19907444.0.0.64b11450FHIgeU
 + 依赖安装：
 **pip install -r  requirements.txt**
@@ -170,6 +171,7 @@ npm run dev
 + **客户端集成** 支持 NextGpt 快速独立站点部署，钉钉机器人的一站式接入以及网站嵌入能力的生成
 + **Agent 能力** 集成主流Agent Framework 完成快速的Agent交付
 + **工具扩展** 快速的工具构建及交付，供给给Agent更丰富的场景
+
 
 
 
