@@ -1,7 +1,7 @@
 
 > 注：当前项目为 Serverless Devs 应用，由于应用中会存在需要初始化才可运行的变量（例如应用部署地区、服务名、函数名等等），所以**不推荐**直接 Clone 本仓库到本地进行部署或直接复制 s.yaml 使用，**强烈推荐**通过 `s init ` 的方法或应用中心进行初始化，详情可参考[部署 & 体验](#部署--体验) 。
 
-# agentcraft 帮助文档
+# AgentCraft 帮助文档
 <p align="center" class="flex justify-center">
     <a href="https://www.serverless-devs.com" class="ml-1">
     <img src="http://editor.devsapp.cn/icon?package=agentcraft&type=packageType">
@@ -85,15 +85,22 @@
 
 <appdetail id="flushContent">
 
-**AgentCraft** 是一个LLMOps Platform的样板案例,提供了基础的LLMOps Platform能力，比如基础模型管理，数据集管理，提示词调试，Agent工具构建，知识库的问答以及端侧接入等，基于这套样板我们期望能够帮助广大开发者和企业构建自己的LLMOps Platform 加速企业能力AI的转型
+**AgentCraft** 作为LLMOps Platform的样板间，提供了基础的LLMOps Platform功能，比如
++ 基础模型管理
++ 数据集处理
++ 内容上下文向量化
++ 提示词工程
++ 知识库构建，Agent构建
++ 端侧对接
+其中，端侧接入方案，Agent工具构建都是开放能力，可以被使用到类似的平台中，我们期望AgentCraft能够作为广大开发者或者企业的参考，能够基于此快速构建自己的LLMOps Platform
 
 ![AgentCraft Structer](https://img.alicdn.com/imgextra/i4/O1CN01O9AyfH1MtqDgPLsL1_!!6000000001493-0-tps-2448-1314.jpg)
 ![AgentCraft APPs](https://img.alicdn.com/imgextra/i4/O1CN01buPNco1T8qtV4xewI_!!6000000002338-1-tps-1777-893.gif)
 ![AgentCraft KnowledgeBase](https://img.alicdn.com/imgextra/i1/O1CN01yvWBWA29BKu5EZgtW_!!6000000008029-1-tps-1777-893.gif)
 ## 使用场景
 
-+ 开发者基于AgentCraft构建自己的专业知识沉淀平台，也可以构建自己的AI需求交付平台
-+ 企业可以基于AgentCraft构建自身的LLMOps Platform,进行AI能力的整合沉淀，探索AI转型
++ 开发者可以基于AgentCraft定制自己的专业知识库沉淀平台或者AI业务交付中心
++ 企业可以基于AgentCraft定制自己的行业LLMOps Platform，可以进行AI能力的整合沉淀，探索AI转型
 
 ## 核心能力
 
@@ -121,18 +128,42 @@
 ### 2.数据集
 可视化的数据集托管和处理，支持自动和手动文本数据处理功能，支持PDF,txt，html等格式数据源，支持模糊文档类数据源以及精准QA类的数据源处理操作，为实现更加准确知识问答效果提供支持
 ![AgentCraft DataSet](https://img.alicdn.com/imgextra/i4/O1CN01FqjAaP1e9H1uFhHzY_!!6000000003828-1-tps-1777-893.gif)
-### 3.提供API服务
+### 3.API服务
 每个知识库、Agent都提供独立的鉴权能力，可以方便的集成到应用之中，另外支持使用阿里云微服务网关进行更加专业的API管理
 
-### 4.便捷的端侧接入
+### 4.端侧接入
 支持 web网站、钉钉机器人、站点嵌入等接入业务端侧的能力，提供一站式的引导服务，基于ServerlessDevs， Eventbridge等Serverless+EDA等云原生产品架构可以快速实现端侧的接入
 
-### 5. 极速的工具开发和集成
+### 5. 工具开发和集成
 基于阿里云Serverless开发工具可以快速进行工具函数的构建和托管以及LLM Agent的安全集成
 
 ## 快速开始
-### 云服务直接部署
 
+### 本地开发
+#### 后端工程 agentcraft-be
+
++ 配置准备：修改.env.example -> .env
+填写好相关的配置，主要依赖  EMBEDDING_URL 和 数据库的配置，其中EMBEDDING_URL 可以访问
+https://fcnext.console.aliyun.com/applications/create?template=fc-embedding-api，
+创建后获取，
+数据库可以创建一个RDS PostgreSQL实例 https://rdsbuy.console.aliyun.com/create/rds/mysql?spm=5176.19907444.0.0.64b11450FHIgeU
++ 依赖安装：
+**pip install -r  requirements.txt**
++ 服务启动：
+```shell
+export PYTHONPATH="${PYTHONPATH}:<your project path>"
+python3 -u app/main.py
+```
+#### 前端工程 agentcraft-fe
++ 配置准备：修改.env.example -> .env，将后端服务的域名填写为baseUrl的值，获得阿里云的AK,SK并填写为.env中的值（该配置在操作云资源的时候需要，如管理基础模型服务）
++ 依赖安装：
+**npm install -f**
++ 服务启动
+```
+npm run dev
+```
+
+### 云服务部署
 
 
 ## RoadMAP
@@ -140,6 +171,7 @@
 + **客户端集成** 支持 NextGpt 快速独立站点部署，钉钉机器人的一站式接入以及网站嵌入能力的生成
 + **Agent 能力** 集成主流Agent Framework 完成快速的Agent交付
 + **工具扩展** 快速的工具构建及交付，供给给Agent更丰富的场景
+
 
 
 
@@ -168,10 +200,17 @@ Apache2.0协议
 </appdetail>
 
 ## 使用文档
+### 基本概念
+#### LLMOps
+LLMOps(Large Language Model Operations) 是构建大语言模型应用的最佳实践，涉及开发，部署，运维等一系列过程，目的是为了高效，安全，可以扩展的构建大语言模型的应用程序，相关生态如下：
+https://github.com/tensorchord/Awesome-LLMOps#llmops
 
+#### LLMOps Platform
+LLMOps Platform 是将LLMOps的最佳实践进行聚合整理最终以软件产品化的方式呈现的一种LLM能力交付的中心
 <usedetail id="flushContent">
 
 ### 常见问题
+
 #### 数据库连接不上？
 请检查vpc网络环境，保证部署到FC 的AgentCraft服务跟数据库实例在同一个网络环境，设置数据库密码的时候请不要使用@符号
 
