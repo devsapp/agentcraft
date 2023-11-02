@@ -85,15 +85,15 @@
 
 <appdetail id="flushContent">
 
-**AgentCraft** 是一个基于Serverless架构的面向大语言模型开发应用的LLMOps平台,提供了标准的API服务和一个可视化操作的后台系统，可以进行基础模型管理，数据集管理， 以及知识库的快速构建
+**AgentCraft** 是一个LLMOps Platform的样板案例,提供了基础的LLMOps Platform能力，比如基础模型管理，数据集管理，提示词调试，Agent工具构建，知识库的问答以及端侧接入等，基于这套样板我们期望能够帮助广大开发者和企业构建自己的LLMOps Platform 加速企业能力AI的转型
 
 ![AgentCraft Structer](https://img.alicdn.com/imgextra/i4/O1CN01O9AyfH1MtqDgPLsL1_!!6000000001493-0-tps-2448-1314.jpg)
 ![AgentCraft APPs](https://img.alicdn.com/imgextra/i4/O1CN01buPNco1T8qtV4xewI_!!6000000002338-1-tps-1777-893.gif)
 ![AgentCraft KnowledgeBase](https://img.alicdn.com/imgextra/i1/O1CN01yvWBWA29BKu5EZgtW_!!6000000008029-1-tps-1777-893.gif)
 ## 使用场景
 
-+ 开发者可以直接AgentCraft作为独立的知识库服务，管理相关的知识体系，也可以基于此作为AI能力的交付中心，快速开发以及对外提供AI的服务
-+ 企业可以基于此进行AI能力的整合沉淀，探索AI转型
++ 开发者基于AgentCraft构建自己的专业知识沉淀平台，也可以构建自己的AI需求交付平台
++ 企业可以基于AgentCraft构建自身的LLMOps Platform,进行AI能力的整合沉淀，探索AI转型
 
 ## 核心能力
 

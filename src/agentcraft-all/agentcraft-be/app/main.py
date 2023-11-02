@@ -2,6 +2,12 @@
 import os
 import uvicorn
 from app.db import create_tables
+import os
+try:
+    from dotenv import load_dotenv
+    load_dotenv()  # take environment variables from .env.
+except ModuleNotFoundError:
+    print("dotenv module not installed. Skipping loading .env file.")
 if os.environ.get("CREATE_TABLES", False):
     create_tables()
 uvicorn.run("server:app",
