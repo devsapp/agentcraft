@@ -1,1 +1,6 @@
-self.__FONT_LOADER_MANIFEST={pages:{},app:{},appUsingSizeAdjust:!1,pagesUsingSizeAdjust:!1};
+self.__FONT_LOADER_MANIFEST={
+  "pages": {},
+  "app": {},
+  "appUsingSizeAdjust": false,
+  "pagesUsingSizeAdjust": false
+}

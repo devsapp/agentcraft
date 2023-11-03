@@ -1,526 +1,140 @@
+/*
+ * ATTENTION: An "eval-source-map" devtool has been used.
+ * This devtool is neither made for production nor for readable output files.
+ * It uses "eval()" calls to create a separate source file with attached SourceMaps in the browser devtools.
+ * If you are trying to read the output file, select a different devtool (https://webpack.js.org/configuration/devtool/)
+ * or disable the default devtool with "devtool: false".
+ * If you are looking for production-ready output files, see mode: "production" (https://webpack.js.org/configuration/mode/).
+ */
 (() => {
 var exports = {};
-exports.id = 2888;
-exports.ids = [2888];
+exports.id = "pages/_app";
+exports.ids = ["pages/_app"];
 exports.modules = {
 
-/***/ 9299:
+/***/ "./styles/header.module.scss":
+/*!***********************************!*\
+  !*** ./styles/header.module.scss ***!
+  \***********************************/
 /***/ ((module) => {
 
-// Exports
-module.exports = {
-	"agentcraft-header": "header_agentcraft-header__3PTbK",
-	"user": "header_user__WEQyQ",
-	"user-content": "header_user-content__gZ3TI",
-	"logout": "header_logout__49lOn"
-};
-
+eval("// Exports\nmodule.exports = {\n\t\"agentcraft-header\": \"header_agentcraft-header__3PTbK\",\n\t\"user\": \"header_user__WEQyQ\",\n\t\"user-content\": \"header_user-content__gZ3TI\",\n\t\"logout\": \"header_logout__49lOn\"\n};\n//# sourceURL=[module]\n//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoiLi9zdHlsZXMvaGVhZGVyLm1vZHVsZS5zY3NzLmpzIiwibWFwcGluZ3MiOiJBQUFBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFDQTtBQUNBIiwic291cmNlcyI6WyJ3ZWJwYWNrOi8vYWdlbnRjcmFmdC11aS8uL3N0eWxlcy9oZWFkZXIubW9kdWxlLnNjc3M/NzUxMSJdLCJzb3VyY2VzQ29udGVudCI6WyIvLyBFeHBvcnRzXG5tb2R1bGUuZXhwb3J0cyA9IHtcblx0XCJhZ2VudGNyYWZ0LWhlYWRlclwiOiBcImhlYWRlcl9hZ2VudGNyYWZ0LWhlYWRlcl9fM1BUYktcIixcblx0XCJ1c2VyXCI6IFwiaGVhZGVyX3VzZXJfX1dFUXlRXCIsXG5cdFwidXNlci1jb250ZW50XCI6IFwiaGVhZGVyX3VzZXItY29udGVudF9fZ1ozVElcIixcblx0XCJsb2dvdXRcIjogXCJoZWFkZXJfbG9nb3V0X180OWxPblwiXG59O1xuIl0sIm5hbWVzIjpbXSwic291cmNlUm9vdCI6IiJ9\n//# sourceURL=webpack-internal:///./styles/header.module.scss\n");
 
 /***/ }),
 
-/***/ 5321:
-/***/ ((module, __webpack_exports__, __webpack_require__) => {
-
-"use strict";
-__webpack_require__.a(module, async (__webpack_handle_async_dependencies__, __webpack_async_result__) => { try {
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "h": () => (/* binding */ Header)
-/* harmony export */ });
-/* harmony import */ var react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(997);
-/* harmony import */ var react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var _mantine_core__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(2247);
-/* harmony import */ var _mantine_core__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_mantine_core__WEBPACK_IMPORTED_MODULE_1__);
-/* harmony import */ var _mantine_modals__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(1280);
-/* harmony import */ var _mantine_modals__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(_mantine_modals__WEBPACK_IMPORTED_MODULE_2__);
-/* harmony import */ var _tabler_icons_react__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(2236);
-/* harmony import */ var _tabler_icons_react__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(_tabler_icons_react__WEBPACK_IMPORTED_MODULE_3__);
-/* harmony import */ var _store_user__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(9095);
-/* harmony import */ var next_router__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(1853);
-/* harmony import */ var next_router__WEBPACK_IMPORTED_MODULE_5___default = /*#__PURE__*/__webpack_require__.n(next_router__WEBPACK_IMPORTED_MODULE_5__);
-/* harmony import */ var _store_authentication__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(7583);
-/* harmony import */ var _styles_header_module_scss__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(9299);
-/* harmony import */ var _styles_header_module_scss__WEBPACK_IMPORTED_MODULE_8___default = /*#__PURE__*/__webpack_require__.n(_styles_header_module_scss__WEBPACK_IMPORTED_MODULE_8__);
-/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(6689);
-/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_7___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_7__);
-var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_store_user__WEBPACK_IMPORTED_MODULE_4__, _store_authentication__WEBPACK_IMPORTED_MODULE_6__]);
-([_store_user__WEBPACK_IMPORTED_MODULE_4__, _store_authentication__WEBPACK_IMPORTED_MODULE_6__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
-
-
-
-
-
-
-
-
-
-function Header() {
-    const user = (0,_store_user__WEBPACK_IMPORTED_MODULE_4__/* .useUserStore */ .L)().userInfo;
-    const setToken = (0,_store_authentication__WEBPACK_IMPORTED_MODULE_6__/* .useAuthenticationStore */ .O_)().setToken;
-    const router = (0,next_router__WEBPACK_IMPORTED_MODULE_5__.useRouter)();
-    const logout = ()=>{
-        _mantine_modals__WEBPACK_IMPORTED_MODULE_2__.modals.openConfirmModal({
-            title: "登出确认",
-            centered: true,
-            children: /*#__PURE__*/ react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsx(_mantine_core__WEBPACK_IMPORTED_MODULE_1__.Text, {
-                size: "sm",
-                children: "确定退出本次登录么？"
-            }),
-            labels: {
-                confirm: "确定",
-                cancel: "取消"
-            },
-            onCancel: ()=>console.log("Cancel"),
-            onConfirm: ()=>{
-                setToken("");
-                router.push("/login");
-            }
-        });
-    };
-    (0,react__WEBPACK_IMPORTED_MODULE_7__.useEffect)(()=>{
-        if (!user.username) (0,_store_user__WEBPACK_IMPORTED_MODULE_4__/* .getUserInfo */ .b)();
-    }, []);
-    return /*#__PURE__*/ react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsx(_mantine_core__WEBPACK_IMPORTED_MODULE_1__.Header, {
-        height: 60,
-        p: "xs",
-        children: /*#__PURE__*/ (0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsxs)("div", {
-            className: (_styles_header_module_scss__WEBPACK_IMPORTED_MODULE_8___default()["agentcraft-header"]),
-            children: [
-                /*#__PURE__*/ react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsx(_mantine_core__WEBPACK_IMPORTED_MODULE_1__.Box, {
-                    ml: 5,
-                    children: /*#__PURE__*/ react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsx("a", {
-                        href: "https://github.com/devsapp/agentcraft",
-                        target: "_blank",
-                        children: /*#__PURE__*/ (0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsxs)(_mantine_core__WEBPACK_IMPORTED_MODULE_1__.Flex, {
-                            align: "center",
-                            children: [
-                                /*#__PURE__*/ react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsx("span", {
-                                    style: {
-                                        marginRight: 12
-                                    },
-                                    children: "AgentCraft【Beta】"
-                                }),
-                                "  ",
-                                /*#__PURE__*/ react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsx(_tabler_icons_react__WEBPACK_IMPORTED_MODULE_3__.IconBrandGithubFilled, {
-                                    color: "white"
-                                })
-                            ]
-                        })
-                    })
-                }),
-                user.username ? /*#__PURE__*/ (0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsxs)("div", {
-                    className: (_styles_header_module_scss__WEBPACK_IMPORTED_MODULE_8___default().user),
-                    children: [
-                        /*#__PURE__*/ (0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsxs)("div", {
-                            className: (_styles_header_module_scss__WEBPACK_IMPORTED_MODULE_8___default()["user-content"]),
-                            children: [
-                                "您好：",
-                                user.username
-                            ]
-                        }),
-                        /*#__PURE__*/ react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsx("a", {
-                            className: (_styles_header_module_scss__WEBPACK_IMPORTED_MODULE_8___default().logout),
-                            onClick: logout,
-                            children: "登出"
-                        })
-                    ]
-                }) : null
-            ]
-        })
-    });
-}
-
-__webpack_async_result__();
-} catch(e) { __webpack_async_result__(e); } });
-
-/***/ }),
-
-/***/ 9198:
+/***/ "./constants/index.ts":
+/*!****************************!*\
+  !*** ./constants/index.ts ***!
+  \****************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "J": () => (/* binding */ Nav)
-/* harmony export */ });
-/* harmony import */ var react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(997);
-/* harmony import */ var react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var next_router__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(1853);
-/* harmony import */ var next_router__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(next_router__WEBPACK_IMPORTED_MODULE_1__);
-/* harmony import */ var _mantine_core__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(2247);
-/* harmony import */ var _mantine_core__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(_mantine_core__WEBPACK_IMPORTED_MODULE_2__);
-/* harmony import */ var _tabler_icons_react__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(2236);
-/* harmony import */ var _tabler_icons_react__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(_tabler_icons_react__WEBPACK_IMPORTED_MODULE_3__);
-
-
-
-
-const flattenNavItems = (result, navItems, parentPath = "", level = 0)=>{
-    level++;
-    return navItems.reduce((result, item)=>{
-        const fullPath = item.path;
-        item.parentPath = parentPath;
-        item.level = level;
-        result[fullPath] = item;
-        if (item.subNav) {
-            result = flattenNavItems(result, item.subNav, `${fullPath}`, level);
-        } else {
-            result[fullPath] = item;
-        }
-        return result;
-    }, result);
-};
-const Nav = ()=>{
-    const router = (0,next_router__WEBPACK_IMPORTED_MODULE_1__.useRouter)();
-    const { pathname , query  } = router;
-    const id = query.id;
-    const knowledgeBaseId = query.knowledgeBaseId;
-    const handleClick = (path)=>{
-        router.push(`${path.replace("[id]", id).replace("[knowledgeBaseId]", knowledgeBaseId)}`);
-    };
-    const navItems = [
-        // {
-        //     name: "概览",
-        //     path: "/overview",
-        //     icon: <IconHome2 size="1rem" stroke={1.5} />,
-        // },
-        {
-            name: "应用",
-            path: "/app",
-            icon: /*#__PURE__*/ react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsx(_tabler_icons_react__WEBPACK_IMPORTED_MODULE_3__.IconApps, {
-                size: "1rem",
-                stroke: 1.5
-            }),
-            subNav: [
-                {
-                    name: "知识库",
-                    path: "/app/[id]/knowledgeBase",
-                    icon: /*#__PURE__*/ react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsx(_tabler_icons_react__WEBPACK_IMPORTED_MODULE_3__.IconVocabulary, {
-                        size: "1rem",
-                        stroke: 1.5
-                    }),
-                    subNav: [
-                        {
-                            name: "知识库信息",
-                            path: "/app/[id]/knowledgeBase/[knowledgeBaseId]/detail",
-                            icon: /*#__PURE__*/ react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsx(_tabler_icons_react__WEBPACK_IMPORTED_MODULE_3__.IconHome2, {
-                                size: "1rem",
-                                stroke: 1.5
-                            })
-                        },
-                        {
-                            name: "知识库问答记录",
-                            path: "/app/[id]/knowledgeBase/[knowledgeBaseId]/chatlist",
-                            icon: /*#__PURE__*/ react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsx(_tabler_icons_react__WEBPACK_IMPORTED_MODULE_3__.IconHome2, {
-                                size: "1rem",
-                                stroke: 1.5
-                            })
-                        }
-                    ]
-                },
-                {
-                    name: "Agent",
-                    path: "/app/[id]/agent",
-                    icon: /*#__PURE__*/ react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsx(_tabler_icons_react__WEBPACK_IMPORTED_MODULE_3__.IconAlien, {
-                        size: "1rem",
-                        stroke: 1.5
-                    })
-                }
-            ]
-        },
-        {
-            name: "数据集",
-            path: "/dataset",
-            icon: /*#__PURE__*/ react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsx(_tabler_icons_react__WEBPACK_IMPORTED_MODULE_3__.IconDatabasePlus, {
-                size: "1rem",
-                stroke: 1.5
-            }),
-            subNav: [
-                {
-                    name: "数据源",
-                    path: "/dataset/[id]/datasource",
-                    icon: /*#__PURE__*/ react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsx(_tabler_icons_react__WEBPACK_IMPORTED_MODULE_3__.IconHome2, {
-                        size: "1rem",
-                        stroke: 1.5
-                    })
-                }
-            ]
-        },
-        {
-            name: "LLM代理",
-            path: "/model",
-            icon: /*#__PURE__*/ react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsx(_tabler_icons_react__WEBPACK_IMPORTED_MODULE_3__.IconServer, {
-                size: "1rem",
-                stroke: 1.5
-            })
-        },
-        {
-            path: "/divider1",
-            type: "divider"
-        },
-        {
-            name: "基础模型",
-            path: "/foundationModel",
-            icon: /*#__PURE__*/ react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsx(_tabler_icons_react__WEBPACK_IMPORTED_MODULE_3__.IconRowInsertTop, {
-                size: "1rem",
-                stroke: 1.5
-            }),
-            subNav: [
-                {
-                    name: "创建基础模型",
-                    path: "/foundationModel/create",
-                    solo: true,
-                    icon: /*#__PURE__*/ react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsx(_tabler_icons_react__WEBPACK_IMPORTED_MODULE_3__.IconHome2, {
-                        size: "1rem",
-                        stroke: 1.5
-                    })
-                },
-                {
-                    name: "基础模型详细",
-                    solo: true,
-                    path: "/foundationModel/[fmId]/detail",
-                    icon: /*#__PURE__*/ react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsx(_tabler_icons_react__WEBPACK_IMPORTED_MODULE_3__.IconHome2, {
-                        size: "1rem",
-                        stroke: 1.5
-                    })
-                }
-            ]
-        }
-    ];
-    const navItemsMap = flattenNavItems({}, navItems);
-    const currentNav = navItemsMap[pathname];
-    let renderNavList = [];
-    if (currentNav.solo) {
-        renderNavList = [
-            currentNav
-        ]; // 只有一个
-    } else {
-        renderNavList = Object.keys(navItemsMap).filter((key)=>{
-            const navItem = navItemsMap[key];
-            return navItem.level === currentNav.level && navItem.parentPath === currentNav.parentPath;
-        }).map((key)=>{
-            return navItemsMap[key];
-        });
-    }
-    return /*#__PURE__*/ (0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsxs)(_mantine_core__WEBPACK_IMPORTED_MODULE_2__.Navbar, {
-        className: "navbar",
-        width: {
-            base: 240
-        },
-        p: "xs",
-        children: [
-            currentNav.parentPath ? /*#__PURE__*/ react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsx(_mantine_core__WEBPACK_IMPORTED_MODULE_2__.Center, {
-                h: 40,
-                mx: "auto",
-                children: /*#__PURE__*/ react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsx(_mantine_core__WEBPACK_IMPORTED_MODULE_2__.ActionIcon, {
-                    onClick: ()=>{
-                        let parentPath = currentNav.parentPath?.replace("[id]", id).replace("[knowledgeBaseId]", knowledgeBaseId) || "";
-                        router.push(parentPath);
-                    },
-                    children: /*#__PURE__*/ react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsx(_tabler_icons_react__WEBPACK_IMPORTED_MODULE_3__.IconArrowBackUp, {})
-                })
-            }) : null,
-            renderNavList.map((item)=>{
-                if (item.type === "divider") {
-                    return /*#__PURE__*/ react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsx(_mantine_core__WEBPACK_IMPORTED_MODULE_2__.Divider, {
-                        mt: 8,
-                        mb: 8
-                    }, item.path);
-                } else {
-                    return /*#__PURE__*/ react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsx(_mantine_core__WEBPACK_IMPORTED_MODULE_2__.NavLink, {
-                        label: item.name,
-                        icon: item.icon,
-                        variant: "filled",
-                        onClick: ()=>handleClick(item.path),
-                        active: pathname === item.path ? true : false
-                    }, item.path);
-                }
-            })
-        ]
-    });
-};
-
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"AGENT_CRAFT_TOKEN\": () => (/* binding */ AGENT_CRAFT_TOKEN),\n/* harmony export */   \"DEFAULT_MODEL_REQUEST_TIMEOUT\": () => (/* binding */ DEFAULT_MODEL_REQUEST_TIMEOUT),\n/* harmony export */   \"FORM_WIDTH\": () => (/* binding */ FORM_WIDTH),\n/* harmony export */   \"FORM_WIDTH_1280\": () => (/* binding */ FORM_WIDTH_1280),\n/* harmony export */   \"REQUEST_TIMEOUT_MS\": () => (/* binding */ REQUEST_TIMEOUT_MS)\n/* harmony export */ });\nconst FORM_WIDTH = 640;\nconst FORM_WIDTH_1280 = 1280;\nconst DEFAULT_MODEL_REQUEST_TIMEOUT = 600;\nconst REQUEST_TIMEOUT_MS = 60000;\nconst AGENT_CRAFT_TOKEN = \"agent_craft_token\";\n//# sourceURL=[module]\n//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoiLi9jb25zdGFudHMvaW5kZXgudHMuanMiLCJtYXBwaW5ncyI6Ijs7Ozs7Ozs7QUFBTyxNQUFNQSxhQUFjLElBQUk7QUFDeEIsTUFBTUMsa0JBQW1CLEtBQUs7QUFFOUIsTUFBTUMsZ0NBQWdDLElBQUk7QUFFMUMsTUFBTUMscUJBQXFCLE1BQU07QUFFakMsTUFBTUMsb0JBQW9CLG9CQUFvQiIsInNvdXJjZXMiOlsid2VicGFjazovL2FnZW50Y3JhZnQtdWkvLi9jb25zdGFudHMvaW5kZXgudHM/NjY0ZiJdLCJzb3VyY2VzQ29udGVudCI6WyJleHBvcnQgY29uc3QgRk9STV9XSURUSCA9ICA2NDA7XG5leHBvcnQgY29uc3QgRk9STV9XSURUSF8xMjgwID0gIDEyODA7XG5cbmV4cG9ydCBjb25zdCBERUZBVUxUX01PREVMX1JFUVVFU1RfVElNRU9VVCA9IDYwMDtcblxuZXhwb3J0IGNvbnN0IFJFUVVFU1RfVElNRU9VVF9NUyA9IDYwMDAwO1xuXG5leHBvcnQgY29uc3QgQUdFTlRfQ1JBRlRfVE9LRU4gPSAnYWdlbnRfY3JhZnRfdG9rZW4nOyJdLCJuYW1lcyI6WyJGT1JNX1dJRFRIIiwiRk9STV9XSURUSF8xMjgwIiwiREVGQVVMVF9NT0RFTF9SRVFVRVNUX1RJTUVPVVQiLCJSRVFVRVNUX1RJTUVPVVRfTVMiLCJBR0VOVF9DUkFGVF9UT0tFTiJdLCJzb3VyY2VSb290IjoiIn0=\n//# sourceURL=webpack-internal:///./constants/index.ts\n");
 
 /***/ }),
 
-/***/ 973:
+/***/ "./layouts/header/index.tsx":
+/*!**********************************!*\
+  !*** ./layouts/header/index.tsx ***!
+  \**********************************/
 /***/ ((module, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
-__webpack_require__.a(module, async (__webpack_handle_async_dependencies__, __webpack_async_result__) => { try {
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "N": () => (/* binding */ Shell)
-/* harmony export */ });
-/* harmony import */ var react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(997);
-/* harmony import */ var react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var next_router__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(1853);
-/* harmony import */ var next_router__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(next_router__WEBPACK_IMPORTED_MODULE_1__);
-/* harmony import */ var _mantine_core__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(2247);
-/* harmony import */ var _mantine_core__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(_mantine_core__WEBPACK_IMPORTED_MODULE_2__);
-/* harmony import */ var layouts_navbar__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(9198);
-/* harmony import */ var layouts_header__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(5321);
-/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(6689);
-/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_5___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_5__);
-var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([layouts_header__WEBPACK_IMPORTED_MODULE_4__]);
-layouts_header__WEBPACK_IMPORTED_MODULE_4__ = (__webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__)[0];
-
-
-
-
-
-
-function Shell(props) {
-    const router = (0,next_router__WEBPACK_IMPORTED_MODULE_1__.useRouter)();
-    const { pathname  } = router;
-    const isMainPage = pathname.indexOf("login") === -1 && pathname.indexOf("register") === -1;
-    return /*#__PURE__*/ react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsx(react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.Fragment, {
-        children: isMainPage ? /*#__PURE__*/ react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsx(_mantine_core__WEBPACK_IMPORTED_MODULE_2__.AppShell, {
-            padding: "md",
-            navbar: /*#__PURE__*/ react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsx(layouts_navbar__WEBPACK_IMPORTED_MODULE_3__/* .Nav */ .J, {}),
-            header: /*#__PURE__*/ react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsx(layouts_header__WEBPACK_IMPORTED_MODULE_4__/* .Header */ .h, {}),
-            styles: (theme)=>({
-                    main: {
-                        backgroundColor: theme.colorScheme === "dark" ? theme.colors.dark[8] : theme.colors.gray[0]
-                    }
-                }),
-            children: /*#__PURE__*/ react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsx("div", {
-                style: {
-                    paddingRight: 20
-                },
-                children: props.children
-            })
-        }) : /*#__PURE__*/ react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsx(react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.Fragment, {
-            children: props.children
-        })
-    });
-}
-
-__webpack_async_result__();
-} catch(e) { __webpack_async_result__(e); } });
+eval("__webpack_require__.a(module, async (__webpack_handle_async_dependencies__, __webpack_async_result__) => { try {\n__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"Header\": () => (/* binding */ Header)\n/* harmony export */ });\n/* harmony import */ var react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react/jsx-dev-runtime */ \"react/jsx-dev-runtime\");\n/* harmony import */ var react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_0__);\n/* harmony import */ var _mantine_core__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @mantine/core */ \"@mantine/core\");\n/* harmony import */ var _mantine_core__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_mantine_core__WEBPACK_IMPORTED_MODULE_1__);\n/* harmony import */ var _mantine_modals__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @mantine/modals */ \"@mantine/modals\");\n/* harmony import */ var _mantine_modals__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(_mantine_modals__WEBPACK_IMPORTED_MODULE_2__);\n/* harmony import */ var _tabler_icons_react__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @tabler/icons-react */ \"@tabler/icons-react\");\n/* harmony import */ var _tabler_icons_react__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(_tabler_icons_react__WEBPACK_IMPORTED_MODULE_3__);\n/* harmony import */ var _store_user__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! @/store/user */ \"./store/user.ts\");\n/* harmony import */ var next_router__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! next/router */ \"next/router\");\n/* harmony import */ var next_router__WEBPACK_IMPORTED_MODULE_5___default = /*#__PURE__*/__webpack_require__.n(next_router__WEBPACK_IMPORTED_MODULE_5__);\n/* harmony import */ var _store_authentication__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! @/store/authentication */ \"./store/authentication.ts\");\n/* harmony import */ var _styles_header_module_scss__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! @/styles/header.module.scss */ \"./styles/header.module.scss\");\n/* harmony import */ var _styles_header_module_scss__WEBPACK_IMPORTED_MODULE_8___default = /*#__PURE__*/__webpack_require__.n(_styles_header_module_scss__WEBPACK_IMPORTED_MODULE_8__);\n/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! react */ \"react\");\n/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_7___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_7__);\nvar __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_store_user__WEBPACK_IMPORTED_MODULE_4__, _store_authentication__WEBPACK_IMPORTED_MODULE_6__]);\n([_store_user__WEBPACK_IMPORTED_MODULE_4__, _store_authentication__WEBPACK_IMPORTED_MODULE_6__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);\n\n\n\n\n\n\n\n\n\nfunction Header() {\n    const user = (0,_store_user__WEBPACK_IMPORTED_MODULE_4__.useUserStore)().userInfo;\n    const setToken = (0,_store_authentication__WEBPACK_IMPORTED_MODULE_6__.useAuthenticationStore)().setToken;\n    const router = (0,next_router__WEBPACK_IMPORTED_MODULE_5__.useRouter)();\n    const logout = ()=>{\n        _mantine_modals__WEBPACK_IMPORTED_MODULE_2__.modals.openConfirmModal({\n            title: \"登出确认\",\n            centered: true,\n            children: /*#__PURE__*/ (0,react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_0__.jsxDEV)(_mantine_core__WEBPACK_IMPORTED_MODULE_1__.Text, {\n                size: \"sm\",\n                children: \"确定退出本次登录么？\"\n            }, void 0, false, {\n                fileName: \"/Users/hanxie/opensource/devsapp/agentcraft/src/agentcraft-all/agentcraft-fe/layouts/header/index.tsx\",\n                lineNumber: 19,\n                columnNumber: 17\n            }, this),\n            labels: {\n                confirm: \"确定\",\n                cancel: \"取消\"\n            },\n            onCancel: ()=>console.log(\"Cancel\"),\n            onConfirm: ()=>{\n                setToken(\"\");\n                router.push(\"/login\");\n            }\n        });\n    };\n    (0,react__WEBPACK_IMPORTED_MODULE_7__.useEffect)(()=>{\n        if (!user.username) (0,_store_user__WEBPACK_IMPORTED_MODULE_4__.getUserInfo)();\n    }, []);\n    return /*#__PURE__*/ (0,react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_0__.jsxDEV)(_mantine_core__WEBPACK_IMPORTED_MODULE_1__.Header, {\n        height: 60,\n        p: \"xs\",\n        children: /*#__PURE__*/ (0,react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_0__.jsxDEV)(\"div\", {\n            className: (_styles_header_module_scss__WEBPACK_IMPORTED_MODULE_8___default()[\"agentcraft-header\"]),\n            children: [\n                /*#__PURE__*/ (0,react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_0__.jsxDEV)(_mantine_core__WEBPACK_IMPORTED_MODULE_1__.Box, {\n                    ml: 5,\n                    children: /*#__PURE__*/ (0,react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_0__.jsxDEV)(\"a\", {\n                        href: \"https://github.com/devsapp/agentcraft\",\n                        target: \"_blank\",\n                        children: /*#__PURE__*/ (0,react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_0__.jsxDEV)(_mantine_core__WEBPACK_IMPORTED_MODULE_1__.Flex, {\n                            align: \"center\",\n                            children: [\n                                /*#__PURE__*/ (0,react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_0__.jsxDEV)(\"span\", {\n                                    style: {\n                                        marginRight: 12\n                                    },\n                                    children: \"AgentCraft【Beta】\"\n                                }, void 0, false, {\n                                    fileName: \"/Users/hanxie/opensource/devsapp/agentcraft/src/agentcraft-all/agentcraft-fe/layouts/header/index.tsx\",\n                                    lineNumber: 40,\n                                    columnNumber: 25\n                                }, this),\n                                \"  \",\n                                /*#__PURE__*/ (0,react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_0__.jsxDEV)(_tabler_icons_react__WEBPACK_IMPORTED_MODULE_3__.IconBrandGithubFilled, {\n                                    color: \"white\"\n                                }, void 0, false, {\n                                    fileName: \"/Users/hanxie/opensource/devsapp/agentcraft/src/agentcraft-all/agentcraft-fe/layouts/header/index.tsx\",\n                                    lineNumber: 40,\n                                    columnNumber: 84\n                                }, this)\n                            ]\n                        }, void 0, true, {\n                            fileName: \"/Users/hanxie/opensource/devsapp/agentcraft/src/agentcraft-all/agentcraft-fe/layouts/header/index.tsx\",\n                            lineNumber: 39,\n                            columnNumber: 21\n                        }, this)\n                    }, void 0, false, {\n                        fileName: \"/Users/hanxie/opensource/devsapp/agentcraft/src/agentcraft-all/agentcraft-fe/layouts/header/index.tsx\",\n                        lineNumber: 38,\n                        columnNumber: 17\n                    }, this)\n                }, void 0, false, {\n                    fileName: \"/Users/hanxie/opensource/devsapp/agentcraft/src/agentcraft-all/agentcraft-fe/layouts/header/index.tsx\",\n                    lineNumber: 37,\n                    columnNumber: 13\n                }, this),\n                user.username ? /*#__PURE__*/ (0,react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_0__.jsxDEV)(\"div\", {\n                    className: (_styles_header_module_scss__WEBPACK_IMPORTED_MODULE_8___default().user),\n                    children: [\n                        /*#__PURE__*/ (0,react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_0__.jsxDEV)(\"div\", {\n                            className: (_styles_header_module_scss__WEBPACK_IMPORTED_MODULE_8___default()[\"user-content\"]),\n                            children: [\n                                \"您好：\",\n                                user.username\n                            ]\n                        }, void 0, true, {\n                            fileName: \"/Users/hanxie/opensource/devsapp/agentcraft/src/agentcraft-all/agentcraft-fe/layouts/header/index.tsx\",\n                            lineNumber: 47,\n                            columnNumber: 21\n                        }, this),\n                        /*#__PURE__*/ (0,react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_0__.jsxDEV)(\"a\", {\n                            className: (_styles_header_module_scss__WEBPACK_IMPORTED_MODULE_8___default().logout),\n                            onClick: logout,\n                            children: \"登出\"\n                        }, void 0, false, {\n                            fileName: \"/Users/hanxie/opensource/devsapp/agentcraft/src/agentcraft-all/agentcraft-fe/layouts/header/index.tsx\",\n                            lineNumber: 48,\n                            columnNumber: 21\n                        }, this)\n                    ]\n                }, void 0, true, {\n                    fileName: \"/Users/hanxie/opensource/devsapp/agentcraft/src/agentcraft-all/agentcraft-fe/layouts/header/index.tsx\",\n                    lineNumber: 46,\n                    columnNumber: 17\n                }, this) : null\n            ]\n        }, void 0, true, {\n            fileName: \"/Users/hanxie/opensource/devsapp/agentcraft/src/agentcraft-all/agentcraft-fe/layouts/header/index.tsx\",\n            lineNumber: 36,\n            columnNumber: 9\n        }, this)\n    }, void 0, false, {\n        fileName: \"/Users/hanxie/opensource/devsapp/agentcraft/src/agentcraft-all/agentcraft-fe/layouts/header/index.tsx\",\n        lineNumber: 35,\n        columnNumber: 12\n    }, this);\n}\n\n__webpack_async_result__();\n} catch(e) { __webpack_async_result__(e); } });//# sourceURL=[module]\n//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoiLi9sYXlvdXRzL2hlYWRlci9pbmRleC50c3guanMiLCJtYXBwaW5ncyI6Ijs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7O0FBQXlFO0FBQ2hDO0FBQ21CO0FBQ0g7QUFDakI7QUFDd0I7QUFDZjtBQUNmO0FBRTNCLFNBQVNDLFNBQVM7SUFDckIsTUFBTVksT0FBT04seURBQVlBLEdBQUdPLFFBQVE7SUFDcEMsTUFBTUMsV0FBV0wsNkVBQXNCQSxHQUFHSyxRQUFRO0lBQ2xELE1BQU1DLFNBQVNQLHNEQUFTQTtJQUN4QixNQUFNUSxTQUFTLElBQU07UUFDakJaLG9FQUF1QixDQUFDO1lBQ3BCYyxPQUFPO1lBQ1BDLFVBQVUsSUFBSTtZQUNkQyx3QkFDSSw4REFBQ2xCLCtDQUFJQTtnQkFBQ21CLE1BQUs7MEJBQUs7Ozs7OztZQUlwQkMsUUFBUTtnQkFBRUMsU0FBUztnQkFBTUMsUUFBUTtZQUFLO1lBQ3RDQyxVQUFVLElBQU1DLFFBQVFDLEdBQUcsQ0FBQztZQUM1QkMsV0FBVyxJQUFNO2dCQUNiZCxTQUFTO2dCQUNUQyxPQUFPYyxJQUFJLENBQUM7WUFDaEI7UUFDSjtJQUVKO0lBQ0FsQixnREFBU0EsQ0FBQyxJQUFNO1FBQ1osSUFBSSxDQUFDQyxLQUFLa0IsUUFBUSxFQUFFdkIsd0RBQVdBO0lBQ25DLEdBQUcsRUFBRTtJQUNMLHFCQUFPLDhEQUFDTixpREFBYUE7UUFBQzhCLFFBQVE7UUFBSUMsR0FBRTtrQkFDaEMsNEVBQUNDO1lBQUlDLFdBQVd4Qix3RkFBMkI7OzhCQUN2Qyw4REFBQ1gsOENBQUdBO29CQUFDb0MsSUFBSTs4QkFDTCw0RUFBQ0M7d0JBQUVDLE1BQUs7d0JBQXdDQyxRQUFPO2tDQUNuRCw0RUFBQ25DLCtDQUFJQTs0QkFBQ29DLE9BQU07OzhDQUNSLDhEQUFDQztvQ0FBS0MsT0FBTzt3Q0FBRUMsYUFBYTtvQ0FBRzs4Q0FBRzs7Ozs7O2dDQUF1Qjs4Q0FBRSw4REFBQ3JDLHNFQUFxQkE7b0NBQUNzQyxPQUFNOzs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7O2dCQUtuRy9CLEtBQUtrQixRQUFRLGlCQUNWLDhEQUFDRztvQkFBSUMsV0FBV3hCLHdFQUFjOztzQ0FDMUIsOERBQUN1Qjs0QkFBSUMsV0FBV3hCLG1GQUFzQjs7Z0NBQUU7Z0NBQUlFLEtBQUtrQixRQUFROzs7Ozs7O3NDQUN6RCw4REFBQ007NEJBQUVGLFdBQVd4QiwwRUFBZ0I7NEJBQUVrQyxTQUFTNUI7c0NBQVE7Ozs7Ozs7Ozs7OzJCQUM1QyxJQUFJOzs7Ozs7Ozs7Ozs7QUFJN0IsQ0FBQyIsInNvdXJjZXMiOlsid2VicGFjazovL2FnZW50Y3JhZnQtdWkvLi9sYXlvdXRzL2hlYWRlci9pbmRleC50c3g/MjFlZCJdLCJzb3VyY2VzQ29udGVudCI6WyJpbXBvcnQgeyBCb3gsIEhlYWRlciBhcyBNYW50aW5lSGVhZGVyLCBUZXh0LCBGbGV4IH0gZnJvbSAnQG1hbnRpbmUvY29yZSc7XG5pbXBvcnQgeyBtb2RhbHMgfSBmcm9tICdAbWFudGluZS9tb2RhbHMnO1xuaW1wb3J0IHsgSWNvbkJyYW5kR2l0aHViRmlsbGVkIH0gZnJvbSAnQHRhYmxlci9pY29ucy1yZWFjdCc7XG5pbXBvcnQgeyB1c2VVc2VyU3RvcmUsIGdldFVzZXJJbmZvIH0gZnJvbSAnQC9zdG9yZS91c2VyJztcbmltcG9ydCB7IHVzZVJvdXRlciB9IGZyb20gJ25leHQvcm91dGVyJztcbmltcG9ydCB7IHVzZUF1dGhlbnRpY2F0aW9uU3RvcmUgfSBmcm9tICdAL3N0b3JlL2F1dGhlbnRpY2F0aW9uJztcbmltcG9ydCBzdHlsZXMgZnJvbSAnQC9zdHlsZXMvaGVhZGVyLm1vZHVsZS5zY3NzJztcbmltcG9ydCB7IHVzZUVmZmVjdCB9IGZyb20gJ3JlYWN0JztcblxuZXhwb3J0IGZ1bmN0aW9uIEhlYWRlcigpIHtcbiAgICBjb25zdCB1c2VyID0gdXNlVXNlclN0b3JlKCkudXNlckluZm87XG4gICAgY29uc3Qgc2V0VG9rZW4gPSB1c2VBdXRoZW50aWNhdGlvblN0b3JlKCkuc2V0VG9rZW47XG4gICAgY29uc3Qgcm91dGVyID0gdXNlUm91dGVyKCk7XG4gICAgY29uc3QgbG9nb3V0ID0gKCkgPT4ge1xuICAgICAgICBtb2RhbHMub3BlbkNvbmZpcm1Nb2RhbCh7XG4gICAgICAgICAgICB0aXRsZTogJ+eZu+WHuuehruiupCcsXG4gICAgICAgICAgICBjZW50ZXJlZDogdHJ1ZSxcbiAgICAgICAgICAgIGNoaWxkcmVuOiAoXG4gICAgICAgICAgICAgICAgPFRleHQgc2l6ZT1cInNtXCI+XG4gICAgICAgICAgICAgICAgICAgIOehruWumumAgOWHuuacrOasoeeZu+W9leS5iO+8n1xuICAgICAgICAgICAgICAgIDwvVGV4dD5cbiAgICAgICAgICAgICksXG4gICAgICAgICAgICBsYWJlbHM6IHsgY29uZmlybTogJ+ehruWumicsIGNhbmNlbDogJ+WPlua2iCcgfSxcbiAgICAgICAgICAgIG9uQ2FuY2VsOiAoKSA9PiBjb25zb2xlLmxvZygnQ2FuY2VsJyksXG4gICAgICAgICAgICBvbkNvbmZpcm06ICgpID0+IHtcbiAgICAgICAgICAgICAgICBzZXRUb2tlbignJyk7XG4gICAgICAgICAgICAgICAgcm91dGVyLnB1c2goJy9sb2dpbicpO1xuICAgICAgICAgICAgfSxcbiAgICAgICAgfSk7XG5cbiAgICB9XG4gICAgdXNlRWZmZWN0KCgpID0+IHtcbiAgICAgICAgaWYgKCF1c2VyLnVzZXJuYW1lKSBnZXRVc2VySW5mbygpO1xuICAgIH0sIFtdKTtcbiAgICByZXR1cm4gPE1hbnRpbmVIZWFkZXIgaGVpZ2h0PXs2MH0gcD1cInhzXCI+XG4gICAgICAgIDxkaXYgY2xhc3NOYW1lPXtzdHlsZXNbJ2FnZW50Y3JhZnQtaGVhZGVyJ119PlxuICAgICAgICAgICAgPEJveCBtbD17NX0+XG4gICAgICAgICAgICAgICAgPGEgaHJlZj1cImh0dHBzOi8vZ2l0aHViLmNvbS9kZXZzYXBwL2FnZW50Y3JhZnRcIiB0YXJnZXQ9XCJfYmxhbmtcIj5cbiAgICAgICAgICAgICAgICAgICAgPEZsZXggYWxpZ249XCJjZW50ZXJcIj5cbiAgICAgICAgICAgICAgICAgICAgICAgIDxzcGFuIHN0eWxlPXt7IG1hcmdpblJpZ2h0OiAxMiB9fT5BZ2VudENyYWZ044CQQmV0YeOAkTwvc3Bhbj4gIDxJY29uQnJhbmRHaXRodWJGaWxsZWQgY29sb3I9J3doaXRlJyAvPlxuICAgICAgICAgICAgICAgICAgICA8L0ZsZXg+XG4gICAgICAgICAgICAgICAgPC9hPlxuICAgICAgICAgICAgPC9Cb3g+XG5cbiAgICAgICAgICAgIHt1c2VyLnVzZXJuYW1lID9cbiAgICAgICAgICAgICAgICA8ZGl2IGNsYXNzTmFtZT17c3R5bGVzWyd1c2VyJ119PlxuICAgICAgICAgICAgICAgICAgICA8ZGl2IGNsYXNzTmFtZT17c3R5bGVzWyd1c2VyLWNvbnRlbnQnXX0+5oKo5aW977yae3VzZXIudXNlcm5hbWV9PC9kaXY+XG4gICAgICAgICAgICAgICAgICAgIDxhIGNsYXNzTmFtZT17c3R5bGVzWydsb2dvdXQnXX0gb25DbGljaz17bG9nb3V0fT7nmbvlh7o8L2E+XG4gICAgICAgICAgICAgICAgPC9kaXY+IDogbnVsbH1cblxuICAgICAgICA8L2Rpdj5cbiAgICA8L01hbnRpbmVIZWFkZXI+XG59Il0sIm5hbWVzIjpbIkJveCIsIkhlYWRlciIsIk1hbnRpbmVIZWFkZXIiLCJUZXh0IiwiRmxleCIsIm1vZGFscyIsIkljb25CcmFuZEdpdGh1YkZpbGxlZCIsInVzZVVzZXJTdG9yZSIsImdldFVzZXJJbmZvIiwidXNlUm91dGVyIiwidXNlQXV0aGVudGljYXRpb25TdG9yZSIsInN0eWxlcyIsInVzZUVmZmVjdCIsInVzZXIiLCJ1c2VySW5mbyIsInNldFRva2VuIiwicm91dGVyIiwibG9nb3V0Iiwib3BlbkNvbmZpcm1Nb2RhbCIsInRpdGxlIiwiY2VudGVyZWQiLCJjaGlsZHJlbiIsInNpemUiLCJsYWJlbHMiLCJjb25maXJtIiwiY2FuY2VsIiwib25DYW5jZWwiLCJjb25zb2xlIiwibG9nIiwib25Db25maXJtIiwicHVzaCIsInVzZXJuYW1lIiwiaGVpZ2h0IiwicCIsImRpdiIsImNsYXNzTmFtZSIsIm1sIiwiYSIsImhyZWYiLCJ0YXJnZXQiLCJhbGlnbiIsInNwYW4iLCJzdHlsZSIsIm1hcmdpblJpZ2h0IiwiY29sb3IiLCJvbkNsaWNrIl0sInNvdXJjZVJvb3QiOiIifQ==\n//# sourceURL=webpack-internal:///./layouts/header/index.tsx\n");
 
 /***/ }),
 
-/***/ 5656:
+/***/ "./layouts/navbar/index.tsx":
+/*!**********************************!*\
+  !*** ./layouts/navbar/index.tsx ***!
+  \**********************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"Nav\": () => (/* binding */ Nav)\n/* harmony export */ });\n/* harmony import */ var react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react/jsx-dev-runtime */ \"react/jsx-dev-runtime\");\n/* harmony import */ var react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_0__);\n/* harmony import */ var next_router__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! next/router */ \"next/router\");\n/* harmony import */ var next_router__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(next_router__WEBPACK_IMPORTED_MODULE_1__);\n/* harmony import */ var _mantine_core__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @mantine/core */ \"@mantine/core\");\n/* harmony import */ var _mantine_core__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(_mantine_core__WEBPACK_IMPORTED_MODULE_2__);\n/* harmony import */ var _tabler_icons_react__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @tabler/icons-react */ \"@tabler/icons-react\");\n/* harmony import */ var _tabler_icons_react__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(_tabler_icons_react__WEBPACK_IMPORTED_MODULE_3__);\n\n\n\n\nconst flattenNavItems = (result, navItems, parentPath = \"\", level = 0)=>{\n    level++;\n    return navItems.reduce((result, item)=>{\n        const fullPath = item.path;\n        item.parentPath = parentPath;\n        item.level = level;\n        result[fullPath] = item;\n        if (item.subNav) {\n            result = flattenNavItems(result, item.subNav, `${fullPath}`, level);\n        } else {\n            result[fullPath] = item;\n        }\n        return result;\n    }, result);\n};\nconst Nav = ()=>{\n    const router = (0,next_router__WEBPACK_IMPORTED_MODULE_1__.useRouter)();\n    const { pathname , query  } = router;\n    const id = query.id;\n    const knowledgeBaseId = query.knowledgeBaseId;\n    const handleClick = (path)=>{\n        router.push(`${path.replace(\"[id]\", id).replace(\"[knowledgeBaseId]\", knowledgeBaseId)}`);\n    };\n    const navItems = [\n        // {\n        //     name: \"概览\",\n        //     path: \"/overview\",\n        //     icon: <IconHome2 size=\"1rem\" stroke={1.5} />,\n        // },\n        {\n            name: \"应用\",\n            path: \"/app\",\n            icon: /*#__PURE__*/ (0,react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_0__.jsxDEV)(_tabler_icons_react__WEBPACK_IMPORTED_MODULE_3__.IconApps, {\n                size: \"1rem\",\n                stroke: 1.5\n            }, void 0, false, {\n                fileName: \"/Users/hanxie/opensource/devsapp/agentcraft/src/agentcraft-all/agentcraft-fe/layouts/navbar/index.tsx\",\n                lineNumber: 55,\n                columnNumber: 19\n            }, undefined),\n            subNav: [\n                {\n                    name: \"知识库\",\n                    path: \"/app/[id]/knowledgeBase\",\n                    icon: /*#__PURE__*/ (0,react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_0__.jsxDEV)(_tabler_icons_react__WEBPACK_IMPORTED_MODULE_3__.IconVocabulary, {\n                        size: \"1rem\",\n                        stroke: 1.5\n                    }, void 0, false, {\n                        fileName: \"/Users/hanxie/opensource/devsapp/agentcraft/src/agentcraft-all/agentcraft-fe/layouts/navbar/index.tsx\",\n                        lineNumber: 59,\n                        columnNumber: 23\n                    }, undefined),\n                    subNav: [\n                        {\n                            name: \"知识库信息\",\n                            path: \"/app/[id]/knowledgeBase/[knowledgeBaseId]/detail\",\n                            icon: /*#__PURE__*/ (0,react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_0__.jsxDEV)(_tabler_icons_react__WEBPACK_IMPORTED_MODULE_3__.IconHome2, {\n                                size: \"1rem\",\n                                stroke: 1.5\n                            }, void 0, false, {\n                                fileName: \"/Users/hanxie/opensource/devsapp/agentcraft/src/agentcraft-all/agentcraft-fe/layouts/navbar/index.tsx\",\n                                lineNumber: 63,\n                                columnNumber: 27\n                            }, undefined)\n                        },\n                        {\n                            name: \"知识库问答记录\",\n                            path: \"/app/[id]/knowledgeBase/[knowledgeBaseId]/chatlist\",\n                            icon: /*#__PURE__*/ (0,react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_0__.jsxDEV)(_tabler_icons_react__WEBPACK_IMPORTED_MODULE_3__.IconHome2, {\n                                size: \"1rem\",\n                                stroke: 1.5\n                            }, void 0, false, {\n                                fileName: \"/Users/hanxie/opensource/devsapp/agentcraft/src/agentcraft-all/agentcraft-fe/layouts/navbar/index.tsx\",\n                                lineNumber: 67,\n                                columnNumber: 27\n                            }, undefined)\n                        }\n                    ]\n                },\n                {\n                    name: \"Agent\",\n                    path: \"/app/[id]/agent\",\n                    icon: /*#__PURE__*/ (0,react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_0__.jsxDEV)(_tabler_icons_react__WEBPACK_IMPORTED_MODULE_3__.IconAlien, {\n                        size: \"1rem\",\n                        stroke: 1.5\n                    }, void 0, false, {\n                        fileName: \"/Users/hanxie/opensource/devsapp/agentcraft/src/agentcraft-all/agentcraft-fe/layouts/navbar/index.tsx\",\n                        lineNumber: 72,\n                        columnNumber: 23\n                    }, undefined)\n                }\n            ]\n        },\n        {\n            name: \"数据集\",\n            path: \"/dataset\",\n            icon: /*#__PURE__*/ (0,react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_0__.jsxDEV)(_tabler_icons_react__WEBPACK_IMPORTED_MODULE_3__.IconDatabasePlus, {\n                size: \"1rem\",\n                stroke: 1.5\n            }, void 0, false, {\n                fileName: \"/Users/hanxie/opensource/devsapp/agentcraft/src/agentcraft-all/agentcraft-fe/layouts/navbar/index.tsx\",\n                lineNumber: 78,\n                columnNumber: 19\n            }, undefined),\n            subNav: [\n                {\n                    name: \"数据源\",\n                    path: \"/dataset/[id]/datasource\",\n                    icon: /*#__PURE__*/ (0,react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_0__.jsxDEV)(_tabler_icons_react__WEBPACK_IMPORTED_MODULE_3__.IconHome2, {\n                        size: \"1rem\",\n                        stroke: 1.5\n                    }, void 0, false, {\n                        fileName: \"/Users/hanxie/opensource/devsapp/agentcraft/src/agentcraft-all/agentcraft-fe/layouts/navbar/index.tsx\",\n                        lineNumber: 82,\n                        columnNumber: 23\n                    }, undefined)\n                }\n            ]\n        },\n        {\n            name: \"LLM代理\",\n            path: \"/model\",\n            icon: /*#__PURE__*/ (0,react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_0__.jsxDEV)(_tabler_icons_react__WEBPACK_IMPORTED_MODULE_3__.IconServer, {\n                size: \"1rem\",\n                stroke: 1.5\n            }, void 0, false, {\n                fileName: \"/Users/hanxie/opensource/devsapp/agentcraft/src/agentcraft-all/agentcraft-fe/layouts/navbar/index.tsx\",\n                lineNumber: 88,\n                columnNumber: 19\n            }, undefined)\n        },\n        {\n            path: \"/divider1\",\n            type: \"divider\"\n        },\n        {\n            name: \"基础模型\",\n            path: \"/foundationModel\",\n            icon: /*#__PURE__*/ (0,react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_0__.jsxDEV)(_tabler_icons_react__WEBPACK_IMPORTED_MODULE_3__.IconRowInsertTop, {\n                size: \"1rem\",\n                stroke: 1.5\n            }, void 0, false, {\n                fileName: \"/Users/hanxie/opensource/devsapp/agentcraft/src/agentcraft-all/agentcraft-fe/layouts/navbar/index.tsx\",\n                lineNumber: 97,\n                columnNumber: 19\n            }, undefined),\n            subNav: [\n                {\n                    name: \"创建基础模型\",\n                    path: \"/foundationModel/create\",\n                    solo: true,\n                    icon: /*#__PURE__*/ (0,react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_0__.jsxDEV)(_tabler_icons_react__WEBPACK_IMPORTED_MODULE_3__.IconHome2, {\n                        size: \"1rem\",\n                        stroke: 1.5\n                    }, void 0, false, {\n                        fileName: \"/Users/hanxie/opensource/devsapp/agentcraft/src/agentcraft-all/agentcraft-fe/layouts/navbar/index.tsx\",\n                        lineNumber: 102,\n                        columnNumber: 23\n                    }, undefined)\n                },\n                {\n                    name: \"基础模型详细\",\n                    solo: true,\n                    path: \"/foundationModel/[fmId]/detail\",\n                    icon: /*#__PURE__*/ (0,react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_0__.jsxDEV)(_tabler_icons_react__WEBPACK_IMPORTED_MODULE_3__.IconHome2, {\n                        size: \"1rem\",\n                        stroke: 1.5\n                    }, void 0, false, {\n                        fileName: \"/Users/hanxie/opensource/devsapp/agentcraft/src/agentcraft-all/agentcraft-fe/layouts/navbar/index.tsx\",\n                        lineNumber: 107,\n                        columnNumber: 23\n                    }, undefined)\n                }\n            ]\n        }\n    ];\n    const navItemsMap = flattenNavItems({}, navItems);\n    const currentNav = navItemsMap[pathname];\n    let renderNavList = [];\n    if (currentNav.solo) {\n        renderNavList = [\n            currentNav\n        ]; // 只有一个\n    } else {\n        renderNavList = Object.keys(navItemsMap).filter((key)=>{\n            const navItem = navItemsMap[key];\n            return navItem.level === currentNav.level && navItem.parentPath === currentNav.parentPath;\n        }).map((key)=>{\n            return navItemsMap[key];\n        });\n    }\n    return /*#__PURE__*/ (0,react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_0__.jsxDEV)(_mantine_core__WEBPACK_IMPORTED_MODULE_2__.Navbar, {\n        className: \"navbar\",\n        width: {\n            base: 240\n        },\n        p: \"xs\",\n        children: [\n            currentNav.parentPath ? /*#__PURE__*/ (0,react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_0__.jsxDEV)(_mantine_core__WEBPACK_IMPORTED_MODULE_2__.Center, {\n                h: 40,\n                mx: \"auto\",\n                children: /*#__PURE__*/ (0,react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_0__.jsxDEV)(_mantine_core__WEBPACK_IMPORTED_MODULE_2__.ActionIcon, {\n                    onClick: ()=>{\n                        let parentPath = currentNav.parentPath?.replace(\"[id]\", id).replace(\"[knowledgeBaseId]\", knowledgeBaseId) || \"\";\n                        router.push(parentPath);\n                    },\n                    children: /*#__PURE__*/ (0,react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_0__.jsxDEV)(_tabler_icons_react__WEBPACK_IMPORTED_MODULE_3__.IconArrowBackUp, {}, void 0, false, {\n                        fileName: \"/Users/hanxie/opensource/devsapp/agentcraft/src/agentcraft-all/agentcraft-fe/layouts/navbar/index.tsx\",\n                        lineNumber: 163,\n                        columnNumber: 25\n                    }, undefined)\n                }, void 0, false, {\n                    fileName: \"/Users/hanxie/opensource/devsapp/agentcraft/src/agentcraft-all/agentcraft-fe/layouts/navbar/index.tsx\",\n                    lineNumber: 159,\n                    columnNumber: 21\n                }, undefined)\n            }, void 0, false, {\n                fileName: \"/Users/hanxie/opensource/devsapp/agentcraft/src/agentcraft-all/agentcraft-fe/layouts/navbar/index.tsx\",\n                lineNumber: 158,\n                columnNumber: 17\n            }, undefined) : null,\n            renderNavList.map((item)=>{\n                if (item.type === \"divider\") {\n                    return /*#__PURE__*/ (0,react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_0__.jsxDEV)(_mantine_core__WEBPACK_IMPORTED_MODULE_2__.Divider, {\n                        mt: 8,\n                        mb: 8\n                    }, item.path, false, {\n                        fileName: \"/Users/hanxie/opensource/devsapp/agentcraft/src/agentcraft-all/agentcraft-fe/layouts/navbar/index.tsx\",\n                        lineNumber: 168,\n                        columnNumber: 28\n                    }, undefined);\n                } else {\n                    return /*#__PURE__*/ (0,react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_0__.jsxDEV)(_mantine_core__WEBPACK_IMPORTED_MODULE_2__.NavLink, {\n                        label: item.name,\n                        icon: item.icon,\n                        variant: \"filled\",\n                        onClick: ()=>handleClick(item.path),\n                        active: pathname === item.path ? true : false\n                    }, item.path, false, {\n                        fileName: \"/Users/hanxie/opensource/devsapp/agentcraft/src/agentcraft-all/agentcraft-fe/layouts/navbar/index.tsx\",\n                        lineNumber: 170,\n                        columnNumber: 28\n                    }, undefined);\n                }\n            })\n        ]\n    }, void 0, true, {\n        fileName: \"/Users/hanxie/opensource/devsapp/agentcraft/src/agentcraft-all/agentcraft-fe/layouts/navbar/index.tsx\",\n        lineNumber: 156,\n        columnNumber: 9\n    }, undefined);\n};\n//# sourceURL=[module]\n//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoiLi9sYXlvdXRzL25hdmJhci9pbmRleC50c3guanMiLCJtYXBwaW5ncyI6Ijs7Ozs7Ozs7Ozs7OztBQUF3QztBQUNxQztBQUU2SDtBQWlCMU0sTUFBTWMsa0JBQWtCLENBQUNDLFFBQW9DQyxVQUFxQkMsYUFBYSxFQUFFLEVBQUVDLFFBQVEsQ0FBQyxHQUFLO0lBQzdHQTtJQUNBLE9BQU9GLFNBQVNHLE1BQU0sQ0FBQyxDQUFDSixRQUFRSyxPQUFTO1FBQ3JDLE1BQU1DLFdBQVdELEtBQUtFLElBQUk7UUFDMUJGLEtBQUtILFVBQVUsR0FBR0E7UUFDbEJHLEtBQUtGLEtBQUssR0FBR0E7UUFDYkgsTUFBTSxDQUFDTSxTQUFTLEdBQUdEO1FBQ25CLElBQUlBLEtBQUtHLE1BQU0sRUFBRTtZQUNiUixTQUFTRCxnQkFBZ0JDLFFBQVFLLEtBQUtHLE1BQU0sRUFBRSxDQUFDLEVBQUVGLFNBQVMsQ0FBQyxFQUFFSDtRQUNqRSxPQUFPO1lBQ0hILE1BQU0sQ0FBQ00sU0FBUyxHQUFHRDtRQUN2QixDQUFDO1FBQ0QsT0FBT0w7SUFDWCxHQUFHQTtBQUNQO0FBRU8sTUFBTVMsTUFBTSxJQUFNO0lBQ3JCLE1BQU1DLFNBQVN6QixzREFBU0E7SUFDeEIsTUFBTSxFQUFFMEIsU0FBUSxFQUFFQyxNQUFLLEVBQUUsR0FBR0Y7SUFDNUIsTUFBTUcsS0FBVUQsTUFBTUMsRUFBRTtJQUN4QixNQUFNQyxrQkFBdUJGLE1BQU1FLGVBQWU7SUFFbEQsTUFBTUMsY0FBYyxDQUFDUixPQUFpQjtRQUNsQ0csT0FBT00sSUFBSSxDQUFDLENBQUMsRUFBRVQsS0FBS1UsT0FBTyxDQUFDLFFBQVFKLElBQUlJLE9BQU8sQ0FBQyxxQkFBcUJILGlCQUFpQixDQUFDO0lBQzNGO0lBQ0EsTUFBTWIsV0FBc0I7UUFDeEIsSUFBSTtRQUNKLGtCQUFrQjtRQUNsQix5QkFBeUI7UUFDekIsb0RBQW9EO1FBQ3BELEtBQUs7UUFDTDtZQUNJaUIsTUFBTTtZQUNOWCxNQUFNO1lBQ05ZLG9CQUFNLDhEQUFDMUIseURBQVFBO2dCQUFDMkIsTUFBSztnQkFBT0MsUUFBUTs7Ozs7O1lBQ3BDYixRQUFRO2dCQUFDO29CQUNMVSxNQUFNO29CQUNOWCxNQUFNO29CQUNOWSxvQkFBTSw4REFBQ3pCLCtEQUFjQTt3QkFBQzBCLE1BQUs7d0JBQU9DLFFBQVE7Ozs7OztvQkFDMUNiLFFBQVE7d0JBQUM7NEJBQ0xVLE1BQU07NEJBQ05YLE1BQU07NEJBQ05ZLG9CQUFNLDhEQUFDNUIsMERBQVNBO2dDQUFDNkIsTUFBSztnQ0FBT0MsUUFBUTs7Ozs7O3dCQUN6Qzt3QkFBRzs0QkFDQ0gsTUFBTTs0QkFDTlgsTUFBTTs0QkFDTlksb0JBQU0sOERBQUM1QiwwREFBU0E7Z0NBQUM2QixNQUFLO2dDQUFPQyxRQUFROzs7Ozs7d0JBQ3pDO3FCQUFFO2dCQUNOO2dCQUFHO29CQUNDSCxNQUFNO29CQUNOWCxNQUFNO29CQUNOWSxvQkFBTSw4REFBQ3JCLDBEQUFTQTt3QkFBQ3NCLE1BQUs7d0JBQU9DLFFBQVE7Ozs7OztnQkFDekM7YUFBRTtRQUNOO1FBQ0E7WUFDSUgsTUFBTTtZQUNOWCxNQUFNO1lBQ05ZLG9CQUFNLDhEQUFDdkIsaUVBQWdCQTtnQkFBQ3dCLE1BQUs7Z0JBQU9DLFFBQVE7Ozs7OztZQUM1Q2IsUUFBUTtnQkFBQztvQkFDTFUsTUFBTTtvQkFDTlgsTUFBTTtvQkFDTlksb0JBQU0sOERBQUM1QiwwREFBU0E7d0JBQUM2QixNQUFLO3dCQUFPQyxRQUFROzs7Ozs7Z0JBQ3pDO2FBQUU7UUFDTjtRQUNBO1lBQ0lILE1BQU07WUFDTlgsTUFBTTtZQUNOWSxvQkFBTSw4REFBQ3hCLDJEQUFVQTtnQkFBQ3lCLE1BQUs7Z0JBQU9DLFFBQVE7Ozs7OztRQUMxQztRQUNBO1lBQ0lkLE1BQU07WUFDTmUsTUFBTTtRQUNWO1FBQ0E7WUFDSUosTUFBTTtZQUNOWCxNQUFNO1lBQ05ZLG9CQUFNLDhEQUFDdEIsaUVBQWdCQTtnQkFBQ3VCLE1BQUs7Z0JBQU9DLFFBQVE7Ozs7OztZQUM1Q2IsUUFBUTtnQkFBQztvQkFDTFUsTUFBTTtvQkFDTlgsTUFBTTtvQkFDTmdCLE1BQU0sSUFBSTtvQkFDVkosb0JBQU0sOERBQUM1QiwwREFBU0E7d0JBQUM2QixNQUFLO3dCQUFPQyxRQUFROzs7Ozs7Z0JBQ3pDO2dCQUFFO29CQUNFSCxNQUFNO29CQUNOSyxNQUFNLElBQUk7b0JBQ1ZoQixNQUFNO29CQUNOWSxvQkFBTSw4REFBQzVCLDBEQUFTQTt3QkFBQzZCLE1BQUs7d0JBQU9DLFFBQVE7Ozs7OztnQkFDekM7YUFBRTtRQUNOO0tBNEJIO0lBRUQsTUFBTUcsY0FBY3pCLGdCQUFnQixDQUFDLEdBQUdFO0lBRXhDLE1BQU13QixhQUFzQkQsV0FBVyxDQUFDYixTQUFTO0lBQ2pELElBQUllLGdCQUEyQixFQUFFO0lBQ2pDLElBQUdELFdBQVdGLElBQUksRUFBRTtRQUNoQkcsZ0JBQWdCO1lBQUNEO1NBQVcsRUFBRSxPQUFPO0lBQ3pDLE9BQU87UUFDSEMsZ0JBQWdCQyxPQUFPQyxJQUFJLENBQUNKLGFBQWFLLE1BQU0sQ0FBQyxDQUFDQyxNQUFRO1lBQ3JELE1BQU1DLFVBQVVQLFdBQVcsQ0FBQ00sSUFBSTtZQUNoQyxPQUFPQyxRQUFRNUIsS0FBSyxLQUFLc0IsV0FBV3RCLEtBQUssSUFBSTRCLFFBQVE3QixVQUFVLEtBQUt1QixXQUFXdkIsVUFBVTtRQUM3RixHQUFHOEIsR0FBRyxDQUFDLENBQUNGLE1BQVE7WUFDWixPQUFPTixXQUFXLENBQUNNLElBQUk7UUFDM0I7SUFDSixDQUFDO0lBR0QscUJBQ0ksOERBQUM1QyxpREFBTUE7UUFBQytDLFdBQVU7UUFBU0MsT0FBTztZQUFFQyxNQUFNO1FBQUk7UUFBR0MsR0FBRTs7WUFDOUNYLFdBQVd2QixVQUFVLGlCQUNsQiw4REFBQ2QsaURBQU1BO2dCQUFDaUQsR0FBRztnQkFBSUMsSUFBRzswQkFDZCw0RUFBQ2pELHFEQUFVQTtvQkFBQ2tELFNBQVMsSUFBTTt3QkFDdkIsSUFBSXJDLGFBQWF1QixXQUFXdkIsVUFBVSxFQUFFZSxRQUFRLFFBQVFKLElBQUlJLE9BQU8sQ0FBQyxxQkFBcUJILG9CQUFvQjt3QkFDN0dKLE9BQU9NLElBQUksQ0FBQ2Q7b0JBQ2hCOzhCQUNJLDRFQUFDVixnRUFBZUE7Ozs7Ozs7Ozs7Ozs7OzRCQUVaLElBQUk7WUFDbkJrQyxjQUFjTSxHQUFHLENBQUMsQ0FBQzNCLE9BQWtCO2dCQUNsQyxJQUFJQSxLQUFLaUIsSUFBSSxLQUFLLFdBQVc7b0JBQ3pCLHFCQUFPLDhEQUFDaEMsa0RBQU9BO3dCQUFDa0QsSUFBSTt3QkFBR0MsSUFBSTt1QkFBUXBDLEtBQUtFLElBQUk7Ozs7O2dCQUNoRCxPQUFPO29CQUNILHFCQUFPLDhEQUFDcEIsa0RBQU9BO3dCQUNYdUQsT0FBT3JDLEtBQUthLElBQUk7d0JBQ2hCQyxNQUFNZCxLQUFLYyxJQUFJO3dCQUNmd0IsU0FBUTt3QkFDUkosU0FBUyxJQUFNeEIsWUFBWVYsS0FBS0UsSUFBSTt3QkFDcENxQyxRQUFRakMsYUFBYU4sS0FBS0UsSUFBSSxHQUFHLElBQUksR0FBRyxLQUFLO3VCQUw1QkYsS0FBS0UsSUFBSTs7Ozs7Z0JBTWxDLENBQUM7WUFDTDs7Ozs7OztBQUdaLEVBQUMiLCJzb3VyY2VzIjpbIndlYnBhY2s6Ly9hZ2VudGNyYWZ0LXVpLy4vbGF5b3V0cy9uYXZiYXIvaW5kZXgudHN4P2VlOTYiXSwic291cmNlc0NvbnRlbnQiOlsiaW1wb3J0IHsgdXNlUm91dGVyIH0gZnJvbSAnbmV4dC9yb3V0ZXInO1xuaW1wb3J0IHsgTmF2YmFyLCBOYXZMaW5rLCBDZW50ZXIsIEFjdGlvbkljb24sIERpdmlkZXIgfSBmcm9tICdAbWFudGluZS9jb3JlJztcblxuaW1wb3J0IHsgSWNvbkhvbWUyLCBJY29uR2F1Z2UsIEljb25BY3Rpdml0eSwgSWNvbkFycm93QmFja1VwLCBJY29uQXBwcywgSWNvblZvY2FidWxhcnksIEljb25TZXJ2ZXIsIEljb25EYXRhYmFzZVBsdXMsIEljb25Ucm93ZWwsIEljb25Sb3dJbnNlcnRUb3AsIEljb25EZXZpY2VzUGMsIEljb25BbGllbiB9IGZyb20gJ0B0YWJsZXIvaWNvbnMtcmVhY3QnO1xuXG5pbnRlcmZhY2UgTmF2SXRlbSB7XG4gICAgbmFtZT86IHN0cmluZyxcbiAgICBwYXRoOiBzdHJpbmcsXG4gICAgdHlwZT86IHN0cmluZyxcbiAgICBpY29uPzogSlNYLkVsZW1lbnQsXG4gICAgc3ViTmF2PzogTmF2SXRlbVtdLFxuICAgIHBhcmVudFBhdGg/OiBzdHJpbmcsXG4gICAgbGV2ZWw/OiBudW1iZXIsXG4gICAgc29sbz86IGJvb2xlYW5cbn1cblxuXG5cblxuXG5jb25zdCBmbGF0dGVuTmF2SXRlbXMgPSAocmVzdWx0OiB7IFtrZXk6IHN0cmluZ106IE5hdkl0ZW0gfSwgbmF2SXRlbXM6IE5hdkl0ZW1bXSwgcGFyZW50UGF0aCA9ICcnLCBsZXZlbCA9IDApID0+IHtcbiAgICBsZXZlbCsrO1xuICAgIHJldHVybiBuYXZJdGVtcy5yZWR1Y2UoKHJlc3VsdCwgaXRlbSkgPT4ge1xuICAgICAgICBjb25zdCBmdWxsUGF0aCA9IGl0ZW0ucGF0aDtcbiAgICAgICAgaXRlbS5wYXJlbnRQYXRoID0gcGFyZW50UGF0aDtcbiAgICAgICAgaXRlbS5sZXZlbCA9IGxldmVsO1xuICAgICAgICByZXN1bHRbZnVsbFBhdGhdID0gaXRlbTtcbiAgICAgICAgaWYgKGl0ZW0uc3ViTmF2KSB7XG4gICAgICAgICAgICByZXN1bHQgPSBmbGF0dGVuTmF2SXRlbXMocmVzdWx0LCBpdGVtLnN1Yk5hdiwgYCR7ZnVsbFBhdGh9YCwgbGV2ZWwpO1xuICAgICAgICB9IGVsc2Uge1xuICAgICAgICAgICAgcmVzdWx0W2Z1bGxQYXRoXSA9IGl0ZW07XG4gICAgICAgIH1cbiAgICAgICAgcmV0dXJuIHJlc3VsdDtcbiAgICB9LCByZXN1bHQpO1xufTtcblxuZXhwb3J0IGNvbnN0IE5hdiA9ICgpID0+IHtcbiAgICBjb25zdCByb3V0ZXIgPSB1c2VSb3V0ZXIoKTtcbiAgICBjb25zdCB7IHBhdGhuYW1lLCBxdWVyeSB9ID0gcm91dGVyO1xuICAgIGNvbnN0IGlkOiBhbnkgPSBxdWVyeS5pZDtcbiAgICBjb25zdCBrbm93bGVkZ2VCYXNlSWQ6IGFueSA9IHF1ZXJ5Lmtub3dsZWRnZUJhc2VJZDtcblxuICAgIGNvbnN0IGhhbmRsZUNsaWNrID0gKHBhdGg6IHN0cmluZykgPT4ge1xuICAgICAgICByb3V0ZXIucHVzaChgJHtwYXRoLnJlcGxhY2UoJ1tpZF0nLCBpZCkucmVwbGFjZSgnW2tub3dsZWRnZUJhc2VJZF0nLCBrbm93bGVkZ2VCYXNlSWQpfWApXG4gICAgfTtcbiAgICBjb25zdCBuYXZJdGVtczogTmF2SXRlbVtdID0gW1xuICAgICAgICAvLyB7XG4gICAgICAgIC8vICAgICBuYW1lOiBcIuamguiniFwiLFxuICAgICAgICAvLyAgICAgcGF0aDogXCIvb3ZlcnZpZXdcIixcbiAgICAgICAgLy8gICAgIGljb246IDxJY29uSG9tZTIgc2l6ZT1cIjFyZW1cIiBzdHJva2U9ezEuNX0gLz4sXG4gICAgICAgIC8vIH0sXG4gICAgICAgIHtcbiAgICAgICAgICAgIG5hbWU6IFwi5bqU55SoXCIsXG4gICAgICAgICAgICBwYXRoOiBcIi9hcHBcIixcbiAgICAgICAgICAgIGljb246IDxJY29uQXBwcyBzaXplPVwiMXJlbVwiIHN0cm9rZT17MS41fSAvPixcbiAgICAgICAgICAgIHN1Yk5hdjogW3tcbiAgICAgICAgICAgICAgICBuYW1lOiBcIuefpeivhuW6k1wiLFxuICAgICAgICAgICAgICAgIHBhdGg6IFwiL2FwcC9baWRdL2tub3dsZWRnZUJhc2VcIixcbiAgICAgICAgICAgICAgICBpY29uOiA8SWNvblZvY2FidWxhcnkgc2l6ZT1cIjFyZW1cIiBzdHJva2U9ezEuNX0gLz4sXG4gICAgICAgICAgICAgICAgc3ViTmF2OiBbe1xuICAgICAgICAgICAgICAgICAgICBuYW1lOiBcIuefpeivhuW6k+S/oeaBr1wiLFxuICAgICAgICAgICAgICAgICAgICBwYXRoOiBcIi9hcHAvW2lkXS9rbm93bGVkZ2VCYXNlL1trbm93bGVkZ2VCYXNlSWRdL2RldGFpbFwiLFxuICAgICAgICAgICAgICAgICAgICBpY29uOiA8SWNvbkhvbWUyIHNpemU9XCIxcmVtXCIgc3Ryb2tlPXsxLjV9IC8+LFxuICAgICAgICAgICAgICAgIH0sIHtcbiAgICAgICAgICAgICAgICAgICAgbmFtZTogXCLnn6Xor4blupPpl67nrZTorrDlvZVcIixcbiAgICAgICAgICAgICAgICAgICAgcGF0aDogXCIvYXBwL1tpZF0va25vd2xlZGdlQmFzZS9ba25vd2xlZGdlQmFzZUlkXS9jaGF0bGlzdFwiLFxuICAgICAgICAgICAgICAgICAgICBpY29uOiA8SWNvbkhvbWUyIHNpemU9XCIxcmVtXCIgc3Ryb2tlPXsxLjV9IC8+LFxuICAgICAgICAgICAgICAgIH1dXG4gICAgICAgICAgICB9LCB7XG4gICAgICAgICAgICAgICAgbmFtZTogXCJBZ2VudFwiLFxuICAgICAgICAgICAgICAgIHBhdGg6IFwiL2FwcC9baWRdL2FnZW50XCIsXG4gICAgICAgICAgICAgICAgaWNvbjogPEljb25BbGllbiBzaXplPVwiMXJlbVwiIHN0cm9rZT17MS41fSAvPixcbiAgICAgICAgICAgIH1dXG4gICAgICAgIH0sXG4gICAgICAgIHtcbiAgICAgICAgICAgIG5hbWU6IFwi5pWw5o2u6ZuGXCIsXG4gICAgICAgICAgICBwYXRoOiBcIi9kYXRhc2V0XCIsXG4gICAgICAgICAgICBpY29uOiA8SWNvbkRhdGFiYXNlUGx1cyBzaXplPVwiMXJlbVwiIHN0cm9rZT17MS41fSAvPixcbiAgICAgICAgICAgIHN1Yk5hdjogW3tcbiAgICAgICAgICAgICAgICBuYW1lOiBcIuaVsOaNrua6kFwiLFxuICAgICAgICAgICAgICAgIHBhdGg6IFwiL2RhdGFzZXQvW2lkXS9kYXRhc291cmNlXCIsXG4gICAgICAgICAgICAgICAgaWNvbjogPEljb25Ib21lMiBzaXplPVwiMXJlbVwiIHN0cm9rZT17MS41fSAvPixcbiAgICAgICAgICAgIH1dXG4gICAgICAgIH0sXG4gICAgICAgIHtcbiAgICAgICAgICAgIG5hbWU6IFwiTExN5Luj55CGXCIsXG4gICAgICAgICAgICBwYXRoOiBcIi9tb2RlbFwiLFxuICAgICAgICAgICAgaWNvbjogPEljb25TZXJ2ZXIgc2l6ZT1cIjFyZW1cIiBzdHJva2U9ezEuNX0gLz5cbiAgICAgICAgfSxcbiAgICAgICAge1xuICAgICAgICAgICAgcGF0aDogJy9kaXZpZGVyMScsXG4gICAgICAgICAgICB0eXBlOiAnZGl2aWRlcicsXG4gICAgICAgIH0sXG4gICAgICAgIHtcbiAgICAgICAgICAgIG5hbWU6IFwi5Z+656GA5qih5Z6LXCIsXG4gICAgICAgICAgICBwYXRoOiBcIi9mb3VuZGF0aW9uTW9kZWxcIixcbiAgICAgICAgICAgIGljb246IDxJY29uUm93SW5zZXJ0VG9wIHNpemU9XCIxcmVtXCIgc3Ryb2tlPXsxLjV9IC8+LFxuICAgICAgICAgICAgc3ViTmF2OiBbe1xuICAgICAgICAgICAgICAgIG5hbWU6IFwi5Yib5bu65Z+656GA5qih5Z6LXCIsXG4gICAgICAgICAgICAgICAgcGF0aDogXCIvZm91bmRhdGlvbk1vZGVsL2NyZWF0ZVwiLFxuICAgICAgICAgICAgICAgIHNvbG86IHRydWUsXG4gICAgICAgICAgICAgICAgaWNvbjogPEljb25Ib21lMiBzaXplPVwiMXJlbVwiIHN0cm9rZT17MS41fSAvPixcbiAgICAgICAgICAgIH0se1xuICAgICAgICAgICAgICAgIG5hbWU6IFwi5Z+656GA5qih5Z6L6K+m57uGXCIsXG4gICAgICAgICAgICAgICAgc29sbzogdHJ1ZSxcbiAgICAgICAgICAgICAgICBwYXRoOiBcIi9mb3VuZGF0aW9uTW9kZWwvW2ZtSWRdL2RldGFpbFwiLFxuICAgICAgICAgICAgICAgIGljb246IDxJY29uSG9tZTIgc2l6ZT1cIjFyZW1cIiBzdHJva2U9ezEuNX0gLz4sXG4gICAgICAgICAgICB9XVxuICAgICAgICB9LFxuICAgICAgICAvLyB7XG4gICAgICAgIC8vICAgICBwYXRoOiAnL2RpdmlkZXIyJyxcbiAgICAgICAgLy8gICAgIHR5cGU6ICdkaXZpZGVyJyxcbiAgICAgICAgLy8gfSxcbiAgICAgICAgLy8ge1xuICAgICAgICAvLyAgICAgbmFtZTogXCLlrqLmiLfnq6/mjqXlhaVcIixcbiAgICAgICAgLy8gICAgIHBhdGg6IFwiL2NsaWVudEFjY2Vzc1wiLFxuICAgICAgICAvLyAgICAgaWNvbjogPEljb25EZXZpY2VzUGMgc2l6ZT1cIjFyZW1cIiBzdHJva2U9ezEuNX0gLz4sXG4gICAgICAgIC8vIH0sXG4gICAgICAgIC8vIHtcbiAgICAgICAgLy8gICAgIHBhdGg6ICcvZGl2aWRlcjMnLFxuICAgICAgICAvLyAgICAgdHlwZTogJ2RpdmlkZXInLFxuICAgICAgICAvLyB9LFxuICAgICAgICAvLyB7XG4gICAgICAgIC8vICAgICBuYW1lOiBcIkxMTeW3peWFt+mbhlwiLFxuICAgICAgICAvLyAgICAgcGF0aDogXCIvdG9vbGZvcm1lclwiLFxuICAgICAgICAvLyAgICAgaWNvbjogPEljb25Ucm93ZWwgc2l6ZT1cIjFyZW1cIiBzdHJva2U9ezEuNX0gLz4sXG4gICAgICAgIC8vIH0sXG4gICAgICAgIC8vIHtcbiAgICAgICAgLy8gICAgIHBhdGg6ICcvZGl2aWRlcicsXG4gICAgICAgIC8vICAgICB0eXBlOiAnZGl2aWRlcicsXG4gICAgICAgIC8vIH0sXG4gICAgICAgIC8vIHtcbiAgICAgICAgLy8gICAgIG5hbWU6IFwi6K+V546p5bel5Y6CXCIsXG4gICAgICAgIC8vICAgICBwYXRoOiBcIi9wbGF5Z3JvdW5kXCIsXG4gICAgICAgIC8vICAgICBpY29uOiA8SWNvbkFjdGl2aXR5IHNpemU9XCIxcmVtXCIgc3Ryb2tlPXsxLjV9IC8+LFxuICAgICAgICAvLyB9LFxuICAgIF1cblxuICAgIGNvbnN0IG5hdkl0ZW1zTWFwID0gZmxhdHRlbk5hdkl0ZW1zKHt9LCBuYXZJdGVtcyk7XG4gICBcbiAgICBjb25zdCBjdXJyZW50TmF2OiBOYXZJdGVtID0gbmF2SXRlbXNNYXBbcGF0aG5hbWVdO1xuICAgIGxldCByZW5kZXJOYXZMaXN0OiBOYXZJdGVtW10gPSBbXTtcbiAgICBpZihjdXJyZW50TmF2LnNvbG8pIHtcbiAgICAgICAgcmVuZGVyTmF2TGlzdCA9IFtjdXJyZW50TmF2XTsgLy8g5Y+q5pyJ5LiA5LiqXG4gICAgfSBlbHNlIHtcbiAgICAgICAgcmVuZGVyTmF2TGlzdCA9IE9iamVjdC5rZXlzKG5hdkl0ZW1zTWFwKS5maWx0ZXIoKGtleSkgPT4ge1xuICAgICAgICAgICAgY29uc3QgbmF2SXRlbSA9IG5hdkl0ZW1zTWFwW2tleV07XG4gICAgICAgICAgICByZXR1cm4gbmF2SXRlbS5sZXZlbCA9PT0gY3VycmVudE5hdi5sZXZlbCAmJiBuYXZJdGVtLnBhcmVudFBhdGggPT09IGN1cnJlbnROYXYucGFyZW50UGF0aDtcbiAgICAgICAgfSkubWFwKChrZXkpID0+IHtcbiAgICAgICAgICAgIHJldHVybiBuYXZJdGVtc01hcFtrZXldO1xuICAgICAgICB9KVxuICAgIH1cbiAgIFxuXG4gICAgcmV0dXJuIChcbiAgICAgICAgPE5hdmJhciBjbGFzc05hbWU9XCJuYXZiYXJcIiB3aWR0aD17eyBiYXNlOiAyNDAgfX0gcD1cInhzXCI+XG4gICAgICAgICAgICB7Y3VycmVudE5hdi5wYXJlbnRQYXRoID9cbiAgICAgICAgICAgICAgICA8Q2VudGVyIGg9ezQwfSBteD1cImF1dG9cIj5cbiAgICAgICAgICAgICAgICAgICAgPEFjdGlvbkljb24gb25DbGljaz17KCkgPT4ge1xuICAgICAgICAgICAgICAgICAgICAgICAgbGV0IHBhcmVudFBhdGggPSBjdXJyZW50TmF2LnBhcmVudFBhdGg/LnJlcGxhY2UoJ1tpZF0nLCBpZCkucmVwbGFjZSgnW2tub3dsZWRnZUJhc2VJZF0nLCBrbm93bGVkZ2VCYXNlSWQpIHx8ICcnO1xuICAgICAgICAgICAgICAgICAgICAgICAgcm91dGVyLnB1c2gocGFyZW50UGF0aClcbiAgICAgICAgICAgICAgICAgICAgfX0+XG4gICAgICAgICAgICAgICAgICAgICAgICA8SWNvbkFycm93QmFja1VwIC8+XG4gICAgICAgICAgICAgICAgICAgIDwvQWN0aW9uSWNvbj5cbiAgICAgICAgICAgICAgICA8L0NlbnRlcj4gOiBudWxsfVxuICAgICAgICAgICAge3JlbmRlck5hdkxpc3QubWFwKChpdGVtOiBOYXZJdGVtKSA9PiB7XG4gICAgICAgICAgICAgICAgaWYgKGl0ZW0udHlwZSA9PT0gJ2RpdmlkZXInKSB7XG4gICAgICAgICAgICAgICAgICAgIHJldHVybiA8RGl2aWRlciBtdD17OH0gbWI9ezh9IGtleT17aXRlbS5wYXRofSAvPlxuICAgICAgICAgICAgICAgIH0gZWxzZSB7XG4gICAgICAgICAgICAgICAgICAgIHJldHVybiA8TmF2TGluayBrZXk9e2l0ZW0ucGF0aH1cbiAgICAgICAgICAgICAgICAgICAgICAgIGxhYmVsPXtpdGVtLm5hbWV9XG4gICAgICAgICAgICAgICAgICAgICAgICBpY29uPXtpdGVtLmljb259XG4gICAgICAgICAgICAgICAgICAgICAgICB2YXJpYW50PVwiZmlsbGVkXCJcbiAgICAgICAgICAgICAgICAgICAgICAgIG9uQ2xpY2s9eygpID0+IGhhbmRsZUNsaWNrKGl0ZW0ucGF0aCl9XG4gICAgICAgICAgICAgICAgICAgICAgICBhY3RpdmU9e3BhdGhuYW1lID09PSBpdGVtLnBhdGggPyB0cnVlIDogZmFsc2V9IC8+XG4gICAgICAgICAgICAgICAgfVxuICAgICAgICAgICAgfSl9XG4gICAgICAgIDwvTmF2YmFyPlxuICAgIClcbn0iXSwibmFtZXMiOlsidXNlUm91dGVyIiwiTmF2YmFyIiwiTmF2TGluayIsIkNlbnRlciIsIkFjdGlvbkljb24iLCJEaXZpZGVyIiwiSWNvbkhvbWUyIiwiSWNvbkFycm93QmFja1VwIiwiSWNvbkFwcHMiLCJJY29uVm9jYWJ1bGFyeSIsIkljb25TZXJ2ZXIiLCJJY29uRGF0YWJhc2VQbHVzIiwiSWNvblJvd0luc2VydFRvcCIsIkljb25BbGllbiIsImZsYXR0ZW5OYXZJdGVtcyIsInJlc3VsdCIsIm5hdkl0ZW1zIiwicGFyZW50UGF0aCIsImxldmVsIiwicmVkdWNlIiwiaXRlbSIsImZ1bGxQYXRoIiwicGF0aCIsInN1Yk5hdiIsIk5hdiIsInJvdXRlciIsInBhdGhuYW1lIiwicXVlcnkiLCJpZCIsImtub3dsZWRnZUJhc2VJZCIsImhhbmRsZUNsaWNrIiwicHVzaCIsInJlcGxhY2UiLCJuYW1lIiwiaWNvbiIsInNpemUiLCJzdHJva2UiLCJ0eXBlIiwic29sbyIsIm5hdkl0ZW1zTWFwIiwiY3VycmVudE5hdiIsInJlbmRlck5hdkxpc3QiLCJPYmplY3QiLCJrZXlzIiwiZmlsdGVyIiwia2V5IiwibmF2SXRlbSIsIm1hcCIsImNsYXNzTmFtZSIsIndpZHRoIiwiYmFzZSIsInAiLCJoIiwibXgiLCJvbkNsaWNrIiwibXQiLCJtYiIsImxhYmVsIiwidmFyaWFudCIsImFjdGl2ZSJdLCJzb3VyY2VSb290IjoiIn0=\n//# sourceURL=webpack-internal:///./layouts/navbar/index.tsx\n");
+
+/***/ }),
+
+/***/ "./layouts/shell/index.tsx":
+/*!*********************************!*\
+  !*** ./layouts/shell/index.tsx ***!
+  \*********************************/
 /***/ ((module, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
-__webpack_require__.a(module, async (__webpack_handle_async_dependencies__, __webpack_async_result__) => { try {
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "default": () => (/* binding */ App)
-/* harmony export */ });
-/* harmony import */ var react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(997);
-/* harmony import */ var react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(6689);
-/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_1__);
-/* harmony import */ var next_head__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(968);
-/* harmony import */ var next_head__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(next_head__WEBPACK_IMPORTED_MODULE_2__);
-/* harmony import */ var _mantine_core__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(2247);
-/* harmony import */ var _mantine_core__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(_mantine_core__WEBPACK_IMPORTED_MODULE_3__);
-/* harmony import */ var _mantine_modals__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(1280);
-/* harmony import */ var _mantine_modals__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(_mantine_modals__WEBPACK_IMPORTED_MODULE_4__);
-/* harmony import */ var layouts_shell__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(973);
-/* harmony import */ var _styles_global_scss__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(291);
-/* harmony import */ var _styles_global_scss__WEBPACK_IMPORTED_MODULE_6___default = /*#__PURE__*/__webpack_require__.n(_styles_global_scss__WEBPACK_IMPORTED_MODULE_6__);
-var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([layouts_shell__WEBPACK_IMPORTED_MODULE_5__]);
-layouts_shell__WEBPACK_IMPORTED_MODULE_5__ = (__webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__)[0];
-
-
-
-
-
-
-
-function App(props) {
-    const { Component , pageProps  } = props;
-    const [render, setRender] = (0,react__WEBPACK_IMPORTED_MODULE_1__.useState)(false);
-    (0,react__WEBPACK_IMPORTED_MODULE_1__.useEffect)(()=>setRender(true), []);
-    return /*#__PURE__*/ (0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsxs)(react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.Fragment, {
-        children: [
-            /*#__PURE__*/ (0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsxs)((next_head__WEBPACK_IMPORTED_MODULE_2___default()), {
-                children: [
-                    /*#__PURE__*/ react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsx("title", {
-                        children: "AgentCraft"
-                    }),
-                    /*#__PURE__*/ react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsx("link", {
-                        rel: "shortcut icon",
-                        href: "/favicon.svg"
-                    }),
-                    /*#__PURE__*/ react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsx("meta", {
-                        name: "viewport",
-                        content: "minimum-scale=1, initial-scale=1, width=device-width"
-                    })
-                ]
-            }),
-            /*#__PURE__*/ react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsx(_mantine_core__WEBPACK_IMPORTED_MODULE_3__.MantineProvider, {
-                withGlobalStyles: true,
-                withNormalizeCSS: true,
-                theme: {
-                    colorScheme: "dark"
-                },
-                children: render ? /*#__PURE__*/ react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsx(_mantine_modals__WEBPACK_IMPORTED_MODULE_4__.ModalsProvider, {
-                    children: /*#__PURE__*/ react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsx(layouts_shell__WEBPACK_IMPORTED_MODULE_5__/* .Shell */ .N, {
-                        children: /*#__PURE__*/ react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsx(Component, {
-                            ...pageProps
-                        })
-                    })
-                }) : null
-            })
-        ]
-    });
-}
-
-__webpack_async_result__();
-} catch(e) { __webpack_async_result__(e); } });
+eval("__webpack_require__.a(module, async (__webpack_handle_async_dependencies__, __webpack_async_result__) => { try {\n__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"Shell\": () => (/* binding */ Shell)\n/* harmony export */ });\n/* harmony import */ var react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react/jsx-dev-runtime */ \"react/jsx-dev-runtime\");\n/* harmony import */ var react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_0__);\n/* harmony import */ var next_router__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! next/router */ \"next/router\");\n/* harmony import */ var next_router__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(next_router__WEBPACK_IMPORTED_MODULE_1__);\n/* harmony import */ var _mantine_core__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @mantine/core */ \"@mantine/core\");\n/* harmony import */ var _mantine_core__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(_mantine_core__WEBPACK_IMPORTED_MODULE_2__);\n/* harmony import */ var layouts_navbar__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! layouts/navbar */ \"./layouts/navbar/index.tsx\");\n/* harmony import */ var layouts_header__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! layouts/header */ \"./layouts/header/index.tsx\");\n/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! react */ \"react\");\n/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_5___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_5__);\nvar __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([layouts_header__WEBPACK_IMPORTED_MODULE_4__]);\nlayouts_header__WEBPACK_IMPORTED_MODULE_4__ = (__webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__)[0];\n\n\n\n\n\n\nfunction Shell(props) {\n    const router = (0,next_router__WEBPACK_IMPORTED_MODULE_1__.useRouter)();\n    const { pathname  } = router;\n    const isMainPage = pathname.indexOf(\"login\") === -1 && pathname.indexOf(\"register\") === -1;\n    return /*#__PURE__*/ (0,react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_0__.jsxDEV)(react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_0__.Fragment, {\n        children: isMainPage ? /*#__PURE__*/ (0,react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_0__.jsxDEV)(_mantine_core__WEBPACK_IMPORTED_MODULE_2__.AppShell, {\n            padding: \"md\",\n            navbar: /*#__PURE__*/ (0,react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_0__.jsxDEV)(layouts_navbar__WEBPACK_IMPORTED_MODULE_3__.Nav, {}, void 0, false, void 0, void 0),\n            header: /*#__PURE__*/ (0,react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_0__.jsxDEV)(layouts_header__WEBPACK_IMPORTED_MODULE_4__.Header, {}, void 0, false, void 0, void 0),\n            styles: (theme)=>({\n                    main: {\n                        backgroundColor: theme.colorScheme === \"dark\" ? theme.colors.dark[8] : theme.colors.gray[0]\n                    }\n                }),\n            children: /*#__PURE__*/ (0,react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_0__.jsxDEV)(\"div\", {\n                style: {\n                    paddingRight: 20\n                },\n                children: props.children\n            }, void 0, false, {\n                fileName: \"/Users/hanxie/opensource/devsapp/agentcraft/src/agentcraft-all/agentcraft-fe/layouts/shell/index.tsx\",\n                lineNumber: 19,\n                columnNumber: 13\n            }, this)\n        }, void 0, false, {\n            fileName: \"/Users/hanxie/opensource/devsapp/agentcraft/src/agentcraft-all/agentcraft-fe/layouts/shell/index.tsx\",\n            lineNumber: 11,\n            columnNumber: 22\n        }, this) : /*#__PURE__*/ (0,react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_0__.jsxDEV)(react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_0__.Fragment, {\n            children: props.children\n        }, void 0, false)\n    }, void 0, false);\n}\n\n__webpack_async_result__();\n} catch(e) { __webpack_async_result__(e); } });//# sourceURL=[module]\n//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoiLi9sYXlvdXRzL3NoZWxsL2luZGV4LnRzeC5qcyIsIm1hcHBpbmdzIjoiOzs7Ozs7Ozs7Ozs7Ozs7Ozs7QUFBd0M7QUFDQztBQUNMO0FBQ0c7QUFDRTtBQUNsQyxTQUFTSyxNQUFNQyxLQUFVLEVBQUU7SUFDOUIsTUFBTUMsU0FBU1Asc0RBQVNBO0lBQ3hCLE1BQU0sRUFBRVEsU0FBUSxFQUFFLEdBQUdEO0lBQ3JCLE1BQU1FLGFBQWFELFNBQVNFLE9BQU8sQ0FBQyxhQUFhLENBQUMsS0FBS0YsU0FBU0UsT0FBTyxDQUFDLGdCQUFnQixDQUFDO0lBQ3pGLHFCQUFPO2tCQUNIRCwyQkFBYSw4REFBQ1IsbURBQVFBO1lBQ2xCVSxTQUFRO1lBQ1JDLHNCQUFRLDhEQUFDViwrQ0FBR0E7WUFDWlcsc0JBQVEsOERBQUNWLGtEQUFNQTtZQUNmVyxRQUFRLENBQUNDLFFBQVc7b0JBQ2hCQyxNQUFNO3dCQUFFQyxpQkFBaUJGLE1BQU1HLFdBQVcsS0FBSyxTQUFTSCxNQUFNSSxNQUFNLENBQUNDLElBQUksQ0FBQyxFQUFFLEdBQUdMLE1BQU1JLE1BQU0sQ0FBQ0UsSUFBSSxDQUFDLEVBQUU7b0JBQUM7Z0JBQ3hHO3NCQUVBLDRFQUFDQztnQkFBSUMsT0FBTztvQkFBRUMsY0FBYztnQkFBRzswQkFDMUJsQixNQUFNbUIsUUFBUTs7Ozs7Ozs7OztpQ0FFVDtzQkFBR25CLE1BQU1tQixRQUFRO3lCQUFJOztBQUkzQyxDQUFDIiwic291cmNlcyI6WyJ3ZWJwYWNrOi8vYWdlbnRjcmFmdC11aS8uL2xheW91dHMvc2hlbGwvaW5kZXgudHN4PzA1OWIiXSwic291cmNlc0NvbnRlbnQiOlsiaW1wb3J0IHsgdXNlUm91dGVyIH0gZnJvbSAnbmV4dC9yb3V0ZXInO1xuaW1wb3J0IHsgQXBwU2hlbGwgfSBmcm9tICdAbWFudGluZS9jb3JlJztcbmltcG9ydCB7IE5hdiB9IGZyb20gJ2xheW91dHMvbmF2YmFyJ1xuaW1wb3J0IHsgSGVhZGVyIH0gZnJvbSAnbGF5b3V0cy9oZWFkZXInXG5pbXBvcnQgUmVhY3QsIHsgdXNlRWZmZWN0IH0gZnJvbSBcInJlYWN0XCI7XG5leHBvcnQgZnVuY3Rpb24gU2hlbGwocHJvcHM6IGFueSkge1xuICAgIGNvbnN0IHJvdXRlciA9IHVzZVJvdXRlcigpO1xuICAgIGNvbnN0IHsgcGF0aG5hbWUgfSA9IHJvdXRlcjtcbiAgICBjb25zdCBpc01haW5QYWdlID0gcGF0aG5hbWUuaW5kZXhPZignbG9naW4nKSA9PT0gLTEgJiYgcGF0aG5hbWUuaW5kZXhPZigncmVnaXN0ZXInKSA9PT0gLTE7XG4gICAgcmV0dXJuIDw+e1xuICAgICAgICBpc01haW5QYWdlID8gPEFwcFNoZWxsXG4gICAgICAgICAgICBwYWRkaW5nPVwibWRcIlxuICAgICAgICAgICAgbmF2YmFyPXs8TmF2IC8+fVxuICAgICAgICAgICAgaGVhZGVyPXs8SGVhZGVyIC8+fVxuICAgICAgICAgICAgc3R5bGVzPXsodGhlbWUpID0+ICh7XG4gICAgICAgICAgICAgICAgbWFpbjogeyBiYWNrZ3JvdW5kQ29sb3I6IHRoZW1lLmNvbG9yU2NoZW1lID09PSAnZGFyaycgPyB0aGVtZS5jb2xvcnMuZGFya1s4XSA6IHRoZW1lLmNvbG9ycy5ncmF5WzBdIH0sXG4gICAgICAgICAgICB9KX1cbiAgICAgICAgPlxuICAgICAgICAgICAgPGRpdiBzdHlsZT17eyBwYWRkaW5nUmlnaHQ6IDIwIH19PlxuICAgICAgICAgICAgICAgIHtwcm9wcy5jaGlsZHJlbn1cbiAgICAgICAgICAgIDwvZGl2PlxuICAgICAgICA8L0FwcFNoZWxsPiA6IDw+e3Byb3BzLmNoaWxkcmVufTwvPlxuICAgIH08Lz5cblxuXG59Il0sIm5hbWVzIjpbInVzZVJvdXRlciIsIkFwcFNoZWxsIiwiTmF2IiwiSGVhZGVyIiwiUmVhY3QiLCJTaGVsbCIsInByb3BzIiwicm91dGVyIiwicGF0aG5hbWUiLCJpc01haW5QYWdlIiwiaW5kZXhPZiIsInBhZGRpbmciLCJuYXZiYXIiLCJoZWFkZXIiLCJzdHlsZXMiLCJ0aGVtZSIsIm1haW4iLCJiYWNrZ3JvdW5kQ29sb3IiLCJjb2xvclNjaGVtZSIsImNvbG9ycyIsImRhcmsiLCJncmF5IiwiZGl2Iiwic3R5bGUiLCJwYWRkaW5nUmlnaHQiLCJjaGlsZHJlbiJdLCJzb3VyY2VSb290IjoiIn0=\n//# sourceURL=webpack-internal:///./layouts/shell/index.tsx\n");
 
 /***/ }),
 
-/***/ 9095:
+/***/ "./pages/_app.tsx":
+/*!************************!*\
+  !*** ./pages/_app.tsx ***!
+  \************************/
 /***/ ((module, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
-__webpack_require__.a(module, async (__webpack_handle_async_dependencies__, __webpack_async_result__) => { try {
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "L": () => (/* binding */ useUserStore),
-/* harmony export */   "b": () => (/* binding */ getUserInfo)
-/* harmony export */ });
-/* harmony import */ var zustand__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(6912);
-/* harmony import */ var zustand_middleware__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(3602);
-/* harmony import */ var _utils_clientRequest__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(8417);
-var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([zustand__WEBPACK_IMPORTED_MODULE_0__, zustand_middleware__WEBPACK_IMPORTED_MODULE_1__, _utils_clientRequest__WEBPACK_IMPORTED_MODULE_2__]);
-([zustand__WEBPACK_IMPORTED_MODULE_0__, zustand_middleware__WEBPACK_IMPORTED_MODULE_1__, _utils_clientRequest__WEBPACK_IMPORTED_MODULE_2__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
-
-
-
-const useUserStore = (0,zustand__WEBPACK_IMPORTED_MODULE_0__.create)()((0,zustand_middleware__WEBPACK_IMPORTED_MODULE_1__.devtools)((set)=>({
-        userInfo: {
-            username: "",
-            created: ""
-        },
-        setUserInfo: (userInfo)=>set((_state)=>({
-                    userInfo
-                }))
-    })));
-async function getUserInfo() {
-    const state = useUserStore.getState();
-    const res = await (0,_utils_clientRequest__WEBPACK_IMPORTED_MODULE_2__/* .request */ .W)("/api/user");
-    const userInfo = await res.data;
-    if (userInfo) {
-        state.setUserInfo(userInfo);
-    }
-}
-
-__webpack_async_result__();
-} catch(e) { __webpack_async_result__(e); } });
+eval("__webpack_require__.a(module, async (__webpack_handle_async_dependencies__, __webpack_async_result__) => { try {\n__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"default\": () => (/* binding */ App)\n/* harmony export */ });\n/* harmony import */ var react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react/jsx-dev-runtime */ \"react/jsx-dev-runtime\");\n/* harmony import */ var react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_0__);\n/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! react */ \"react\");\n/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_1__);\n/* harmony import */ var next_head__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! next/head */ \"next/head\");\n/* harmony import */ var next_head__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(next_head__WEBPACK_IMPORTED_MODULE_2__);\n/* harmony import */ var _mantine_core__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @mantine/core */ \"@mantine/core\");\n/* harmony import */ var _mantine_core__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(_mantine_core__WEBPACK_IMPORTED_MODULE_3__);\n/* harmony import */ var _mantine_modals__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! @mantine/modals */ \"@mantine/modals\");\n/* harmony import */ var _mantine_modals__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(_mantine_modals__WEBPACK_IMPORTED_MODULE_4__);\n/* harmony import */ var layouts_shell__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! layouts/shell */ \"./layouts/shell/index.tsx\");\n/* harmony import */ var _styles_global_scss__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ../styles/global.scss */ \"./styles/global.scss\");\n/* harmony import */ var _styles_global_scss__WEBPACK_IMPORTED_MODULE_6___default = /*#__PURE__*/__webpack_require__.n(_styles_global_scss__WEBPACK_IMPORTED_MODULE_6__);\nvar __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([layouts_shell__WEBPACK_IMPORTED_MODULE_5__]);\nlayouts_shell__WEBPACK_IMPORTED_MODULE_5__ = (__webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__)[0];\n\n\n\n\n\n\n\nfunction App(props) {\n    const { Component , pageProps  } = props;\n    const [render, setRender] = (0,react__WEBPACK_IMPORTED_MODULE_1__.useState)(false);\n    (0,react__WEBPACK_IMPORTED_MODULE_1__.useEffect)(()=>setRender(true), []);\n    return /*#__PURE__*/ (0,react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_0__.jsxDEV)(react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_0__.Fragment, {\n        children: [\n            /*#__PURE__*/ (0,react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_0__.jsxDEV)((next_head__WEBPACK_IMPORTED_MODULE_2___default()), {\n                children: [\n                    /*#__PURE__*/ (0,react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_0__.jsxDEV)(\"title\", {\n                        children: \"AgentCraft\"\n                    }, void 0, false, {\n                        fileName: \"/Users/hanxie/opensource/devsapp/agentcraft/src/agentcraft-all/agentcraft-fe/pages/_app.tsx\",\n                        lineNumber: 18,\n                        columnNumber: 9\n                    }, this),\n                    /*#__PURE__*/ (0,react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_0__.jsxDEV)(\"link\", {\n                        rel: \"shortcut icon\",\n                        href: \"/favicon.svg\"\n                    }, void 0, false, {\n                        fileName: \"/Users/hanxie/opensource/devsapp/agentcraft/src/agentcraft-all/agentcraft-fe/pages/_app.tsx\",\n                        lineNumber: 19,\n                        columnNumber: 9\n                    }, this),\n                    /*#__PURE__*/ (0,react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_0__.jsxDEV)(\"meta\", {\n                        name: \"viewport\",\n                        content: \"minimum-scale=1, initial-scale=1, width=device-width\"\n                    }, void 0, false, {\n                        fileName: \"/Users/hanxie/opensource/devsapp/agentcraft/src/agentcraft-all/agentcraft-fe/pages/_app.tsx\",\n                        lineNumber: 20,\n                        columnNumber: 9\n                    }, this)\n                ]\n            }, void 0, true, {\n                fileName: \"/Users/hanxie/opensource/devsapp/agentcraft/src/agentcraft-all/agentcraft-fe/pages/_app.tsx\",\n                lineNumber: 17,\n                columnNumber: 7\n            }, this),\n            /*#__PURE__*/ (0,react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_0__.jsxDEV)(_mantine_core__WEBPACK_IMPORTED_MODULE_3__.MantineProvider, {\n                withGlobalStyles: true,\n                withNormalizeCSS: true,\n                theme: {\n                    colorScheme: \"dark\"\n                },\n                children: render ? /*#__PURE__*/ (0,react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_0__.jsxDEV)(_mantine_modals__WEBPACK_IMPORTED_MODULE_4__.ModalsProvider, {\n                    children: /*#__PURE__*/ (0,react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_0__.jsxDEV)(layouts_shell__WEBPACK_IMPORTED_MODULE_5__.Shell, {\n                        children: /*#__PURE__*/ (0,react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_0__.jsxDEV)(Component, {\n                            ...pageProps\n                        }, void 0, false, {\n                            fileName: \"/Users/hanxie/opensource/devsapp/agentcraft/src/agentcraft-all/agentcraft-fe/pages/_app.tsx\",\n                            lineNumber: 37,\n                            columnNumber: 15\n                        }, this)\n                    }, void 0, false, {\n                        fileName: \"/Users/hanxie/opensource/devsapp/agentcraft/src/agentcraft-all/agentcraft-fe/pages/_app.tsx\",\n                        lineNumber: 36,\n                        columnNumber: 13\n                    }, this)\n                }, void 0, false, {\n                    fileName: \"/Users/hanxie/opensource/devsapp/agentcraft/src/agentcraft-all/agentcraft-fe/pages/_app.tsx\",\n                    lineNumber: 35,\n                    columnNumber: 11\n                }, this) : null\n            }, void 0, false, {\n                fileName: \"/Users/hanxie/opensource/devsapp/agentcraft/src/agentcraft-all/agentcraft-fe/pages/_app.tsx\",\n                lineNumber: 26,\n                columnNumber: 7\n            }, this)\n        ]\n    }, void 0, true);\n}\n\n__webpack_async_result__();\n} catch(e) { __webpack_async_result__(e); } });//# sourceURL=[module]\n//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoiLi9wYWdlcy9fYXBwLnRzeC5qcyIsIm1hcHBpbmdzIjoiOzs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7QUFBNEM7QUFFZjtBQUNtQjtBQUNDO0FBQ1g7QUFFUDtBQUVoQixTQUFTTSxJQUFJQyxLQUFlLEVBQUU7SUFDM0MsTUFBTSxFQUFFQyxVQUFTLEVBQUVDLFVBQVMsRUFBRSxHQUFHRjtJQUNqQyxNQUFNLENBQUNHLFFBQVFDLFVBQVUsR0FBR1gsK0NBQVFBLENBQUMsS0FBSztJQUMxQ0MsZ0RBQVNBLENBQUMsSUFBTVUsVUFBVSxJQUFJLEdBQUcsRUFBRTtJQUVuQyxxQkFDRTs7MEJBQ0UsOERBQUNULGtEQUFJQTs7a0NBQ0gsOERBQUNVO2tDQUFNOzs7Ozs7a0NBQ1AsOERBQUNDO3dCQUFLQyxLQUFJO3dCQUFnQkMsTUFBSzs7Ozs7O2tDQUMvQiw4REFBQ0M7d0JBQ0NDLE1BQUs7d0JBQ0xDLFNBQVE7Ozs7Ozs7Ozs7OzswQkFJWiw4REFBQ2YsMERBQWVBO2dCQUNkZ0IsZ0JBQWdCO2dCQUNoQkMsZ0JBQWdCO2dCQUNoQkMsT0FBTztvQkFDTEMsYUFBYTtnQkFDZjswQkFHQ1osdUJBQ0MsOERBQUNOLDJEQUFjQTs4QkFDYiw0RUFBQ0MsZ0RBQUtBO2tDQUNKLDRFQUFDRzs0QkFBVyxHQUFHQyxTQUFTOzs7Ozs7Ozs7Ozs7Ozs7MkJBRVIsSUFBSTs7Ozs7Ozs7QUFJbEMsQ0FBQyIsInNvdXJjZXMiOlsid2VicGFjazovL2FnZW50Y3JhZnQtdWkvLi9wYWdlcy9fYXBwLnRzeD8yZmJlIl0sInNvdXJjZXNDb250ZW50IjpbImltcG9ydCB7IHVzZVN0YXRlLCB1c2VFZmZlY3QgfSBmcm9tICdyZWFjdCc7XG5pbXBvcnQgeyBBcHBQcm9wcyB9IGZyb20gXCJuZXh0L2FwcFwiO1xuaW1wb3J0IEhlYWQgZnJvbSBcIm5leHQvaGVhZFwiO1xuaW1wb3J0IHsgTWFudGluZVByb3ZpZGVyIH0gZnJvbSBcIkBtYW50aW5lL2NvcmVcIjtcbmltcG9ydCB7IE1vZGFsc1Byb3ZpZGVyIH0gZnJvbSAnQG1hbnRpbmUvbW9kYWxzJztcbmltcG9ydCB7IFNoZWxsIH0gZnJvbSAnbGF5b3V0cy9zaGVsbCc7XG5cbmltcG9ydCAnLi4vc3R5bGVzL2dsb2JhbC5zY3NzJztcblxuZXhwb3J0IGRlZmF1bHQgZnVuY3Rpb24gQXBwKHByb3BzOiBBcHBQcm9wcykge1xuICBjb25zdCB7IENvbXBvbmVudCwgcGFnZVByb3BzIH0gPSBwcm9wcztcbiAgY29uc3QgW3JlbmRlciwgc2V0UmVuZGVyXSA9IHVzZVN0YXRlKGZhbHNlKTtcbiAgdXNlRWZmZWN0KCgpID0+IHNldFJlbmRlcih0cnVlKSwgW10pO1xuXG4gIHJldHVybiAoXG4gICAgPD5cbiAgICAgIDxIZWFkPlxuICAgICAgICA8dGl0bGU+QWdlbnRDcmFmdDwvdGl0bGU+XG4gICAgICAgIDxsaW5rIHJlbD1cInNob3J0Y3V0IGljb25cIiBocmVmPVwiL2Zhdmljb24uc3ZnXCIgLz5cbiAgICAgICAgPG1ldGFcbiAgICAgICAgICBuYW1lPVwidmlld3BvcnRcIlxuICAgICAgICAgIGNvbnRlbnQ9XCJtaW5pbXVtLXNjYWxlPTEsIGluaXRpYWwtc2NhbGU9MSwgd2lkdGg9ZGV2aWNlLXdpZHRoXCJcbiAgICAgICAgLz5cbiAgICAgIDwvSGVhZD5cblxuICAgICAgPE1hbnRpbmVQcm92aWRlclxuICAgICAgICB3aXRoR2xvYmFsU3R5bGVzXG4gICAgICAgIHdpdGhOb3JtYWxpemVDU1NcbiAgICAgICAgdGhlbWU9e3tcbiAgICAgICAgICBjb2xvclNjaGVtZTogXCJkYXJrXCIsXG4gICAgICAgIH19XG4gICAgICA+XG5cbiAgICAgICAge3JlbmRlciA/XG4gICAgICAgICAgPE1vZGFsc1Byb3ZpZGVyPlxuICAgICAgICAgICAgPFNoZWxsID5cbiAgICAgICAgICAgICAgPENvbXBvbmVudCB7Li4ucGFnZVByb3BzfSAvPlxuICAgICAgICAgICAgPC9TaGVsbD5cbiAgICAgICAgICA8L01vZGFsc1Byb3ZpZGVyPiA6IG51bGx9XG4gICAgICA8L01hbnRpbmVQcm92aWRlcj5cbiAgICA8Lz5cbiAgKTtcbn1cbiJdLCJuYW1lcyI6WyJ1c2VTdGF0ZSIsInVzZUVmZmVjdCIsIkhlYWQiLCJNYW50aW5lUHJvdmlkZXIiLCJNb2RhbHNQcm92aWRlciIsIlNoZWxsIiwiQXBwIiwicHJvcHMiLCJDb21wb25lbnQiLCJwYWdlUHJvcHMiLCJyZW5kZXIiLCJzZXRSZW5kZXIiLCJ0aXRsZSIsImxpbmsiLCJyZWwiLCJocmVmIiwibWV0YSIsIm5hbWUiLCJjb250ZW50Iiwid2l0aEdsb2JhbFN0eWxlcyIsIndpdGhOb3JtYWxpemVDU1MiLCJ0aGVtZSIsImNvbG9yU2NoZW1lIl0sInNvdXJjZVJvb3QiOiIifQ==\n//# sourceURL=webpack-internal:///./pages/_app.tsx\n");
 
 /***/ }),
 
-/***/ 291:
+/***/ "./store/authentication.ts":
+/*!*********************************!*\
+  !*** ./store/authentication.ts ***!
+  \*********************************/
+/***/ ((module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+eval("__webpack_require__.a(module, async (__webpack_handle_async_dependencies__, __webpack_async_result__) => { try {\n__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"login\": () => (/* binding */ login),\n/* harmony export */   \"register\": () => (/* binding */ register),\n/* harmony export */   \"useAuthenticationStore\": () => (/* binding */ useAuthenticationStore)\n/* harmony export */ });\n/* harmony import */ var zustand__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! zustand */ \"zustand\");\n/* harmony import */ var zustand_middleware__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! zustand/middleware */ \"zustand/middleware\");\n/* harmony import */ var _utils_clientRequest__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @/utils/clientRequest */ \"./utils/clientRequest.ts\");\n/* harmony import */ var _constants_index__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @/constants/index */ \"./constants/index.ts\");\nvar __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([zustand__WEBPACK_IMPORTED_MODULE_0__, zustand_middleware__WEBPACK_IMPORTED_MODULE_1__, _utils_clientRequest__WEBPACK_IMPORTED_MODULE_2__]);\n([zustand__WEBPACK_IMPORTED_MODULE_0__, zustand_middleware__WEBPACK_IMPORTED_MODULE_1__, _utils_clientRequest__WEBPACK_IMPORTED_MODULE_2__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);\n\n\n\n\nconst useAuthenticationStore = (0,zustand__WEBPACK_IMPORTED_MODULE_0__.create)((0,zustand_middleware__WEBPACK_IMPORTED_MODULE_1__.persist)((set)=>({\n        token: \"\",\n        setToken: (token)=>set({\n                token\n            })\n    }), {\n    name: _constants_index__WEBPACK_IMPORTED_MODULE_3__.AGENT_CRAFT_TOKEN\n}));\nasync function login(username, password) {\n    const res = await (0,_utils_clientRequest__WEBPACK_IMPORTED_MODULE_2__.request)(\"/api/authentication/login\", {\n        method: \"POST\",\n        body: JSON.stringify({\n            username,\n            password\n        }),\n        headers: {\n            \"Content-Type\": \"application/json\"\n        }\n    });\n    return res;\n}\nasync function register(username, password) {\n    const res = await (0,_utils_clientRequest__WEBPACK_IMPORTED_MODULE_2__.request)(\"/api/authentication/register\", {\n        method: \"POST\",\n        body: JSON.stringify({\n            username,\n            password\n        }),\n        headers: {\n            \"Content-Type\": \"application/json\"\n        }\n    });\n    return res;\n}\n\n__webpack_async_result__();\n} catch(e) { __webpack_async_result__(e); } });//# sourceURL=[module]\n//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoiLi9zdG9yZS9hdXRoZW50aWNhdGlvbi50cy5qcyIsIm1hcHBpbmdzIjoiOzs7Ozs7Ozs7Ozs7O0FBQ2lDO0FBQ1k7QUFDRztBQUNNO0FBSS9DLE1BQU1JLHlCQUF5QkosK0NBQU1BLENBQU1DLDJEQUFPQSxDQUNyRCxDQUFDSSxNQUFTO1FBQ05DLE9BQU87UUFDUEMsVUFBVSxDQUFDRCxRQUFrQkQsSUFBSTtnQkFBRUM7WUFBTTtJQUM3QyxJQUNBO0lBQ0lFLE1BQU1MLCtEQUFpQkE7QUFDM0IsSUFDRjtBQU1LLGVBQWVNLE1BQU1DLFFBQWdCLEVBQUVDLFFBQWdCLEVBQUU7SUFDNUQsTUFBTUMsTUFBVyxNQUFNViw2REFBT0EsQ0FBQyw2QkFBNkI7UUFDeERXLFFBQVE7UUFDUkMsTUFBTUMsS0FBS0MsU0FBUyxDQUFDO1lBQUVOO1lBQVVDO1FBQVM7UUFDMUNNLFNBQVM7WUFDTCxnQkFBZ0I7UUFDcEI7SUFDSjtJQUNBLE9BQU9MO0FBQ1gsQ0FBQztBQUdNLGVBQWVNLFNBQVNSLFFBQWdCLEVBQUVDLFFBQWdCLEVBQUU7SUFDL0QsTUFBTUMsTUFBVyxNQUFNViw2REFBT0EsQ0FBQyxnQ0FBZ0M7UUFDM0RXLFFBQVE7UUFDUkMsTUFBTUMsS0FBS0MsU0FBUyxDQUFDO1lBQUVOO1lBQVVDO1FBQVM7UUFDMUNNLFNBQVM7WUFDTCxnQkFBZ0I7UUFDcEI7SUFDSjtJQUNBLE9BQU9MO0FBQ1gsQ0FBQyIsInNvdXJjZXMiOlsid2VicGFjazovL2FnZW50Y3JhZnQtdWkvLi9zdG9yZS9hdXRoZW50aWNhdGlvbi50cz8yY2E1Il0sInNvdXJjZXNDb250ZW50IjpbIlxuaW1wb3J0IHsgY3JlYXRlIH0gZnJvbSBcInp1c3RhbmRcIjtcbmltcG9ydCB7IHBlcnNpc3QgfSBmcm9tIFwienVzdGFuZC9taWRkbGV3YXJlXCI7XG5pbXBvcnQgeyByZXF1ZXN0IH0gZnJvbSAnQC91dGlscy9jbGllbnRSZXF1ZXN0JztcbmltcG9ydCB7IEFHRU5UX0NSQUZUX1RPS0VOIH0gZnJvbSAnQC9jb25zdGFudHMvaW5kZXgnO1xuXG5cblxuZXhwb3J0IGNvbnN0IHVzZUF1dGhlbnRpY2F0aW9uU3RvcmUgPSBjcmVhdGU8YW55PihwZXJzaXN0KFxuICAgIChzZXQpID0+ICh7XG4gICAgICAgIHRva2VuOiAnJyxcbiAgICAgICAgc2V0VG9rZW46ICh0b2tlbjogc3RyaW5nKSA9PiBzZXQoeyB0b2tlbiB9KSxcbiAgICB9KSxcbiAgICB7XG4gICAgICAgIG5hbWU6IEFHRU5UX0NSQUZUX1RPS0VOLFxuICAgIH1cbikpXG5cblxuXG5cblxuZXhwb3J0IGFzeW5jIGZ1bmN0aW9uIGxvZ2luKHVzZXJuYW1lOiBzdHJpbmcsIHBhc3N3b3JkOiBzdHJpbmcpIHtcbiAgICBjb25zdCByZXM6IGFueSA9IGF3YWl0IHJlcXVlc3QoXCIvYXBpL2F1dGhlbnRpY2F0aW9uL2xvZ2luXCIsIHtcbiAgICAgICAgbWV0aG9kOiAnUE9TVCcsIFxuICAgICAgICBib2R5OiBKU09OLnN0cmluZ2lmeSh7IHVzZXJuYW1lLCBwYXNzd29yZCB9KSwgXG4gICAgICAgIGhlYWRlcnM6IHtcbiAgICAgICAgICAgIFwiQ29udGVudC1UeXBlXCI6IFwiYXBwbGljYXRpb24vanNvblwiLFxuICAgICAgICB9XG4gICAgfSk7XG4gICAgcmV0dXJuIHJlcztcbn1cblxuXG5leHBvcnQgYXN5bmMgZnVuY3Rpb24gcmVnaXN0ZXIodXNlcm5hbWU6IHN0cmluZywgcGFzc3dvcmQ6IHN0cmluZykge1xuICAgIGNvbnN0IHJlczogYW55ID0gYXdhaXQgcmVxdWVzdChcIi9hcGkvYXV0aGVudGljYXRpb24vcmVnaXN0ZXJcIiwge1xuICAgICAgICBtZXRob2Q6ICdQT1NUJywgXG4gICAgICAgIGJvZHk6IEpTT04uc3RyaW5naWZ5KHsgdXNlcm5hbWUsIHBhc3N3b3JkIH0pLCBcbiAgICAgICAgaGVhZGVyczoge1xuICAgICAgICAgICAgXCJDb250ZW50LVR5cGVcIjogXCJhcHBsaWNhdGlvbi9qc29uXCIsXG4gICAgICAgIH1cbiAgICB9KTtcbiAgICByZXR1cm4gcmVzO1xufSJdLCJuYW1lcyI6WyJjcmVhdGUiLCJwZXJzaXN0IiwicmVxdWVzdCIsIkFHRU5UX0NSQUZUX1RPS0VOIiwidXNlQXV0aGVudGljYXRpb25TdG9yZSIsInNldCIsInRva2VuIiwic2V0VG9rZW4iLCJuYW1lIiwibG9naW4iLCJ1c2VybmFtZSIsInBhc3N3b3JkIiwicmVzIiwibWV0aG9kIiwiYm9keSIsIkpTT04iLCJzdHJpbmdpZnkiLCJoZWFkZXJzIiwicmVnaXN0ZXIiXSwic291cmNlUm9vdCI6IiJ9\n//# sourceURL=webpack-internal:///./store/authentication.ts\n");
+
+/***/ }),
+
+/***/ "./store/user.ts":
+/*!***********************!*\
+  !*** ./store/user.ts ***!
+  \***********************/
+/***/ ((module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+eval("__webpack_require__.a(module, async (__webpack_handle_async_dependencies__, __webpack_async_result__) => { try {\n__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"getUserInfo\": () => (/* binding */ getUserInfo),\n/* harmony export */   \"useUserStore\": () => (/* binding */ useUserStore)\n/* harmony export */ });\n/* harmony import */ var zustand__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! zustand */ \"zustand\");\n/* harmony import */ var zustand_middleware__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! zustand/middleware */ \"zustand/middleware\");\n/* harmony import */ var _utils_clientRequest__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @/utils/clientRequest */ \"./utils/clientRequest.ts\");\nvar __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([zustand__WEBPACK_IMPORTED_MODULE_0__, zustand_middleware__WEBPACK_IMPORTED_MODULE_1__, _utils_clientRequest__WEBPACK_IMPORTED_MODULE_2__]);\n([zustand__WEBPACK_IMPORTED_MODULE_0__, zustand_middleware__WEBPACK_IMPORTED_MODULE_1__, _utils_clientRequest__WEBPACK_IMPORTED_MODULE_2__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);\n\n\n\nconst useUserStore = (0,zustand__WEBPACK_IMPORTED_MODULE_0__.create)()((0,zustand_middleware__WEBPACK_IMPORTED_MODULE_1__.devtools)((set)=>({\n        userInfo: {\n            username: \"\",\n            created: \"\"\n        },\n        setUserInfo: (userInfo)=>set((_state)=>({\n                    userInfo\n                }))\n    })));\nasync function getUserInfo() {\n    const state = useUserStore.getState();\n    const res = await (0,_utils_clientRequest__WEBPACK_IMPORTED_MODULE_2__.request)(\"/api/user\");\n    const userInfo = await res.data;\n    if (userInfo) {\n        state.setUserInfo(userInfo);\n    }\n}\n\n__webpack_async_result__();\n} catch(e) { __webpack_async_result__(e); } });//# sourceURL=[module]\n//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoiLi9zdG9yZS91c2VyLnRzLmpzIiwibWFwcGluZ3MiOiI7Ozs7Ozs7Ozs7O0FBQ2lDO0FBQ2E7QUFDRTtBQWF6QyxNQUFNRyxlQUFlSCwrQ0FBTUEsR0FBY0MsNERBQVFBLENBQUMsQ0FBQ0csTUFBUztRQUMvREMsVUFBVTtZQUFFQyxVQUFVO1lBQUlDLFNBQVM7UUFBRztRQUN0Q0MsYUFBYSxDQUFDSCxXQUF1QkQsSUFBSSxDQUFDSyxTQUFpQjtvQkFBRUo7Z0JBQVM7SUFDMUUsS0FBSztBQUdFLGVBQWVLLGNBQWM7SUFDaEMsTUFBTUMsUUFBUVIsYUFBYVMsUUFBUTtJQUNuQyxNQUFNQyxNQUFNLE1BQU1YLDZEQUFPQSxDQUFDO0lBQzFCLE1BQU1HLFdBQVcsTUFBTVEsSUFBSUMsSUFBSTtJQUMvQixJQUFJVCxVQUFVO1FBQ1ZNLE1BQU1ILFdBQVcsQ0FBQ0g7SUFDdEIsQ0FBQztBQUVMLENBQUMiLCJzb3VyY2VzIjpbIndlYnBhY2s6Ly9hZ2VudGNyYWZ0LXVpLy4vc3RvcmUvdXNlci50cz9hNDc0Il0sInNvdXJjZXNDb250ZW50IjpbIlxuaW1wb3J0IHsgY3JlYXRlIH0gZnJvbSBcInp1c3RhbmRcIjtcbmltcG9ydCB7IGRldnRvb2xzIH0gZnJvbSBcInp1c3RhbmQvbWlkZGxld2FyZVwiO1xuaW1wb3J0IHsgcmVxdWVzdCB9IGZyb20gJ0AvdXRpbHMvY2xpZW50UmVxdWVzdCc7XG5cbmV4cG9ydCBpbnRlcmZhY2UgVXNlckluZm8ge1xuICAgIHVzZXJuYW1lOiBzdHJpbmcsXG4gICAgY3JlYXRlZDogc3RyaW5nXG59XG5pbnRlcmZhY2UgVXNlclN0b3JlIHtcbiAgICB1c2VySW5mbzogVXNlckluZm8sXG4gICAgc2V0VXNlckluZm86ICh1c2VySW5mbzogVXNlckluZm8pID0+IHZvaWRcblxuXG59XG5cbmV4cG9ydCBjb25zdCB1c2VVc2VyU3RvcmUgPSBjcmVhdGU8VXNlclN0b3JlPigpKGRldnRvb2xzKChzZXQpID0+ICh7XG4gICAgdXNlckluZm86IHsgdXNlcm5hbWU6ICcnLCBjcmVhdGVkOiAnJyB9LFxuICAgIHNldFVzZXJJbmZvOiAodXNlckluZm86IFVzZXJJbmZvKSA9PiBzZXQoKF9zdGF0ZTogYW55KSA9PiAoeyB1c2VySW5mbyB9KSlcbn0pKSk7XG5cblxuZXhwb3J0IGFzeW5jIGZ1bmN0aW9uIGdldFVzZXJJbmZvKCkge1xuICAgIGNvbnN0IHN0YXRlID0gdXNlVXNlclN0b3JlLmdldFN0YXRlKCk7XG4gICAgY29uc3QgcmVzID0gYXdhaXQgcmVxdWVzdChcIi9hcGkvdXNlclwiKTtcbiAgICBjb25zdCB1c2VySW5mbyA9IGF3YWl0IHJlcy5kYXRhO1xuICAgIGlmICh1c2VySW5mbykge1xuICAgICAgICBzdGF0ZS5zZXRVc2VySW5mbyh1c2VySW5mbyk7XG4gICAgfVxuXG59XG5cbiJdLCJuYW1lcyI6WyJjcmVhdGUiLCJkZXZ0b29scyIsInJlcXVlc3QiLCJ1c2VVc2VyU3RvcmUiLCJzZXQiLCJ1c2VySW5mbyIsInVzZXJuYW1lIiwiY3JlYXRlZCIsInNldFVzZXJJbmZvIiwiX3N0YXRlIiwiZ2V0VXNlckluZm8iLCJzdGF0ZSIsImdldFN0YXRlIiwicmVzIiwiZGF0YSJdLCJzb3VyY2VSb290IjoiIn0=\n//# sourceURL=webpack-internal:///./store/user.ts\n");
+
+/***/ }),
+
+/***/ "./types/httpStatus.ts":
+/*!*****************************!*\
+  !*** ./types/httpStatus.ts ***!
+  \*****************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"HTTP_STATUS\": () => (/* binding */ HTTP_STATUS)\n/* harmony export */ });\nconst HTTP_STATUS = {\n    OK: 200,\n    CREATED: 201,\n    ACCEPTED: 202,\n    NO_CONTENT: 204,\n    BAD_REQUEST: 400,\n    UNAUTHORIZED: 401,\n    FORBIDDEN: 403,\n    NOT_FOUND: 404,\n    CONFLICT: 409,\n    GONE: 410,\n    UNSUPPORTED_MEDIA_TYPE: 415,\n    INTERNAL_SERVER_ERROR: 500,\n    NOT_IMPLEMENTED: 501,\n    BAD_GATEWAY: 502,\n    SERVICE_UNAVAILABLE: 503,\n    GATEWAY_TIMEOUT: 504\n};\n//# sourceURL=[module]\n//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoiLi90eXBlcy9odHRwU3RhdHVzLnRzLmpzIiwibWFwcGluZ3MiOiI7Ozs7QUFBTyxNQUFNQSxjQUFjO0lBQ3ZCQyxJQUFJO0lBQ0pDLFNBQVM7SUFDVEMsVUFBVTtJQUNWQyxZQUFZO0lBQ1pDLGFBQWE7SUFDYkMsY0FBYztJQUNkQyxXQUFXO0lBQ1hDLFdBQVc7SUFDWEMsVUFBVTtJQUNWQyxNQUFNO0lBQ05DLHdCQUF3QjtJQUN4QkMsdUJBQXVCO0lBQ3ZCQyxpQkFBaUI7SUFDakJDLGFBQWE7SUFDYkMscUJBQXFCO0lBQ3JCQyxpQkFBaUI7QUFDckIsRUFBRSIsInNvdXJjZXMiOlsid2VicGFjazovL2FnZW50Y3JhZnQtdWkvLi90eXBlcy9odHRwU3RhdHVzLnRzPzk0YmQiXSwic291cmNlc0NvbnRlbnQiOlsiZXhwb3J0IGNvbnN0IEhUVFBfU1RBVFVTID0ge1xuICAgIE9LOiAyMDAsXG4gICAgQ1JFQVRFRDogMjAxLFxuICAgIEFDQ0VQVEVEOiAyMDIsXG4gICAgTk9fQ09OVEVOVDogMjA0LFxuICAgIEJBRF9SRVFVRVNUOiA0MDAsXG4gICAgVU5BVVRIT1JJWkVEOiA0MDEsXG4gICAgRk9SQklEREVOOiA0MDMsXG4gICAgTk9UX0ZPVU5EOiA0MDQsXG4gICAgQ09ORkxJQ1Q6IDQwOSxcbiAgICBHT05FOiA0MTAsXG4gICAgVU5TVVBQT1JURURfTUVESUFfVFlQRTogNDE1LFxuICAgIElOVEVSTkFMX1NFUlZFUl9FUlJPUjogNTAwLFxuICAgIE5PVF9JTVBMRU1FTlRFRDogNTAxLFxuICAgIEJBRF9HQVRFV0FZOiA1MDIsXG4gICAgU0VSVklDRV9VTkFWQUlMQUJMRTogNTAzLFxuICAgIEdBVEVXQVlfVElNRU9VVDogNTA0LFxufTtcblxuZXhwb3J0IGludGVyZmFjZSBSZXNwb25zZURhdGEge1xuICAgIGNvZGU6IG51bWJlcjtcbiAgICBtZXNzYWdlOiBzdHJpbmc7XG4gICAgZGF0YT86IGFueTtcbiAgICB0b3RhbD86IG51bWJlcjtcbn1cblxuIl0sIm5hbWVzIjpbIkhUVFBfU1RBVFVTIiwiT0siLCJDUkVBVEVEIiwiQUNDRVBURUQiLCJOT19DT05URU5UIiwiQkFEX1JFUVVFU1QiLCJVTkFVVEhPUklaRUQiLCJGT1JCSURERU4iLCJOT1RfRk9VTkQiLCJDT05GTElDVCIsIkdPTkUiLCJVTlNVUFBPUlRFRF9NRURJQV9UWVBFIiwiSU5URVJOQUxfU0VSVkVSX0VSUk9SIiwiTk9UX0lNUExFTUVOVEVEIiwiQkFEX0dBVEVXQVkiLCJTRVJWSUNFX1VOQVZBSUxBQkxFIiwiR0FURVdBWV9USU1FT1VUIl0sInNvdXJjZVJvb3QiOiIifQ==\n//# sourceURL=webpack-internal:///./types/httpStatus.ts\n");
+
+/***/ }),
+
+/***/ "./utils/clientRequest.ts":
+/*!********************************!*\
+  !*** ./utils/clientRequest.ts ***!
+  \********************************/
+/***/ ((module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+eval("__webpack_require__.a(module, async (__webpack_handle_async_dependencies__, __webpack_async_result__) => { try {\n__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"request\": () => (/* binding */ request)\n/* harmony export */ });\n/* harmony import */ var _types_httpStatus__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @/types/httpStatus */ \"./types/httpStatus.ts\");\n/* harmony import */ var next_router__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! next/router */ \"next/router\");\n/* harmony import */ var next_router__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(next_router__WEBPACK_IMPORTED_MODULE_1__);\n/* harmony import */ var _store_authentication__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @/store/authentication */ \"./store/authentication.ts\");\nvar __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_store_authentication__WEBPACK_IMPORTED_MODULE_2__]);\n_store_authentication__WEBPACK_IMPORTED_MODULE_2__ = (__webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__)[0];\n\n\n\nasync function request(url, data) {\n    const { token  } = _store_authentication__WEBPACK_IMPORTED_MODULE_2__.useAuthenticationStore.getState();\n    if (!data) {\n        data = {\n            method: \"GET\",\n            headers: {\n                \"Content-Type\": \"application/json\"\n            }\n        };\n    }\n    if (token) {\n        data.headers[\"Authorization\"] = `Bearer ${token || \"\"}`;\n    }\n    const res = await fetch(url, data);\n    const result = await res.json();\n    if (result.code === _types_httpStatus__WEBPACK_IMPORTED_MODULE_0__.HTTP_STATUS.UNAUTHORIZED) {\n        next_router__WEBPACK_IMPORTED_MODULE_1___default().push(\"/login\");\n    }\n    return result;\n}\n\n__webpack_async_result__();\n} catch(e) { __webpack_async_result__(e); } });//# sourceURL=[module]\n//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoiLi91dGlscy9jbGllbnRSZXF1ZXN0LnRzLmpzIiwibWFwcGluZ3MiOiI7Ozs7Ozs7Ozs7O0FBRytEO0FBQzlCO0FBQytCO0FBQ3pELGVBQWVHLFFBQVFDLEdBQVcsRUFBRUMsSUFBVSxFQUF5QjtJQUMxRSxNQUFNLEVBQUVDLE1BQUssRUFBRSxHQUFHSixrRkFBK0I7SUFDakQsSUFBSSxDQUFDRyxNQUFNO1FBQ1BBLE9BQU87WUFDSEcsUUFBUTtZQUNSQyxTQUFTO2dCQUNMLGdCQUFnQjtZQUNwQjtRQUNKO0lBQ0osQ0FBQztJQUNELElBQUlILE9BQU87UUFDUEQsS0FBS0ksT0FBTyxDQUFDLGdCQUFnQixHQUFHLENBQUMsT0FBTyxFQUFFSCxTQUFTLEdBQUcsQ0FBQztJQUMzRCxDQUFDO0lBQ0QsTUFBTUksTUFBTSxNQUFNQyxNQUFNUCxLQUFLQztJQUM3QixNQUFNTyxTQUF1QixNQUFNRixJQUFJRyxJQUFJO0lBQzNDLElBQUlELE9BQU9FLElBQUksS0FBS2QsdUVBQXdCLEVBQUU7UUFDMUNDLHVEQUFXLENBQUM7SUFDaEIsQ0FBQztJQUNELE9BQU9XO0FBQ1gsQ0FBQyIsInNvdXJjZXMiOlsid2VicGFjazovL2FnZW50Y3JhZnQtdWkvLi91dGlscy9jbGllbnRSZXF1ZXN0LnRzPzI0ODAiXSwic291cmNlc0NvbnRlbnQiOlsiXG5cblxuaW1wb3J0IHsgUmVzcG9uc2VEYXRhLCBIVFRQX1NUQVRVUyB9IGZyb20gJ0AvdHlwZXMvaHR0cFN0YXR1cyc7XG5pbXBvcnQgUm91dGVyIGZyb20gXCJuZXh0L3JvdXRlclwiO1xuaW1wb3J0IHsgdXNlQXV0aGVudGljYXRpb25TdG9yZSB9IGZyb20gJ0Avc3RvcmUvYXV0aGVudGljYXRpb24nO1xuZXhwb3J0IGFzeW5jIGZ1bmN0aW9uIHJlcXVlc3QodXJsOiBzdHJpbmcsIGRhdGE/OiBhbnkpOiBQcm9taXNlPFJlc3BvbnNlRGF0YT4ge1xuICAgIGNvbnN0IHsgdG9rZW4gfSA9IHVzZUF1dGhlbnRpY2F0aW9uU3RvcmUuZ2V0U3RhdGUoKTtcbiAgICBpZiAoIWRhdGEpIHtcbiAgICAgICAgZGF0YSA9IHtcbiAgICAgICAgICAgIG1ldGhvZDogJ0dFVCcsXG4gICAgICAgICAgICBoZWFkZXJzOiB7XG4gICAgICAgICAgICAgICAgJ0NvbnRlbnQtVHlwZSc6ICdhcHBsaWNhdGlvbi9qc29uJ1xuICAgICAgICAgICAgfVxuICAgICAgICB9XG4gICAgfVxuICAgIGlmICh0b2tlbikge1xuICAgICAgICBkYXRhLmhlYWRlcnNbJ0F1dGhvcml6YXRpb24nXSA9IGBCZWFyZXIgJHt0b2tlbiB8fCAnJ31gO1xuICAgIH1cbiAgICBjb25zdCByZXMgPSBhd2FpdCBmZXRjaCh1cmwsIGRhdGEpO1xuICAgIGNvbnN0IHJlc3VsdDogUmVzcG9uc2VEYXRhID0gYXdhaXQgcmVzLmpzb24oKTtcbiAgICBpZiAocmVzdWx0LmNvZGUgPT09IEhUVFBfU1RBVFVTLlVOQVVUSE9SSVpFRCkge1xuICAgICAgICBSb3V0ZXIucHVzaCgnL2xvZ2luJyk7XG4gICAgfVxuICAgIHJldHVybiByZXN1bHQ7XG59XG4iXSwibmFtZXMiOlsiSFRUUF9TVEFUVVMiLCJSb3V0ZXIiLCJ1c2VBdXRoZW50aWNhdGlvblN0b3JlIiwicmVxdWVzdCIsInVybCIsImRhdGEiLCJ0b2tlbiIsImdldFN0YXRlIiwibWV0aG9kIiwiaGVhZGVycyIsInJlcyIsImZldGNoIiwicmVzdWx0IiwianNvbiIsImNvZGUiLCJVTkFVVEhPUklaRUQiLCJwdXNoIl0sInNvdXJjZVJvb3QiOiIifQ==\n//# sourceURL=webpack-internal:///./utils/clientRequest.ts\n");
+
+/***/ }),
+
+/***/ "./styles/global.scss":
+/*!****************************!*\
+  !*** ./styles/global.scss ***!
+  \****************************/
 /***/ (() => {
 
 
 
 /***/ }),
 
-/***/ 2247:
+/***/ "@mantine/core":
+/*!********************************!*\
+  !*** external "@mantine/core" ***!
+  \********************************/
 /***/ ((module) => {
 
 "use strict";
@@ -528,7 +142,10 @@ module.exports = require("@mantine/core");
 
 /***/ }),
 
-/***/ 1280:
+/***/ "@mantine/modals":
+/*!**********************************!*\
+  !*** external "@mantine/modals" ***!
+  \**********************************/
 /***/ ((module) => {
 
 "use strict";
@@ -536,7 +153,10 @@ module.exports = require("@mantine/modals");
 
 /***/ }),
 
-/***/ 2236:
+/***/ "@tabler/icons-react":
+/*!**************************************!*\
+  !*** external "@tabler/icons-react" ***!
+  \**************************************/
 /***/ ((module) => {
 
 "use strict";
@@ -544,7 +164,10 @@ module.exports = require("@tabler/icons-react");
 
 /***/ }),
 
-/***/ 968:
+/***/ "next/head":
+/*!****************************!*\
+  !*** external "next/head" ***!
+  \****************************/
 /***/ ((module) => {
 
 "use strict";
@@ -552,7 +175,10 @@ module.exports = require("next/head");
 
 /***/ }),
 
-/***/ 1853:
+/***/ "next/router":
+/*!******************************!*\
+  !*** external "next/router" ***!
+  \******************************/
 /***/ ((module) => {
 
 "use strict";
@@ -560,7 +186,10 @@ module.exports = require("next/router");
 
 /***/ }),
 
-/***/ 6689:
+/***/ "react":
+/*!************************!*\
+  !*** external "react" ***!
+  \************************/
 /***/ ((module) => {
 
 "use strict";
@@ -568,15 +197,21 @@ module.exports = require("react");
 
 /***/ }),
 
-/***/ 997:
+/***/ "react/jsx-dev-runtime":
+/*!****************************************!*\
+  !*** external "react/jsx-dev-runtime" ***!
+  \****************************************/
 /***/ ((module) => {
 
 "use strict";
-module.exports = require("react/jsx-runtime");
+module.exports = require("react/jsx-dev-runtime");
 
 /***/ }),
 
-/***/ 6912:
+/***/ "zustand":
+/*!**************************!*\
+  !*** external "zustand" ***!
+  \**************************/
 /***/ ((module) => {
 
 "use strict";
@@ -584,7 +219,10 @@ module.exports = import("zustand");;
 
 /***/ }),
 
-/***/ 3602:
+/***/ "zustand/middleware":
+/*!*************************************!*\
+  !*** external "zustand/middleware" ***!
+  \*************************************/
 /***/ ((module) => {
 
 "use strict";
@@ -599,7 +237,7 @@ module.exports = import("zustand/middleware");;
 var __webpack_require__ = require("../webpack-runtime.js");
 __webpack_require__.C(exports);
 var __webpack_exec__ = (moduleId) => (__webpack_require__(__webpack_require__.s = moduleId))
-var __webpack_exports__ = __webpack_require__.X(0, [6766], () => (__webpack_exec__(5656)));
+var __webpack_exports__ = (__webpack_exec__("./pages/_app.tsx"));
 module.exports = __webpack_exports__;
 
 })();
