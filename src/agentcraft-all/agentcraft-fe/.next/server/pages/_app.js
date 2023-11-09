@@ -35,14 +35,14 @@ const ALIBABACLOUD_POSTGRESQL_TUTORIAL = `# 数据库获取实践教程
 
 **选择”RDS PostgreSQL Serverless“**
 
-![image](//alidocs.oss-cn-zhangjiakou.aliyuncs.com/res/3M0Ozwjm2eeYlzeE/img/38ae4820-2291-4583-9ca9-df897430af87.png)
+![image](//img.alicdn.com/imgextra/i4/O1CN01KIbxFu1MIHkEEpUDj_!!6000000001411-0-tps-3498-1828.jpg)
 
 老用户可以访问[快速创建](//rdsbuy.console.aliyun.com/fastCreate)
 ## 数据库创建
 
 ### 创建数据库实例 
 #### 注意这里是Postgresql Serverless类型
-![image](//alidocs.oss-cn-zhangjiakou.aliyuncs.com/res/3M0Ozwjm2eeYlzeE/img/ac313cbc-9864-4945-bd07-721a64cf872d.png)
+![image](//img.alicdn.com/imgextra/i1/O1CN01Xgn67Q1ZQbwxhzzOB_!!6000000003189-0-tps-1678-1842.jpg)
 
 ### 注意：
 + 创建vpc的时候最好保持跟当前服务的vpc一致
@@ -55,53 +55,53 @@ const ALIBABACLOUD_POSTGRESQL_TUTORIAL = `# 数据库获取实践教程
 + **选择的可用区是:K**
 
 
-![image](//alidocs.oss-cn-zhangjiakou.aliyuncs.com/res/3M0Ozwjm2eeYlzeE/img/da06561c-711a-40b9-8579-951b74b0ff95.png)
+![image](//img.alicdn.com/imgextra/i3/O1CN01pjv4jx1zpVUMJjZ7l_!!6000000006763-0-tps-1668-1852.jpg)
 
-![image](//alidocs.oss-cn-zhangjiakou.aliyuncs.com/res/3M0Ozwjm2eeYlzeE/img/1f2b443e-a7a0-47e6-90b3-09719e64dfa3.png)
+![image](//img.alicdn.com/imgextra/i3/O1CN01qVaFvT1ZB2Tysrgu1_!!6000000003155-0-tps-3540-1842.jpg)
 
 进入控制台等待实例启动 
 
-![image](//alidocs.oss-cn-zhangjiakou.aliyuncs.com/res/3M0Ozwjm2eeYlzeE/img/4a92fc9e-499c-445b-b273-43a66c39d88a.png)
+![image](//img.alicdn.com/imgextra/i2/O1CN015UrP3y28SuUMmjbMf_!!6000000007932-0-tps-3558-1722.jpg)
 
 ### 创建数据库 
 
-![image](//alidocs.oss-cn-zhangjiakou.aliyuncs.com/res/3M0Ozwjm2eeYlzeE/img/55f4970b-eb6f-45f8-b188-c0f47e3c466f.png)
+![image](//img.alicdn.com/imgextra/i4/O1CN01OOS1QR1zJuA4P2KLC_!!6000000006694-0-tps-3522-1422.jpg)
 
-![image](//alidocs.oss-cn-zhangjiakou.aliyuncs.com/res/3M0Ozwjm2eeYlzeE/img/8156e7c9-8e46-44d7-abb4-2f270cdb8d73.png)
+![image](//img.alicdn.com/imgextra/i1/O1CN01MCvyQV1J6t2c4oRlH_!!6000000000980-0-tps-3542-1850.jpg)
 
-![image](//alidocs.oss-cn-zhangjiakou.aliyuncs.com/res/3M0Ozwjm2eeYlzeE/img/ffbf5c7d-bf75-4e63-a71c-4754d33f06f0.png)
+![image](//img.alicdn.com/imgextra/i3/O1CN01d2lsUT27wOMsvnbPa_!!6000000007861-0-tps-3502-1226.jpg)
 
 ### 创建管理账号
 
-![image](//alidocs.oss-cn-zhangjiakou.aliyuncs.com/res/3M0Ozwjm2eeYlzeE/img/3afd1698-654e-490c-8fef-666180bdc228.png)
+![image](//img.alicdn.com/imgextra/i3/O1CN01cEewJA28vlRUoSK6V_!!6000000007995-0-tps-3466-1450.jpg)
 
 注意选择高权限账号
 
-![image](//alidocs.oss-cn-zhangjiakou.aliyuncs.com/res/3M0Ozwjm2eeYlzeE/img/97f0b2f4-1c11-40cd-80ce-7150be363e88.png)
+![image](//img.alicdn.com/imgextra/i1/O1CN012WgalA1kLXKoqWmiu_!!6000000004667-0-tps-3380-1642.jpg)
 
 ### 数据库连接测试
 
-![image](//alidocs.oss-cn-zhangjiakou.aliyuncs.com/res/3M0Ozwjm2eeYlzeE/img/846b2e73-5bc3-46d7-b668-ffc39307676e.png)
+![image](//img.alicdn.com/imgextra/i3/O1CN01pD2lR626rywIkw6Eu_!!6000000007716-0-tps-3514-1158.jpg)
 
-![image](//alidocs.oss-cn-zhangjiakou.aliyuncs.com/res/3M0Ozwjm2eeYlzeE/img/342ca780-047c-4e05-a545-7be56d09c10a.png)
+![image](//img.alicdn.com/imgextra/i4/O1CN01YPNEZC1Ddxx3r0ch9_!!6000000000240-0-tps-3468-1716.jpg)
 
-![image](//alidocs.oss-cn-zhangjiakou.aliyuncs.com/res/3M0Ozwjm2eeYlzeE/img/5f90cd8d-92b3-45f0-9dc8-5b80097c3955.png)
+![image](//img.alicdn.com/imgextra/i1/O1CN01FBkzpE253lu5Zi4xN_!!6000000007471-0-tps-2758-1550.jpg)
 
 ### 开通vector插件，并且准备好配置项
 
-![image](//alidocs.oss-cn-zhangjiakou.aliyuncs.com/res/3M0Ozwjm2eeYlzeE/img/33a4eb6a-1fce-49a6-bd62-0c0125223040.png)
+![image](//img.alicdn.com/imgextra/i2/O1CN01LgKO1J244OpZ7Tdm4_!!6000000007337-0-tps-3536-1728.jpg)
 
 ## 最终配置
 
 ### 数据库连接地址 
 
-![image](//alidocs.oss-cn-zhangjiakou.aliyuncs.com/res/3M0Ozwjm2eeYlzeE/img/d0188e29-0ddf-4fdc-9c10-6822cdf0edcd.png)
+![image](//img.alicdn.com/imgextra/i2/O1CN01FWVxkg1yVyzP5ZxrG_!!6000000006585-0-tps-1476-432.jpg)
 
-![image](//alidocs.oss-cn-zhangjiakou.aliyuncs.com/res/3M0Ozwjm2eeYlzeE/img/8dfb6eb8-9d72-4042-be64-836428e25a08.png)
+![image](//img.alicdn.com/imgextra/i4/O1CN01WVXB3K205zkJxWzGs_!!6000000006799-0-tps-3546-990.jpg)
 
 ### 数据库名
 
-![image](//alidocs.oss-cn-zhangjiakou.aliyuncs.com/res/3M0Ozwjm2eeYlzeE/img/38053222-2c90-4e79-9ebd-d91f9376bcb6.png)
+![image](//img.alicdn.com/imgextra/i4/O1CN01Ra3bpd21J6hegBqfz_!!6000000006963-0-tps-3514-454.jpg)
 
 ### 数据库账号 
 

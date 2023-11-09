@@ -1,6 +1,6 @@
 
 import * as $OpenApi from '@alicloud/openapi-client';
-import { DescribeVpcsRequest ,CreateVSwitchRequest} from '@alicloud/vpc20160428';
+import { DescribeVpcsRequest ,CreateVSwitchRequest } from '@alicloud/vpc20160428';
 import * as $Util from '@alicloud/tea-util';
 import VpcClient from "./vpcClient";
 
