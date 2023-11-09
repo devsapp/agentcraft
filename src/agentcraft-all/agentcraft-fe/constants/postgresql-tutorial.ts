@@ -4,13 +4,13 @@ export const ALIBABACLOUD_POSTGRESQL_TUTORIAL=`# 数据库获取实践教程
 
 ## 数据库资源领取 （1分钟）
 
-新用户建议先领取免费额度，[点击进入freetair](https://free.aliyun.com/?product=9564560&crowd=personal&spm=5176.28055625.J_4VYgf18xNlTAyFFbOuOQe.173.e939154aVMAc9G&scm=20140722.M_9489724._.V_1)
+新用户建议先领取免费额度，[点击进入freetair](//free.aliyun.com/?product=9564560&crowd=personal&spm=5176.28055625.J_4VYgf18xNlTAyFFbOuOQe.173.e939154aVMAc9G&scm=20140722.M_9489724._.V_1)
 
 **选择”RDS PostgreSQL Serverless“**
 
-![image](https://alidocs.oss-cn-zhangjiakou.aliyuncs.com/res/3M0Ozwjm2eeYlzeE/img/38ae4820-2291-4583-9ca9-df897430af87.png)
+![image](//alidocs.oss-cn-zhangjiakou.aliyuncs.com/res/3M0Ozwjm2eeYlzeE/img/38ae4820-2291-4583-9ca9-df897430af87.png)
 
-老用户可以访问[快速创建](https://rdsbuy.console.aliyun.com/fastCreate)
+老用户可以访问[快速创建](//rdsbuy.console.aliyun.com/fastCreate)
 ## 数据库创建
 
 ### 创建数据库实例 
@@ -34,19 +34,19 @@ export const ALIBABACLOUD_POSTGRESQL_TUTORIAL=`# 数据库获取实践教程
 
 进入控制台等待实例启动 
 
-![image](https://alidocs.oss-cn-zhangjiakou.aliyuncs.com/res/3M0Ozwjm2eeYlzeE/img/4a92fc9e-499c-445b-b273-43a66c39d88a.png)
+![image](//alidocs.oss-cn-zhangjiakou.aliyuncs.com/res/3M0Ozwjm2eeYlzeE/img/4a92fc9e-499c-445b-b273-43a66c39d88a.png)
 
 ### 创建数据库 
 
 ![image](//alidocs.oss-cn-zhangjiakou.aliyuncs.com/res/3M0Ozwjm2eeYlzeE/img/55f4970b-eb6f-45f8-b188-c0f47e3c466f.png)
 
-![image](https://alidocs.oss-cn-zhangjiakou.aliyuncs.com/res/3M0Ozwjm2eeYlzeE/img/8156e7c9-8e46-44d7-abb4-2f270cdb8d73.png)
+![image](//alidocs.oss-cn-zhangjiakou.aliyuncs.com/res/3M0Ozwjm2eeYlzeE/img/8156e7c9-8e46-44d7-abb4-2f270cdb8d73.png)
 
 ![image](//alidocs.oss-cn-zhangjiakou.aliyuncs.com/res/3M0Ozwjm2eeYlzeE/img/ffbf5c7d-bf75-4e63-a71c-4754d33f06f0.png)
 
 ### 创建管理账号
 
-![image](https://alidocs.oss-cn-zhangjiakou.aliyuncs.com/res/3M0Ozwjm2eeYlzeE/img/3afd1698-654e-490c-8fef-666180bdc228.png)
+![image](//alidocs.oss-cn-zhangjiakou.aliyuncs.com/res/3M0Ozwjm2eeYlzeE/img/3afd1698-654e-490c-8fef-666180bdc228.png)
 
 注意选择高权限账号
 
@@ -74,7 +74,7 @@ export const ALIBABACLOUD_POSTGRESQL_TUTORIAL=`# 数据库获取实践教程
 
 ### 数据库名
 
-![image](https://alidocs.oss-cn-zhangjiakou.aliyuncs.com/res/3M0Ozwjm2eeYlzeE/img/38053222-2c90-4e79-9ebd-d91f9376bcb6.png)
+![image](//alidocs.oss-cn-zhangjiakou.aliyuncs.com/res/3M0Ozwjm2eeYlzeE/img/38053222-2c90-4e79-9ebd-d91f9376bcb6.png)
 
 ### 数据库账号 
 
