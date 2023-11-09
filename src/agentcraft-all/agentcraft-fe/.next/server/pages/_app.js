@@ -1276,8 +1276,7 @@ const useSystemConfigStore = (0,zustand__WEBPACK_IMPORTED_MODULE_0__.create)((0,
     name: _constants_index__WEBPACK_IMPORTED_MODULE_3__/* .AGENTCRAFT_SYSTEMCONFIG_COMPLETED */ .T9
 }));
 async function getSystemConfig() {
-    const res = await fetch("/api/systemConfig");
-    const result = await res.json();
+    const result = await request("/api/systemConfig/init");
     const state = useSystemConfigStore.getState();
     const setCompleteConfig = state.setCompleteConfig;
     const setHiddenConfigView = state.setHiddenConfigView;
@@ -1292,8 +1291,7 @@ async function updateSystemConfig(payload) {
             "Content-Type": "application/json"
         }
     });
-}
-getSystemConfig();
+} // getSystemConfig();
 
 __webpack_async_result__();
 } catch(e) { __webpack_async_result__(e); } });

@@ -1,8 +1,8 @@
 "use strict";
 (() => {
 var exports = {};
-exports.id = 8478;
-exports.ids = [8478];
+exports.id = 196;
+exports.ids = [196];
 exports.modules = {
 
 /***/ 8113:
@@ -54,7 +54,7 @@ module.exports = require("@alicloud/vpc20160428");
 
 /***/ }),
 
-/***/ 5680:
+/***/ 232:
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 __webpack_require__.r(__webpack_exports__);
@@ -142,10 +142,10 @@ async function handler(req, res) {
 ;
 
 // load runtime
-var __webpack_require__ = require("../../webpack-api-runtime.js");
+var __webpack_require__ = require("../../../webpack-api-runtime.js");
 __webpack_require__.C(exports);
 var __webpack_exec__ = (moduleId) => (__webpack_require__(__webpack_require__.s = moduleId))
-var __webpack_exports__ = __webpack_require__.X(0, [7332], () => (__webpack_exec__(5680)));
+var __webpack_exports__ = __webpack_require__.X(0, [7332], () => (__webpack_exec__(232)));
 module.exports = __webpack_exports__;
 
 })();
