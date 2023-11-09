@@ -41,7 +41,7 @@ export const useSystemConfigStore = create<any>(persist(
 
 
 export async function getSystemConfig() {
-    const result:any = await request('/api/systemConfig/init');
+    const result:any = await request(`/api/systemConfig/init`);
  
     const state = useSystemConfigStore.getState();
     const setCompleteConfig = state.setCompleteConfig;
@@ -61,4 +61,3 @@ export async function updateSystemConfig(payload: any) {
     });
 }
 
-// getSystemConfig();

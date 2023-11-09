@@ -15,7 +15,7 @@ export const ALIBABACLOUD_POSTGRESQL_TUTORIAL=`# 数据库获取实践教程
 
 ### 创建数据库实例 
 #### 注意这里是Postgresql Serverless类型
-![image](https://alidocs.oss-cn-zhangjiakou.aliyuncs.com/res/3M0Ozwjm2eeYlzeE/img/ac313cbc-9864-4945-bd07-721a64cf872d.png)
+![image](//alidocs.oss-cn-zhangjiakou.aliyuncs.com/res/3M0Ozwjm2eeYlzeE/img/ac313cbc-9864-4945-bd07-721a64cf872d.png)
 
 ### 注意：
 + 创建vpc的时候最好保持跟当前服务的vpc一致
@@ -28,9 +28,9 @@ export const ALIBABACLOUD_POSTGRESQL_TUTORIAL=`# 数据库获取实践教程
 + **选择的可用区是:K**
 
 
-![image](https://alidocs.oss-cn-zhangjiakou.aliyuncs.com/res/3M0Ozwjm2eeYlzeE/img/da06561c-711a-40b9-8579-951b74b0ff95.png)
+![image](//alidocs.oss-cn-zhangjiakou.aliyuncs.com/res/3M0Ozwjm2eeYlzeE/img/da06561c-711a-40b9-8579-951b74b0ff95.png)
 
-![image](https://alidocs.oss-cn-zhangjiakou.aliyuncs.com/res/3M0Ozwjm2eeYlzeE/img/1f2b443e-a7a0-47e6-90b3-09719e64dfa3.png)
+![image](//alidocs.oss-cn-zhangjiakou.aliyuncs.com/res/3M0Ozwjm2eeYlzeE/img/1f2b443e-a7a0-47e6-90b3-09719e64dfa3.png)
 
 进入控制台等待实例启动 
 
@@ -38,11 +38,11 @@ export const ALIBABACLOUD_POSTGRESQL_TUTORIAL=`# 数据库获取实践教程
 
 ### 创建数据库 
 
-![image](https://alidocs.oss-cn-zhangjiakou.aliyuncs.com/res/3M0Ozwjm2eeYlzeE/img/55f4970b-eb6f-45f8-b188-c0f47e3c466f.png)
+![image](//alidocs.oss-cn-zhangjiakou.aliyuncs.com/res/3M0Ozwjm2eeYlzeE/img/55f4970b-eb6f-45f8-b188-c0f47e3c466f.png)
 
 ![image](https://alidocs.oss-cn-zhangjiakou.aliyuncs.com/res/3M0Ozwjm2eeYlzeE/img/8156e7c9-8e46-44d7-abb4-2f270cdb8d73.png)
 
-![image](https://alidocs.oss-cn-zhangjiakou.aliyuncs.com/res/3M0Ozwjm2eeYlzeE/img/ffbf5c7d-bf75-4e63-a71c-4754d33f06f0.png)
+![image](//alidocs.oss-cn-zhangjiakou.aliyuncs.com/res/3M0Ozwjm2eeYlzeE/img/ffbf5c7d-bf75-4e63-a71c-4754d33f06f0.png)
 
 ### 创建管理账号
 
@@ -50,27 +50,27 @@ export const ALIBABACLOUD_POSTGRESQL_TUTORIAL=`# 数据库获取实践教程
 
 注意选择高权限账号
 
-![image](https://alidocs.oss-cn-zhangjiakou.aliyuncs.com/res/3M0Ozwjm2eeYlzeE/img/97f0b2f4-1c11-40cd-80ce-7150be363e88.png)
+![image](//alidocs.oss-cn-zhangjiakou.aliyuncs.com/res/3M0Ozwjm2eeYlzeE/img/97f0b2f4-1c11-40cd-80ce-7150be363e88.png)
 
 ### 数据库连接测试
 
-![image](https://alidocs.oss-cn-zhangjiakou.aliyuncs.com/res/3M0Ozwjm2eeYlzeE/img/846b2e73-5bc3-46d7-b668-ffc39307676e.png)
+![image](//alidocs.oss-cn-zhangjiakou.aliyuncs.com/res/3M0Ozwjm2eeYlzeE/img/846b2e73-5bc3-46d7-b668-ffc39307676e.png)
 
-![image](https://alidocs.oss-cn-zhangjiakou.aliyuncs.com/res/3M0Ozwjm2eeYlzeE/img/342ca780-047c-4e05-a545-7be56d09c10a.png)
+![image](//alidocs.oss-cn-zhangjiakou.aliyuncs.com/res/3M0Ozwjm2eeYlzeE/img/342ca780-047c-4e05-a545-7be56d09c10a.png)
 
-![image](https://alidocs.oss-cn-zhangjiakou.aliyuncs.com/res/3M0Ozwjm2eeYlzeE/img/5f90cd8d-92b3-45f0-9dc8-5b80097c3955.png)
+![image](//alidocs.oss-cn-zhangjiakou.aliyuncs.com/res/3M0Ozwjm2eeYlzeE/img/5f90cd8d-92b3-45f0-9dc8-5b80097c3955.png)
 
 ### 开通vector插件，并且准备好配置项
 
-![image](https://alidocs.oss-cn-zhangjiakou.aliyuncs.com/res/3M0Ozwjm2eeYlzeE/img/33a4eb6a-1fce-49a6-bd62-0c0125223040.png)
+![image](//alidocs.oss-cn-zhangjiakou.aliyuncs.com/res/3M0Ozwjm2eeYlzeE/img/33a4eb6a-1fce-49a6-bd62-0c0125223040.png)
 
 ## 最终配置
 
 ### 数据库连接地址 
 
-![image](https://alidocs.oss-cn-zhangjiakou.aliyuncs.com/res/3M0Ozwjm2eeYlzeE/img/d0188e29-0ddf-4fdc-9c10-6822cdf0edcd.png)
+![image](//alidocs.oss-cn-zhangjiakou.aliyuncs.com/res/3M0Ozwjm2eeYlzeE/img/d0188e29-0ddf-4fdc-9c10-6822cdf0edcd.png)
 
-![image](https://alidocs.oss-cn-zhangjiakou.aliyuncs.com/res/3M0Ozwjm2eeYlzeE/img/8dfb6eb8-9d72-4042-be64-836428e25a08.png)
+![image](//alidocs.oss-cn-zhangjiakou.aliyuncs.com/res/3M0Ozwjm2eeYlzeE/img/8dfb6eb8-9d72-4042-be64-836428e25a08.png)
 
 ### 数据库名
 
