@@ -48,7 +48,7 @@ export const useQuickStartStore = create<any>(persist(
         autoQuickStart: true,
         activeStep: QuickStartStep.LLM_PROXY,
         dataSetId: [],
-        modelId: '',    
+        modelId: '',
         configStepStatus: {
             llm_proxy_config_ready: false,
             llm_proxy_create_loading: false,
@@ -113,12 +113,11 @@ function checkAppStatus(appName: string): Promise<any> {
 export async function createFoundationModelOnly(payload: any) {
     const createAppPayload = {
         description: payload.description,
-        parameters: {
-            region: payload.region,
-            apiKey: payload.apiKey,
-            model: payload.model,
-        }
+        region: payload.region,
+        apiKey: payload.apiKey,
+        model: payload.model,
     }
+
 
     const res = await request(`/api/infra/alibaba-cloud/createApp?template=fc-qwen`, {
         method: "POST",
@@ -130,7 +129,7 @@ export async function createFoundationModelOnly(payload: any) {
     return res?.data?.name;
 
 }
-export async function checkFoundationModelStatusAndLLMProxy(appName:string,payload: any) {
+export async function checkFoundationModelStatusAndLLMProxy(appName: string, payload: any) {
 
     const appInfo = await checkAppStatus(appName);
     const appService: any = appInfo?.output?.deploy['client'];
@@ -196,7 +195,7 @@ export async function createKnowledgeBaseApp(payload: any) {
             "Content-Type": "application/json",
         },
     });
-    const appId =   app.data.id;
+    const appId = app.data.id;
     payload.app_id = appId;
     await request("/api/knowledgeBase/create", {
         method: "POST",

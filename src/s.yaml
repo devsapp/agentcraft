@@ -102,7 +102,7 @@ services:
         environmentVariables:
           baseUrl: '${agentcraft-backend.output.url.system_intranet_url}'
           openApiUrl: '${agentcraft-backend.output.url.custom_domain[0].domain}'
-          beServiceName:  '${service.name}'
+          beServiceName:  '${vars.service.name}'
           beFunctionName: agentcraft-backend
           NODE_PATH: /opt/nodejs/node_modules
           Region: ${vars.region}

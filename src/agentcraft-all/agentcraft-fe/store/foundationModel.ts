@@ -101,7 +101,6 @@ export async function deleteFoundationModel(appName: string) {
 }
 
 export async function addFoundationModel(template: string, payload: any) {
-
     const res =  await request(`/api/infra/alibaba-cloud/createApp?template=${template}`, {
         method: "POST",
         body: JSON.stringify(payload),
