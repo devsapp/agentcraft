@@ -56,6 +56,7 @@ def add_dataset(**kwargs):
         dataset = Dataset(**kwargs)
         session.add(dataset)
         session.commit()
+        return dataset.id
 
 
 def update_dataset(dataset_id: int, user_id: int, **kwargs):

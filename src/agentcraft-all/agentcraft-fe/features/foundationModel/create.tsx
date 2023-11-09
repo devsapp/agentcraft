@@ -1,14 +1,11 @@
-import React, { use, useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import { useRouter } from 'next/router'
 import { Breadcrumbs, Anchor, Flex, Tabs, Box, Card, Image, Text, Badge, Button, Group, Modal, TextInput, Select, PasswordInput, LoadingOverlay, Stepper, Loader, Notification } from '@mantine/core';
-import { useForm, UseFormReturnType } from '@mantine/form';
-
+import { useForm } from '@mantine/form';
 import { IconMessageCircle, IconBrandGithubFilled, IconExternalLink } from '@tabler/icons-react';
 import FeatureDescription from '@/components/FeatureDescription';
 import { useFoundationModelStore, addFoundationModel, getFoundationModel, APP_STATUS } from '@/store/foundationModel';
-
 import { FORM_WIDTH } from 'constants/index';
-
 import { FOUNDATION_MODEL_TEMPLATES } from '@/constants/foundationModelTemplate';
 import { ServerlessAppTemplate, TemplateParams, TemplatePropertyDetail } from '@/types/serverless-devs-app';
 // import styles from './index.module.scss';
@@ -28,12 +25,11 @@ function LoadingStepper() {
 
 }
 
-function FmForm() {
-
+function FoundationModelForm() {
     const setOpen = useFoundationModelStore().setOpen;
     const setCreateLoading = useFoundationModelStore().setCreateLoading;
     const setAppStatus = useFoundationModelStore().setAppStatus;
-    const fmTemplate: TemplateParams & { template: string } = useFoundationModelStore().fmTemplate as TemplateParams & { template: string };
+    const fmTemplate: TemplateParams & { template: string, description: string } = useFoundationModelStore().fmTemplate as TemplateParams & { template: string, description: string };
     let validate = {};
     const validateField = fmTemplate?.required || [];
     if (validateField.length > 0) {
@@ -130,7 +126,7 @@ function FmForm() {
                         try {
                             setCreateLoading(true);
                             setAppStatus(APP_STATUS.INIT);
-                            
+
                             const data = await addFoundationModel(fmTemplate.template, form.values);
 
                             const name = data.name;
@@ -158,7 +154,7 @@ function Add() {
     return (
         <Modal opened={open} onClose={() => { setOpen(false) }} title="创建基础模型" centered size={'xl'}>
             <LoadingOverlay loader={<LoadingStepper />} visible={createLoading} overlayOpacity={0.8} overlayBlur={2} />
-            {open && <FmForm />}
+            {open && <FoundationModelForm />}
         </Modal>
     );
 }
@@ -167,8 +163,8 @@ function Add() {
 function FoundationModelTab() {
     const setOpen = useFoundationModelStore().setOpen;
     const setFmTemplate = useFoundationModelStore().setFmTemplate;
-    const openToCreateFoundationModel = (template: string, formData: any) => {
-        setFmTemplate(Object.assign({}, formData, { template }));
+    const openToCreateFoundationModel = (item: ServerlessAppTemplate) => {
+        setFmTemplate(Object.assign({}, item.templateParams, { template: item.template, description: item.description }));
         setOpen(true);
     }
     return <Tabs variant="outline" defaultValue="text2text">
@@ -214,7 +210,7 @@ function FoundationModelTab() {
                             {item.description}
                         </Text>
                         <Flex align={'center'}>
-                            <Button mr={8} variant="light" fullWidth mt="md" radius="md" onClick={() => openToCreateFoundationModel(item.template, item.templateParams)}>
+                            <Button mr={8} variant="light" fullWidth mt="md" radius="md" onClick={() => openToCreateFoundationModel(item)}>
                                 直接创建
                             </Button>
                             <a target="_blank" href={item.fcLink}>

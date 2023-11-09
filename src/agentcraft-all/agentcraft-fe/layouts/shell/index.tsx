@@ -2,11 +2,13 @@ import { useRouter } from 'next/router';
 import { AppShell } from '@mantine/core';
 import { Nav } from 'layouts/navbar'
 import { Header } from 'layouts/header'
-import React, { useEffect } from "react";
+import React from "react";
+
+
 export function Shell(props: any) {
     const router = useRouter();
     const { pathname } = router;
-    const isMainPage = pathname.indexOf('login') === -1 && pathname.indexOf('register') === -1;
+    const isMainPage = pathname.indexOf('login') === -1 && pathname.indexOf('register') === -1 && pathname.indexOf('config') === -1;
     return <>{
         isMainPage ? <AppShell
             padding="md"

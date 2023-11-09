@@ -1,9 +1,7 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
-
 import { ServerlessBridgeService } from '@/infra/alibaba-cloud/services/serverless-app';
+import { AGENTCRAFT_APP } from 'constants/index';
 
-
-const AGENT_CRAFT = 'AgentCraft';
 
 
 export default async function handler(
@@ -24,7 +22,7 @@ export default async function handler(
         }
     }
     const serverlessBridgeService = new ServerlessBridgeService(credential);
-  
+
     let status = 200;
     let data: any = {
         code: 200,
@@ -33,9 +31,10 @@ export default async function handler(
         const result = await serverlessBridgeService.listApplications();
         data.code = result.statusCode;
         const agentCraftAppList = result.body.result;
-        data.data = agentCraftAppList.filter((item: any) => item.name.indexOf(AGENT_CRAFT) === 0);
+        data.data = agentCraftAppList.filter((item: any) => item.name.indexOf(AGENTCRAFT_APP) === 0);
     } catch (e: any) {
         status = 500;
+        data.code = status;
         data.error = e.message;
     }
     res.status(status).json(data);

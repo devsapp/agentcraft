@@ -1,6 +1,10 @@
 import React, { useState, Suspense } from 'react';
 import ReactMarkdown from 'react-markdown';
 import CodeHighlight from '@/components/CodeHighlight';
+import RemarkMath from "remark-math";
+import RemarkBreaks from "remark-breaks";
+// import RehypeKatex from "rehype-katex";
+import RemarkGfm from "remark-gfm";
 import styles from '@/styles/chat.module.scss';
 
 
@@ -39,6 +43,7 @@ const MarkdownContent = (props: tProps) => {
     <ReactMarkdown
       linkTarget={"_blank"}
       className={className}
+      remarkPlugins={[RemarkMath, RemarkGfm, RemarkBreaks]}
       components={{
         code({ node, inline, className, children, ...props }) {
           const match = /language-(\w+)/.exec(className || "");

@@ -20,13 +20,16 @@ async def list_models(page: int, limit: int, token: JWTData = Depends(validate_t
     }
 
 
-@router.post('/add', response_model=BasicResponse)
+@router.post('/add', response_model=DictResponse)
 async def add_model(req: UpsertModelRequest, token: JWTData = Depends(validate_token)):
     """添加模型"""
-    service.add_model(user_id=token.user_id, **vars(req))
+    id = service.add_model(user_id=token.user_id, **vars(req))
     return {
         "code": 201,
         "msg": "success",
+        "data": {
+            "id": id
+        }
     }
 
 

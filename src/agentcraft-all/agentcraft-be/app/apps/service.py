@@ -11,7 +11,7 @@ def list_apps(user_id: int, page: int, limit: int):
 
 def add_app(**kwargs):
     """增加应用"""
-    database.add_app(**kwargs)
+    return database.add_app(**kwargs)
 
 
 def delete_app(app_id: int, user_id: int):

@@ -2,6 +2,7 @@
 import { ServerlessBridgeFc, ServerlessBridgeServerlessDevs } from '@/infra/alibaba-cloud/open-apis/fc';
 import { ServerlessBridgeRam } from '@/infra/alibaba-cloud/open-apis/ram';
 import { ServerlessBridgeSts } from '@/infra/alibaba-cloud/open-apis/sts';
+import { ServerlessBridgeVpc } from '@/infra/alibaba-cloud/open-apis/vpc';
 import { FC_DEFAULT_ROLE_NAME, ASSUME_ROLE_POLICY_DOCUMENT, SERVERLESS_DEVS_POLICIES } from '@/constants/cloud-resources'
 import { OpenApiConfig } from '@/infra/alibaba-cloud/open-apis//types';
 
@@ -9,12 +10,16 @@ export class ServerlessBridgeService {
   serverlessBridgeRam: ServerlessBridgeRam;
   serverlessBridgeSts: ServerlessBridgeSts;
   serverlessBridgeServerlessDevs: ServerlessBridgeServerlessDevs;
+  serverlessBridgeFc: ServerlessBridgeFc;
+  serverlessBridgeVpc: ServerlessBridgeVpc;
   config: OpenApiConfig | undefined;
-  constructor(config?: OpenApiConfig) {
+  constructor(config?: OpenApiConfig, accountId?: string) {
     this.config = config;
     this.serverlessBridgeRam = new ServerlessBridgeRam(config);
     this.serverlessBridgeSts = new ServerlessBridgeSts(config);
     this.serverlessBridgeServerlessDevs = new ServerlessBridgeServerlessDevs(config);
+    this.serverlessBridgeFc = new ServerlessBridgeFc(config, accountId);
+    this.serverlessBridgeVpc = new ServerlessBridgeVpc(config);
   }
   getServerlessBridgeRam(): ServerlessBridgeRam {
     return this.serverlessBridgeRam;
@@ -24,8 +29,12 @@ export class ServerlessBridgeService {
     return this.serverlessBridgeSts;
   }
 
+  getServerlessBridgeVpc(): ServerlessBridgeVpc {
+    return this.serverlessBridgeVpc;
+  }
+
   getServerlessBridgeFc(accountId: string, config?: OpenApiConfig): ServerlessBridgeFc {
-    return new ServerlessBridgeFc(accountId, config);
+    return new ServerlessBridgeFc(config, accountId);
   }
 
   getServerlessBridgeServerlessDevs(): ServerlessBridgeServerlessDevs {
@@ -304,10 +313,9 @@ export class ServerlessBridgeService {
    * @param payload 执行函数的请求数据
    * @returns 
    */
-  async invokeFunction(accountId: string, stsConfig: any, fcInvokeData: any, payload: any): Promise<any> {
+  async invokeFunction(fcInvokeData: any, payload: any): Promise<any> {
 
-    const fcClient = this.getServerlessBridgeFc(accountId, stsConfig);
-    return await fcClient.invokeFunction(fcInvokeData, payload);
+    return await this.serverlessBridgeFc.invokeFunction(fcInvokeData, payload);
   }
 
   /**
@@ -316,10 +324,48 @@ export class ServerlessBridgeService {
    * @param payload 
    * @returns 
    */
-  async listFunctions(accountId: string, stsConfig: any, payload: any): Promise<any> {
+  async listFunctions(payload: any): Promise<any> {
 
-    const fcClient = this.getServerlessBridgeFc(accountId, stsConfig);
-    return await fcClient.listFunctions(payload);
+
+    return await this.serverlessBridgeFc.listFunctions(payload);
+  }
+  /**
+   * 查询函数列表
+   * @param stsConfig 
+   * @param payload 
+   * @returns 
+   */
+  async updateFunction(payload: any): Promise<any> {
+
+    return await this.serverlessBridgeFc.updateFunction(payload);
+  }
+
+  /**
+  * 查询函数列表
+  * @param payload 
+  * @returns 
+  */
+  async getFunction(payload: any): Promise<any> {
+
+    return await this.serverlessBridgeFc.getFunction(payload);
+  }
+
+  /**
+  * 查询函数列表
+  * @param payload 
+  * @returns 
+  */
+  async getService(payload: any): Promise<any> {
+    return await this.serverlessBridgeFc.getService(payload);
+  }
+
+  async describeVpcs(payload: any): Promise<any> {
+    return await this.serverlessBridgeVpc.describeVpcs(payload);
+  }
+  
+  async createVSwitch(payload: any): Promise<any> {
+    return await this.serverlessBridgeVpc.createVSwitch(payload);
   }
 }
+
 

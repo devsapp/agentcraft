@@ -4,7 +4,7 @@ export const FOUNDATION_MODEL_TEMPLATES = [
         tag: ['阿里云', '通义千问'],
         type: 'llm',
         icon: 'https://img.alicdn.com/imgextra/i4/O1CN01c26iB51UyR3MKMFvk_!!6000000002586-2-tps-124-122.png',
-        description: '商业版本的统一千问，支持8K上下文，性能强劲，推理能力强',
+        description: '商业版本的通义千问，支持8K上下文，性能强劲，推理能力强',
         fcLink: 'https://fcnext.console.aliyun.com/applications/create?template=fc-qwen',
         githubLink: '',
         template: 'fc-qwen',

@@ -16,10 +16,12 @@ interface FoundationModelStore {
     loading: boolean,
     createLoading: boolean,
     open: boolean,
+    appName: string,
     foundationModelList: any[],
     fmTemplate: any,
     appStatus: APP_STATUS,
     currentFoundationModel: any,
+    setAppName: (appName: string) => void;
     setCreateLoading: (loading: boolean) => void;
     setAppStatus: (appStatus: number) => void,
     setOpen: (open: boolean) => void;
@@ -38,6 +40,7 @@ export const useFoundationModelStore = create<FoundationModelStore>()(devtools((
     createLoading: false,
     open: false,
     fmTemplate: {},
+    appName: '',
     appStatus: APP_STATUS.INIT,
     currentFoundationModel: {},
     setCurrentFoundationModel:(currentFoundationModel)=> set((_state) => {
@@ -48,6 +51,9 @@ export const useFoundationModelStore = create<FoundationModelStore>()(devtools((
     }),
     setFmTemplate: (_fmTemplate: any) => set((_state) => {
         return ({ fmTemplate: _fmTemplate })
+    }),
+    setAppName: (appName: string) => set((_state) => {
+        return ({ appName })
     }),
     setCreateLoading: (createLoading: boolean) => set((_state) => {
         return ({ createLoading })

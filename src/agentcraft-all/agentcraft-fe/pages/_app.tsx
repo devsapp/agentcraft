@@ -3,15 +3,18 @@ import { AppProps } from "next/app";
 import Head from "next/head";
 import { MantineProvider } from "@mantine/core";
 import { ModalsProvider } from '@mantine/modals';
+import { Notifications } from '@mantine/notifications';
 import { Shell } from 'layouts/shell';
-
+import { useSystemConfigStore } from '@/store/systemConfig';
+import { SystemConfig } from '@/features/systemConfig';
 import '../styles/global.scss';
+
 
 export default function App(props: AppProps) {
   const { Component, pageProps } = props;
   const [render, setRender] = useState(false);
+  const hiddenConfigView = useSystemConfigStore().hiddenConfigView;
   useEffect(() => setRender(true), []);
-
   return (
     <>
       <Head>
@@ -30,12 +33,13 @@ export default function App(props: AppProps) {
           colorScheme: "dark",
         }}
       >
-
+        <Notifications />
         {render ?
           <ModalsProvider>
-            <Shell >
+            {!hiddenConfigView ? < SystemConfig /> : <Shell >
               <Component {...pageProps} />
-            </Shell>
+            </Shell>}.
+
           </ModalsProvider> : null}
       </MantineProvider>
     </>

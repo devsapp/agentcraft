@@ -42,6 +42,7 @@ def add_app(**kwargs):
         app = App(**kwargs)
         session.add(app)
         session.commit()
+        return app.id
 
 
 def get_app(app_id: int, user_id: int) -> App:

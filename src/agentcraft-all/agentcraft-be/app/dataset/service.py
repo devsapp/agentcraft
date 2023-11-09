@@ -10,7 +10,7 @@ def list_datasets(user_id: int, page: int, limit: int, dataset_type: int = None)
 
 def add_dataset(**kwargs):
     """增加数据集"""
-    database.add_dataset(**kwargs)
+    return database.add_dataset(**kwargs)
 
 def update_dataset(**kwargs):
     """修改数据集"""

@@ -11,7 +11,7 @@ def list_models(user_id: int, page: int, limit: int):
 
 def add_model(**kwargs):
     """添加模型"""
-    database.add_model(**kwargs)
+    return database.add_model(**kwargs)
 
 
 def delete_model(model_id: int, user_id: int):

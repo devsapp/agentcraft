@@ -24,7 +24,7 @@ const LoginPage = () => {
         const data = await login(username, password);
         if (data.access_token) {
             setToken(data.access_token);
-            router.push('/app');
+            router.push('/');
         }
 
     };

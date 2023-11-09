@@ -20,13 +20,16 @@ async def list_apps(page: int, limit: int, token: JWTData = Depends(validate_tok
     }
 
 
-@router.post('/add', response_model=BasicResponse)
+@router.post('/add', response_model=DictResponse)
 async def add_app(req: UpsertAppRequest, token: JWTData = Depends(validate_token)):
     """添加应用"""
-    service.add_app(user_id=token.user_id, **vars(req))
+    id = service.add_app(user_id=token.user_id, **vars(req))
     return {
-        "code": 201,
+        "code": 200,
         "msg": "success",
+        "data": {
+            "id": id
+        }
     }
 
 

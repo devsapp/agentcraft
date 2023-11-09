@@ -1,45 +1,84 @@
 "use strict";
-/*
- * ATTENTION: An "eval-source-map" devtool has been used.
- * This devtool is neither made for production nor for readable output files.
- * It uses "eval()" calls to create a separate source file with attached SourceMaps in the browser devtools.
- * If you are trying to read the output file, select a different devtool (https://webpack.js.org/configuration/devtool/)
- * or disable the default devtool with "devtool: false".
- * If you are looking for production-ready output files, see mode: "production" (https://webpack.js.org/configuration/mode/).
- */
 (() => {
 var exports = {};
-exports.id = "pages/api/application/list";
-exports.ids = ["pages/api/application/list"];
+exports.id = 600;
+exports.ids = [600];
 exports.modules = {
 
-/***/ "axios":
-/*!************************!*\
-  !*** external "axios" ***!
-  \************************/
+/***/ 9648:
 /***/ ((module) => {
 
 module.exports = import("axios");;
 
 /***/ }),
 
-/***/ "(api)/./pages/api/application/list.ts":
-/*!***************************************!*\
-  !*** ./pages/api/application/list.ts ***!
-  \***************************************/
+/***/ 7604:
 /***/ ((module, __webpack_exports__, __webpack_require__) => {
 
-eval("__webpack_require__.a(module, async (__webpack_handle_async_dependencies__, __webpack_async_result__) => { try {\n__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"default\": () => (/* binding */ handler)\n/* harmony export */ });\n/* harmony import */ var utils_serverRequest__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! utils/serverRequest */ \"(api)/./utils/serverRequest.ts\");\nvar __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([utils_serverRequest__WEBPACK_IMPORTED_MODULE_0__]);\nutils_serverRequest__WEBPACK_IMPORTED_MODULE_0__ = (__webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__)[0];\n\nasync function handler(req, res) {\n    const { page =0 , limit =200  } = req.query;\n    utils_serverRequest__WEBPACK_IMPORTED_MODULE_0__[\"default\"].defaults.headers.common.Authorization = req.headers.authorization;\n    const result = await utils_serverRequest__WEBPACK_IMPORTED_MODULE_0__[\"default\"].get(\"/app/list?page=${page}&limit=${limit}\", {\n        params: {\n            page,\n            limit\n        }\n    });\n    const { status , data  } = result;\n    res.status(status).json(data);\n}\n\n__webpack_async_result__();\n} catch(e) { __webpack_async_result__(e); } });//# sourceURL=[module]\n//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoiKGFwaSkvLi9wYWdlcy9hcGkvYXBwbGljYXRpb24vbGlzdC50cy5qcyIsIm1hcHBpbmdzIjoiOzs7Ozs7OztBQUMwQztBQUszQixlQUFlQyxRQUMxQkMsR0FBbUIsRUFDbkJDLEdBQTBCLEVBQzVCO0lBQ0UsTUFBTSxFQUFFQyxNQUFPLEVBQUMsRUFBRUMsT0FBUSxJQUFHLEVBQUUsR0FBR0gsSUFBSUksS0FBSztJQUMzQ04saUdBQWdELEdBQUdFLElBQUlNLE9BQU8sQ0FBQ0UsYUFBYTtJQUM1RSxNQUFNQyxTQUFTLE1BQU1YLCtEQUFXLENBQUMseUNBQXlDO1FBQUVhLFFBQVE7WUFBRVQ7WUFBTUM7UUFBTTtJQUFFO0lBQ3BHLE1BQU0sRUFBRVMsT0FBTSxFQUFFQyxLQUFJLEVBQUUsR0FBR0o7SUFDekJSLElBQUlXLE1BQU0sQ0FBQ0EsUUFBUUUsSUFBSSxDQUFDRDtBQUM1QixDQUFDIiwic291cmNlcyI6WyJ3ZWJwYWNrOi8vYWdlbnRjcmFmdC11aS8uL3BhZ2VzL2FwaS9hcHBsaWNhdGlvbi9saXN0LnRzPzVmYjkiXSwic291cmNlc0NvbnRlbnQiOlsiaW1wb3J0IHR5cGUgeyBOZXh0QXBpUmVxdWVzdCwgTmV4dEFwaVJlc3BvbnNlIH0gZnJvbSAnbmV4dCdcbmltcG9ydCByZXF1ZXN0IGZyb20gJ3V0aWxzL3NlcnZlclJlcXVlc3QnO1xudHlwZSBEYXRhID0ge1xuICAgIG5hbWU6IHN0cmluZ1xufVxuXG5leHBvcnQgZGVmYXVsdCBhc3luYyBmdW5jdGlvbiBoYW5kbGVyKFxuICAgIHJlcTogTmV4dEFwaVJlcXVlc3QsXG4gICAgcmVzOiBOZXh0QXBpUmVzcG9uc2U8RGF0YT5cbikge1xuICAgIGNvbnN0IHsgcGFnZSA9IDAsIGxpbWl0ID0gMjAwIH0gPSByZXEucXVlcnk7XG4gICAgcmVxdWVzdC5kZWZhdWx0cy5oZWFkZXJzLmNvbW1vblsnQXV0aG9yaXphdGlvbiddID0gcmVxLmhlYWRlcnMuYXV0aG9yaXphdGlvbjtcbiAgICBjb25zdCByZXN1bHQgPSBhd2FpdCByZXF1ZXN0LmdldCgnL2FwcC9saXN0P3BhZ2U9JHtwYWdlfSZsaW1pdD0ke2xpbWl0fScsIHsgcGFyYW1zOiB7IHBhZ2UsIGxpbWl0IH0gfSk7XG4gICAgY29uc3QgeyBzdGF0dXMsIGRhdGEgfSA9IHJlc3VsdDtcbiAgICByZXMuc3RhdHVzKHN0YXR1cykuanNvbihkYXRhKVxufVxuIl0sIm5hbWVzIjpbInJlcXVlc3QiLCJoYW5kbGVyIiwicmVxIiwicmVzIiwicGFnZSIsImxpbWl0IiwicXVlcnkiLCJkZWZhdWx0cyIsImhlYWRlcnMiLCJjb21tb24iLCJhdXRob3JpemF0aW9uIiwicmVzdWx0IiwiZ2V0IiwicGFyYW1zIiwic3RhdHVzIiwiZGF0YSIsImpzb24iXSwic291cmNlUm9vdCI6IiJ9\n//# sourceURL=webpack-internal:///(api)/./pages/api/application/list.ts\n");
+__webpack_require__.a(module, async (__webpack_handle_async_dependencies__, __webpack_async_result__) => { try {
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (/* binding */ handler)
+/* harmony export */ });
+/* harmony import */ var utils_serverRequest__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(3671);
+var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([utils_serverRequest__WEBPACK_IMPORTED_MODULE_0__]);
+utils_serverRequest__WEBPACK_IMPORTED_MODULE_0__ = (__webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__)[0];
+
+async function handler(req, res) {
+    const { page =0 , limit =200  } = req.query;
+    utils_serverRequest__WEBPACK_IMPORTED_MODULE_0__/* ["default"].defaults.headers.common.Authorization */ .Z.defaults.headers.common.Authorization = req.headers.authorization;
+    const result = await utils_serverRequest__WEBPACK_IMPORTED_MODULE_0__/* ["default"].get */ .Z.get("/app/list?page=${page}&limit=${limit}", {
+        params: {
+            page,
+            limit
+        }
+    });
+    const { status , data  } = result;
+    res.status(status).json(data);
+}
+
+__webpack_async_result__();
+} catch(e) { __webpack_async_result__(e); } });
 
 /***/ }),
 
-/***/ "(api)/./utils/serverRequest.ts":
-/*!********************************!*\
-  !*** ./utils/serverRequest.ts ***!
-  \********************************/
+/***/ 3671:
 /***/ ((module, __webpack_exports__, __webpack_require__) => {
 
-eval("__webpack_require__.a(module, async (__webpack_handle_async_dependencies__, __webpack_async_result__) => { try {\n__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"default\": () => (__WEBPACK_DEFAULT_EXPORT__)\n/* harmony export */ });\n/* harmony import */ var axios__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! axios */ \"axios\");\nvar __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([axios__WEBPACK_IMPORTED_MODULE_0__]);\naxios__WEBPACK_IMPORTED_MODULE_0__ = (__webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__)[0];\n\nconst request = axios__WEBPACK_IMPORTED_MODULE_0__[\"default\"].create({\n    baseURL: process.env.baseUrl || \"\",\n    headers: {\n        // 'Authorization': `Bearer ${process.env.token || ''}`,\n        \"Content-Type\": \"application/json\"\n    }\n});\n// 响应拦截器, 处理服务端的异常\nrequest.interceptors.response.use((response)=>{\n    return Promise.resolve(response);\n}, (error)=>{\n    if (error.response.status) {\n        const { status , data  } = error.response;\n        return Promise.resolve({\n            status,\n            data: {\n                code: status,\n                message: data.detail\n            }\n        });\n    }\n});\n/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (request);\n\n__webpack_async_result__();\n} catch(e) { __webpack_async_result__(e); } });//# sourceURL=[module]\n//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoiKGFwaSkvLi91dGlscy9zZXJ2ZXJSZXF1ZXN0LnRzLmpzIiwibWFwcGluZ3MiOiI7Ozs7Ozs7O0FBQTBCO0FBRTFCLE1BQU1DLFVBQVVELG9EQUFZLENBQUM7SUFDekJHLFNBQVNDLFFBQVFDLEdBQUcsQ0FBQ0MsT0FBTyxJQUFJO0lBQ2hDQyxTQUFTO1FBQ0wsd0RBQXdEO1FBQ3hELGdCQUFnQjtJQUNwQjtBQUNKO0FBQ0Esa0JBQWtCO0FBQ2xCTixRQUFRTyxZQUFZLENBQUNDLFFBQVEsQ0FBQ0MsR0FBRyxDQUM3QkQsQ0FBQUEsV0FBWTtJQUNSLE9BQU9FLFFBQVFDLE9BQU8sQ0FBQ0g7QUFDM0IsR0FDQUksQ0FBQUEsUUFBUztJQUNMLElBQUlBLE1BQU1KLFFBQVEsQ0FBQ0ssTUFBTSxFQUFFO1FBQ3ZCLE1BQU0sRUFBRUEsT0FBTSxFQUFFQyxLQUFJLEVBQUUsR0FBR0YsTUFBTUosUUFBUTtRQUN2QyxPQUFPRSxRQUFRQyxPQUFPLENBQUM7WUFBRUU7WUFBUUMsTUFBTTtnQkFBRUMsTUFBTUY7Z0JBQVFHLFNBQVNGLEtBQUtHLE1BQU07WUFBQztRQUFFO0lBQ2xGLENBQUM7QUFDTDtBQUVKLGlFQUFlakIsT0FBT0EsRUFBQyIsInNvdXJjZXMiOlsid2VicGFjazovL2FnZW50Y3JhZnQtdWkvLi91dGlscy9zZXJ2ZXJSZXF1ZXN0LnRzPzVjMmQiXSwic291cmNlc0NvbnRlbnQiOlsiaW1wb3J0IGF4aW9zIGZyb20gJ2F4aW9zJztcblxuY29uc3QgcmVxdWVzdCA9IGF4aW9zLmNyZWF0ZSh7XG4gICAgYmFzZVVSTDogcHJvY2Vzcy5lbnYuYmFzZVVybCB8fCAnJyxcbiAgICBoZWFkZXJzOiB7XG4gICAgICAgIC8vICdBdXRob3JpemF0aW9uJzogYEJlYXJlciAke3Byb2Nlc3MuZW52LnRva2VuIHx8ICcnfWAsXG4gICAgICAgICdDb250ZW50LVR5cGUnOiAnYXBwbGljYXRpb24vanNvbidcbiAgICB9XG59KTtcbi8vIOWTjeW6lOaLpuaIquWZqCwg5aSE55CG5pyN5Yqh56uv55qE5byC5bi4XG5yZXF1ZXN0LmludGVyY2VwdG9ycy5yZXNwb25zZS51c2UoXG4gICAgcmVzcG9uc2UgPT4ge1xuICAgICAgICByZXR1cm4gUHJvbWlzZS5yZXNvbHZlKHJlc3BvbnNlKTtcbiAgICB9LFxuICAgIGVycm9yID0+IHtcbiAgICAgICAgaWYgKGVycm9yLnJlc3BvbnNlLnN0YXR1cykge1xuICAgICAgICAgICAgY29uc3QgeyBzdGF0dXMsIGRhdGEgfSA9IGVycm9yLnJlc3BvbnNlO1xuICAgICAgICAgICAgcmV0dXJuIFByb21pc2UucmVzb2x2ZSh7IHN0YXR1cywgZGF0YTogeyBjb2RlOiBzdGF0dXMsIG1lc3NhZ2U6IGRhdGEuZGV0YWlsIH0gfSk7XG4gICAgICAgIH1cbiAgICB9XG4pO1xuZXhwb3J0IGRlZmF1bHQgcmVxdWVzdDsiXSwibmFtZXMiOlsiYXhpb3MiLCJyZXF1ZXN0IiwiY3JlYXRlIiwiYmFzZVVSTCIsInByb2Nlc3MiLCJlbnYiLCJiYXNlVXJsIiwiaGVhZGVycyIsImludGVyY2VwdG9ycyIsInJlc3BvbnNlIiwidXNlIiwiUHJvbWlzZSIsInJlc29sdmUiLCJlcnJvciIsInN0YXR1cyIsImRhdGEiLCJjb2RlIiwibWVzc2FnZSIsImRldGFpbCJdLCJzb3VyY2VSb290IjoiIn0=\n//# sourceURL=webpack-internal:///(api)/./utils/serverRequest.ts\n");
+__webpack_require__.a(module, async (__webpack_handle_async_dependencies__, __webpack_async_result__) => { try {
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "Z": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var axios__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(9648);
+var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([axios__WEBPACK_IMPORTED_MODULE_0__]);
+axios__WEBPACK_IMPORTED_MODULE_0__ = (__webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__)[0];
+
+const request = axios__WEBPACK_IMPORTED_MODULE_0__["default"].create({
+    baseURL: process.env.baseUrl || "",
+    headers: {
+        // 'Authorization': `Bearer ${process.env.token || ''}`,
+        "Content-Type": "application/json"
+    }
+});
+// 响应拦截器, 处理服务端的异常
+request.interceptors.response.use((response)=>{
+    return Promise.resolve(response);
+}, (error)=>{
+    if (error.response.status) {
+        const { status , data  } = error.response;
+        return Promise.resolve({
+            status,
+            data: {
+                code: status,
+                message: data.detail
+            }
+        });
+    }
+});
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (request);
+
+__webpack_async_result__();
+} catch(e) { __webpack_async_result__(e); } });
 
 /***/ })
 
@@ -50,7 +89,7 @@ eval("__webpack_require__.a(module, async (__webpack_handle_async_dependencies__
 var __webpack_require__ = require("../../../webpack-api-runtime.js");
 __webpack_require__.C(exports);
 var __webpack_exec__ = (moduleId) => (__webpack_require__(__webpack_require__.s = moduleId))
-var __webpack_exports__ = (__webpack_exec__("(api)/./pages/api/application/list.ts"));
+var __webpack_exports__ = (__webpack_exec__(7604));
 module.exports = __webpack_exports__;
 
 })();

@@ -47,6 +47,7 @@ def add_model(**kwargs):
         model = Model(**kwargs)
         session.add(model)
         session.commit()
+        return model.id
 
 
 def get_model(model_id: int, user_id: int) -> Model:

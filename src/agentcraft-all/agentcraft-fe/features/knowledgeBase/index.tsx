@@ -2,7 +2,6 @@ import React, { useEffect } from "react";
 import Link from 'next/link';
 import { Breadcrumbs, Anchor, Button, Box, Table, Modal, Text, TextInput, Group, Divider, Title, Paper, Tooltip, Flex, Badge, LoadingOverlay, Textarea, MultiSelect, NumberInput, Select, Drawer } from '@mantine/core';
 import { useForm } from '@mantine/form';
-import { useDisclosure } from '@mantine/hooks';
 import { getModelList, useGlobalStore as modelUseGlobalStore } from '@/store/model';
 import { getDataSetList, useGlobalStore as dataSetUseGlobalStore } from '@/store/dataset';
 import { formatDateTime } from 'utils/index';
@@ -11,7 +10,8 @@ import { DataSet, DataSetType } from '@/types/dataset';
 import FeatureDescription from '@/components/FeatureDescription';
 import { getKnowledgeBaseList, useGlobalStore, addKnowledgeBase, refreshToken, updateKnowledgeBase, getKnowledgeBase, } from '@/store/knowledgeBase';
 import { KnowledgeBaseResponseData, Dataset } from '@/types/knowledgeBase';
-import { FORM_WIDTH_1280 } from 'constants/index';
+import { FORM_WIDTH_1280,PROMPT_TEMPLATE, DEFAULT_SYSTEM_PROMPT } from 'constants/index';
+
 import CopyToClipboard from '@/components/CopyToClipboard';
 import Chat from 'features/chat';
 // import styles from './index.module.scss';
@@ -37,7 +37,7 @@ export function KnowledgeBaseForm({ appId, containerType }: { appId: any, contai
         initialValues: {
             name: '',
             description: '',
-            prompt_template: `已知信息：【{context}】。你需要积极，简洁和专业地来回答\`\`\`中的问题。如果问题和已知信息没有关系，或者问题存在争议性，请说 “抱歉，无法回答该问题”，不允许编造。问题是：\`\`\`{query}\`\`\``,
+            prompt_template: PROMPT_TEMPLATE,
             app_id: parseInt(appId),
             exact_datasets: [],
             fuzzy_datasets: [],
@@ -56,7 +56,7 @@ export function KnowledgeBaseForm({ appId, containerType }: { appId: any, contai
             redis_history_ex: 0,
             model_ip_limit: 0,
             llm_history_len: 0,
-            system_message: '',
+            system_message: DEFAULT_SYSTEM_PROMPT,
             exact_search_limit: 1,
             fuzzy_search_limit: 3
 
@@ -134,7 +134,7 @@ export function KnowledgeBaseForm({ appId, containerType }: { appId: any, contai
                     <Title order={5} size="h5">提示词</Title>
                     <Box maw={FORM_WIDTH_1280} pl={4} pr={4} >
                         <Textarea label="系统提示词" placeholder="输入系统提示词" {...form.getInputProps('system_message')} description="系统提示词作为第一个输入给大语言模型的文本，往往用来设定角色" />
-                        <Textarea withAsterisk label="提示词模板" placeholder="" {...form.getInputProps('prompt_template')} minRows={6} description="提示词模板可以将检索的结果context和用户的输入query整合到一起，最后整体输入给大语言模型" />
+                        <Textarea label="提示词模板" placeholder="" {...form.getInputProps('prompt_template')} minRows={6} description="提示词模板可以将检索的结果context和用户的输入query整合到一起，最后整体输入给大语言模型" />
                         {/* <TextInput label="停止提示词" placeholder="停止输出的token" {...form.getInputProps('stop')} /> */}
                     </Box>
                     <Divider my="sm" />

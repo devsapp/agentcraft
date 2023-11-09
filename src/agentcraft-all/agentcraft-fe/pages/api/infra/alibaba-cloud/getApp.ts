@@ -35,6 +35,7 @@ export default async function handler(
         data.data = result.body;
     } catch (e: any) {
         status = 500;
+        data.code = status;
         data.error = e.message
     }
     res.status(status).json(data);

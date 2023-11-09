@@ -1,8 +1,7 @@
-import type { NextApiRequest, NextApiResponse } from 'next'
-import { nanoid } from 'nanoid'
+import type { NextApiRequest, NextApiResponse } from 'next';
+import { nanoid } from 'nanoid';
 import { ServerlessBridgeService } from '@/infra/alibaba-cloud/services/serverless-app';
-
-
+import { AGENTCRAFT_APP } from '@/constants/index';
 interface ServerlessAppRequestBody {
     name: string,
     description: string,
@@ -27,7 +26,7 @@ export default async function handler(
     res: NextApiResponse
 ) {
     const template: any = req.query.template;
-    const parameters = req.body;
+    const body: any = req.body;
     const headers = req.headers;
     const mainAccountId = headers['x-fc-account-id'] || process.env.MAIN_ACCOUNT_ID;
     const accessKeyId: any = headers['x-fc-access-key-id'];
@@ -42,19 +41,20 @@ export default async function handler(
         }
     }
     const serverlessBridgeService = new ServerlessBridgeService(credential);
-    const appName = `AgentCraft_${nanoid()}`;
+
+    const { description = '', name = '', ...parameters } = body;
+    const appName = name || `${AGENTCRAFT_APP}_${nanoid()}`;
     const appData: ServerlessAppRequestBody = {
         name: appName,
-        description: '由AgentCraft创建，谨慎删除',
+        description: description || '由AgentCraft创建，谨慎删除',
         template,
         parameters,
         roleArn: `acs:ram::${mainAccountId}:role/aliyunfcserverlessdevsrole`,
         autoDeploy: true,
-
     }
     // await serverlessBridgeService.getMainOrCreateAccountRole();
     let status = 200;
-    let data: any = {
+    const data: any = {
         code: 200,
     }
     try {
@@ -63,6 +63,7 @@ export default async function handler(
 
     } catch (e: any) {
         status = 500;
+        data.code = status;
         data.error = e.message
     }
     res.status(status).json(data);

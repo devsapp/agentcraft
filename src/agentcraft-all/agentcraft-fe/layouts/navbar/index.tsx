@@ -44,11 +44,11 @@ export const Nav = () => {
         router.push(`${path.replace('[id]', id).replace('[knowledgeBaseId]', knowledgeBaseId)}`)
     };
     const navItems: NavItem[] = [
-        // {
-        //     name: "概览",
-        //     path: "/overview",
-        //     icon: <IconHome2 size="1rem" stroke={1.5} />,
-        // },
+        {
+            name: "概览",
+            path: "/overview",
+            icon: <IconHome2 size="1rem" stroke={1.5} />,
+        },
         {
             name: "应用",
             path: "/app",
@@ -66,11 +66,13 @@ export const Nav = () => {
                     path: "/app/[id]/knowledgeBase/[knowledgeBaseId]/chatlist",
                     icon: <IconHome2 size="1rem" stroke={1.5} />,
                 }]
-            }, {
-                name: "Agent",
-                path: "/app/[id]/agent",
-                icon: <IconAlien size="1rem" stroke={1.5} />,
-            }]
+            }, 
+            // {
+            //     name: "Agent",
+            //     path: "/app/[id]/agent",
+            //     icon: <IconAlien size="1rem" stroke={1.5} />,
+            // }
+            ]
         },
         {
             name: "数据集",

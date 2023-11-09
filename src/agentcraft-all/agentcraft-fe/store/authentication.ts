@@ -2,7 +2,7 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 import { request } from '@/utils/clientRequest';
-import { AGENT_CRAFT_TOKEN } from '@/constants/index';
+import { AGENTCRAFT_TOKEN } from '@/constants/index';
 
 
 
@@ -12,7 +12,7 @@ export const useAuthenticationStore = create<any>(persist(
         setToken: (token: string) => set({ token }),
     }),
     {
-        name: AGENT_CRAFT_TOKEN,
+        name: AGENTCRAFT_TOKEN,
     }
 ))
 

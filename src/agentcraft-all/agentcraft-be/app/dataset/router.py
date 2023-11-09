@@ -20,13 +20,14 @@ async def list_datasets(page: int, limit: int, dataset_type: int | None = None, 
     }
 
 
-@router.post('/add', response_model=BasicResponse)
+@router.post('/add', response_model=DictResponse)
 async def add_dataset(req: UpsertDatasetRequest, token: JWTData = Depends(validate_token)):
     """添加数据集"""
-    service.add_dataset(user_id=token.user_id, **vars(req))
+    id = service.add_dataset(user_id=token.user_id, **vars(req))
     return {
-        "code": 201,
+        "code": 200,
         "msg": "success",
+        "data": {"id":id}
     }
 
 
