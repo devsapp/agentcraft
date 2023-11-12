@@ -8,6 +8,7 @@ import { Shell } from 'layouts/shell';
 import { useSystemConfigStore, getSystemConfig } from '@/store/systemConfig';
 import { SystemConfig } from '@/features/systemConfig';
 import '../styles/global.scss';
+import '../styles/markdown.scss';
 
 
 export default function App(props: AppProps) {

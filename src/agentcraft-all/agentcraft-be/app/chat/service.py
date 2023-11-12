@@ -77,7 +77,8 @@ def rank_search_res(search_res: list) -> list[tuple[str, str, str, float]]:
     for chunk in search_res:  # concat by url
         title, url, doc_chunk, chunk_idx, similarity = chunk.title, chunk.url, chunk.doc_chunk, chunk.chunk_idx, chunk.similarity
         if url in results_filter:
-            results_filter[url].append((title, doc_chunk, chunk_idx, similarity))
+            results_filter[url].append(
+                (title, doc_chunk, chunk_idx, similarity))
         else:
             results_filter[url] = [(title, doc_chunk, chunk_idx, similarity)]
     for url, value in results_filter.items():
@@ -90,8 +91,10 @@ def rank_search_res(search_res: list) -> list[tuple[str, str, str, float]]:
                 doc_chunk += f"\n\n{value[i][1]}"
             similarity = max(similarity, value[i][3])
         results.append((title, url, similarity, doc_chunk))
-    results.sort(key=lambda x: x[2], reverse=True)  # FIXME: may not be necessary
+    # FIXME: may not be necessary
+    results.sort(key=lambda x: x[2], reverse=True)
     return results
+
 
 def convert_exact_search_res_stream(search_res: list):
     """转换精确搜索结果以流式响应"""
@@ -110,6 +113,7 @@ def convert_exact_search_res_stream(search_res: list):
         choices.append(choice)
         answer.append(chunk)
     return choices, answer
+
 
 def convert_exact_search_res(search_res: list):
     """转换精确搜索结果"""
@@ -161,8 +165,9 @@ def chat(query: str, ip_addr: str, agent_id: int):
         "exact_search_limit": agent.exact_search_limit,
         "fuzzy_search_limit": agent.fuzzy_search_limit
     }
-    similarity_search_res, use_model = agent_dataset_database.similarity_search(**search_args)
-    history = [] #get_history(ip_addr)
+    similarity_search_res, use_model = agent_dataset_database.similarity_search(
+        **search_args)
+    history = []  # get_history(ip_addr)
     if not use_model:
         choices, answer = convert_exact_search_res(similarity_search_res)
         resp = {
@@ -259,10 +264,25 @@ def chat(query: str, ip_addr: str, agent_id: int):
 def chat_stream(query: str, ip_addr: str, agent_id: int):
     """Chat with agent."""
     agent = agent_database.get_agent_lite(agent_id)
-    created = int(time())
     if not agent:
         raise ValueError("agent does not exist")
+    created = int(time())
     uid = f"chatcompl-{uuid.uuid4()}"
+    if not agent.prompt_template:  # 无提示词模版直接进行模型问答
+        chat_args = {
+            "query": query,
+            "prompt": query,
+            "history": [],
+            "search_choices": [],
+            "ip_addr": ip_addr,
+            "agent": agent,
+            "chat_type": 0,
+            "uid": uid,
+            "created": created
+        }
+        yield from model_chat_stream(**chat_args)
+        return
+    
     embedding = utils.embed(query)[0]
     search_args = {
         "agent_id": agent.id,
@@ -272,12 +292,12 @@ def chat_stream(query: str, ip_addr: str, agent_id: int):
         "exact_search_limit": agent.exact_search_limit,
         "fuzzy_search_limit": agent.fuzzy_search_limit
     }
-    similarity_search_res, use_model = agent_dataset_database.similarity_search(**search_args)
-    print(f"similarity_search_res{similarity_search_res}")
-    print(f"use_model{use_model}")
-    history = [] #get_history(ip_addr)
+    similarity_search_res, use_model = agent_dataset_database.similarity_search(
+        **search_args)
+    history = []  # get_history(ip_addr)
     if not use_model:
-        choices, answer = convert_exact_search_res_stream(similarity_search_res)
+        choices, answer = convert_exact_search_res_stream(
+            similarity_search_res)
         resp = {
             "id": uid,
             "object": "chat.search.exact",
@@ -285,7 +305,6 @@ def chat_stream(query: str, ip_addr: str, agent_id: int):
             "created": created
         }
         yield json.dumps(resp)
-        print(f"resp{resp}")
         add_args = {
             "query": query,
             "prompt": "",
@@ -432,8 +451,8 @@ def model_chat(
         "logit_bias": json.loads(agent.logit_bias) if agent.logit_bias else {}
     })
     logger.info(request_data)
-    print(f"model.url:{model.url}")
-    resp = requests.post(model.url, headers=headers, data=request_data, timeout=model.timeout)
+    resp = requests.post(model.url, headers=headers,
+                         data=request_data, timeout=model.timeout)
     if resp.status_code != 200:
         logger.error(resp.text)
         raise ValueError("model request failed")

@@ -81,7 +81,7 @@ services:
     component: fc
     actions:
        pre-deploy:
-        - run: npm i
+        - run: npm i --production
           path: ./agentcraft-all/agentcraft-fe
     props:
       region: ${vars.region}

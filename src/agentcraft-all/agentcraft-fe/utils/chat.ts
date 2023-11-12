@@ -27,7 +27,7 @@ export async function readAndRenderStream(
 
             const _value = decoder.decode(value);
 
-            const msg = JSON.parse("{\"data\":" + _value.replace('data', '').trim() + "}");
+            // const msg = JSON.parse("{\"data\":" + _value.replace('data', '').trim() + "}");
             renderInvoke(decoder.decode(value));
         }
     }

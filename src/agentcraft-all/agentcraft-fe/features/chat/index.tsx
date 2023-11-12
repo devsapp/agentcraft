@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect } from 'react';
 import { Loader } from '@mantine/core';
 import MarkdownContent from '@/components/MarkdownContent';
+import { Markdown } from '@/components/Markdown';
 import { chatStream } from '@/store/chat';
 import { MessageType, ChatMessage } from '@/types/chat';
 import { KnowledgeBase } from '@/types/knowledgeBase';
@@ -14,16 +15,16 @@ export default function Home({ fromChat = false }: { fromChat?: boolean }) {
     const [userInput, setUserInput] = useState(defaultPrompt);
 
     const [loading, setLoading] = useState(false);
-    const [messages, setMessages] = useState<ChatMessage[]>(currentKnowledgeBase.system_message ? [
+    const [messages, setMessages] = useState<ChatMessage[]>([
         {
-            message: currentKnowledgeBase.system_message,
+            message: '你好！有什么我可以帮助你的吗？',
             sourceIdx: -1,
             type: MessageType.SYSTEM,
             showFeedback: false,
             liked: false,
             disLiked: false,
         },
-    ] : []);
+    ]);
 
     const messageListRef = useRef(null);
     const textAreaRef = useRef(null);
@@ -54,13 +55,13 @@ export default function Home({ fromChat = false }: { fromChat?: boolean }) {
         setUserInput("");
     };
 
-    const handleSubmit = async (e: any) => {
+    const handleSubmit = (e: any) => {
         e.preventDefault();
         if (userInput.trim() === "") {
             return;
         }
 
-        let currentMessage: ChatMessage[] = [
+        const currentMessage: ChatMessage[] = [
             ...messages,
             {
                 message: userInput,
@@ -84,7 +85,7 @@ export default function Home({ fromChat = false }: { fromChat?: boolean }) {
                 disLiked: false,
             };
             setUserInput("");
-            await chatStream({
+            chatStream({
                 messages: [{
                     role: 'user',
                     content: userInput
@@ -98,7 +99,7 @@ export default function Home({ fromChat = false }: { fromChat?: boolean }) {
                 },
                 onUpdate: (responseText: string, delta: string) => {
                     newMessage.message += delta;
-                    console.log(delta,'delta')
+                    console.log(delta, 'delta')
                     setMessages([..._preMessages, newMessage]);
                 }
             }, currentKnowledgeBase.token);
@@ -171,7 +172,8 @@ export default function Home({ fromChat = false }: { fromChat?: boolean }) {
                                         </div>
                                     )}
                                     <div className={styles.markdownanswer}>
-                                        <MarkdownContent textContent={message.message} />
+                                        <Markdown content={message.message} />
+                                        {/* <MarkdownContent textContent={message.message} /> */}
                                     </div>
                                 </div>
                             );

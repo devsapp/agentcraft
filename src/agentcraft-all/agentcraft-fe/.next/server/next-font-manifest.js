@@ -1,0 +1,1 @@
+self.__NEXT_FONT_MANIFEST='{"pages":{"/app/[id]/knowledgeBase":[],"/app/[id]/knowledgeBase/[knowledgeBaseId]/detail":[]},"app":{},"appUsingSizeAdjust":false,"pagesUsingSizeAdjust":false}';

@@ -96,7 +96,7 @@ export function KnowledgeBaseForm({ appId, containerType }: { appId: any, contai
             fuzzy_search_limit: currentKnowledgeBase?.fuzzy_search_limit
         })
     }, [currentKnowledgeBase]);
-    const modelSelectData: any = modelList.map((item: Model) => { return { label: item.name, value: item.id } });
+    const modelSelectData: any = modelList.map((item: Model) => { return { label: item.name_alias, value: item.id } });
     const documentSelectData: any = dataSetList.filter((item: DataSet) => item.dataset_type == DataSetType.DOCUMENT).map((item: DataSet) => { return { label: item.name, value: item.id } });
     const qaSelectData: any = dataSetList.filter((item: DataSet) => item.dataset_type == DataSetType.QUESTION).map((item: DataSet) => { return { label: item.name, value: item.id } });
     return <>
@@ -115,7 +115,7 @@ export function KnowledgeBaseForm({ appId, containerType }: { appId: any, contai
                 <Title order={5} size="h5">提示词</Title>
                 <Box maw={FORM_WIDTH_1280} pl={4} pr={4} >
                     <Textarea label="系统提示词" placeholder="输入系统提示词" {...form.getInputProps('system_message')} description="系统提示词作为第一个输入给大语言模型的文本，往往用来设定角色" />
-                    <Textarea withAsterisk label="提示词模板" placeholder="" {...form.getInputProps('prompt_template')} minRows={6} description="提示词模板可以将检索的结果context和用户的输入query整合到一起，最后整体输入给大语言模型" />
+                    <Textarea label="提示词模板" placeholder="" {...form.getInputProps('prompt_template')} minRows={6} description="提示词模板可以将检索的结果context和用户的输入query整合到一起，最后整体输入给大语言模型" />
                     {/* <TextInput label="停止提示词" placeholder="停止输出的token" {...form.getInputProps('stop')} /> */}
                 </Box>
                 <Divider my="sm" />

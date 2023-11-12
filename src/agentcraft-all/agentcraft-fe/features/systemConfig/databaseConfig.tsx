@@ -29,7 +29,7 @@ export default function DataBaseConfig({ form }: any) {
             <TextInput withAsterisk label="数据库地址" description="请输入数据库访问地址" placeholder="示例: mxlpo.pg.rds.aliyuncs.com"  {...form.getInputProps('POSTGRES_HOST')} />
             <TextInput withAsterisk label="数据库名称" description="请输入数据库名称" placeholder="" {...form.getInputProps('POSTGRES_DATABASE')} />
             <TextInput withAsterisk label="数据库访问用户名" description="请输入数据库访问用户名" placeholder="" {...form.getInputProps('POSTGRES_USER')} />
-            <PasswordInput withAsterisk label="数据库访问密码" description="请输入数据库访问密码，注意不要带“@”符号" placeholder="" {...form.getInputProps('POSTGRES_PASSWORD')} />
+            <PasswordInput withAsterisk label="数据库访问密码" description="请输入数据库访问密码" placeholder="" {...form.getInputProps('POSTGRES_PASSWORD')} />
         </Paper>
     );
 }

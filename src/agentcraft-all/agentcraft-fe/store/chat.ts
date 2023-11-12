@@ -65,16 +65,16 @@ export async function getChatList(knowledgeBaseId: any) {
 }
 
 
-export async function chatStream(options: ChatOptions, token: string) {
+export function chatStream(options: ChatOptions, token: string) {
     const controller = new AbortController();
     options.onController?.(controller);
-    const chatPayload = await {
+    const chatPayload = {
         method: "POST",
         headers: {
-            "Content-Type": "application/json",
+            "Content-Type": "application/json"
         },
         signal: controller.signal,
-        body: JSON.stringify(Object.assign({}, options, { token })),
+        body: JSON.stringify(Object.assign({ stream: true }, options, { token })),
     }
     const requestTimeoutId = setTimeout(
         () => controller.abort(),
@@ -89,8 +89,8 @@ export async function chatStream(options: ChatOptions, token: string) {
             finished = true;
         }
     };
-
     controller.signal.onabort = finish;
+    
     fetchEventSource('/api/chat', {
         ...chatPayload,
         async onopen(res) {
@@ -100,7 +100,6 @@ export async function chatStream(options: ChatOptions, token: string) {
                 "AgentCraft request response content type: ",
                 contentType,
             );
-
             if (contentType?.startsWith("text/plain")) {
                 responseText = await res.clone().text();
                 return finish();
@@ -110,20 +109,23 @@ export async function chatStream(options: ChatOptions, token: string) {
                 !res.ok ||
                 !res.headers
                     .get("content-type")
-                    ?.startsWith(EventStreamContentType) ||
+                    ?.startsWith('application/octet-stream') ||
                 res.status !== 200
             ) {
+
                 const responseTexts = [responseText];
                 let extraInfo = await res.clone().text();
+
                 try {
                     const resJson = await res.clone().json();
                     extraInfo = prettyObject(resJson);
-                } catch { }
+                } catch(e) {
+                    console.log(e);
+                 }
 
                 if (res.status === 401) {
                     responseTexts.push(Locale.Error.Unauthorized);
                 }
-
                 if (extraInfo) {
                     responseTexts.push(extraInfo);
                 }
