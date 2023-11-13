@@ -99,7 +99,6 @@ export default function Home({ fromChat = false }: { fromChat?: boolean }) {
                 },
                 onUpdate: (responseText: string, delta: string) => {
                     newMessage.message += delta;
-                    console.log(delta, 'delta')
                     setMessages([..._preMessages, newMessage]);
                 }
             }, currentKnowledgeBase.token);

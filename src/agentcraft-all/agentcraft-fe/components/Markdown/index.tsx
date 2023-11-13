@@ -1,9 +1,11 @@
 import React, { useRef, useState, RefObject, useEffect } from "react";
 import ReactMarkdown from "react-markdown";
+
 import { Loader } from '@mantine/core';
 import RemarkMath from "remark-math";
 import RemarkBreaks from "remark-breaks";
 import RehypeKatex from "rehype-katex";
+import rehypeRaw from 'rehype-raw';
 import RemarkGfm from "remark-gfm";
 import RehypeHighlight from "rehype-highlight";
 import { useClipboard } from "@/components/CopyToClipboard";
@@ -18,6 +20,7 @@ export function showImageModal(img: string) {
   alert('showimg')
 }
 
+
 export function Mermaid(props: { code: string }) {
   const ref = useRef<HTMLDivElement>(null);
   const [hasError, setHasError] = useState(false);
@@ -29,7 +32,7 @@ export function Mermaid(props: { code: string }) {
           nodes: [ref.current],
           suppressErrors: true,
         })
-        .catch((e:any) => {
+        .catch((e: any) => {
           setHasError(true);
           console.error("[Mermaid] ", e.message);
         });
@@ -64,18 +67,19 @@ export function Mermaid(props: { code: string }) {
   );
 }
 
+
 export function PreCode(props: { children: any }) {
   const ref = useRef<HTMLPreElement>(null);
   const refText = ref.current?.innerText;
   const [mermaidCode, setMermaidCode] = useState("");
   const copyUser = useClipboard({ timeout: 3000 });
-    // const renderMermaid = useDebouncedCallback(() => {
-    //   if (!ref.current) return;
-    //   const mermaidDom = ref.current.querySelector("code.language-mermaid");
-    //   if (mermaidDom) {
-    //     setMermaidCode((mermaidDom as HTMLElement).innerText);
-    //   }
-    // }, 600);
+  // const renderMermaid = useDebouncedCallback(() => {
+  //   if (!ref.current) return;
+  //   const mermaidDom = ref.current.querySelector("code.language-mermaid");
+  //   if (mermaidDom) {
+  //     setMermaidCode((mermaidDom as HTMLElement).innerText);
+  //   }
+  // }, 600);
 
   useEffect(() => {
     // setTimeout(renderMermaid, 1);
@@ -93,7 +97,7 @@ export function PreCode(props: { children: any }) {
           onClick={() => {
             if (ref.current) {
               const code = ref.current.innerText;
-              
+
               copyUser.copy(code);
             }
           }}
@@ -104,6 +108,7 @@ export function PreCode(props: { children: any }) {
   );
 }
 
+
 function _MarkDownContent(props: { content: string }) {
   return (
     <ReactMarkdown
@@ -111,6 +116,8 @@ function _MarkDownContent(props: { content: string }) {
       rehypePlugins={[
         //@ts-ignore
         RehypeKatex,
+        //@ts-ignore
+        rehypeRaw,
         [
           //@ts-ignore
           RehypeHighlight,
@@ -126,8 +133,26 @@ function _MarkDownContent(props: { content: string }) {
           const href = aProps.href || "";
           const isInternal = /^\/#/i.test(href);
           const target = isInternal ? "_self" : aProps.target ?? "_blank";
-          return <a {...aProps} target={target} />;
+          return <a color="red" {...aProps} target={target} />;
         },
+        video: ({ node, ...props }: any) => {
+          let videoNode: any = { props: {} };
+          console.log(props,'props')
+          try {
+            props.children.map((item: any) => {
+              if (item.props && item.type === 'source') {
+                videoNode = item;
+              }
+            })
+          } catch (e) {
+
+          }
+
+          return <video controls {...props}>
+            <source src={videoNode.props.src || ''} type={videoNode.props.type || 'video/mp4'} />
+            你的浏览器不支持video标签
+          </video>
+        }
       }}
     >
       {props.content}

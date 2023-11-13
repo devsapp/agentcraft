@@ -5,8 +5,8 @@
   "devFiles": [],
   "ampDevFiles": [],
   "lowPriorityFiles": [
-    "static/vHa21pJZ37O-NpBrDIJPe/_buildManifest.js",
-    "static/vHa21pJZ37O-NpBrDIJPe/_ssgManifest.js"
+    "static/p2TnzHsGrETQvUkcYMEMP/_buildManifest.js",
+    "static/p2TnzHsGrETQvUkcYMEMP/_ssgManifest.js"
   ],
   "rootMainFiles": [],
   "pages": {
@@ -14,7 +14,7 @@
       "static/chunks/webpack-9d79e7a696dc200a.js",
       "static/chunks/framework-467b11a89995b152.js",
       "static/chunks/main-75bdb96a41ba80f4.js",
-      "static/css/1e3e740e80f22ba7.css",
+      "static/css/0751c4fc0748d62f.css",
       "static/chunks/pages/_app-8f788b7d75898424.js"
     ],
     "/_error": [
@@ -48,10 +48,10 @@
       "static/chunks/322-91d717bc37ba7813.js",
       "static/chunks/194-8a6d05a88d55755a.js",
       "static/css/3fa41ea7ef96924b.css",
-      "static/chunks/838-b814ad8ac6f5cdba.js",
-      "static/chunks/864-3e93596b4ea17bdd.js",
+      "static/chunks/279-ab7c45472736fad2.js",
+      "static/chunks/864-907140302ab0ac23.js",
       "static/css/985c11ab56e47170.css",
-      "static/chunks/pages/app/[id]/knowledgeBase-46cbb7002a03da7a.js"
+      "static/chunks/pages/app/[id]/knowledgeBase-8ece6a663fc36c0b.js"
     ],
     "/app/[id]/knowledgeBase/[knowledgeBaseId]/chatlist": [
       "static/chunks/webpack-9d79e7a696dc200a.js",
@@ -70,10 +70,10 @@
       "static/chunks/322-91d717bc37ba7813.js",
       "static/chunks/194-8a6d05a88d55755a.js",
       "static/css/3fa41ea7ef96924b.css",
-      "static/chunks/838-b814ad8ac6f5cdba.js",
-      "static/chunks/864-3e93596b4ea17bdd.js",
+      "static/chunks/279-ab7c45472736fad2.js",
+      "static/chunks/864-907140302ab0ac23.js",
       "static/css/985c11ab56e47170.css",
-      "static/chunks/pages/app/[id]/knowledgeBase/[knowledgeBaseId]/detail-92b045e9d52f38e2.js"
+      "static/chunks/pages/app/[id]/knowledgeBase/[knowledgeBaseId]/detail-ec977af42de6e924.js"
     ],
     "/clientAccess": [
       "static/chunks/webpack-9d79e7a696dc200a.js",
