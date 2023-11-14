@@ -14,11 +14,11 @@ export function QuickStart() {
     const [appName, setAppName] = useState('');
     const llmProxyForm: UseFormReturnType<any> = useForm({
         initialValues: {
-            name_alias: '通义千问模型',
+            name_alias: '通义千问Plus版本',
             description: '',
             region: 'cn-hangzhou',
             apiKey: '',
-            model: 'qwen-turbo'
+            model: 'qwen-plus'
         },
         validate: {
             name_alias: (value) => (!value ? 'LLM代理名称必填' : null),

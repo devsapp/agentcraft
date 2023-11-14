@@ -3,6 +3,7 @@ import Link from 'next/link'
 import { Paper, Col, TextInput, PasswordInput, Button } from '@mantine/core';
 import { useForm } from '@mantine/form';
 import { useRouter } from 'next/router';
+import { notifications } from '@mantine/notifications';
 import { register } from '@/store/authentication';
 const LoginPage = () => {
     const router = useRouter();
@@ -22,6 +23,11 @@ const LoginPage = () => {
         form.validate();
         const { username, password } = form.values;
         const data = await register(username, password);
+        notifications.show({
+            title: '注册成功',
+            message: '您已成功注册账号，请前往登录',
+            color: 'green',
+        });
         router.push('/login');
     };
 

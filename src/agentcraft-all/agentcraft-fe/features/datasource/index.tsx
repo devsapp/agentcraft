@@ -195,7 +195,7 @@ function List({ dataSetId, dataSetType }: DatasourceProps) {
         <tr key={element.id}>
             <td style={{width: 80}}>{element.id}</td>
             <td style={{width: 240}}>{element.title}</td>
-            <td style={{width: 240}}>{element.url ? <CopyToClipboard value={element.url} content={element.url} truncate /> : null}</td>
+            <td style={{width: 240}}>{element.url ? <CopyToClipboard value={element.url} content={element.url} truncate width={200}/> : null}</td>
             {dataSetType == DataSetType.QUESTION ? <td style={{width: 120}}><CopyToClipboard value={element.question} content={element.question} truncate /></td> : null}
             <td width={550} ><CopyToClipboard value={element.doc_chunk} content={element.doc_chunk}  width={550}/></td>
             {/* <td>{element.token_size}</td> */}
