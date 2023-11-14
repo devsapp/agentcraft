@@ -3,7 +3,7 @@ Type: Application
 Name: agentcraft
 Provider:
   - 阿里云
-Version: dev
+Version: 0.0.2
 Description: Serverless架构的LLMOps开发平台，快速交付知识库，Agent等LLM应用
 HomePage: 项目首页地址
 Tags: #标签详情
