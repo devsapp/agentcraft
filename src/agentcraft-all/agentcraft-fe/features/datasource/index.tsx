@@ -12,7 +12,6 @@ import { DataSetType } from "@/types/dataset";
 import { DocumentRequestPayload, QuestionRequestPayload } from "@/types/datasource";
 import { formatDateTime } from 'utils/index';
 import { FORM_WIDTH } from 'constants/index';
-// import styles from './index.module.scss';
 
 interface DatasourceProps {
     dataSetId: number,
@@ -194,15 +193,15 @@ function List({ dataSetId, dataSetType }: DatasourceProps) {
     }
     const rows = dataSourceList.map((element: DataSource) => (
         <tr key={element.id}>
-            <td>{element.id}</td>
-            <td>{element.title}</td>
-            <td ><CopyToClipboard value={element.url} content={element.url} truncate /></td>
-            {dataSetType == DataSetType.QUESTION ? <td ><CopyToClipboard value={element.question} content={element.question} truncate /></td> : null}
-            <td><CopyToClipboard value={element.doc_chunk} content={element.doc_chunk} /></td>
+            <td style={{width: 80}}>{element.id}</td>
+            <td style={{width: 240}}>{element.title}</td>
+            <td style={{width: 240}}>{element.url ? <CopyToClipboard value={element.url} content={element.url} truncate /> : null}</td>
+            {dataSetType == DataSetType.QUESTION ? <td style={{width: 120}}><CopyToClipboard value={element.question} content={element.question} truncate /></td> : null}
+            <td width={550} ><CopyToClipboard value={element.doc_chunk} content={element.doc_chunk}  width={550}/></td>
             {/* <td>{element.token_size}</td> */}
-            <td>{formatDateTime(element.created)}</td>
-            <td>{formatDateTime(element.modified)}</td>
-            <td> <Button variant="filled" color="red" size="xs" onClick={() => removeDataDataSource(element)}>删除</Button></td>
+            <td style={{width: 120}}>{formatDateTime(element.created)}</td>
+            <td style={{width: 120}}>{formatDateTime(element.modified)}</td>
+            <td style={{width: 80}}> <Button variant="filled" color="red" size="xs" onClick={() => removeDataDataSource(element)}>删除</Button></td>
         </tr>
     ));
     const getDatasource = async () => {

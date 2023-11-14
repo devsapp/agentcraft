@@ -54,15 +54,15 @@ export const Nav = () => {
             path: "/app",
             icon: <IconApps size="1rem" stroke={1.5} />,
             subNav: [{
-                name: "知识库",
+                name: "领域知识智能体",
                 path: "/app/[id]/knowledgeBase",
                 icon: <IconVocabulary size="1rem" stroke={1.5} />,
                 subNav: [{
-                    name: "知识库信息",
+                    name: "智能体信息",
                     path: "/app/[id]/knowledgeBase/[knowledgeBaseId]/detail",
                     icon: <IconHome2 size="1rem" stroke={1.5} />,
                 }, {
-                    name: "知识库问答记录",
+                    name: "智能体解答记录",
                     path: "/app/[id]/knowledgeBase/[knowledgeBaseId]/chatlist",
                     icon: <IconHome2 size="1rem" stroke={1.5} />,
                 }]
@@ -140,7 +140,7 @@ export const Nav = () => {
 
     const navItemsMap = flattenNavItems({}, navItems);
    
-    const currentNav: NavItem = navItemsMap[pathname];
+    const currentNav: NavItem = navItemsMap[pathname] || {};
     let renderNavList: NavItem[] = [];
     if(currentNav.solo) {
         renderNavList = [currentNav]; // 只有一个

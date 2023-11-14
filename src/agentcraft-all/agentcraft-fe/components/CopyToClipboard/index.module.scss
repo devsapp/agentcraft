@@ -1,7 +1,10 @@
 .copy-to-clipboard-content {
     cursor: pointer;
-    width: 90%;
+    width: 100%;
+    padding-left: 12px;
+    padding-right: 12px;
     display: block;
+    word-wrap: break-word;
     &:hover {
         text-decoration: underline;
     }

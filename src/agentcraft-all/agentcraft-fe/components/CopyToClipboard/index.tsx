@@ -7,8 +7,8 @@ import styles from './index.module.scss';
 
 type CopyToClipboardProps = {
     value?: string,
-    content?: string,
-    width?: number,
+    content?: any,
+    width?: any,
     truncate?: any
 }
 
@@ -63,24 +63,24 @@ export function useClipboard({ timeout = 2000 } = {}) {
 
     return { copy, reset, error, copied };
 }
-export default function CopyToClipboard({ value, content, truncate, width = 300 }: CopyToClipboardProps) {
+export default function CopyToClipboard({ value, content, truncate, width = 'auto' }: CopyToClipboardProps) {
     const clipboard = useClipboard({ timeout: 500 });
 
-    return  <Tooltip label={clipboard.copied ? '已复制' : '复制'} withArrow position="right">
-                <Flex
-                onClick={() => clipboard.copy(value)}
-                mih={50}
-                style={{ width }}
-                gap="xs"
-                justify="flex-start"
-                align="center"
-                direction="row"
-                wrap="nowrap">
-                    {content ? <Text truncate={truncate} className={styles['copy-to-clipboard-content']}>{content}</Text> : null}
-                    <ActionIcon color={clipboard.copied ? 'teal' : 'gray'} >
-                        {clipboard.copied ? <IconCheck size="1rem" /> : <IconCopy size="1rem" />}
-                    </ActionIcon>
-                </Flex>
-            </Tooltip>
+    return <Tooltip label={clipboard.copied ? '已复制' : '复制'} withArrow position="right" >
+        <Flex
+            onClick={() => clipboard.copy(value)}
+            mih={50}
+            style={{ width }}
+            gap="xs"
+            justify="flex-start"
+            align="center"
+            direction="row"
+            wrap="nowrap">
+            {content ? <Text truncate={truncate} className={styles['copy-to-clipboard-content']}>{content}</Text> : null}
+            <ActionIcon color={clipboard.copied ? 'teal' : 'gray'} >
+                {clipboard.copied ? <IconCheck size="1rem" /> : <IconCopy size="1rem" />}
+            </ActionIcon>
+        </Flex>
+    </Tooltip>
 
 }

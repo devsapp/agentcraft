@@ -44,7 +44,7 @@ export function QuickStart() {
 
     const knowledgeBaseForm: UseFormReturnType<any> = useForm({
         initialValues: {
-            name: 'AgentCraft快速入门知识库',
+            name: 'AgentCraft快速入门智能体',
             prompt_template: PROMPT_TEMPLATE,
             description: '',
             app_id: '',
@@ -70,7 +70,7 @@ export function QuickStart() {
             fuzzy_search_limit: 3
         },
         validate: {
-            name: (value) => (!value ? '知识库名称必填' : null),
+            name: (value) => (!value ? '智能体名称必填' : null),
         },
     });
     const {
@@ -175,8 +175,8 @@ export function QuickStart() {
             configStepStatus.knowledge_base_config_ready = true;
             setConfigStepStatus(configStepStatus);
             notifications.show({
-                title: '恭喜您完成知识库应用创建',
-                message: '前往知识库详列表查看',
+                title: '恭喜您完成智能体应用创建',
+                message: '前往智能体详列表查看',
                 color: 'green',
             });
             router.push(`/app/${appId}/knowledgeBase`)
@@ -258,7 +258,7 @@ export function QuickStart() {
                         </div>
                     </div>
                 </Stepper.Step>
-                <Stepper.Step label="知识库应用创建" description="创建知识库" loading={knowledge_base_create_loading}>
+                <Stepper.Step label="智能体应用创建" description="创建智能体" loading={knowledge_base_create_loading}>
                     {/* <div>{configStepStatus.llm_proxy_config_ready ? <div>该服务已经创建,点击完成会自动忽略创建过程。<Button onClick={() => {
                         createLLMProxy();
                     }} compact variant="subtle">可点击再次创建</Button></div> : null}</div> */}

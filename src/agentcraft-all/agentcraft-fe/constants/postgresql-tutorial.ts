@@ -22,8 +22,8 @@ export const ALIBABACLOUD_POSTGRESQL_TUTORIAL=`# 数据库获取实践教程
 + 如果没找到一致的vpc(函数计算的可用区跟数据库的可用区不完全一致)，可以选择默认的vpc，然后数据库开放公网访问进行测试，后续可以在函数计算服务修改vpc
 
 ### 以下是当前服务的vpc信息
-+ **vpcName是: {{vpcName}}**
-+ **vpcId是: {{vpcId}}** 
++ **vpcName是:{{vpcName}}**
++ **vpcId是:{{vpcId}}** 
 + **交换机的名称是: agentcraft-vpc** 
 + **选择的可用区是:K**
 

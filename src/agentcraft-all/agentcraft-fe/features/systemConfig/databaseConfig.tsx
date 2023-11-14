@@ -8,7 +8,7 @@ import { useSystemConfigStore } from '@/store/systemConfig';
 // import styles from './index.module.scss';
 
 
-function dynamicAddition(content: string, { vpcId, vpcName }: { vpcId: string, vpcName: string }) {
+function dynamicAddition(content: string, { vpcId = '', vpcName = '' }: { vpcId: string, vpcName: string }) {
     return content.replace(/{{vpcId}}/g, vpcId).replace(/{{vpcName}}/g, vpcName);
 }
 

@@ -16,7 +16,7 @@ export default function DataAll({ form }: any) {
             <Divider my="sm" />
             <Title order={5}>数据源设置</Title>
             <Box mx="auto">
-                <FileInput withAsterisk accept=".md,.txt,.html,.pdf" name="file" label="选择文档" description={<div > 选择本地文件上传，支持 .txt,.md,.html文件 ,<a href="/example.md" download>下载示例文档</a></div>} placeholder="点击上传文档" icon={<IconUpload size={rem(14)} />} {...form.getInputProps('file')} />
+                <FileInput withAsterisk accept=".md,.txt,.html,.pdf" name="file" label="选择文档" description={<div > 选择本地文件上传，支持 .txt,.md,.html文件 ,<a href="/agentcraft.md" download>下载AgentCraft教程文档</a></div>} placeholder="点击上传文档" icon={<IconUpload size={rem(14)} />} {...form.getInputProps('file')} />
                 <TextInput withAsterisk label="标题" description="标题内容作为检索的数据来源，用来展示检索结果" placeholder="" {...form.getInputProps('title')} />
                 <NumberInput withAsterisk label="文档切片大小" description="" placeholder="" {...form.getInputProps('chunk_size')} />
                 <TextInput label="来源url" placeholder="" {...form.getInputProps('url')} />

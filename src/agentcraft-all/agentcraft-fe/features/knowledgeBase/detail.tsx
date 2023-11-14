@@ -61,7 +61,7 @@ export function KnowledgeBaseForm({ appId, containerType }: { appId: any, contai
 
         },
         validate: {
-            name: (value) => (!value ? '知识库名必填' : null)
+            name: (value) => (!value ? '智能体名必填' : null)
         },
     });
     useEffect(() => {
@@ -104,9 +104,9 @@ export function KnowledgeBaseForm({ appId, containerType }: { appId: any, contai
             {containerType !== ContainerType.CHAT ? <Title order={4} mb={8}>基础设置</Title> : null}
             <Paper shadow="xs" p="md" withBorder >
                 {containerType !== ContainerType.CHAT ? <>
-                    <Title order={5} size="h5">知识库</Title>
+                    <Title order={5} size="h5">智能体</Title>
                     <Box maw={FORM_WIDTH_1280} pl={4} pr={4} >
-                        <TextInput withAsterisk label="名称" placeholder="输入知识库名称" {...form.getInputProps('name')} />
+                        <TextInput withAsterisk label="名称" placeholder="输入智能体名称" {...form.getInputProps('name')} />
                         <Textarea label="描述" placeholder="输入应用描述" {...form.getInputProps('description')} />
                     </Box>
                     <Divider my="sm" />
@@ -120,6 +120,24 @@ export function KnowledgeBaseForm({ appId, containerType }: { appId: any, contai
                 </Box>
                 <Divider my="sm" />
 
+                
+                <Title order={5} size="h5" >模型</Title>
+                <Box maw={FORM_WIDTH_1280} pl={4} pr={4} mb={12}>
+                    <Select
+                        withAsterisk
+                        data={modelSelectData}
+                        description="LLM代理是大语言模型的代理服务，通过opneai范式的兼容，可以任意切换不同类型的LLM而不用修改业务代码"
+                        label="LLM代理"
+                        placeholder=""
+                        {...form.getInputProps('model_id')}
+                    />
+                </Box>
+                <Divider my="sm" />
+            </Paper>
+        </div>
+        <div style={{ width: '33%' }}>
+            {containerType !== ContainerType.CHAT ? <Title order={4} mb={8} >高级设置</Title> : null}
+            <Paper shadow="xs" p="md" withBorder>
                 <Title order={5} size="h5">数据集</Title>
                 <Box maw={FORM_WIDTH_1280} pl={4} pr={4} >
                     <Group grow>
@@ -140,23 +158,6 @@ export function KnowledgeBaseForm({ appId, containerType }: { appId: any, contai
                     </Group>
                 </Box>
                 <Divider my="sm" />
-                <Title order={5} size="h5" >模型</Title>
-                <Box maw={FORM_WIDTH_1280} pl={4} pr={4} mb={12}>
-                    <Select
-                        withAsterisk
-                        data={modelSelectData}
-                        description="LLM代理是大语言模型的代理服务，通过opneai范式的兼容，可以任意切换不同类型的LLM而不用修改业务代码"
-                        label="LLM代理"
-                        placeholder=""
-                        {...form.getInputProps('model_id')}
-                    />
-                </Box>
-                <Divider my="sm" />
-            </Paper>
-        </div>
-        <div style={{ width: '33%' }}>
-            {containerType !== ContainerType.CHAT ? <Title order={4} mb={8} >高级设置</Title> : null}
-            <Paper shadow="xs" p="md" withBorder>
                 <Title order={5} size="h5" >答案召回</Title>
                 <Box maw={FORM_WIDTH_1280} pl={4} pr={4}>
                     <Group grow>
@@ -199,7 +200,7 @@ export function KnowledgeBaseForm({ appId, containerType }: { appId: any, contai
                 </Box>
                 <Divider my="sm" />
             </Paper>
-            <Box maw={FORM_WIDTH_1280} pt={24} style={{ textAlign: 'center', width: '100%' }}>
+            <Box maw={FORM_WIDTH_1280} pt={18} style={{ textAlign: 'center', width: '100%' }}>
                 <Button style={{ width: '100%' }} onClick={async () => {
                     form.validate();
                     if (form.isValid()) {
@@ -221,7 +222,7 @@ function ChatDrawer() {
     return <Drawer
         opened={chatDrawer}
         onClose={() => { setChatDrawer(false) }}
-        title={<div><Text fz="xl" >知识库调试</Text><Text fz="sm">您可以通过提示词调整，数据集切换，模型服务，以及切换模型参数来调整知识库问答的效果</Text></div>}
+        title={<div><Text fz="xl" >智能体调试</Text><Text fz="sm">您可以通过提示词调整，数据集切换，模型服务，以及切换模型参数来调整智能体问答的效果</Text></div>}
         position="right"
         size="30%"
         overlayProps={{ opacity: 0.5, blur: 4 }}
@@ -231,7 +232,7 @@ function ChatDrawer() {
             direction="row"
         >
             <div >
-                <div><Badge color="orange" size="lg" radius="xs" variant="filled">知识库问答</Badge></div>
+                <div><Badge color="orange" size="lg" radius="xs" variant="filled">智能体问答</Badge></div>
                 <Chat />
             </div>
         </Flex>
@@ -329,8 +330,8 @@ export function DetailPage({ appId, knowledgeBaseId }: DetailPageProps) {
     const updateCurrentKnowledgeBase = useGlobalStore().updateCurrentKnowledgeBase;
     const items = [
         { title: '应用列表', href: '/app' },
-        { title: '知识库', href: `/app/${appId}/knowledgeBase` },
-        { title: '知识库详细', href: `/app/${appId}/knowledgeBase/${knowledgeBaseId}/detail` },
+        { title: '领域知识智能体', href: `/app/${appId}/knowledgeBase` },
+        { title: '智能体详细', href: `/app/${appId}/knowledgeBase/${knowledgeBaseId}/detail` },
     ].map((item, index) => (
         <Anchor href={item.href} key={index}>
             {item.title}
@@ -348,7 +349,7 @@ export function DetailPage({ appId, knowledgeBaseId }: DetailPageProps) {
         <Box pos="relative" >
             <LoadingOverlay visible={loading} overlayOpacity={0.3} />
             <Breadcrumbs>{items}</Breadcrumbs>
-            <FeatureDescription title="知识库详情" description="您可以查看修改知识库内容，以及查看API调用" />
+            <FeatureDescription title="智能体详情" description="您可以查看修改智能体内容，以及查看API调用" />
             <ChatDrawer />
             <Flex
                 mih={50}

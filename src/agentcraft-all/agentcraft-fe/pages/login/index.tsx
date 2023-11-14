@@ -9,8 +9,8 @@ const LoginPage = () => {
     const setToken = useAuthenticationStore().setToken;
     const form = useForm({
         initialValues: {
-            username: 'serverless_llm',
-            password: 'serverless_LLM',
+            username: '',
+            password: '',
         },
 
         validate: {

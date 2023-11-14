@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect } from 'react';
 import { Loader } from '@mantine/core';
 import MarkdownContent from '@/components/MarkdownContent';
+import MDXContainer from '@/components/MDXContainer';
 import { Markdown } from '@/components/Markdown';
 import { chatStream } from '@/store/chat';
 import { MessageType, ChatMessage } from '@/types/chat';
@@ -17,7 +18,7 @@ export default function Home({ fromChat = false }: { fromChat?: boolean }) {
     const [loading, setLoading] = useState(false);
     const [messages, setMessages] = useState<ChatMessage[]>([
         {
-            message: '你好！有什么我可以帮助你的吗？',
+            message: `你好！有什么我可以帮助你的吗？`,
             sourceIdx: -1,
             type: MessageType.SYSTEM,
             showFeedback: false,
@@ -171,7 +172,8 @@ export default function Home({ fromChat = false }: { fromChat?: boolean }) {
                                         </div>
                                     )}
                                     <div className={styles.markdownanswer}>
-                                        <Markdown content={message.message} />
+                                        <MDXContainer content={message.message} />
+                                        {/* <Markdown content={message.message} /> */}
                                         {/* <MarkdownContent textContent={message.message} /> */}
                                     </div>
                                 </div>
@@ -191,7 +193,7 @@ export default function Home({ fromChat = false }: { fromChat?: boolean }) {
                                 maxLength={512}
                                 id="userInput"
                                 name="userInput"
-                                placeholder={loading ? "等待回复中" : "请输入你的问题"}
+                                placeholder={loading ? "等待回复中" : "请输入你的问题，如AgentCraft的使用场景有哪些？ "}
                                 value={userInput}
                                 onChange={(e) => setUserInput(e.target.value)}
                                 className={styles.textarea}

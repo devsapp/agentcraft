@@ -28,7 +28,7 @@ export default function KnowledgeBase({ form }: any) {
                 <Textarea label="描述" description="" placeholder="" minRows={2}  {...form.getInputProps('description')} />
             </Box>
             <Divider my="sm" />
-            <Title order={5}>知识库设置</Title>
+            <Title order={5}>领域知识智能体设置</Title>
             <Box pl={4} pr={4} >
                 <Textarea label="系统提示词" placeholder="输入系统提示词" {...form.getInputProps('system_message')} minRows={2} description="系统提示词作为第一个输入给大语言模型的文本，往往用来设定角色" />
                 <Textarea label="提示词模板" placeholder="" {...form.getInputProps('prompt_template')} minRows={2} description="提示词模板可以将检索的结果context和用户的输入query整合到一起，最后整体输入给大语言模型" />

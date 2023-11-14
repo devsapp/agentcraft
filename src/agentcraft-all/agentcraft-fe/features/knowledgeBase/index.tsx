@@ -10,7 +10,7 @@ import { DataSet, DataSetType } from '@/types/dataset';
 import FeatureDescription from '@/components/FeatureDescription';
 import { getKnowledgeBaseList, useGlobalStore, addKnowledgeBase, refreshToken, updateKnowledgeBase, getKnowledgeBase, } from '@/store/knowledgeBase';
 import { KnowledgeBaseResponseData, Dataset } from '@/types/knowledgeBase';
-import { FORM_WIDTH_1280,PROMPT_TEMPLATE, DEFAULT_SYSTEM_PROMPT } from 'constants/index';
+import { FORM_WIDTH_1280, PROMPT_TEMPLATE, DEFAULT_SYSTEM_PROMPT } from 'constants/index';
 
 import CopyToClipboard from '@/components/CopyToClipboard';
 import Chat from 'features/chat';
@@ -62,7 +62,7 @@ export function KnowledgeBaseForm({ appId, containerType }: { appId: any, contai
 
         },
         validate: {
-            name: (value) => (!value ? '知识库名必填' : null)
+            name: (value) => (!value ? '智能体名必填' : null)
         },
     });
     useEffect(() => {
@@ -123,22 +123,39 @@ export function KnowledgeBaseForm({ appId, containerType }: { appId: any, contai
 
                 <Paper shadow="xs" p="md" withBorder >
                     {containerType !== ContainerType.CHAT ? <>
-                        <Title order={5} size="h5">知识库</Title>
+                        <Title order={5} size="h5">智能体</Title>
                         <Box maw={FORM_WIDTH_1280} pl={4} pr={4} >
-                            <TextInput withAsterisk label="名称" placeholder="输入知识库名称" {...form.getInputProps('name')} />
-                            <Textarea label="描述" placeholder="输入应用描述" {...form.getInputProps('description')} />
+                            <TextInput withAsterisk label="名称" placeholder="输入智能体名称" {...form.getInputProps('name')} />
+                            <TextInput label="描述" placeholder="输入应用描述" {...form.getInputProps('description')} />
                         </Box>
                         <Divider my="sm" />
                     </> : null}
 
                     <Title order={5} size="h5">提示词</Title>
                     <Box maw={FORM_WIDTH_1280} pl={4} pr={4} >
-                        <Textarea label="系统提示词" placeholder="输入系统提示词" {...form.getInputProps('system_message')} description="系统提示词作为第一个输入给大语言模型的文本，往往用来设定角色" />
-                        <Textarea label="提示词模板" placeholder="" {...form.getInputProps('prompt_template')} minRows={6} description="提示词模板可以将检索的结果context和用户的输入query整合到一起，最后整体输入给大语言模型" />
+                        <Textarea label="系统提示词" placeholder="输入系统提示词" {...form.getInputProps('system_message')} minRows={containerType !== ContainerType.CHAT ? 2 : 8} description="系统提示词作为第一个输入给大语言模型的文本，往往用来设定角色" />
+                        <Textarea label="提示词模板" placeholder="" {...form.getInputProps('prompt_template')} minRows={containerType !== ContainerType.CHAT ? 6 : 8} description="提示词模板可以将检索的结果context和用户的输入query整合到一起，最后整体输入给大语言模型" />
                         {/* <TextInput label="停止提示词" placeholder="停止输出的token" {...form.getInputProps('stop')} /> */}
                     </Box>
                     <Divider my="sm" />
 
+                    <Title order={5} size="h5" >基础模型</Title>
+                    <Box maw={FORM_WIDTH_1280} pl={4} pr={4} mb={12}>
+                        <Select
+                            withAsterisk
+                            data={modelSelectData}
+                            description="LLM代理是大语言模型的代理服务，通过opneai范式的兼容，可以任意切换不同类型的LLM而不用修改业务代码"
+                            label="LLM代理"
+                            placeholder=""
+                            {...form.getInputProps('model_id')}
+                        />
+                    </Box>
+                    <Divider my="sm" />
+                </Paper>
+            </div>
+            <div style={{ width: '50%' }}>
+                {containerType !== ContainerType.CHAT ? <Title order={4} mb={8} >高级设置</Title> : null}
+                <Paper shadow="xs" p="md" withBorder>
                     <Title order={5} size="h5">数据集</Title>
                     <Box maw={FORM_WIDTH_1280} pl={4} pr={4} >
                         <Group grow>
@@ -159,25 +176,8 @@ export function KnowledgeBaseForm({ appId, containerType }: { appId: any, contai
                         </Group>
                     </Box>
                     <Divider my="sm" />
-                    <Title order={5} size="h5" >基础模型</Title>
-                    <Box maw={FORM_WIDTH_1280} pl={4} pr={4} mb={12}>
-                        <Select
-                            withAsterisk
-                            data={modelSelectData}
-                            description="LLM代理是大语言模型的代理服务，通过opneai范式的兼容，可以任意切换不同类型的LLM而不用修改业务代码"
-                            label="LLM代理"
-                            placeholder=""
-                            {...form.getInputProps('model_id')}
-                        />
-                    </Box>
-                    <Divider my="sm" />
-                </Paper>
-            </div>
-            <div style={{ width: '50%' }}>
-                {containerType !== ContainerType.CHAT ? <Title order={4} mb={8} >高级设置</Title> : null}
-                <Paper shadow="xs" p="md" withBorder>
                     <Title order={5} size="h5" >答案召回</Title>
-                    <Box maw={FORM_WIDTH_1280} pl={4} pr={4}>
+                    <Box maw={FORM_WIDTH_1280} pl={4} pr={4} mt={4}>
                         <Group grow>
                             <TextInput withAsterisk description="文档数据检索的精度，取值0-1之间，建议取0.6~0.8" label="文档结果召回精度" placeholder="" {...form.getInputProps('fuzzy_search_similarity')} />
                             <TextInput withAsterisk description="问答数据检索的精度，取值0-1之间，建议取0.9~1" label="问答结果召回精度" placeholder="" {...form.getInputProps('exact_search_similarity')} />
@@ -201,7 +201,7 @@ export function KnowledgeBaseForm({ appId, containerType }: { appId: any, contai
                 </Box> */}
                     <Divider my="sm" />
                     <Title order={5} size="h5">大语言模型参数</Title>
-                    <Box maw={FORM_WIDTH_1280} pl={4} pr={4}>
+                    <Box maw={FORM_WIDTH_1280} pl={4} pr={4} mt={4}>
                         <Group grow>
                             <TextInput withAsterisk label="temperature" placeholder="" {...form.getInputProps('temperature')} />
                             <TextInput withAsterisk label="top_p" placeholder="" {...form.getInputProps('top_p')} />
@@ -249,7 +249,7 @@ function AddOrUpdate({ appId }: any) {
 
 
     return (
-        <Modal opened={open} onClose={() => { setEditStatus(false); setOpen(false); }} title={isEdit ? "编辑知识库" : "创建知识库"} centered size="55%">
+        <Modal opened={open} onClose={() => { setEditStatus(false); setOpen(false); }} title={isEdit ? "编辑智能体" : "创建智能体"} centered size="55%">
 
             <KnowledgeBaseForm appId={appId} />
 
@@ -263,7 +263,7 @@ export function ChatDrawer({ appId }: KnowledgeBaseProps) {
     return <Drawer
         opened={chatDrawer}
         onClose={() => { setChatDrawer(false) }}
-        title={<div><Text fz="xl" >知识库调试</Text><Text fz="sm">您可以通过提示词调整，数据集切换，模型服务，以及切换模型参数来调整知识库问答的效果</Text></div>}
+        title={<div><Text fz="xl" >智能体调试</Text><Text fz="sm">您可以通过提示词调整，数据集切换，模型服务，以及切换模型参数来调整智能体问答的效果</Text></div>}
         position="right"
         size="90%"
         overlayProps={{ opacity: 0.5, blur: 4 }}
@@ -273,11 +273,11 @@ export function ChatDrawer({ appId }: KnowledgeBaseProps) {
             direction="row"
         >
             <div style={{ width: '60%' }}>
-                <div style={{ marginBottom: 12 }}><Badge color="orange" size="lg" radius="xs" variant="filled">知识库参数设置</Badge></div>
+                <div style={{ marginBottom: 12 }}><Badge color="orange" size="lg" radius="xs" variant="filled">智能体参数设置</Badge></div>
                 <KnowledgeBaseForm appId={appId} containerType={ContainerType.CHAT} />
             </div>
             <div style={{ marginLeft: 12, borderLeft: '1px solid #eee', paddingLeft: 8, width: '40%' }}>
-                <div><Badge color="orange" size="lg" radius="xs" variant="filled">知识库问答</Badge></div>
+                <div><Badge color="orange" size="lg" radius="xs" variant="filled">智能体问答</Badge></div>
                 <Chat />
             </div>
         </Flex>
@@ -306,11 +306,11 @@ function List({ appId }: KnowledgeBaseProps) {
     const rows = knowledgeBaseList.map((element: KnowledgeBaseResponseData) => (
         <tr key={element.id}>
             <td style={{ width: 20 }}>{element.id}</td>
-            <td style={{ width: 100 }}><Link href={`/app/${appId}/knowledgeBase/${element.id}/detail`}>{element.name}</Link></td>
-            <td style={{ width: 100 }}>{element.description}</td>
-            <td style={{ width: 200 }}>{element.system_message}</td>
-            <td style={{ width: 300 }}><CopyToClipboard value={element.prompt_template} content={element.prompt_template} /></td>
-            <td >{element.token ? <CopyToClipboard value={element.token} content={element.token} truncate /> : <Button color="lime" size="xs" compact onClick={() => generateToken(element.id)}>生成访问令牌</Button>}</td>
+            <td style={{ width: 120 }}><Link href={`/app/${appId}/knowledgeBase/${element.id}/detail`}>{element.name}</Link></td>
+            <td style={{ width: 180 }}>{element.description}</td>
+            <td style={{ width: 200 }}>{element.system_message ? <CopyToClipboard value={element.system_message} content={element.system_message} width={300} /> : null}</td>
+            <td style={{ width: 300 }}>{element.prompt_template ? <CopyToClipboard value={element.prompt_template} content={element.prompt_template} width={300} /> : null}</td>
+            <td >{element.token ? <CopyToClipboard value={element.token} content={element.token} truncate width={160} /> : <Button color="lime" size="xs" compact onClick={() => generateToken(element.id)}>生成访问令牌</Button>}</td>
             <td>{formatDateTime(element.created)}</td>
             <td>
                 {!element.token ? <Tooltip label="需要成访问令牌才可以访问此能力" >
@@ -362,7 +362,7 @@ function List({ appId }: KnowledgeBaseProps) {
     return (
         <>
 
-            <ChatDrawer appId={appId}/>
+            <ChatDrawer appId={appId} />
             <Table striped withBorder withColumnBorders mt={12}  >
                 <thead>
                     <tr>
@@ -388,7 +388,7 @@ export function KnowledgeBasePage({ appId }: KnowledgeBaseProps) {
     const loading: boolean = useGlobalStore().loading;
     const items = [
         { title: '应用列表', href: '/app' },
-        { title: '知识库', href: `/app/${appId}/knowledgeBase` },
+        { title: '智能体', href: `/app/${appId}/knowledgeBase` },
     ].map((item, index) => (
         <Anchor href={item.href} key={index}>
             {item.title}
@@ -401,10 +401,10 @@ export function KnowledgeBasePage({ appId }: KnowledgeBaseProps) {
         <div style={{ position: 'relative' }} >
             <LoadingOverlay visible={loading} overlayOpacity={0.3} />
             <Breadcrumbs>{items}</Breadcrumbs>
-            <FeatureDescription title="知识库" description="知识库使用RAG(Retrieval-Augmented Generation 检索增强生成)技术来将大语言模型跟数据进行结合，以实现更准确的预测" />
+            <FeatureDescription title="领域知识智能体" description="领域知识智能体专注于传授知识，利用LLM对自然语言进行认知，结合RAG(Retrieval-Augmented Generation 检索增强生成)技术来将领域的信息进行有效的整合，然后通过图片，视频，可交互组件完成知识交付，" />
             <Box  >
                 <Button onClick={() => setOpen(true)}>
-                    新建知识库
+                    新建领域知识智能体
                 </Button>
             </Box>
             <AddOrUpdate appId={appId} />

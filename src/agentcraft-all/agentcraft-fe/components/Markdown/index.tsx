@@ -137,7 +137,6 @@ function _MarkDownContent(props: { content: string }) {
         },
         video: ({ node, ...props }: any) => {
           let videoNode: any = { props: {} };
-          console.log(props,'props')
           try {
             props.children.map((item: any) => {
               if (item.props && item.type === 'source') {
