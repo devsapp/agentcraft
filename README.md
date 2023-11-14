@@ -113,7 +113,7 @@ AgentCraft既可以面向开发者做AI应用的开发交付，也可以作为�
 + 开发者可以基于AgentCraft定制自己的专业知识库沉淀平台或者AI业务交付中心
 + 企业可以基于AgentCraft定制自己的行业LLMOps Platform，可以进行AI能力的整合沉淀，探索AI转型
 ## AgentCraft使用指引
-下面是不同角色在AgentCraft操作的常请，开发者进行基础模型管理和AI应用编排，最后交付给业务场景，
+下面是不同角色在AgentCraft操作的场景，开发者进行基础模型管理和AI应用编排，最后交付给业务场景，
 用户在业务场景的客户端上使用企业的AI服务
 ![AgentCraft Structer](https://img.alicdn.com/imgextra/i2/O1CN01phVIf61Iceu25Q6Gk_!!6000000000914-2-tps-1968-1378.png)
 ## AgentCraft的功能架构
