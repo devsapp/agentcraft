@@ -1,6 +1,6 @@
 
 import * as $OpenApi from '@alicloud/openapi-client';
-import { CreateApplicationRequest, ListApplicationsRequest } from '@alicloud/serverless20210924';
+import { CreateApplicationRequest, ListApplicationsRequest, } from '@alicloud/serverless20210924';
 import Util, * as $Util from '@alicloud/tea-util';
 import { InvokeFunctionRequest, InvokeFunctionHeaders, ListFunctionsHeaders, ListFunctionsRequest, UpdateFunctionHeaders, UpdateFunctionRequest, GetServiceHeaders, GetServiceRequest } from '@alicloud/fc-open20210406';
 import ServerlessDevsClient from "./serverlessDevsClient";
@@ -39,7 +39,9 @@ export class ServerlessBridgeServerlessDevs {
     }
 
     async getApplication(appName: string) {
-        return await this.client.getApplication(appName);
+        const runtimeObject = new $Util.RuntimeOptions({ReadTimeout: 60000});
+        const headers : {[key: string ]: string} = { };
+        return await this.client.getApplicationWithOptions(appName,headers,runtimeObject);
     }
 
     async listApplications() {

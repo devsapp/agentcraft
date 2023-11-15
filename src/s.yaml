@@ -20,8 +20,8 @@ services:
         timeout: 7200
         caPort: 8000
         layers:
-          - acs:fc:cn-hangzhou:1431999136518149:layers/NLP-Python310/versions/1
-          - acs:fc:cn-hangzhou:1431999136518149:layers/FastAPI-Python310/versions/6
+          - acs:fc:${vars.region}:1431999136518149:layers/NLP-Python310/versions/1
+          - acs:fc:${vars.region}:1431999136518149:layers/FastAPI-Python310/versions/6
         customRuntimeConfig:
           command:
             - python3
