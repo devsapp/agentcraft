@@ -1,10 +1,20 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Paper, Text, Title, Button, Divider, Flex, Box, Anchor } from '@mantine/core';
 import { QuickStart } from "features/overview/quickStart";
 import { useQuickStartStore } from "store/quickStart";
+import { useGlobalStore, getAccessUrl } from '@/store/knowledgeBase';
 export function OverView() {
     const { autoQuickStart, setAutoQuickStart } = useQuickStartStore();
+    const accessUrl = useGlobalStore().accessUrl;
+    const setAccessUrl = useGlobalStore().setAccessUrl;
+    useEffect(() => {
+        (async () => {
+            const result = await getAccessUrl();
+            const data = result.data || { openApiUrl: '', innerApiUrl: '' }
+            setAccessUrl(data);
+        })()
 
+    }, [])
     return (
         <>
             {autoQuickStart && <Paper shadow="xs" p="xl" >
@@ -66,13 +76,24 @@ export function OverView() {
                         <Flex direction="column" style={{ width: '30%' }}>
                             <Paper shadow="xs" p="xl" mb={24} withBorder >
                                 <Title order={3}>常用信息</Title>
-                                <Flex align="center">
-                                    <Anchor href="https://github.com/devsapp/agentcraft" target="_blank" mr={8}>
-                                        AgentCarft项目地址
+                                <Flex align="center" mb={8} justify="space-between" mt={8}>
+                                    <div style={{ width: '50%' }}>
+                                        <Anchor href="https://github.com/devsapp/agentcraft" target="_blank" mr={8}>
+                                            AgentCarft项目地址
+                                        </Anchor>
+                                    </div>
+                                    <div style={{ width: '50%' }}>
+                                        <Anchor href="https://www.serverless-devs.com/" target="_blank">
+                                            ServerlessDevs地址
+                                        </Anchor>
+                                    </div>
+
+                                </Flex>
+                                <Flex align="center" mb={8} justify="space-between" mt={8}>
+                                    <Anchor href={accessUrl.openApiUrl} target="_blank" mr={8}>
+                                        当前项目API地址
                                     </Anchor>
-                                    <Anchor href="https://www.serverless-devs.com/" target="_blank">
-                                        ServerlessDevs地址
-                                    </Anchor>
+
                                 </Flex>
                                 <div>
                                     <Title order={4} mt={8}>交流群</Title>

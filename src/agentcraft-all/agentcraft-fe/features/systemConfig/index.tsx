@@ -108,6 +108,7 @@ export function SystemConfig() {
                             message: '您已完成配置，请前往注册',
                             color: 'green',
                         });
+                        
                         router.push('/register');
                     } else {
                         notifications.show({

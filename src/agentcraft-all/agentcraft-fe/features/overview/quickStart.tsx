@@ -32,7 +32,7 @@ export function QuickStart() {
             name: 'AgentCraft快速入门数据集',
             title: 'AgentCraft快速入门数据集',
             chunk_size: 521,
-            url: `${window.location.protocol}/${window.location.host}/example.md`,
+            url: `${window.location.protocol}/${window.location.host}/agentcraft.md`,
             file: ''
         },
         validate: {
@@ -174,6 +174,7 @@ export function QuickStart() {
             configStepStatus.knowledge_base_create_loading = false;
             configStepStatus.knowledge_base_config_ready = true;
             setConfigStepStatus(configStepStatus);
+            setAutoQuickStart(false); //关闭快速启动
             notifications.show({
                 title: '恭喜您完成智能体应用创建',
                 message: '前往智能体详列表查看',

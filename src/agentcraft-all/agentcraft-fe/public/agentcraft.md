@@ -11,6 +11,11 @@
 + 客户端侧对接
 + 生成式UI渲染能力
 
+
+
+
+
+
 ## AgentCraft的使用场景
 各种领域知识的交付场景,包括不限于以下场景：
 + 零售导购，数字人+领域知识智能体能够作为新一代的零售导购服务增强企业竞争力
@@ -23,23 +28,49 @@
 AgentCraft可以快速交付领域智能体，满足上述要求
 
 
+
+
+
+
 ## AgentCraft的使用角色
 AgentCraft既可以面向开发者做AI应用的开发交付，也可以作为企业AI能力的服务之一
 + 开发者可以基于AgentCraft定制自己的专业知识库沉淀平台或者AI业务交付中心
 + 企业可以基于AgentCraft定制自己的行业LLMOps Platform，可以进行AI能力的整合沉淀，探索AI转型
+
+
+
+
 ## AgentCraft使用指引
 下面是不同角色在AgentCraft操作的常请，开发者进行基础模型管理和AI应用编排，最后交付给业务场景，
 用户在业务场景的客户端上使用企业的AI服务
 ![AgentCraft Structer](https://img.alicdn.com/imgextra/i2/O1CN01phVIf61Iceu25Q6Gk_!!6000000000914-2-tps-1968-1378.png)
+
+
+
+
+
 ## AgentCraft的功能架构
 ![AgentCraft Structer](https://img.alicdn.com/imgextra/i4/O1CN01O9AyfH1MtqDgPLsL1_!!6000000001493-0-tps-2448-1314.jpg)
+
+
+
+
+
 
 ## AgentCraft的特色及核心能力
 涵盖了了算法，算力，模型，数据，工具，AI交付，以及生成式UI等全方位的功能，并且提供了极简的部署方式
 
+
+
+
+
 ### 1基础模型
 依托于阿里云Serverless产品函数计算，提供海量的基础模型构建托管服务，依托于基础的模型服务您可以用来构建更加丰富的AI应用形态
 ![AgentCraft FoundationModel](https://img.alicdn.com/imgextra/i3/O1CN01tp5Mtm1lnlM8Z6IKN_!!6000000004864-1-tps-1777-867.gif)
+
+
+
+
 #### 大语言模型系列
 
 + **通义千问** ： qwen-plus、qwen-turbo
@@ -50,6 +81,9 @@ AgentCraft既可以面向开发者做AI应用的开发交付，也可以作为�
 + **OpenAI** : GPT4、GPT3.5-turbo
 
 基础模型部分支持基于Hugging Face，ModelScope等开源模型的开放模型进行微调和部署
+
+
+
 
 #### 文生图系列
 + **通义万相**
@@ -101,9 +135,15 @@ python3 -u app/main.py
 npm run dev
 ```
 
+
+
 ## AgentCraft安装视频教程
 以下是在云服务安装AgentCraft的使用教程
 <video width="680" height="340" controls src="https://cloud.video.taobao.com/play/u/null/p/1/e/6/t/1/436856476412.mp4" />
+
+
+
+
 
 ## AgentCraft的基本概念
 ### 基础模型
@@ -121,9 +161,13 @@ LLM代理可以更好的兼容不同的LLM服务，使用相同的数据输入�
                                 增加问答知识的准确率，通过生成式UI，加强知识的交付效果
 
 
+
 ## 模型列表
 已有的模型列表如下：
 <ModelView  />
+
+
+
 
 ## RoadMAP
 正在进行中的开发：
@@ -139,12 +183,19 @@ LLM代理可以更好的兼容不同的LLM服务，使用相同的数据输入�
 ## 如何贡献
 欢迎为AgentCraft贡献，一起推进AI应用的落地。  欢迎各种方式的贡献，提交代码、问题、新想法、或者分享你的AI应用
 
+
+
+
+
 ## 联系我们
 
 如果您有任何问题、建议或合作意向，可以用以下方式联系我们：
 + GithubRepo 提交 Issue 或 PR
 + 加入Serverless+ AIGC 钉群讨论 
 ![dingtalk](https://img.alicdn.com/imgextra/i2/O1CN01zGJ4fS21GMJy6Okd8_!!6000000006957-0-tps-470-472.jpg)
+
+
+
 
 
 ## Citation

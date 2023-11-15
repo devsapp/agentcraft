@@ -13,8 +13,14 @@
     font-size: 1.1rem;
     margin: 1rem;
 }
-
-.avatar {
+.system_avatar {
+    height: 36px;
+    width: 36px;
+    overflow: hidden;
+    background: #fafafa;
+    border-radius: 4px;
+}
+.user_avatar {
     height: 36px;
     width: 36px;
     padding: 6px;
