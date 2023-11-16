@@ -100,7 +100,8 @@ function checkAppStatus(appName: string): Promise<any> {
                     resolve(release);
                 }
             } catch (e) {
-                reject(e);
+                // 忽略超时 
+                // reject(e);
             }
 
         }, 4000);

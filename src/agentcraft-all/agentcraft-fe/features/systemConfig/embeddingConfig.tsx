@@ -47,7 +47,8 @@ export default function EmbeddingConfig({ form }: any) {
                         resolve(release);
                     }
                 } catch (e) {
-                    reject(e);
+                    // 忽略超时响应的问题
+                    // reject(e);
                 }
 
             }, 4000);

@@ -53,7 +53,7 @@ export default async function handler(
         });
         const vpcConfig = serviceInfo?.body?.vpcConfig || {}
         let _vpcName = ''
-      
+
         try {
             const vpcResult = await serverlessBridgeService.describeVpcs({
                 vpcId: vpcConfig.vpcId,
@@ -61,14 +61,15 @@ export default async function handler(
             });
             const vpcInfo = vpcResult?.body?.vpcs?.vpc[0] || {};
             const { vpcName, vpcId } = vpcInfo;
-            _vpcName = vpcName; 
+            _vpcName = vpcName;
             const vswitchPayload = DEFAULT_VWISTH_CONFIG;
             vswitchPayload.vpcId = vpcId;
             vswitchPayload.regionId = region;
             await serverlessBridgeService.createVSwitch(vswitchPayload); //兼容数据库的可用区创建一个vswitch
         } catch (e) {
+            console.log('vswitch create error:', e);
         }
-        data.data = { EMBEDDING_URL: embedding_url, vpcInfo: { vpcName:_vpcName, vpcId: vpcConfig.vpcId } }
+        data.data = { EMBEDDING_URL: embedding_url, vpcInfo: { vpcName: _vpcName, vpcId: vpcConfig.vpcId } }
     } catch (e: any) {
         status = 500;
         data.code = status;

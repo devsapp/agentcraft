@@ -39,9 +39,9 @@ export class ServerlessBridgeServerlessDevs {
     }
 
     async getApplication(appName: string) {
-        const runtimeObject = new $Util.RuntimeOptions({ReadTimeout: 60000});
-        const headers : {[key: string ]: string} = { };
-        return await this.client.getApplicationWithOptions(appName,headers,runtimeObject);
+        const runtimeObject = new $Util.RuntimeOptions({ ReadTimeout: 60000 });
+        const headers: { [key: string]: string } = {};
+        return await this.client.getApplicationWithOptions(appName, headers, runtimeObject);
     }
 
     async listApplications() {
