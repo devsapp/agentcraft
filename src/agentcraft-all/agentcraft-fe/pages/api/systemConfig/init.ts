@@ -79,8 +79,7 @@ export default async function handler(
             vswitchPayload.vpcId = vpcId;
             vswitchPayload.regionId = region;
             const vSwitchResult = await serverlessBridgeService.createVSwitch(vswitchPayload); //兼容数据库的可用区创建一个vswitch
-            console.log(vSwitchResult);
-            await addVswitchId(serverlessBridgeService, serviceInfo, vSwitchResult?.body?.VSwitchId); //函数计算增加 i可用区的vswitch
+            await addVswitchId(serverlessBridgeService, serviceInfo, vSwitchResult?.body?.vSwitchId); //函数计算增加 i可用区的vswitch
         } catch (e) {
             console.log('vswitch create error:', e);
         }
