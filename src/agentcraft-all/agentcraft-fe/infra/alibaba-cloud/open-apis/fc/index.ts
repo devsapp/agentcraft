@@ -2,7 +2,7 @@
 import * as $OpenApi from '@alicloud/openapi-client';
 import { CreateApplicationRequest, ListApplicationsRequest, } from '@alicloud/serverless20210924';
 import Util, * as $Util from '@alicloud/tea-util';
-import { InvokeFunctionRequest, InvokeFunctionHeaders, ListFunctionsHeaders, ListFunctionsRequest, UpdateFunctionHeaders, UpdateFunctionRequest, GetServiceHeaders, GetServiceRequest } from '@alicloud/fc-open20210406';
+import { InvokeFunctionRequest, InvokeFunctionHeaders, ListFunctionsHeaders, ListFunctionsRequest, UpdateFunctionHeaders, UpdateFunctionRequest, GetServiceHeaders, GetServiceRequest, UpdateServiceHeaders, TracingConfig, UpdateServiceRequest ,VPCConfig} from '@alicloud/fc-open20210406';
 import ServerlessDevsClient from "./serverlessDevsClient";
 import FcClient from "./fcClient";
 import { OpenApiConfig } from '../types';
@@ -96,10 +96,21 @@ export class ServerlessBridgeFc {
     }
 
     async getService(payload: any) {
-        let getServiceHeaders = new GetServiceHeaders({});
-        let getServiceRequest = new GetServiceRequest({});
+        const getServiceHeaders = new GetServiceHeaders({});
+        const getServiceRequest = new GetServiceRequest({});
         const runtime = new $Util.RuntimeOptions({});
         return await this.client.getServiceWithOptions(payload.serviceName, getServiceRequest, getServiceHeaders, runtime);
+    }
+    async updateService(serviceName:string,payload:any) {
+        const updateServiceHeaders = new UpdateServiceHeaders({});
+        const vpcConfig = new VPCConfig(payload.vpcConfig);
+        const tracingConfig = new TracingConfig(payload.tracingConfig);
+        const updateServiceRequest = new UpdateServiceRequest({
+            tracingConfig,
+            vpcConfig,
+        });
+        const runtime = new $Util.RuntimeOptions({});
+        return await this.client.updateServiceWithOptions(serviceName, updateServiceRequest, updateServiceHeaders, runtime);
     }
 
     async getFunction(payload: UpdateFunctionConfigProps) {

@@ -359,10 +359,14 @@ export class ServerlessBridgeService {
     return await this.serverlessBridgeFc.getService(payload);
   }
 
+  async updateService(serviceName: string, payload: any): Promise<any> {
+    return await this.serverlessBridgeFc.updateService(serviceName, payload);
+  }
+  
   async describeVpcs(payload: any): Promise<any> {
     return await this.serverlessBridgeVpc.describeVpcs(payload);
   }
-  
+
   async createVSwitch(payload: any): Promise<any> {
     return await this.serverlessBridgeVpc.createVSwitch(payload);
   }
