@@ -14,6 +14,7 @@ request.interceptors.response.use(
     },
     error => {
         if (error.response.status) {
+            console.log('from backend server:', error);
             const { status, data } = error.response;
             return Promise.resolve({ status, data: { code: status, message: data.detail } });
         }

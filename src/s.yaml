@@ -6,6 +6,7 @@ vars:
     name: '{{ serviceName }}'
     description: '部署AgentCraft到函数计算'
     internetAccess: true
+    {{ if roleArn !== '' && roleArn !== undefined }}role: "{{roleArn}}"{{/if}}
     logConfig: auto
     vpcConfig: auto
 services:

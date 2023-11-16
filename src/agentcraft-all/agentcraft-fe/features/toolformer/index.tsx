@@ -4,7 +4,7 @@ import { Breadcrumbs, Anchor, Button, Box, Table, TextInput, Text, Highlight, Lo
 import { useForm, UseFormReturnType } from '@mantine/form';
 import { modals } from '@mantine/modals';
 import { IconFileUpload } from '@tabler/icons-react';
-import { getDataSourceList, useGlobalStore, addDataSource, deleteDataSource } from '@/store/datasource';
+import { getDataSourceList, useDataSourceStore, addDataSource, deleteDataSource } from '@/store/datasource';
 import { DataSource } from '@/types/datasource';
 import { DataSetType } from "@/types/dataset";
 import FeatureDescription from '@/components/FeatureDescription';
@@ -38,9 +38,9 @@ function QuestionForm({ form }: { form: UseFormReturnType<QuestionRequestPayload
 
 function Add() {
     const router = useRouter()
-    const open = useGlobalStore().open;
-    const setOpen = useGlobalStore().setOpen;
-    const setLoading = useGlobalStore().setLoading;
+    const open = useDataSourceStore().open;
+    const setOpen = useDataSourceStore().setOpen;
+    const setLoading = useDataSourceStore().setLoading;
     const { query } = router;
     const dataSetType: any = query.dataSetType;
     const dataSetId: any = query.id;
@@ -105,9 +105,9 @@ function Add() {
 
 
 function List({ dataSetId, dataSetType }: DatasourceProps) {
-    const dataSourceList: DataSource[] = []; // useGlobalStore().dataSourceList;
-    const loading: boolean = useGlobalStore().loading;
-    const setLoading = useGlobalStore().setLoading;
+    const dataSourceList: DataSource[] = []; // useDataSourceStore().dataSourceList;
+    const loading: boolean = useDataSourceStore().loading;
+    const setLoading = useDataSourceStore().setLoading;
     const removeDataDataSource = (dataSource: DataSource) => {
         const { id, title } = dataSource;
         const deleteContent = `确定删除 ${title}?`;

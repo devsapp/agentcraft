@@ -312,7 +312,7 @@ function List({ appId }: KnowledgeBaseProps) {
             <td style={{ width: 300 }}>{element.prompt_template ? <CopyToClipboard value={element.prompt_template} content={element.prompt_template} width={300} /> : null}</td>
             <td >{element.token ? <CopyToClipboard value={element.token} content={element.token} truncate width={160} /> : <Button color="lime" size="xs" compact onClick={() => generateToken(element.id)}>生成访问令牌</Button>}</td>
             <td>{formatDateTime(element.created)}</td>
-            <td>
+            <td style={{width: 220}}>
                 {!element.token ? <Tooltip label="需要成访问令牌才可以访问此能力" >
                     <Button
                         color="grape"

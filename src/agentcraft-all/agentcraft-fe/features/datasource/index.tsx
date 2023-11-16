@@ -1,11 +1,11 @@
 import React, { useEffect } from "react";
 import { useRouter } from 'next/router'
-import { Breadcrumbs, Anchor, Button, Box, Table, TextInput, Text, Highlight, LoadingOverlay, Select, Modal, Textarea, Flex, Space, NumberInput, FileInput, rem } from '@mantine/core';
+import { Breadcrumbs, Anchor, Button, Box, Table, TextInput, Text, Highlight, LoadingOverlay, Modal, Textarea, Flex, Space, NumberInput, FileInput, rem } from '@mantine/core';
 import { useForm, UseFormReturnType } from '@mantine/form';
 import { modals } from '@mantine/modals';
 import CopyToClipboard from '@/components/CopyToClipboard';
 import { IconFileUpload, IconUpload } from '@tabler/icons-react';
-import { getDataSourceList, useGlobalStore, addDataSource, deleteDataSource, addDataSourceByUploadFile } from '@/store/datasource';
+import { getDataSourceList, useDataSourceStore, addDataSource, deleteDataSource, addDataSourceByUploadFile, updateDataSource } from '@/store/datasource';
 import { DataSource } from '@/types/datasource';
 import { DataSetType } from "@/types/dataset";
 
@@ -36,11 +36,14 @@ function QuestionForm({ form }: { form: UseFormReturnType<QuestionRequestPayload
     </Box>
 }
 
-function Add() {
+function AddOrUpdate() {
     const router = useRouter()
-    const open = useGlobalStore().open;
-    const setOpen = useGlobalStore().setOpen;
-    const setLoading = useGlobalStore().setLoading;
+    const open = useDataSourceStore().open;
+    const setOpen = useDataSourceStore().setOpen;
+    const setLoading = useDataSourceStore().setLoading;
+    const isEdit = useDataSourceStore().isEdit;
+    const setIsEdit = useDataSourceStore().setIsEdit;
+    const currentDataSource = useDataSourceStore().currentDataSource;
     const { query } = router;
     const dataSetType: any = query.dataSetType;
     const dataSetId: any = query.id;
@@ -50,7 +53,7 @@ function Add() {
             title: '',
             content: '',
             url: '',
-            chunk_size: 1024,
+            chunk_size: 512,
             ext: 'txt',
             tag: dataSetId
         },
@@ -75,8 +78,31 @@ function Add() {
     });
 
     const currentForm: UseFormReturnType<any> = dataSetType == DataSetType.DOCUMENT ? documentForm : questionForm;
+    useEffect(() => {
+        if (isEdit) {
+            if (dataSetType == DataSetType.DOCUMENT) {
+                documentForm.setValues({
+                    title: currentDataSource.title,
+                    content: currentDataSource.doc_chunk,
+                    url: currentDataSource.url,
+                    chunk_size: currentDataSource.token_size,
+                    ext: 'txt',
+                    tag: dataSetId
+                });
+            }
+            if (dataSetType == DataSetType.QUESTION) {
+                questionForm.setValues({
+                    title: currentDataSource.title,
+                    question: currentDataSource.question,
+                    answer: currentDataSource.doc_chunk,
+                    tag: dataSetId,
+                    url: currentDataSource.url
+                });
+            }
+        }
+    }, [isEdit, currentDataSource]);
     return (
-        <Modal opened={open} onClose={() => { setOpen(false) }} title="创建数据集" centered>
+        <Modal opened={open} onClose={() => { setOpen(false); setIsEdit(false); }} title={isEdit ? '编辑数据源' : '新增数据源'} centered>
             {dataSetType == DataSetType.DOCUMENT ? <DocumentForm form={documentForm} /> : <QuestionForm form={questionForm} />}
             <Box maw={FORM_WIDTH} mx="auto" pt={12} style={{ textAlign: 'right' }}>
                 <Button onClick={async () => {
@@ -85,7 +111,12 @@ function Add() {
                         try {
                             setLoading(true);
                             const values = currentForm.values;
-                            await addDataSource({ dataSetId, dataSetType }, values);
+                            if (isEdit) {
+                                await updateDataSource({ dataSetId, dataSetType, dataSourceId: currentDataSource.id }, values);
+                            } else {
+                                await addDataSource({ dataSetId, dataSetType }, values);
+                            }
+
                             await getDataSourceList(dataSetId, dataSetType);
                         } catch (e) {
                             console.log(e);
@@ -93,7 +124,6 @@ function Add() {
                             setOpen(false);
                             setLoading(false);
                         }
-
 
                     }
 
@@ -106,9 +136,10 @@ function Add() {
 
 function UploadDataSource() {
     const router = useRouter()
-    const open = useGlobalStore().openUploadModel;
-    const setOpen = useGlobalStore().setOpenUploadModel;
-    const setLoading = useGlobalStore().setLoading;
+    const open = useDataSourceStore().openUploadModel;
+    const setOpen = useDataSourceStore().setOpenUploadModel;
+    const setLoading = useDataSourceStore().setLoading;
+    const setIsEdit = useDataSourceStore().setIsEdit;
     const { query } = router;
     const dataSetType: any = query.dataSetType;
     const dataSetId: any = query.id;
@@ -128,7 +159,7 @@ function UploadDataSource() {
 
 
     return (
-        <Modal opened={open} onClose={() => { setOpen(false) }} title="上传数据集文档" centered>
+        <Modal opened={open} onClose={() => { setOpen(false); setIsEdit(false) }} title="上传数据集文档" centered>
             <FileInput withAsterisk accept=".md,.txt,.html,.pdf" name="file" label="选择文档" description="选择本地文件上传，支持 .txt,.md,.html文件" placeholder="点击上传文档" icon={<IconUpload size={rem(14)} />} {...form.getInputProps('file')} />
             <TextInput withAsterisk label="标题" description="标题内容作为检索的数据来源，用来展示检索结果" placeholder="" {...form.getInputProps('title')} />
             <NumberInput withAsterisk label="文档切片大小" description="" placeholder="" {...form.getInputProps('chunk_size')} />
@@ -154,8 +185,6 @@ function UploadDataSource() {
                             setOpen(false);
                             setLoading(false);
                         }
-
-
                     }
 
                 }}>确认</Button>
@@ -166,8 +195,11 @@ function UploadDataSource() {
 
 
 function List({ dataSetId, dataSetType }: DatasourceProps) {
-    const dataSourceList: DataSource[] = useGlobalStore().dataSourceList;
-    const setLoading = useGlobalStore().setLoading;
+    const dataSourceList: DataSource[] = useDataSourceStore().dataSourceList;
+    const setLoading = useDataSourceStore().setLoading;
+    const setIsEdit = useDataSourceStore().setIsEdit;
+    const setOpen = useDataSourceStore().setOpen;
+    const setCurrentDataSource = useDataSourceStore().setCurrentDataSource;
     const removeDataDataSource = (dataSource: DataSource) => {
         const { id, title } = dataSource;
         const deleteContent = `确定删除 ${title}?`;
@@ -193,15 +225,22 @@ function List({ dataSetId, dataSetType }: DatasourceProps) {
     }
     const rows = dataSourceList.map((element: DataSource) => (
         <tr key={element.id}>
-            <td style={{width: 80}}>{element.id}</td>
-            <td style={{width: 240}}>{element.title}</td>
-            <td style={{width: 240}}>{element.url ? <CopyToClipboard value={element.url} content={element.url} truncate width={200}/> : null}</td>
-            {dataSetType == DataSetType.QUESTION ? <td style={{width: 120}}><CopyToClipboard value={element.question} content={element.question} truncate /></td> : null}
-            <td width={550} ><CopyToClipboard value={element.doc_chunk} content={element.doc_chunk}  width={550}/></td>
+            <td style={{ width: 80 }}>{element.id}</td>
+            <td style={{ width: 240 }}>{element.title}</td>
+            <td style={{ width: 140 }}>{element.url ? <CopyToClipboard value={element.url} content={element.url} truncate width={120} /> : null}</td>
+            {dataSetType == DataSetType.QUESTION ? <td style={{ width: 120 }}><CopyToClipboard value={element.question} content={element.question} truncate /></td> : null}
+            <td width={550} ><CopyToClipboard value={element.doc_chunk} content={element.doc_chunk} width={550} /></td>
             {/* <td>{element.token_size}</td> */}
-            <td style={{width: 120}}>{formatDateTime(element.created)}</td>
-            <td style={{width: 120}}>{formatDateTime(element.modified)}</td>
-            <td style={{width: 80}}> <Button variant="filled" color="red" size="xs" onClick={() => removeDataDataSource(element)}>删除</Button></td>
+            <td style={{ width: 120 }}>{formatDateTime(element.created)}</td>
+            <td style={{ width: 120 }}>{formatDateTime(element.modified)}</td>
+            <td style={{ width: 140 }}>
+                <Button variant="filled" color="red" size="xs" onClick={() => removeDataDataSource(element)} mr={4}>删除</Button>
+                <Button variant="filled" size="xs" onClick={() => {
+                    setOpen(true);
+                    setIsEdit(true);
+                    setCurrentDataSource(element);
+                }}>编辑</Button>
+            </td>
         </tr>
     ));
     const getDatasource = async () => {
@@ -256,9 +295,9 @@ export function Datasource() {
             {item.title}
         </Anchor>
     ));
-    const loading: boolean = useGlobalStore().loading;
-    const setOpen = useGlobalStore().setOpen;
-    const setOpenUploadModel = useGlobalStore().setOpenUploadModel;
+    const loading: boolean = useDataSourceStore().loading;
+    const setOpen = useDataSourceStore().setOpen;
+    const setOpenUploadModel = useDataSourceStore().setOpenUploadModel;
     return (
         <>
             <Breadcrumbs>{items}</Breadcrumbs>
@@ -282,7 +321,7 @@ export function Datasource() {
             </Box>
             <Box >
                 <LoadingOverlay visible={loading} overlayOpacity={0.3} />
-                <Add />
+                <AddOrUpdate />
                 <UploadDataSource />
                 <List dataSetId={dataSetId} dataSetType={dataSetType} />
             </Box>

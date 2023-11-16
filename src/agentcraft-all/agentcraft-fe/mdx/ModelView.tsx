@@ -29,7 +29,7 @@ function FoundationModelTab() {
             <Card.Section >
               <img
                 src={item.icon}
-                style={{ margin: '10px auto', width: 160, height: 160,display: 'block' }}
+                style={{ margin: '10px auto', width: 160, height: 160, display: 'block' }}
                 height={160}
                 width={160}
                 alt={item.tag.join('')}

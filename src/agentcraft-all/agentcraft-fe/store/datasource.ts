@@ -9,22 +9,35 @@ import { request } from '@/utils/clientRequest';
 interface DataSourceStore {
     loading: boolean,
     open: boolean,
+    isEdit: boolean,
+    currentDataSource: any,
     openUploadModel: boolean,
     dataSourceList: DataSource[],
+    setIsEdit: (isEdit: boolean) => void;
     setLoading: (loading: boolean) => void;
     setOpen: (open: boolean) => void;
     setOpenUploadModel: (open: boolean) => void;
+    setCurrentDataSource: (currentDataSource: DataSource) => void;
     updatedataSourceList: (_: DataSource[]) => void;
 
 
 }
 
 
-export const useGlobalStore = create<DataSourceStore>()(devtools((set) => ({
+export const useDataSourceStore = create<DataSourceStore>()(devtools((set) => ({
     dataSourceList: [],
     loading: false,
     open: false,
+    isEdit: false,
     openUploadModel: false,
+    currentDataSource: {
+    },
+    setCurrentDataSource: (currentDataSource: any) => set((_state) => {
+        return ({ currentDataSource })
+    }),
+    setIsEdit: (isEdit: boolean) => set((_state) => {
+        return ({ isEdit })
+    }),
     setLoading: (status: boolean) => set((_state) => {
         return ({ loading: status })
     }),
@@ -45,12 +58,12 @@ export const useGlobalStore = create<DataSourceStore>()(devtools((set) => ({
  * @param datasetType 
  */
 export async function getDataSourceList(dataSetId: number, dataSetType: number) {
-    const state = useGlobalStore.getState();
+    const state = useDataSourceStore.getState();
     const updatedataSourceList = state.updatedataSourceList;
     const res = await request(`/api/dataset/${dataSetId}/datasource/list?dataSetType=${dataSetType}`);
     const dataSourceList = res.data;
-    if(dataSourceList)
-    updatedataSourceList(dataSourceList);
+    if (dataSourceList)
+        updatedataSourceList(dataSourceList);
 
 }
 
@@ -70,6 +83,18 @@ export async function addDataSource({ dataSetId, dataSetType }: { dataSetId: num
 
     const res = await request(`/api/dataset/${dataSetId}/datasource/create?dataSetType=${dataSetType}`, {
         method: "POST",
+        body: JSON.stringify(payload),
+        headers: {
+            "Content-Type": "application/json",
+        },
+    });
+    await res;
+
+}
+
+export async function updateDataSource({ dataSetId, dataSetType, dataSourceId }: { dataSetId: number, dataSetType: number, dataSourceId: any }, payload: DocumentRequestPayload | QuestionRequestPayload) {
+    const res = await request(`/api/dataset/${dataSetId}/datasource/update?dataSetType=${dataSetType}&dataSourceId=${dataSourceId}`, {
+        method: "PUT",
         body: JSON.stringify(payload),
         headers: {
             "Content-Type": "application/json",

@@ -45,15 +45,16 @@ def delete_question(question_id: int, user_id: int):
     database.delete_question(question_id, user_id)
 
 
-def update_question(question: str, answer, **kwargs):
+def update_question(question: str, doc_chunk, **kwargs):
     """更新问题"""
     question_vector = embed(question)[0]
     update_args = {
         "question": question,
         "embedding": question_vector,
-        "doc_chunk": answer,
+        "doc_chunk": doc_chunk,
         "token_size": len(question_vector),
     }
+    print(f"{update_args}")
     database.update_question(**update_args, **kwargs)
 
 

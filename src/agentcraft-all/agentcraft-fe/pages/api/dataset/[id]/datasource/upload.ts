@@ -3,7 +3,6 @@ import { createRouter } from 'next-connect';
 import multer from 'multer';
 import { extname } from 'path';
 import * as pdfjsLib from 'pdfjs-dist';
-import { Document } from "langchain/document";
 import { CharacterTextSplitter, RecursiveCharacterTextSplitter } from "langchain/text_splitter";
 import request from 'utils/serverRequest';
 

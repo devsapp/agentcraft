@@ -4,7 +4,7 @@ import { Breadcrumbs, Anchor, Button, Text, Flex, Card, Image, Group, Badge } fr
 import { useForm, UseFormReturnType } from '@mantine/form';
 import { modals } from '@mantine/modals';
 import { IconFileUpload } from '@tabler/icons-react';
-import { getDataSourceList, useGlobalStore, addDataSource, deleteDataSource } from '@/store/datasource';
+import { getDataSourceList, useDataSourceStore, addDataSource, deleteDataSource } from '@/store/datasource';
 import { DataSource } from '@/types/datasource';
 import { DataSetType } from "@/types/dataset";
 
