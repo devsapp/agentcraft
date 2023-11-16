@@ -4,7 +4,7 @@ Type: Project
 Name: AgentCraft
 Provider:
   - 阿里云
-Version: dev.0.1
+Version: dev
 Organization: 阿里云函数计算 （FC）
 Effective: Public
 Description: Serverless架构的LLMOps开发平台，快速交付知识库，Agent等LLM应用
