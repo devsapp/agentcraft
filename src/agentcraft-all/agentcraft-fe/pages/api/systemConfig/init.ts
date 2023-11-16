@@ -4,7 +4,7 @@ import { ServerlessBridgeService } from '@/infra/alibaba-cloud/services/serverle
 const DEFAULT_VWISTH_CONFIG = {
     regionId: "cn-hangzhou",
     zoneId: "cn-hangzhou-i",
-    cidrBlock: "10.0.0.0/24",
+    cidrBlock: "10.2.0.0/24",
     vpcId: "",
     vSwitchName: "agentcraft-vpc",
     description: "由AgentCraft创建，配置数据库使用，请谨慎删除",
@@ -80,7 +80,7 @@ export default async function handler(
             vswitchPayload.regionId = region;
             const vSwitchResult = await serverlessBridgeService.createVSwitch(vswitchPayload); //兼容数据库的可用区创建一个vswitch
             console.log(vSwitchResult);
-            await addVswitchId(serverlessBridgeService, serviceInfo, vSwitchResult.VSwitchId); //函数计算增加 i可用区的vswitch
+            await addVswitchId(serverlessBridgeService, serviceInfo, vSwitchResult?.body?.VSwitchId); //函数计算增加 i可用区的vswitch
         } catch (e) {
             console.log('vswitch create error:', e);
         }
