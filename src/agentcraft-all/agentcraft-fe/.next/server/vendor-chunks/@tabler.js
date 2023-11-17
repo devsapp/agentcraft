@@ -141,16 +141,6 @@ eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpac
 
 /***/ }),
 
-/***/ "./node_modules/@tabler/icons-react/dist/esm/icons/IconUpload.js":
-/*!***********************************************************************!*\
-  !*** ./node_modules/@tabler/icons-react/dist/esm/icons/IconUpload.js ***!
-  \***********************************************************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"default\": () => (/* binding */ IconUpload)\n/* harmony export */ });\n/* harmony import */ var _createReactComponent_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../createReactComponent.js */ \"./node_modules/@tabler/icons-react/dist/esm/createReactComponent.js\");\n/**\n * @tabler/icons-react v2.35.0 - MIT\n */\n\n\n\nvar IconUpload = (0,_createReactComponent_js__WEBPACK_IMPORTED_MODULE_0__[\"default\"])(\"upload\", \"IconUpload\", [\n  [\"path\", { d: \"M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2 -2v-2\", key: \"svg-0\" }],\n  [\"path\", { d: \"M7 9l5 -5l5 5\", key: \"svg-1\" }],\n  [\"path\", { d: \"M12 4l0 12\", key: \"svg-2\" }]\n]);\n\n\n//# sourceMappingURL=IconUpload.js.map\n//# sourceURL=[module]\n//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoiLi9ub2RlX21vZHVsZXMvQHRhYmxlci9pY29ucy1yZWFjdC9kaXN0L2VzbS9pY29ucy9JY29uVXBsb2FkLmpzIiwibWFwcGluZ3MiOiI7Ozs7O0FBQUE7QUFDQTtBQUNBOztBQUU4RDs7QUFFOUQsaUJBQWlCLG9FQUFvQjtBQUNyQyxhQUFhLCtEQUErRDtBQUM1RSxhQUFhLGtDQUFrQztBQUMvQyxhQUFhLCtCQUErQjtBQUM1Qzs7QUFFaUM7QUFDakMiLCJzb3VyY2VzIjpbIndlYnBhY2s6Ly9hZ2VudGNyYWZ0LXVpLy4vbm9kZV9tb2R1bGVzL0B0YWJsZXIvaWNvbnMtcmVhY3QvZGlzdC9lc20vaWNvbnMvSWNvblVwbG9hZC5qcz80MjcxIl0sInNvdXJjZXNDb250ZW50IjpbIi8qKlxuICogQHRhYmxlci9pY29ucy1yZWFjdCB2Mi4zNS4wIC0gTUlUXG4gKi9cblxuaW1wb3J0IGNyZWF0ZVJlYWN0Q29tcG9uZW50IGZyb20gJy4uL2NyZWF0ZVJlYWN0Q29tcG9uZW50LmpzJztcblxudmFyIEljb25VcGxvYWQgPSBjcmVhdGVSZWFjdENvbXBvbmVudChcInVwbG9hZFwiLCBcIkljb25VcGxvYWRcIiwgW1xuICBbXCJwYXRoXCIsIHsgZDogXCJNNCAxN3YyYTIgMiAwIDAgMCAyIDJoMTJhMiAyIDAgMCAwIDIgLTJ2LTJcIiwga2V5OiBcInN2Zy0wXCIgfV0sXG4gIFtcInBhdGhcIiwgeyBkOiBcIk03IDlsNSAtNWw1IDVcIiwga2V5OiBcInN2Zy0xXCIgfV0sXG4gIFtcInBhdGhcIiwgeyBkOiBcIk0xMiA0bDAgMTJcIiwga2V5OiBcInN2Zy0yXCIgfV1cbl0pO1xuXG5leHBvcnQgeyBJY29uVXBsb2FkIGFzIGRlZmF1bHQgfTtcbi8vIyBzb3VyY2VNYXBwaW5nVVJMPUljb25VcGxvYWQuanMubWFwXG4iXSwibmFtZXMiOltdLCJzb3VyY2VSb290IjoiIn0=\n//# sourceURL=webpack-internal:///./node_modules/@tabler/icons-react/dist/esm/icons/IconUpload.js\n");
-
-/***/ }),
-
 /***/ "./node_modules/@tabler/icons-react/dist/esm/icons/IconVocabulary.js":
 /*!***************************************************************************!*\
   !*** ./node_modules/@tabler/icons-react/dist/esm/icons/IconVocabulary.js ***!

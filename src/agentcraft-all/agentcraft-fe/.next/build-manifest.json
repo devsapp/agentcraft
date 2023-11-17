@@ -32,10 +32,15 @@
       "static/chunks/main.js",
       "static/chunks/pages/app/[id]/knowledgeBase.js"
     ],
-    "/overview": [
+    "/dataset": [
       "static/chunks/webpack.js",
       "static/chunks/main.js",
-      "static/chunks/pages/overview.js"
+      "static/chunks/pages/dataset.js"
+    ],
+    "/model": [
+      "static/chunks/webpack.js",
+      "static/chunks/main.js",
+      "static/chunks/pages/model.js"
     ]
   },
   "ampFirstPages": []

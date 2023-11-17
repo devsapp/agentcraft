@@ -1,0 +1,86 @@
+"use strict";
+/*
+ * ATTENTION: An "eval-source-map" devtool has been used.
+ * This devtool is neither made for production nor for readable output files.
+ * It uses "eval()" calls to create a separate source file with attached SourceMaps in the browser devtools.
+ * If you are trying to read the output file, select a different devtool (https://webpack.js.org/configuration/devtool/)
+ * or disable the default devtool with "devtool: false".
+ * If you are looking for production-ready output files, see mode: "production" (https://webpack.js.org/configuration/mode/).
+ */
+(() => {
+var exports = {};
+exports.id = "pages/api/authentication/login";
+exports.ids = ["pages/api/authentication/login"];
+exports.modules = {
+
+/***/ "next/dist/compiled/next-server/pages-api.runtime.dev.js":
+/*!**************************************************************************!*\
+  !*** external "next/dist/compiled/next-server/pages-api.runtime.dev.js" ***!
+  \**************************************************************************/
+/***/ ((module) => {
+
+module.exports = require("next/dist/compiled/next-server/pages-api.runtime.dev.js");
+
+/***/ }),
+
+/***/ "querystring":
+/*!******************************!*\
+  !*** external "querystring" ***!
+  \******************************/
+/***/ ((module) => {
+
+module.exports = require("querystring");
+
+/***/ }),
+
+/***/ "axios":
+/*!************************!*\
+  !*** external "axios" ***!
+  \************************/
+/***/ ((module) => {
+
+module.exports = import("axios");;
+
+/***/ }),
+
+/***/ "(api)/./node_modules/next/dist/build/webpack/loaders/next-route-loader/index.js?kind=PAGES_API&page=%2Fapi%2Fauthentication%2Flogin&preferredRegion=&absolutePagePath=.%2Fpages%2Fapi%2Fauthentication%2Flogin.ts&middlewareConfigBase64=e30%3D!":
+/*!**************************************************************************************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/next/dist/build/webpack/loaders/next-route-loader/index.js?kind=PAGES_API&page=%2Fapi%2Fauthentication%2Flogin&preferredRegion=&absolutePagePath=.%2Fpages%2Fapi%2Fauthentication%2Flogin.ts&middlewareConfigBase64=e30%3D! ***!
+  \**************************************************************************************************************************************************************************************************************************************************/
+/***/ ((module, __webpack_exports__, __webpack_require__) => {
+
+eval("__webpack_require__.a(module, async (__webpack_handle_async_dependencies__, __webpack_async_result__) => { try {\n__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   config: () => (/* binding */ config),\n/* harmony export */   \"default\": () => (__WEBPACK_DEFAULT_EXPORT__),\n/* harmony export */   routeModule: () => (/* binding */ routeModule)\n/* harmony export */ });\n/* harmony import */ var next_dist_server_future_route_modules_pages_api_module_compiled__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! next/dist/server/future/route-modules/pages-api/module.compiled */ \"(api)/./node_modules/next/dist/server/future/route-modules/pages-api/module.compiled.js\");\n/* harmony import */ var next_dist_server_future_route_modules_pages_api_module_compiled__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(next_dist_server_future_route_modules_pages_api_module_compiled__WEBPACK_IMPORTED_MODULE_0__);\n/* harmony import */ var next_dist_server_future_route_kind__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! next/dist/server/future/route-kind */ \"(api)/./node_modules/next/dist/server/future/route-kind.js\");\n/* harmony import */ var next_dist_build_templates_helpers__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! next/dist/build/templates/helpers */ \"(api)/./node_modules/next/dist/build/templates/helpers.js\");\n/* harmony import */ var _pages_api_authentication_login_ts__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./pages/api/authentication/login.ts */ \"(api)/./pages/api/authentication/login.ts\");\nvar __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_pages_api_authentication_login_ts__WEBPACK_IMPORTED_MODULE_3__]);\n_pages_api_authentication_login_ts__WEBPACK_IMPORTED_MODULE_3__ = (__webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__)[0];\n\n\n\n// Import the userland code.\n\n// Re-export the handler (should be the default export).\n/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ((0,next_dist_build_templates_helpers__WEBPACK_IMPORTED_MODULE_2__.hoist)(_pages_api_authentication_login_ts__WEBPACK_IMPORTED_MODULE_3__, \"default\"));\n// Re-export config.\nconst config = (0,next_dist_build_templates_helpers__WEBPACK_IMPORTED_MODULE_2__.hoist)(_pages_api_authentication_login_ts__WEBPACK_IMPORTED_MODULE_3__, \"config\");\n// Create and export the route module that will be consumed.\nconst routeModule = new next_dist_server_future_route_modules_pages_api_module_compiled__WEBPACK_IMPORTED_MODULE_0__.PagesAPIRouteModule({\n    definition: {\n        kind: next_dist_server_future_route_kind__WEBPACK_IMPORTED_MODULE_1__.RouteKind.PAGES_API,\n        page: \"/api/authentication/login\",\n        pathname: \"/api/authentication/login\",\n        // The following aren't used in production.\n        bundlePath: \"\",\n        filename: \"\"\n    },\n    userland: _pages_api_authentication_login_ts__WEBPACK_IMPORTED_MODULE_3__\n});\n\n//# sourceMappingURL=pages-api.js.map\n__webpack_async_result__();\n} catch(e) { __webpack_async_result__(e); } });//# sourceURL=[module]\n//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoiKGFwaSkvLi9ub2RlX21vZHVsZXMvbmV4dC9kaXN0L2J1aWxkL3dlYnBhY2svbG9hZGVycy9uZXh0LXJvdXRlLWxvYWRlci9pbmRleC5qcz9raW5kPVBBR0VTX0FQSSZwYWdlPSUyRmFwaSUyRmF1dGhlbnRpY2F0aW9uJTJGbG9naW4mcHJlZmVycmVkUmVnaW9uPSZhYnNvbHV0ZVBhZ2VQYXRoPS4lMkZwYWdlcyUyRmFwaSUyRmF1dGhlbnRpY2F0aW9uJTJGbG9naW4udHMmbWlkZGxld2FyZUNvbmZpZ0Jhc2U2ND1lMzAlM0QhIiwibWFwcGluZ3MiOiI7Ozs7Ozs7Ozs7Ozs7O0FBQXNHO0FBQ3ZDO0FBQ0w7QUFDMUQ7QUFDZ0U7QUFDaEU7QUFDQSxpRUFBZSx3RUFBSyxDQUFDLCtEQUFRLFlBQVksRUFBQztBQUMxQztBQUNPLGVBQWUsd0VBQUssQ0FBQywrREFBUTtBQUNwQztBQUNPLHdCQUF3QixnSEFBbUI7QUFDbEQ7QUFDQSxjQUFjLHlFQUFTO0FBQ3ZCO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFDQSxLQUFLO0FBQ0wsWUFBWTtBQUNaLENBQUM7O0FBRUQscUMiLCJzb3VyY2VzIjpbIndlYnBhY2s6Ly9hZ2VudGNyYWZ0LXVpLz8xMWY3Il0sInNvdXJjZXNDb250ZW50IjpbImltcG9ydCB7IFBhZ2VzQVBJUm91dGVNb2R1bGUgfSBmcm9tIFwibmV4dC9kaXN0L3NlcnZlci9mdXR1cmUvcm91dGUtbW9kdWxlcy9wYWdlcy1hcGkvbW9kdWxlLmNvbXBpbGVkXCI7XG5pbXBvcnQgeyBSb3V0ZUtpbmQgfSBmcm9tIFwibmV4dC9kaXN0L3NlcnZlci9mdXR1cmUvcm91dGUta2luZFwiO1xuaW1wb3J0IHsgaG9pc3QgfSBmcm9tIFwibmV4dC9kaXN0L2J1aWxkL3RlbXBsYXRlcy9oZWxwZXJzXCI7XG4vLyBJbXBvcnQgdGhlIHVzZXJsYW5kIGNvZGUuXG5pbXBvcnQgKiBhcyB1c2VybGFuZCBmcm9tIFwiLi9wYWdlcy9hcGkvYXV0aGVudGljYXRpb24vbG9naW4udHNcIjtcbi8vIFJlLWV4cG9ydCB0aGUgaGFuZGxlciAoc2hvdWxkIGJlIHRoZSBkZWZhdWx0IGV4cG9ydCkuXG5leHBvcnQgZGVmYXVsdCBob2lzdCh1c2VybGFuZCwgXCJkZWZhdWx0XCIpO1xuLy8gUmUtZXhwb3J0IGNvbmZpZy5cbmV4cG9ydCBjb25zdCBjb25maWcgPSBob2lzdCh1c2VybGFuZCwgXCJjb25maWdcIik7XG4vLyBDcmVhdGUgYW5kIGV4cG9ydCB0aGUgcm91dGUgbW9kdWxlIHRoYXQgd2lsbCBiZSBjb25zdW1lZC5cbmV4cG9ydCBjb25zdCByb3V0ZU1vZHVsZSA9IG5ldyBQYWdlc0FQSVJvdXRlTW9kdWxlKHtcbiAgICBkZWZpbml0aW9uOiB7XG4gICAgICAgIGtpbmQ6IFJvdXRlS2luZC5QQUdFU19BUEksXG4gICAgICAgIHBhZ2U6IFwiL2FwaS9hdXRoZW50aWNhdGlvbi9sb2dpblwiLFxuICAgICAgICBwYXRobmFtZTogXCIvYXBpL2F1dGhlbnRpY2F0aW9uL2xvZ2luXCIsXG4gICAgICAgIC8vIFRoZSBmb2xsb3dpbmcgYXJlbid0IHVzZWQgaW4gcHJvZHVjdGlvbi5cbiAgICAgICAgYnVuZGxlUGF0aDogXCJcIixcbiAgICAgICAgZmlsZW5hbWU6IFwiXCJcbiAgICB9LFxuICAgIHVzZXJsYW5kXG59KTtcblxuLy8jIHNvdXJjZU1hcHBpbmdVUkw9cGFnZXMtYXBpLmpzLm1hcCJdLCJuYW1lcyI6W10sInNvdXJjZVJvb3QiOiIifQ==\n//# sourceURL=webpack-internal:///(api)/./node_modules/next/dist/build/webpack/loaders/next-route-loader/index.js?kind=PAGES_API&page=%2Fapi%2Fauthentication%2Flogin&preferredRegion=&absolutePagePath=.%2Fpages%2Fapi%2Fauthentication%2Flogin.ts&middlewareConfigBase64=e30%3D!\n");
+
+/***/ }),
+
+/***/ "(api)/./pages/api/authentication/login.ts":
+/*!*******************************************!*\
+  !*** ./pages/api/authentication/login.ts ***!
+  \*******************************************/
+/***/ ((module, __webpack_exports__, __webpack_require__) => {
+
+eval("__webpack_require__.a(module, async (__webpack_handle_async_dependencies__, __webpack_async_result__) => { try {\n__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"default\": () => (/* binding */ handler)\n/* harmony export */ });\n/* harmony import */ var utils_serverRequest__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! utils/serverRequest */ \"(api)/./utils/serverRequest.ts\");\n/* harmony import */ var querystring__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! querystring */ \"querystring\");\n/* harmony import */ var querystring__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(querystring__WEBPACK_IMPORTED_MODULE_1__);\nvar __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([utils_serverRequest__WEBPACK_IMPORTED_MODULE_0__]);\nutils_serverRequest__WEBPACK_IMPORTED_MODULE_0__ = (__webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__)[0];\n\n\nasync function handler(req, res) {\n    const { username, password } = req.body;\n    const result = await utils_serverRequest__WEBPACK_IMPORTED_MODULE_0__[\"default\"].post(\"/auth/login\", querystring__WEBPACK_IMPORTED_MODULE_1___default().stringify({\n        username,\n        password,\n        scope: \"\",\n        client_id: \"\",\n        client_secret: \"\"\n    }), {\n        headers: {\n            \"Accept\": \"application/json\",\n            \"Content-Type\": \"application/x-www-form-urlencoded\"\n        }\n    });\n    const { status, data } = result;\n    res.status(status).json(data);\n}\n\n__webpack_async_result__();\n} catch(e) { __webpack_async_result__(e); } });//# sourceURL=[module]\n//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoiKGFwaSkvLi9wYWdlcy9hcGkvYXV0aGVudGljYXRpb24vbG9naW4udHMiLCJtYXBwaW5ncyI6Ijs7Ozs7Ozs7OztBQUMwQztBQUNKO0FBRXZCLGVBQWVFLFFBQzFCQyxHQUFtQixFQUNuQkMsR0FBb0I7SUFFcEIsTUFBTSxFQUFFQyxRQUFRLEVBQUVDLFFBQVEsRUFBRSxHQUFHSCxJQUFJSSxJQUFJO0lBQ3ZDLE1BQU1DLFNBQVMsTUFBTVIsZ0VBQVksQ0FBQyxlQUFlQyw0REFBcUIsQ0FBQztRQUNuRUk7UUFDQUM7UUFDQUssT0FBTztRQUNQQyxXQUFXO1FBQ1hDLGVBQWU7SUFDbkIsSUFBSTtRQUNBQyxTQUFTO1lBQ0wsVUFBVTtZQUNWLGdCQUFnQjtRQUNwQjtJQUNKO0lBQ0EsTUFBTSxFQUFFQyxNQUFNLEVBQUVDLElBQUksRUFBRSxHQUFHUjtJQUN6QkosSUFBSVcsTUFBTSxDQUFDQSxRQUFRRSxJQUFJLENBQUNEO0FBQzVCIiwic291cmNlcyI6WyJ3ZWJwYWNrOi8vYWdlbnRjcmFmdC11aS8uL3BhZ2VzL2FwaS9hdXRoZW50aWNhdGlvbi9sb2dpbi50cz84ZTU2Il0sInNvdXJjZXNDb250ZW50IjpbImltcG9ydCB0eXBlIHsgTmV4dEFwaVJlcXVlc3QsIE5leHRBcGlSZXNwb25zZSB9IGZyb20gJ25leHQnXG5pbXBvcnQgcmVxdWVzdCBmcm9tICd1dGlscy9zZXJ2ZXJSZXF1ZXN0JztcbmltcG9ydCBxdWVyeXN0cmluZyBmcm9tICdxdWVyeXN0cmluZyc7XG5cbmV4cG9ydCBkZWZhdWx0IGFzeW5jIGZ1bmN0aW9uIGhhbmRsZXIoXG4gICAgcmVxOiBOZXh0QXBpUmVxdWVzdCxcbiAgICByZXM6IE5leHRBcGlSZXNwb25zZVxuKSB7XG4gICAgY29uc3QgeyB1c2VybmFtZSwgcGFzc3dvcmQgfSA9IHJlcS5ib2R5O1xuICAgIGNvbnN0IHJlc3VsdCA9IGF3YWl0IHJlcXVlc3QucG9zdCgnL2F1dGgvbG9naW4nLCBxdWVyeXN0cmluZy5zdHJpbmdpZnkoe1xuICAgICAgICB1c2VybmFtZSxcbiAgICAgICAgcGFzc3dvcmQsXG4gICAgICAgIHNjb3BlOiAnJyxcbiAgICAgICAgY2xpZW50X2lkOiAnJyxcbiAgICAgICAgY2xpZW50X3NlY3JldDogJydcbiAgICB9KSwge1xuICAgICAgICBoZWFkZXJzOiB7XG4gICAgICAgICAgICAnQWNjZXB0JzogJ2FwcGxpY2F0aW9uL2pzb24nLFxuICAgICAgICAgICAgJ0NvbnRlbnQtVHlwZSc6ICdhcHBsaWNhdGlvbi94LXd3dy1mb3JtLXVybGVuY29kZWQnXG4gICAgICAgIH1cbiAgICB9KTtcbiAgICBjb25zdCB7IHN0YXR1cywgZGF0YSB9ID0gcmVzdWx0O1xuICAgIHJlcy5zdGF0dXMoc3RhdHVzKS5qc29uKGRhdGEpO1xufVxuIl0sIm5hbWVzIjpbInJlcXVlc3QiLCJxdWVyeXN0cmluZyIsImhhbmRsZXIiLCJyZXEiLCJyZXMiLCJ1c2VybmFtZSIsInBhc3N3b3JkIiwiYm9keSIsInJlc3VsdCIsInBvc3QiLCJzdHJpbmdpZnkiLCJzY29wZSIsImNsaWVudF9pZCIsImNsaWVudF9zZWNyZXQiLCJoZWFkZXJzIiwic3RhdHVzIiwiZGF0YSIsImpzb24iXSwic291cmNlUm9vdCI6IiJ9\n//# sourceURL=webpack-internal:///(api)/./pages/api/authentication/login.ts\n");
+
+/***/ }),
+
+/***/ "(api)/./utils/serverRequest.ts":
+/*!********************************!*\
+  !*** ./utils/serverRequest.ts ***!
+  \********************************/
+/***/ ((module, __webpack_exports__, __webpack_require__) => {
+
+eval("__webpack_require__.a(module, async (__webpack_handle_async_dependencies__, __webpack_async_result__) => { try {\n__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"default\": () => (__WEBPACK_DEFAULT_EXPORT__)\n/* harmony export */ });\n/* harmony import */ var axios__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! axios */ \"axios\");\nvar __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([axios__WEBPACK_IMPORTED_MODULE_0__]);\naxios__WEBPACK_IMPORTED_MODULE_0__ = (__webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__)[0];\n\nconst request = axios__WEBPACK_IMPORTED_MODULE_0__[\"default\"].create({\n    baseURL: process.env.baseUrl || \"\",\n    headers: {\n        // 'Authorization': `Bearer ${process.env.token || ''}`,\n        \"Content-Type\": \"application/json\"\n    }\n});\n// 响应拦截器, 处理服务端的异常\nrequest.interceptors.response.use((response)=>{\n    return Promise.resolve(response);\n}, (error)=>{\n    if (error.response.status) {\n        console.log(\"from backend server:\", error);\n        const { status, data } = error.response;\n        return Promise.resolve({\n            status,\n            data: {\n                code: status,\n                message: data.detail\n            }\n        });\n    }\n});\n/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (request);\n\n__webpack_async_result__();\n} catch(e) { __webpack_async_result__(e); } });//# sourceURL=[module]\n//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoiKGFwaSkvLi91dGlscy9zZXJ2ZXJSZXF1ZXN0LnRzIiwibWFwcGluZ3MiOiI7Ozs7Ozs7O0FBQTBCO0FBRTFCLE1BQU1DLFVBQVVELG9EQUFZLENBQUM7SUFDekJHLFNBQVNDLFFBQVFDLEdBQUcsQ0FBQ0MsT0FBTyxJQUFJO0lBQ2hDQyxTQUFTO1FBQ0wsd0RBQXdEO1FBQ3hELGdCQUFnQjtJQUNwQjtBQUNKO0FBQ0Esa0JBQWtCO0FBQ2xCTixRQUFRTyxZQUFZLENBQUNDLFFBQVEsQ0FBQ0MsR0FBRyxDQUM3QkQsQ0FBQUE7SUFDSSxPQUFPRSxRQUFRQyxPQUFPLENBQUNIO0FBQzNCLEdBQ0FJLENBQUFBO0lBQ0ksSUFBSUEsTUFBTUosUUFBUSxDQUFDSyxNQUFNLEVBQUU7UUFDdkJDLFFBQVFDLEdBQUcsQ0FBQyx3QkFBd0JIO1FBQ3BDLE1BQU0sRUFBRUMsTUFBTSxFQUFFRyxJQUFJLEVBQUUsR0FBR0osTUFBTUosUUFBUTtRQUN2QyxPQUFPRSxRQUFRQyxPQUFPLENBQUM7WUFBRUU7WUFBUUcsTUFBTTtnQkFBRUMsTUFBTUo7Z0JBQVFLLFNBQVNGLEtBQUtHLE1BQU07WUFBQztRQUFFO0lBQ2xGO0FBQ0o7QUFFSixpRUFBZW5CLE9BQU9BLEVBQUMiLCJzb3VyY2VzIjpbIndlYnBhY2s6Ly9hZ2VudGNyYWZ0LXVpLy4vdXRpbHMvc2VydmVyUmVxdWVzdC50cz81YzJkIl0sInNvdXJjZXNDb250ZW50IjpbImltcG9ydCBheGlvcyBmcm9tICdheGlvcyc7XG5cbmNvbnN0IHJlcXVlc3QgPSBheGlvcy5jcmVhdGUoe1xuICAgIGJhc2VVUkw6IHByb2Nlc3MuZW52LmJhc2VVcmwgfHwgJycsXG4gICAgaGVhZGVyczoge1xuICAgICAgICAvLyAnQXV0aG9yaXphdGlvbic6IGBCZWFyZXIgJHtwcm9jZXNzLmVudi50b2tlbiB8fCAnJ31gLFxuICAgICAgICAnQ29udGVudC1UeXBlJzogJ2FwcGxpY2F0aW9uL2pzb24nXG4gICAgfVxufSk7XG4vLyDlk43lupTmi6bmiKrlmagsIOWkhOeQhuacjeWKoeerr+eahOW8guW4uFxucmVxdWVzdC5pbnRlcmNlcHRvcnMucmVzcG9uc2UudXNlKFxuICAgIHJlc3BvbnNlID0+IHtcbiAgICAgICAgcmV0dXJuIFByb21pc2UucmVzb2x2ZShyZXNwb25zZSk7XG4gICAgfSxcbiAgICBlcnJvciA9PiB7XG4gICAgICAgIGlmIChlcnJvci5yZXNwb25zZS5zdGF0dXMpIHtcbiAgICAgICAgICAgIGNvbnNvbGUubG9nKCdmcm9tIGJhY2tlbmQgc2VydmVyOicsIGVycm9yKTtcbiAgICAgICAgICAgIGNvbnN0IHsgc3RhdHVzLCBkYXRhIH0gPSBlcnJvci5yZXNwb25zZTtcbiAgICAgICAgICAgIHJldHVybiBQcm9taXNlLnJlc29sdmUoeyBzdGF0dXMsIGRhdGE6IHsgY29kZTogc3RhdHVzLCBtZXNzYWdlOiBkYXRhLmRldGFpbCB9IH0pO1xuICAgICAgICB9XG4gICAgfVxuKTtcbmV4cG9ydCBkZWZhdWx0IHJlcXVlc3Q7Il0sIm5hbWVzIjpbImF4aW9zIiwicmVxdWVzdCIsImNyZWF0ZSIsImJhc2VVUkwiLCJwcm9jZXNzIiwiZW52IiwiYmFzZVVybCIsImhlYWRlcnMiLCJpbnRlcmNlcHRvcnMiLCJyZXNwb25zZSIsInVzZSIsIlByb21pc2UiLCJyZXNvbHZlIiwiZXJyb3IiLCJzdGF0dXMiLCJjb25zb2xlIiwibG9nIiwiZGF0YSIsImNvZGUiLCJtZXNzYWdlIiwiZGV0YWlsIl0sInNvdXJjZVJvb3QiOiIifQ==\n//# sourceURL=webpack-internal:///(api)/./utils/serverRequest.ts\n");
+
+/***/ })
+
+};
+;
+
+// load runtime
+var __webpack_require__ = require("../../../webpack-api-runtime.js");
+__webpack_require__.C(exports);
+var __webpack_exec__ = (moduleId) => (__webpack_require__(__webpack_require__.s = moduleId))
+var __webpack_exports__ = __webpack_require__.X(0, ["vendor-chunks/next"], () => (__webpack_exec__("(api)/./node_modules/next/dist/build/webpack/loaders/next-route-loader/index.js?kind=PAGES_API&page=%2Fapi%2Fauthentication%2Flogin&preferredRegion=&absolutePagePath=.%2Fpages%2Fapi%2Fauthentication%2Flogin.ts&middlewareConfigBase64=e30%3D!")));
+module.exports = __webpack_exports__;
+
+})();
