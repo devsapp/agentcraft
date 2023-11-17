@@ -27,6 +27,11 @@
       "static/chunks/main.js",
       "static/chunks/pages/app.js"
     ],
+    "/app/[id]/knowledgeBase": [
+      "static/chunks/webpack.js",
+      "static/chunks/main.js",
+      "static/chunks/pages/app/[id]/knowledgeBase.js"
+    ],
     "/overview": [
       "static/chunks/webpack.js",
       "static/chunks/main.js",
