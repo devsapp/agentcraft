@@ -1,10 +1,12 @@
 
 import * as $OpenApi from '@alicloud/openapi-client';
 import { CreateApplicationRequest, ListApplicationsRequest, } from '@alicloud/serverless20210924';
+import FC20230330, * as $FC20230330 from '@alicloud/fc20230330';
 import Util, * as $Util from '@alicloud/tea-util';
-import { InvokeFunctionRequest, InvokeFunctionHeaders, ListFunctionsHeaders, ListFunctionsRequest, UpdateFunctionHeaders, UpdateFunctionRequest, GetServiceHeaders, GetServiceRequest, UpdateServiceHeaders, TracingConfig, UpdateServiceRequest ,VPCConfig} from '@alicloud/fc-open20210406';
+import { InvokeFunctionRequest, InvokeFunctionHeaders, ListFunctionsHeaders, ListFunctionsRequest, UpdateFunctionHeaders, UpdateFunctionRequest, GetServiceHeaders, GetServiceRequest, UpdateServiceHeaders, TracingConfig, UpdateServiceRequest, VPCConfig } from '@alicloud/fc-open20210406';
 import ServerlessDevsClient from "./serverlessDevsClient";
 import FcClient from "./fcClient";
+import FcClientV3 from "./fcClientV3";
 import { OpenApiConfig } from '../types';
 
 
@@ -18,8 +20,8 @@ export class ServerlessBridgeServerlessDevs {
     }
     createServerlessDevsClient(config?: OpenApiConfig) {
         const credential = config ?? {
-            accessKeyId: process.env.AK,
-            accessKeySecret: process.env.SK,
+            accessKeyId: process.env.ALIBABA_CLOUD_ACCESS_KEY_ID,
+            accessKeySecret: process.env.ALIBABA_CLOUD_ACCESS_KEY_SECRET,
         }
         credential.endpoint = `serverless-dualstack.cn-hangzhou.aliyuncs.com`
         const _config = new $OpenApi.Config(credential);
@@ -101,7 +103,7 @@ export class ServerlessBridgeFc {
         const runtime = new $Util.RuntimeOptions({});
         return await this.client.getServiceWithOptions(payload.serviceName, getServiceRequest, getServiceHeaders, runtime);
     }
-    async updateService(serviceName:string,payload:any) {
+    async updateService(serviceName: string, payload: any) {
         const updateServiceHeaders = new UpdateServiceHeaders({});
         const vpcConfig = new VPCConfig(payload.vpcConfig);
         const tracingConfig = new TracingConfig(payload.tracingConfig);
@@ -138,5 +140,41 @@ export class ServerlessBridgeFc {
         return await this.client.callApi(params, request, runtime);
     }
 
+
 }
 
+
+export class ServerlessBridgeFcV3 {
+    client: FcClientV3;
+    constructor(config?: OpenApiConfig, accountId?: string) {
+        this.client = this.createFcClient(config, accountId);
+    }
+    createFcClient(config?: OpenApiConfig, accountId?: string) {
+        const credential = config ?? {
+            accessKeyId: process.env.AK,
+            accessKeySecret: process.env.SK,
+        }
+        credential.endpoint = `${accountId}.${process.env.Region}.fc.aliyuncs.com`
+        const _config = new $OpenApi.Config(credential);
+        return new FcClientV3(_config);
+    }
+
+
+
+    async getFunction(functionName: string) {
+        const getFunctionRequest = new $FC20230330.GetFunctionRequest({});
+        const runtime = new $Util.RuntimeOptions({});
+        const headers: { [key: string]: string } = {};
+        return await this.client.getFunctionWithOptions(functionName, getFunctionRequest, headers, runtime);
+    }
+    async updateFunction(functionName: string, body: any) {
+        const updateFunctionInput = new $FC20230330.UpdateFunctionInput(body);
+        const updateFunctionRequest = new $FC20230330.UpdateFunctionRequest({
+            body: updateFunctionInput,
+        });
+        const runtime = new $Util.RuntimeOptions({});
+        const headers: { [key: string]: string } = {};
+        return await this.client.updateFunctionWithOptions(functionName, updateFunctionRequest, headers, runtime);
+    }
+
+}

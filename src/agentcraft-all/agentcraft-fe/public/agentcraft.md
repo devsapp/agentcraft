@@ -27,10 +27,20 @@
 
 AgentCraft可以快速交付领域智能体，满足上述要求
 
+### 场景
+以下通过表格展示场景
+<Scenes userResponseWithUI={userResponseWithUI} />
 
 
+## 特色
 
-
++ 基础模型： 可以一键部署千问，Chatglm, llama2等模型，并且提供api服务
++ 数据集： 支持泛化的文档数据集可以精准问答数据集，支持pdf,html,md等多类型文件，支持单条数据编辑
++ 智能体编排： 包括提示词，模型，数据集，LLM调用参数等编排，以及工具能力编排（开发中
++ 生成式UI： 支持图片，文本，视频，以及自定义UI的输出
++ 客户端交付： 支持独立站点web交付，支持接入钉钉机器人等客户端应用，一站式部署
++ 工具集能力： 工具能力是Agent感知与连接世界的重要能力，AgentCraft支持在线工具编写，发布管理
+<Features userResponseWithUI={userResponseWithUI} />
 
 ## AgentCraft的使用角色
 AgentCraft既可以面向开发者做AI应用的开发交付，也可以作为企业AI能力的服务之一

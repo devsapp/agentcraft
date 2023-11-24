@@ -97,6 +97,16 @@ export async function addKnowledgeBase(payload: KnowledgeBaseRequestPayload) {
 
 }
 
+export async function deleteKnowledgeBase(knowledgeBaseId: any) {
+    return await request(`/api/knowledgeBase/delete?agentId=${knowledgeBaseId}`, {
+        method: "DELETE",
+        headers: {
+            "Content-Type": "application/json",
+        },
+    });
+
+}
+
 export async function updateKnowledgeBase(id: any, payload: KnowledgeBaseRequestPayload) {
 
     return await request(`/api/knowledgeBase/update?id=${id}`, {

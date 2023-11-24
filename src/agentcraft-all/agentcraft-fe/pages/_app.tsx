@@ -23,7 +23,7 @@ export default function App(props: AppProps) {
     <>
       <Head>
         <title>AgentCraft</title>
-        <link rel="shortcut icon" href="/favicon.svg" />
+        <link rel="shortcut icon" href="/favicon.ico" />
         <meta
           name="viewport"
           content="minimum-scale=1, initial-scale=1, width=device-width"

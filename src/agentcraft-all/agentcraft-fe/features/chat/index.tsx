@@ -18,7 +18,7 @@ export default function Home({ fromChat = false }: { fromChat?: boolean }) {
     const [loading, setLoading] = useState(false);
     const [messages, setMessages] = useState<ChatMessage[]>([
         {
-            message: `你好！有什么我可以帮助你的吗？`,
+            message: `你好！我是智能体小助手，请问有什么可以帮助您的`,
             sourceIdx: -1,
             type: MessageType.SYSTEM,
             showFeedback: false,
@@ -108,6 +108,53 @@ export default function Home({ fromChat = false }: { fromChat?: boolean }) {
             handleError(e);
         }
     };
+    const userResponseWithUI = (assistant: string) => {
+        const currentMessage: ChatMessage[] = [
+            ...messages,
+            {
+                message: assistant,
+                type: MessageType.USER,
+                sourceIdx: -1,
+                showFeedback: false,
+                liked: false,
+                disLiked: false,
+            },
+        ];
+        setLoading(true);
+        setMessages(currentMessage);
+        try {
+            const _preMessages = JSON.parse(JSON.stringify(currentMessage));
+            const newMessage = {
+                message: "",
+                type: "assistant",
+                sourceIdx: -1,
+                showFeedback: false,
+                liked: false,
+                disLiked: false,
+            };
+            setUserInput("");
+            chatStream({
+                messages: [{
+                    role: 'user',
+                    content: assistant
+                }],
+                config: {
+                    stream: true,
+                    max_tokens: 1024
+                },
+                onFinish: (msg) => {
+                    setLoading(false);
+                },
+                onUpdate: (responseText: string, delta: string) => {
+                    newMessage.message += delta;
+                    setMessages([..._preMessages, newMessage]);
+                }
+            }, currentKnowledgeBase.token);
+
+        } catch (e) {
+            handleError(e);
+        }
+    }
     const handleEnter = (e: any) => {
         if (e.keyCode === 13 && userInput) {
             if (!e.shiftKey && userInput) {
@@ -138,7 +185,7 @@ export default function Home({ fromChat = false }: { fromChat?: boolean }) {
                                     }
                                 >
                                     {message.type !== MessageType.USER ? (
-                                        <div className={styles["system_avatar"]} onClick={handleError}>
+                                        <div className={styles["system_avatar"]} >
                                             <img src="https://img.alicdn.com/imgextra/i1/O1CN01Ag2hWp1uz3fbGtWqB_!!6000000006107-2-tps-1024-1024.png" style={{ width: '100%', height: '100%' }} />
                                         </div>
                                     ) : (
@@ -159,7 +206,8 @@ export default function Home({ fromChat = false }: { fromChat?: boolean }) {
                                         </div>
                                     )}
                                     <div className={styles.markdownanswer}>
-                                        {message.type === MessageType.USER ? <MarkdownContent textContent={message.message} /> : <MDXContainer content={message.message} />}
+                                        <MDXContainer content={message.message} scope={{ userResponseWithUI }} />
+                                        {/* {message.type == MessageType.USER ? <MarkdownContent textContent={message.message} /> : <MDXContainer content={message.message} scope={{ userResponseWithUI }} />} */}
                                         {/* <MDXContainer content={message.message} /> */}
                                         {/* <Markdown content={message.message} /> */}
                                         {/* <MarkdownContent textContent={message.message} /> */}

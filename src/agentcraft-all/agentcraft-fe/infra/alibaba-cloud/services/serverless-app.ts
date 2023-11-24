@@ -1,5 +1,5 @@
 
-import { ServerlessBridgeFc, ServerlessBridgeServerlessDevs } from '@/infra/alibaba-cloud/open-apis/fc';
+import { ServerlessBridgeFc, ServerlessBridgeServerlessDevs, ServerlessBridgeFcV3 } from '@/infra/alibaba-cloud/open-apis/fc';
 import { ServerlessBridgeRam } from '@/infra/alibaba-cloud/open-apis/ram';
 import { ServerlessBridgeSts } from '@/infra/alibaba-cloud/open-apis/sts';
 import { ServerlessBridgeVpc } from '@/infra/alibaba-cloud/open-apis/vpc';
@@ -11,6 +11,7 @@ export class ServerlessBridgeService {
   serverlessBridgeSts: ServerlessBridgeSts;
   serverlessBridgeServerlessDevs: ServerlessBridgeServerlessDevs;
   serverlessBridgeFc: ServerlessBridgeFc;
+  serverlessBridgeFcV3: ServerlessBridgeFcV3;
   serverlessBridgeVpc: ServerlessBridgeVpc;
   config: OpenApiConfig | undefined;
   constructor(config?: OpenApiConfig, accountId?: string) {
@@ -20,6 +21,7 @@ export class ServerlessBridgeService {
     this.serverlessBridgeServerlessDevs = new ServerlessBridgeServerlessDevs(config);
     this.serverlessBridgeFc = new ServerlessBridgeFc(config, accountId);
     this.serverlessBridgeVpc = new ServerlessBridgeVpc(config);
+    this.serverlessBridgeFcV3 = new ServerlessBridgeFcV3(config, accountId);
   }
   getServerlessBridgeRam(): ServerlessBridgeRam {
     return this.serverlessBridgeRam;
@@ -35,6 +37,10 @@ export class ServerlessBridgeService {
 
   getServerlessBridgeFc(accountId: string, config?: OpenApiConfig): ServerlessBridgeFc {
     return new ServerlessBridgeFc(config, accountId);
+  }
+
+  getServerlessBridgeFcV3(accountId: string, config?: OpenApiConfig): ServerlessBridgeFcV3 {
+    return new ServerlessBridgeFcV3(config, accountId);
   }
 
   getServerlessBridgeServerlessDevs(): ServerlessBridgeServerlessDevs {
@@ -351,6 +357,22 @@ export class ServerlessBridgeService {
   }
 
   /**
+  * 查询函数列表V3版本
+  * @param functionName
+  * @returns 
+  */
+  async getFunctionV3(functionName: string): Promise<any> {
+
+    return await this.serverlessBridgeFcV3.getFunction(functionName);
+  }
+
+  async updateFunctionV3(functionName: string, body: any): Promise<any> {
+    return await this.serverlessBridgeFcV3.updateFunction(functionName, body);
+  }
+
+
+
+  /**
   * 查询函数列表
   * @param payload 
   * @returns 
@@ -362,7 +384,7 @@ export class ServerlessBridgeService {
   async updateService(serviceName: string, payload: any): Promise<any> {
     return await this.serverlessBridgeFc.updateService(serviceName, payload);
   }
-  
+
   async describeVpcs(payload: any): Promise<any> {
     return await this.serverlessBridgeVpc.describeVpcs(payload);
   }

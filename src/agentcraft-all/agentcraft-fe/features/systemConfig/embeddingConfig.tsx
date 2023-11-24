@@ -64,9 +64,13 @@ export default function EmbeddingConfig({ form }: any) {
             title: '创建函数计算Embedding服务',
             centered: true,
             children: (
-                <Text size="sm">
-                    {addContent}
-                </Text>
+                <div>
+                    <Text size="sm">
+                        {addContent}
+                    </Text>
+                    <Flex align={'center'}><span>注意该服务需要依赖NAS服务以存储模型</span> <Anchor href={`https://nasnext.console.aliyun.com/introduction`} target="_blank">NAS服务地址</Anchor></Flex>
+                </div>
+
             ),
             labels: { confirm: '确定', cancel: '取消' },
             onCancel: () => console.log('Cancel'),

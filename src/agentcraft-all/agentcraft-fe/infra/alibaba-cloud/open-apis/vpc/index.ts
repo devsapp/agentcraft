@@ -16,8 +16,8 @@ export class ServerlessBridgeVpc {
     }
     createVpcClient(config?: OpenApiConfig) {
         const credential = config ?? {
-            accessKeyId: process.env.AK,
-            accessKeySecret: process.env.SK,
+            accessKeyId: process.env.ALIBABA_CLOUD_ACCESS_KEY_ID,
+            accessKeySecret: process.env.ALIBABA_CLOUD_ACCESS_KEY_SECRET,
         }
         credential.endpoint = `vpc.aliyuncs.com`;
         const _config = new $OpenApi.Config(credential);

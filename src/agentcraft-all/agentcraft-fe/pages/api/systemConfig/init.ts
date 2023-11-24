@@ -3,7 +3,7 @@ import { ServerlessBridgeService } from '@/infra/alibaba-cloud/services/serverle
 
 const DEFAULT_VWISTH_CONFIG = {
     regionId: "cn-hangzhou",
-    zoneId: "cn-hangzhou-i",
+    zoneId: "cn-hangzhou-j",
     cidrBlock: "10.2.0.0/24",
     vpcId: "",
     vSwitchName: "agentcraft-vpc",
@@ -21,17 +21,33 @@ async function addVswitchId(serverlessBridgeService: ServerlessBridgeService, se
     } catch (e) {
 
     }
-
 }
+
+async function addVswitchIdV3(serverlessBridgeService: ServerlessBridgeService, functionInfo: any, vswitchIds: string) {
+    try {
+        const vpcConfig = functionInfo?.vpcConfig || {}
+        console.log(vpcConfig);
+        vpcConfig.vSwitchIds = vswitchIds;
+        functionInfo.vpcConfig = vpcConfig;
+        const updateFunctionConfig = {
+            environmentVariables: functionInfo?.environmentVariables,
+            vpcConfig: functionInfo.vpcConfig
+        }
+        return await serverlessBridgeService.updateFunctionV3(functionInfo.functionName, updateFunctionConfig)
+    } catch (e) {
+        console.log(e);
+    }
+}
+
 export default async function handler(
     req: NextApiRequest,
     res: NextApiResponse
 ) {
     const headers = req.headers;
-    const mainAccountId: any = headers['x-fc-account-id'] || process.env.MAIN_ACCOUNT_ID;
-    const accessKeyId: any = headers['x-fc-access-key-id'];
-    const accessKeySecret: any = headers['x-fc-access-key-secret'];
-    const securityToken: any = headers['x-fc-security-token'];
+    const mainAccountId: any = process.env.FC_ACCOUNT_ID || headers['x-fc-account-id'];
+    const accessKeyId: any = process.env.ALIBABA_CLOUD_ACCESS_KEY_ID || headers['x-fc-access-key-id'];
+    const accessKeySecret: any = process.env.ALIBABA_CLOUD_ACCESS_KEY_SECRET || headers['x-fc-access-key-secret'];
+    const securityToken: any = process.env.ALIBABA_CLOUD_SECURITY_TOKEN || headers['x-fc-security-token'];
     const region = process.env.Region || 'cn-hangzhou';
     let credential = undefined;
     if (accessKeyId) {
@@ -51,20 +67,22 @@ export default async function handler(
     const data: any = {
         code: 200,
     }
-    const serviceName = process.env.beServiceName;
-    const functionName = process.env.beFunctionName;
+    // const serviceName = process.env.beServiceName || '';
+    const functionName = process.env.beFunctionName || '';
     try {
-        const result = await serverlessBridgeService.getFunction({
-            serviceName,
-            functionName,
-            qualifier: 'LATEST'
-        });
-
-        const embedding_url = result?.body?.environmentVariables?.EMBEDDING_URL;
-        const serviceInfo = await serverlessBridgeService.getService({
-            serviceName
-        });
-        const vpcConfig = serviceInfo?.body?.vpcConfig || {}
+        // const result = await serverlessBridgeService.getFunction({
+        //     serviceName,
+        //     functionName,
+        //     qualifier: 'LATEST'
+        // });
+        const result = await serverlessBridgeService.getFunctionV3(functionName);
+        const functionInfo = result?.body || {};
+        const embedding_url = functionInfo.environmentVariables?.EMBEDDING_URL;
+        // const serviceInfo = await serverlessBridgeService.getService({
+        //     serviceName
+        // });
+        // const vpcConfig = serviceInfo?.body?.vpcConfig || {}
+        const vpcConfig = functionInfo.vpcConfig || {};
         let _vpcName = ''
 
         try {
@@ -78,12 +96,24 @@ export default async function handler(
             const vswitchPayload = DEFAULT_VWISTH_CONFIG;
             vswitchPayload.vpcId = vpcId;
             vswitchPayload.regionId = region;
-            const vSwitchResult = await serverlessBridgeService.createVSwitch(vswitchPayload); //兼容数据库的可用区创建一个vswitch
-            await addVswitchId(serverlessBridgeService, serviceInfo, vSwitchResult?.body?.vSwitchId); //函数计算增加 i可用区的vswitch
+            try {
+                await serverlessBridgeService.createVSwitch(vswitchPayload); //兼容数据库的可用区创建一个vswitch
+            } catch (e: any) {
+            }
+            const latestVpcResult = await serverlessBridgeService.describeVpcs({
+                vpcId: vpcConfig.vpcId,
+                regionId: region
+            });
+            const latestVpcInfo = latestVpcResult?.body?.vpcs?.vpc[0] || {};
+            console.log('latestVpcResult', latestVpcResult);
+            const vSwitchId = latestVpcInfo?.vSwitchIds?.vSwitchId || [];
+            if (vSwitchId && vSwitchId.length > 0) {
+                await addVswitchIdV3(serverlessBridgeService, functionInfo, vSwitchId);
+            }
+            // await addVswitchId(serverlessBridgeService, serviceInfo, vSwitchResult?.body?.vSwitchId); //函数计算增加 i可用区的vswitch
         } catch (e) {
-            console.log('vswitch create error:', e);
+            console.log('error:', e);
         }
-        
         data.data = { EMBEDDING_URL: embedding_url, vpcInfo: { vpcName: _vpcName, vpcId: vpcConfig.vpcId } }
     } catch (e: any) {
         status = 500;

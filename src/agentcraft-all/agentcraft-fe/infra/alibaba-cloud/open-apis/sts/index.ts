@@ -34,8 +34,8 @@ export class ServerlessBridgeSts {
     }
     createStsClient(config?: OpenApiConfig) {
         const credential = config ?? {
-            accessKeyId: process.env.AK,
-            accessKeySecret: process.env.SK,
+            accessKeyId: process.env.ALIBABA_CLOUD_ACCESS_KEY_ID,
+            accessKeySecret: process.env.ALIBABA_CLOUD_ACCESS_KEY_SECRET,
         }
         credential.endpoint = `sts.${process.env.Region}.aliyuncs.com`;
         const _config = new $OpenApi.Config(credential);

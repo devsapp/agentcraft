@@ -2,7 +2,7 @@ export const ALIBABACLOUD_POSTGRESQL_TUTORIAL=`# 数据库获取实践教程
 
 
 
-## 数据库资源领取 （1分钟）
+## 数据库资源领取 （5分钟）
 
 新用户建议先领取免费额度，[点击进入freetair](//free.aliyun.com/?product=9564560&crowd=personal&spm=5176.28055625.J_4VYgf18xNlTAyFFbOuOQe.173.e939154aVMAc9G&scm=20140722.M_9489724._.V_1)
 
@@ -10,7 +10,7 @@ export const ALIBABACLOUD_POSTGRESQL_TUTORIAL=`# 数据库获取实践教程
 
 ![image](//img.alicdn.com/imgextra/i4/O1CN01KIbxFu1MIHkEEpUDj_!!6000000001411-0-tps-3498-1828.jpg)
 
-老用户可以访问[快速创建](//rdsbuy.console.aliyun.com/fastCreate)
+老用户可以访问[快速创建](//rdsbuy.console.aliyun.com/create/rds_serverless_public_cn/PostgreSQL)
 ## 数据库创建
 
 ### 创建数据库实例 
@@ -21,11 +21,12 @@ export const ALIBABACLOUD_POSTGRESQL_TUTORIAL=`# 数据库获取实践教程
 + 创建vpc的时候最好保持跟当前服务的vpc一致
 + 如果没找到一致的vpc(函数计算的可用区跟数据库的可用区不完全一致)，可以选择默认的vpc，然后数据库开放公网访问进行测试，后续可以在函数计算服务修改vpc
 
+在您初始化系统的时候我们会为您在 可用区 J 创建一个vswitch
 ### 以下是当前服务的vpc信息
 + **vpcName是:{{vpcName}}**
 + **vpcId是:{{vpcId}}** 
 + **交换机的名称是: agentcraft-vpc** 
-+ **选择的可用区是:K**
++ **选择的可用区是: J**
 
 
 ![image](//img.alicdn.com/imgextra/i3/O1CN01pjv4jx1zpVUMJjZ7l_!!6000000006763-0-tps-1668-1852.jpg)

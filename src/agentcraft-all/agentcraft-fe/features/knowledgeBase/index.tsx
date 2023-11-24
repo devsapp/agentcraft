@@ -1,14 +1,15 @@
 import React, { useEffect } from "react";
 import Link from 'next/link';
-import { Breadcrumbs, Anchor, Button, Box, Table, Modal, Text, TextInput, Group, Divider, Title, Paper, Tooltip, Flex, Badge, LoadingOverlay, Textarea, MultiSelect, NumberInput, Select, Drawer } from '@mantine/core';
+import { Tooltip, Breadcrumbs, Anchor, Button, Box, Table, TextInput, Text, Highlight, Group, Badge, MultiSelect, Select, Drawer, LoadingOverlay, Modal, Textarea, Flex, NumberInput, Paper, Title, Divider } from '@mantine/core';
 import { useForm } from '@mantine/form';
+import { modals } from '@mantine/modals';
 import { getModelList, useGlobalStore as modelUseGlobalStore } from '@/store/model';
 import { getDataSetList, useGlobalStore as dataSetUseGlobalStore } from '@/store/dataset';
 import { formatDateTime } from 'utils/index';
 import { Model } from '@/types/model';
 import { DataSet, DataSetType } from '@/types/dataset';
 import FeatureDescription from '@/components/FeatureDescription';
-import { getKnowledgeBaseList, useGlobalStore, addKnowledgeBase, refreshToken, updateKnowledgeBase, getKnowledgeBase, } from '@/store/knowledgeBase';
+import { getKnowledgeBaseList, useGlobalStore, addKnowledgeBase, refreshToken, updateKnowledgeBase, getKnowledgeBase,deleteKnowledgeBase } from '@/store/knowledgeBase';
 import { KnowledgeBaseResponseData, Dataset } from '@/types/knowledgeBase';
 import { FORM_WIDTH_1280, PROMPT_TEMPLATE, DEFAULT_SYSTEM_PROMPT } from 'constants/index';
 
@@ -303,6 +304,29 @@ function List({ appId }: KnowledgeBaseProps) {
         }
 
     }
+    const removeKnowledgeBase = (knowledgeBase: KnowledgeBaseResponseData) => {
+        const { id, name } = knowledgeBase;
+        const deleteContent = `确定删除 ${name}?`;
+        modals.openConfirmModal({
+            title: '删除知识智能体',
+            centered: true,
+            children: (
+                <Text size="sm">
+                    <Highlight highlight={name}>{deleteContent}</Highlight>
+                </Text>
+            ),
+            labels: { confirm: '确定', cancel: '取消' },
+            onCancel: () => console.log('Cancel'),
+            confirmProps: { color: 'red' },
+            onConfirm: async () => {
+                setLoading(true);
+                await deleteKnowledgeBase(id);
+                await getKnowledgeBaseList(appId);
+                setLoading(false);
+            },
+        });
+
+    }
     const rows = knowledgeBaseList.map((element: KnowledgeBaseResponseData) => (
         <tr key={element.id}>
             <td style={{ width: 20 }}>{element.id}</td>
@@ -312,7 +336,7 @@ function List({ appId }: KnowledgeBaseProps) {
             <td style={{ width: 300 }}>{element.prompt_template ? <CopyToClipboard value={element.prompt_template} content={element.prompt_template} width={300} /> : null}</td>
             <td >{element.token ? <CopyToClipboard value={element.token} content={element.token} truncate width={160} /> : <Button color="lime" size="xs" compact onClick={() => generateToken(element.id)}>生成访问令牌</Button>}</td>
             <td>{formatDateTime(element.created)}</td>
-            <td style={{width: 220}}>
+            <td style={{ width: 220 }}>
                 {!element.token ? <Tooltip label="需要成访问令牌才可以访问此能力" >
                     <Button
                         color="grape"
@@ -343,7 +367,9 @@ function List({ appId }: KnowledgeBaseProps) {
                     mr={4}>
                     编辑
                 </Button>
-                <Button variant="filled" color="red" size="xs" onClick={() => { }}>删除</Button></td>
+                <Button variant="filled" color="red" size="xs" onClick={() => {
+                    removeKnowledgeBase(element);
+                }}>删除</Button></td>
         </tr>
     ));
     const getKonwledgeBase = async () => {
