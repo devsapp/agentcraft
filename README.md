@@ -14,15 +14,11 @@ AgentCraft是一个依托于阿里云Serverless基础设施的开源开放智能
 
 <p align="center">
  
-  <a href="https://fcnext.console.aliyun.com/applications/create?template=AgentCraft">
+  <a href="https://fcnext.console.aliyun.com/applications/create?template=AgentCraft" target="_blank">
     <img height="21" src="https://img.shields.io/badge/快速部署体验-7d09f1?style=flat-square" alt="document">
   </a>
   <a href="#local-developement">
     <img height="21" src="https://img.shields.io/badge/本地开发-%23d4eaf7?style=flat-square&logo=xcode&logoColor=7d09f1" alt="development">
-  </a>
- 
-  <a href="https://github.com/labring/FastGPT/blob/main/LICENSE">
-    <img height="21" src="https://img.shields.io/badge/License-Apache--2.0-ffffff?style=flat-square&labelColor=d4eaf7&color=7d09f1" alt="license">
   </a>
 </p>
 
