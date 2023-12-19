@@ -1,8 +1,8 @@
 
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
-import { devtools } from "zustand/middleware";
-import { AGENTCRAFT_QUICK_START } from '@/constants/index';
+import { AGENTCRAFT_FM_QWEN_BIZ } from 'constants/foundation-model';
+import { AGENTCRAFT_QUICK_START } from 'constants/index';
 import { request } from '@/utils/clientRequest';
 export const enum QuickStartStep {
     LLM_PROXY = 0,
@@ -112,15 +112,17 @@ function checkAppStatus(appName: string): Promise<any> {
 }
 
 export async function createFoundationModelOnly(payload: any) {
+    
     const createAppPayload = {
         description: payload.description,
         region: payload.region,
         apiKey: payload.apiKey,
         model: payload.model,
+        name: payload.name,
     }
 
 
-    const res = await request(`/api/infra/alibaba-cloud/createApp?template=fc-qwen`, {
+    const res = await request(`/api/infra/alibaba-cloud/createApp?template=${AGENTCRAFT_FM_QWEN_BIZ}`, {
         method: "POST",
         body: JSON.stringify(createAppPayload),
         headers: {
@@ -133,8 +135,8 @@ export async function createFoundationModelOnly(payload: any) {
 export async function checkFoundationModelStatusAndLLMProxy(appName: string, payload: any) {
 
     const appInfo = await checkAppStatus(appName);
-    const appService: any = appInfo?.output?.deploy['client'];
-    const appUrl = appService?.customDomains[0]?.domainName;
+    const domainData: any = appInfo?.output?.deploy['domain'];
+    const appUrl = domainData.domainName;
     const llmProxyPayload = {
         name: payload.model,
         name_alias: payload.name_alias,

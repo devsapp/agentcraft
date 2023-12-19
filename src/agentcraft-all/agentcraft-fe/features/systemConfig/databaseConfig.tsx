@@ -1,11 +1,10 @@
-import React, { useEffect, useState } from "react";
-import { useRouter } from 'next/router'
+import React from "react";
 import { useDisclosure } from '@mantine/hooks';
-import { PasswordInput, Paper, Drawer, Group, Anchor, Button, Box, Table, TextInput, Text, Highlight, LoadingOverlay, Select, Modal, Textarea, Flex, Space, NumberInput } from '@mantine/core';
-import MarkdownContent from "@/components/MarkdownContent";
-import { ALIBABACLOUD_POSTGRESQL_TUTORIAL } from '@/constants/postgresql-tutorial';
-import { useSystemConfigStore } from '@/store/systemConfig';
-// import styles from './index.module.scss';
+import { PasswordInput, Paper, Drawer,  Button, Box, Table, TextInput, Text } from '@mantine/core';
+import MarkdownContent from "components/MarkdownContent";
+import { ALIBABACLOUD_POSTGRESQL_TUTORIAL } from 'constants/system-config';
+import { useSystemConfigStore } from 'store/systemConfig';
+
 
 
 function dynamicAddition(content: string, { vpcId = '', vpcName = '' }: { vpcId: string, vpcName: string }) {
@@ -20,7 +19,7 @@ export default function DataBaseConfig({ form }: any) {
         <Paper shadow="xs" p="xl">
             <Drawer opened={opened} onClose={close} title="获取阿里云Postgresql Serverless版教程" position="right" size="50%">
                 <div style={{ width: window.innerWidth / 2 - 40 }}>
-                    <MarkdownContent textContent={dynamicAddition(ALIBABACLOUD_POSTGRESQL_TUTORIAL, vpcInfo)} className="markdown-content" />
+                    <MarkdownContent textContent={dynamicAddition(ALIBABACLOUD_POSTGRESQL_TUTORIAL, vpcInfo)}  />
                 </div>
             </Drawer>
             <div>

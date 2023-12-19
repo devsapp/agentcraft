@@ -1,20 +1,18 @@
 import { useState, useRef, useEffect } from 'react';
 import { Loader } from '@mantine/core';
-import MarkdownContent from '@/components/MarkdownContent';
-import MDXContainer from '@/components/MDXContainer';
-import { Markdown } from '@/components/Markdown';
-import { chatStream } from '@/store/chat';
-import { MessageType, ChatMessage } from '@/types/chat';
-import { KnowledgeBase } from '@/types/knowledgeBase';
-import { useGlobalStore, } from '@/store/knowledgeBase';
-import styles from '@/styles/chat.module.scss';
+import MarkdownContent from 'components/MarkdownContent';
+import MDXContainer from 'components/MDXContainer';
+import { chatStream } from 'store/chat';
+import { MessageType, ChatMessage } from 'types/chat';
+import { KnowledgeBase } from 'types/knowledgeBase';
+import { useKnowledgeBaseStore } from 'store/knowledgeBase';
+import styles from 'styles/chat.module.scss';
+
 const defaultPrompt = ``;
 
-export default function Home({ fromChat = false }: { fromChat?: boolean }) {
-
-    const currentKnowledgeBase: KnowledgeBase = useGlobalStore().currentKnowledgeBase as KnowledgeBase;
+export default function Home() {
+    const currentKnowledgeBase: KnowledgeBase = useKnowledgeBaseStore().currentKnowledgeBase as KnowledgeBase;
     const [userInput, setUserInput] = useState(defaultPrompt);
-
     const [loading, setLoading] = useState(false);
     const [messages, setMessages] = useState<ChatMessage[]>([
         {
@@ -86,11 +84,14 @@ export default function Home({ fromChat = false }: { fromChat?: boolean }) {
                 disLiked: false,
             };
             setUserInput("");
+            const requestMessage = currentMessage.map((item) => {
+                return {
+                    role: item.type,
+                    content: item.message
+                }
+            })
             chatStream({
-                messages: [{
-                    role: 'user',
-                    content: userInput
-                }],
+                messages: requestMessage,
                 config: {
                     stream: true,
                     max_tokens: 1024
@@ -206,11 +207,7 @@ export default function Home({ fromChat = false }: { fromChat?: boolean }) {
                                         </div>
                                     )}
                                     <div className={styles.markdownanswer}>
-                                        <MDXContainer content={message.message} scope={{ userResponseWithUI }} />
-                                        {/* {message.type == MessageType.USER ? <MarkdownContent textContent={message.message} /> : <MDXContainer content={message.message} scope={{ userResponseWithUI }} />} */}
-                                        {/* <MDXContainer content={message.message} /> */}
-                                        {/* <Markdown content={message.message} /> */}
-                                        {/* <MarkdownContent textContent={message.message} /> */}
+                                        {message.type == MessageType.USER ? <MarkdownContent textContent={message.message} /> : <MDXContainer content={message.message} scope={{ userResponseWithUI }} />}
                                     </div>
                                 </div>
                             );
@@ -226,7 +223,6 @@ export default function Home({ fromChat = false }: { fromChat?: boolean }) {
                                 ref={textAreaRef}
                                 autoFocus={false}
                                 rows={1}
-                                maxLength={512}
                                 id="userInput"
                                 name="userInput"
                                 placeholder={loading ? "等待回复中" : "请输入你的问题，如AgentCraft的使用场景有哪些？ "}
@@ -240,7 +236,6 @@ export default function Home({ fromChat = false }: { fromChat?: boolean }) {
                                 className={styles.generatebutton}
                             >
                                 {loading ? <Loader mt={-8} /> : (
-
                                     <svg
                                         viewBox="0 0 20 20"
                                         className={styles.svgicon}

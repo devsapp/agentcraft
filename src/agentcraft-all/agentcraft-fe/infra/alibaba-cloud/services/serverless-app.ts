@@ -1,10 +1,11 @@
 
-import { ServerlessBridgeFc, ServerlessBridgeServerlessDevs, ServerlessBridgeFcV3 } from '@/infra/alibaba-cloud/open-apis/fc';
-import { ServerlessBridgeRam } from '@/infra/alibaba-cloud/open-apis/ram';
-import { ServerlessBridgeSts } from '@/infra/alibaba-cloud/open-apis/sts';
-import { ServerlessBridgeVpc } from '@/infra/alibaba-cloud/open-apis/vpc';
-import { FC_DEFAULT_ROLE_NAME, ASSUME_ROLE_POLICY_DOCUMENT, SERVERLESS_DEVS_POLICIES } from '@/constants/cloud-resources'
-import { OpenApiConfig } from '@/infra/alibaba-cloud/open-apis//types';
+import { ServerlessBridgeFc, ServerlessBridgeServerlessDevs, ServerlessBridgeFcV3 } from 'infra/alibaba-cloud/open-apis/fc';
+import { ServerlessBridgeRam } from 'infra/alibaba-cloud/open-apis/ram';
+import { ServerlessBridgeSts } from 'infra/alibaba-cloud/open-apis/sts';
+import { ServerlessBridgeVpc } from 'infra/alibaba-cloud/open-apis/vpc';
+import { ServerlessBridgeEventbridge } from 'infra/alibaba-cloud/open-apis/eventbridge';
+import { FC_DEFAULT_ROLE_NAME, ASSUME_ROLE_POLICY_DOCUMENT, SERVERLESS_DEVS_POLICIES } from 'constants/cloud-resources'
+import { OpenApiConfig } from 'infra/alibaba-cloud/open-apis//types';
 
 export class ServerlessBridgeService {
   serverlessBridgeRam: ServerlessBridgeRam;
@@ -13,6 +14,7 @@ export class ServerlessBridgeService {
   serverlessBridgeFc: ServerlessBridgeFc;
   serverlessBridgeFcV3: ServerlessBridgeFcV3;
   serverlessBridgeVpc: ServerlessBridgeVpc;
+  serverlessBridgeEb: ServerlessBridgeEventbridge;
   config: OpenApiConfig | undefined;
   constructor(config?: OpenApiConfig, accountId?: string) {
     this.config = config;
@@ -22,7 +24,9 @@ export class ServerlessBridgeService {
     this.serverlessBridgeFc = new ServerlessBridgeFc(config, accountId);
     this.serverlessBridgeVpc = new ServerlessBridgeVpc(config);
     this.serverlessBridgeFcV3 = new ServerlessBridgeFcV3(config, accountId);
+    this.serverlessBridgeEb = new ServerlessBridgeEventbridge(config);
   }
+
   getServerlessBridgeRam(): ServerlessBridgeRam {
     return this.serverlessBridgeRam;
   }
@@ -391,6 +395,17 @@ export class ServerlessBridgeService {
 
   async createVSwitch(payload: any): Promise<any> {
     return await this.serverlessBridgeVpc.createVSwitch(payload);
+  }
+  async createEventBus(params: any) {
+    return await this.serverlessBridgeEb.createEventBus(params);
+  }
+
+  async getEventBus(busName?: string) {
+    return await this.serverlessBridgeEb.getEventBus(busName);
+  }
+  async creatEventRule(eventruleData: any) {
+  
+    return await this.serverlessBridgeEb.creatEventRule(eventruleData);
   }
 }
 

@@ -3,13 +3,14 @@ import { useRouter } from 'next/router'
 import { Breadcrumbs, Anchor, Button, Box, Table, TextInput, Text, Highlight, LoadingOverlay, Select, Modal, Textarea, Flex, Space, NumberInput } from '@mantine/core';
 import { useForm, UseFormReturnType } from '@mantine/form';
 import { modals } from '@mantine/modals';
-import { IconFileUpload } from '@tabler/icons-react';
-import { getDataSourceList, useDataSourceStore, addDataSource, deleteDataSource } from '@/store/datasource';
-import { DataSource } from '@/types/datasource';
-import { DataSetType } from "@/types/dataset";
+import { getDataSourceList, useDataSourceStore, addDataSource, deleteDataSource } from 'store/datasource';
+import { DataSource } from 'types/datasource';
+import { DataSetType } from "types/dataset";
 import FeatureDescription from '@/components/FeatureDescription';
-import { DocumentRequestPayload, QuestionRequestPayload } from "@/types/datasource";
+import { DocumentRequestPayload, QuestionRequestPayload } from "types/datasource";
+
 import { formatDateTime } from 'utils/index';
+import { DEFAULT_CHUNK_SIZE } from 'constants/dataset';
 import { FORM_WIDTH } from 'constants/index';
 // import styles from './index.module.scss';
 
@@ -50,7 +51,7 @@ function Add() {
             title: '',
             content: '',
             url: '',
-            chunk_size: 1024,
+            chunk_size: DEFAULT_CHUNK_SIZE,
             ext: 'txt',
             tag: dataSetId
         },

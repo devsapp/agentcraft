@@ -27,3 +27,17 @@ export interface OpenApiConfig {
     cert?: string;
     ca?: string;
 }
+
+export interface FcAsyncCallBack {
+    destination: string
+}
+export interface DestinationConfig {
+    onFailure: FcAsyncCallBack,
+    onSuccess: FcAsyncCallBack
+}
+
+export interface FC3AsyncInvokeConfig {
+    destinationConfig: DestinationConfig,
+    maxAsyncEventAgeInSeconds?: number, // 消息最大存活时长
+    maxAsyncRetryAttempts?:number // 异步调用失败后的最大重试次数
+}

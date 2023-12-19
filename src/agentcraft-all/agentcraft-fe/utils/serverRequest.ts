@@ -13,7 +13,7 @@ request.interceptors.response.use(
         return Promise.resolve(response);
     },
     error => {
-        if (error.response.status) {
+        if (error?.response?.status) {
             console.log('from backend server:', error);
             const { status, data } = error.response;
             return Promise.resolve({ status, data: { code: status, message: data.detail } });

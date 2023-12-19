@@ -2,9 +2,9 @@ import React from "react";
 
 import { nanoid } from 'nanoid';
 import { modals } from '@mantine/modals';
-import { Paper, Stepper, Anchor, Button, Box, Table, TextInput, Text, Highlight, LoadingOverlay, Select, Modal, Textarea, Flex, Space, NumberInput } from '@mantine/core';
+import { Paper, Stepper, Anchor, Button, TextInput, Text, LoadingOverlay, Flex } from '@mantine/core';
 import { useFoundationModelStore, addFoundationModel, getFoundationModel, APP_STATUS } from 'store/foundationModel';
-import { SYSTEM_AGENTCRAFT, AGENTCRAFT_SERVICE, AGENTCRAFT_FUNCTION, EMBEDDING_TEMPLATE_NAME } from 'constants/index';
+import { SYSTEM_AGENTCRAFT_PREFIX , AGENTCRAFT_SERVICE, AGENTCRAFT_FUNCTION, EMBEDDING_TEMPLATE_NAME } from 'constants/system-config';
 import { useSystemConfigStore } from '@/store/systemConfig';
 // import styles from './index.module.scss';
 
@@ -77,7 +77,7 @@ export default function EmbeddingConfig({ form }: any) {
             onConfirm: async () => {
                 const templateName = EMBEDDING_TEMPLATE_NAME;
                 const parameters: any = {
-                    region: process.env.Region || 'cn-hangzhou',
+                    region: completeConfig.regionId || 'cn-hangzhou',
                     serviceName: AGENTCRAFT_SERVICE,
                     functionName: `${AGENTCRAFT_FUNCTION}_${nanoid()}`,
                     description: 'Embedding算法服务【作为AgentCraft服务的核心依赖，请谨慎删除】'
@@ -85,7 +85,7 @@ export default function EmbeddingConfig({ form }: any) {
                 try {
                     setCreateLoading(true);
                     setAppStatus(APP_STATUS.INIT);
-                    parameters.name = `${SYSTEM_AGENTCRAFT}_${nanoid()}`;
+                    parameters.name = `${SYSTEM_AGENTCRAFT_PREFIX}_${nanoid()}`;
                     const data = await addFoundationModel(templateName, parameters);
                     const name = data.name;
                     setAppName(name);

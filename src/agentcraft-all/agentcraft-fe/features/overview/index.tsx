@@ -2,18 +2,17 @@ import React, { useEffect } from "react";
 import { Paper, Text, Title, Button, Divider, Flex, Box, Anchor } from '@mantine/core';
 import { QuickStart } from "features/overview/quickStart";
 import { useQuickStartStore } from "store/quickStart";
-import { useGlobalStore, getAccessUrl } from '@/store/knowledgeBase';
+import { useKnowledgeBaseStore, getAccessUrl } from '@/store/knowledgeBase';
 export function OverView() {
     const { autoQuickStart, setAutoQuickStart } = useQuickStartStore();
-    const accessUrl = useGlobalStore().accessUrl;
-    const setAccessUrl = useGlobalStore().setAccessUrl;
+    const accessUrl = useKnowledgeBaseStore().accessUrl;
+    const setAccessUrl = useKnowledgeBaseStore().setAccessUrl;
     useEffect(() => {
         (async () => {
             const result = await getAccessUrl();
             const data = result.data || { openApiUrl: '', innerApiUrl: '' }
             setAccessUrl(data);
         })()
-
     }, [])
     return (
         <>
@@ -22,9 +21,6 @@ export function OverView() {
             </Paper>}
             {!autoQuickStart &&
                 <div>
-
-
-
                     <Flex gap="xs">
 
                         <Flex direction="column" style={{ width: '68%' }}>

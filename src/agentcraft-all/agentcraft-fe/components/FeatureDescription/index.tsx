@@ -43,6 +43,5 @@ export default function FeatureDescription(props: FeatureDescriptionProps) {
         {description ? <Text lineClamp={4}>
             {description}
         </Text> : null}
-
     </Box>
 }

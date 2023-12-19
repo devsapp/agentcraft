@@ -1,6 +1,6 @@
 import React, { useEffect } from "react";
 import { useRouter } from 'next/router'
-import { Breadcrumbs, Anchor, Box,  Text,  Title, Paper, Flex } from '@mantine/core';
+import { Breadcrumbs, Anchor, Box, Text, Title, Paper, Flex } from '@mantine/core';
 
 
 import FeatureDescription from '@/components/FeatureDescription';
@@ -13,7 +13,7 @@ import { FORM_WIDTH_1280 } from 'constants/index';
 // import styles from './index.module.scss';
 
 const FM_TEMPLATE_ACCESS_API_FUNCTION_MAP: any = {
-    'fc-qwen': 'client',
+    'agentcraft-fm-qwen-biz': 'apiServer',
     'fc-llm-api': 'llm-server',
 }
 
@@ -28,15 +28,24 @@ const FM_APP_STATUS: any = {
     }
 }
 
+interface DOMAIN_DATA {
+    domainName: string,
+    protocol: string
+}
 function getLLMServiceUrl(currentFoundationModel: any) {
     try {
         const output = currentFoundationModel.output;
-        const deploy = output?.deploy;
+        const deploy = output?.deploy || {};
 
         const allFunctions = Object.keys(deploy).filter((key: string) => FM_TEMPLATE_ACCESS_API_FUNCTION_MAP[currentFoundationModel.appConfig.template] === key);
         const apiServiceConfig = deploy[allFunctions[0]];
         if (apiServiceConfig) {
-            return apiServiceConfig.customDomains[0].domainName;
+            if (apiServiceConfig.customDomains && apiServiceConfig.customDomains[0]) {
+                return apiServiceConfig.customDomains[0].domainName;
+            }
+            const domainData: DOMAIN_DATA = deploy['domain'];
+            return domainData.domainName;
+
         }
     } catch (e) {
         console.log(e);
@@ -82,7 +91,7 @@ function FoundationModelView({ fmId }: any) {
                             <Flex align={'center'}>API访问地址：<CopyToClipboard width={800} content={`http://${servcieURL}/v1/chat/completions`} value={`http://${servcieURL}/v1/chat/completions`} /></Flex>
                         </div>
                         <div>
-                            <span>API访问文档：{`http://${servcieURL}/docs`}</span>
+                            <span>API访问文档：<Anchor href={`http://${servcieURL}/docs`} target="_blank">访问文档</Anchor></span>
                         </div>
 
                     </Box> : null}

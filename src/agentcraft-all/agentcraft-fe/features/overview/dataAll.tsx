@@ -1,7 +1,6 @@
-import React, { useEffect, useState } from "react";
-import { useRouter } from 'next/router'
-import { Paper, Button, Box, Table, TextInput, FileInput, PasswordInput, Text, Textarea, Highlight, LoadingOverlay, Divider, Title, Select, Modal, Flex, Space, NumberInput, Stepper, Group, rem } from '@mantine/core';
-import { IconFileUpload, IconUpload } from '@tabler/icons-react';
+import React from "react";
+import { Box, TextInput, FileInput, Textarea, Divider, Title, NumberInput, rem } from '@mantine/core';
+import { IconUpload } from '@tabler/icons-react';
 export default function DataAll({ form }: any) {
 
 

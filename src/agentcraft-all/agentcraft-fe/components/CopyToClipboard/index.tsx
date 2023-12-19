@@ -1,5 +1,3 @@
-
-
 import { useState } from 'react';
 import { ActionIcon, Tooltip, Text, Flex } from '@mantine/core';
 import { IconCopy, IconCheck } from '@tabler/icons-react';

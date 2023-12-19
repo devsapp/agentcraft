@@ -1,19 +1,20 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import Link from 'next/link';
-import { Tooltip, Breadcrumbs, Anchor, Button, Box, Table, TextInput, Text, Highlight, Group, Badge, MultiSelect, Select, Drawer, LoadingOverlay, Modal, Textarea, Flex, NumberInput, Paper, Title, Divider } from '@mantine/core';
+import { Tooltip, Spoiler, Breadcrumbs, Anchor, Button, Box, Table, TextInput, Text, Highlight, Switch, Group, Badge, MultiSelect, Select, Drawer, LoadingOverlay, Modal, Textarea, Flex, NumberInput, Paper, Title, Divider } from '@mantine/core';
 import { useForm } from '@mantine/form';
 import { modals } from '@mantine/modals';
-import { getModelList, useGlobalStore as modelUseGlobalStore } from '@/store/model';
-import { getDataSetList, useGlobalStore as dataSetUseGlobalStore } from '@/store/dataset';
+import { IconRefresh } from '@tabler/icons-react';
+import { getModelList, useGlobalStore as modelUseGlobalStore } from 'store/model';
+import { getDataSetList, useGlobalStore as dataSetUseGlobalStore } from 'store/dataset';
 import { formatDateTime } from 'utils/index';
-import { Model } from '@/types/model';
-import { DataSet, DataSetType } from '@/types/dataset';
-import FeatureDescription from '@/components/FeatureDescription';
-import { getKnowledgeBaseList, useGlobalStore, addKnowledgeBase, refreshToken, updateKnowledgeBase, getKnowledgeBase,deleteKnowledgeBase } from '@/store/knowledgeBase';
-import { KnowledgeBaseResponseData, Dataset } from '@/types/knowledgeBase';
-import { FORM_WIDTH_1280, PROMPT_TEMPLATE, DEFAULT_SYSTEM_PROMPT } from 'constants/index';
-
-import CopyToClipboard from '@/components/CopyToClipboard';
+import { Model } from 'types/model';
+import { DataSet, DataSetType } from 'types/dataset';
+import FeatureDescription from 'components/FeatureDescription';
+import { getKnowledgeBaseList, useKnowledgeBaseStore, addKnowledgeBase, refreshToken, updateKnowledgeBase, getKnowledgeBase, deleteKnowledgeBase } from 'store/knowledgeBase';
+import { KnowledgeBaseResponseData, Dataset } from 'types/knowledgeBase';
+import { PROMPT_TEMPLATE } from 'constants/index';
+import { INSTRUCTION_TEMPLATES, DEFAULT_INSTRUCTION } from 'constants/instructions'
+import CopyToClipboard from 'components/CopyToClipboard';
 import Chat from 'features/chat';
 // import styles from './index.module.scss';
 
@@ -28,10 +29,10 @@ interface KnowledgeBaseProps {
 
 export function KnowledgeBaseForm({ appId, containerType }: { appId: any, containerType?: ContainerType }) {
 
-    const setOpen = useGlobalStore().setOpen;
-    const isEdit = useGlobalStore().isEdit;
-    const currentKnowledgeBase = useGlobalStore().currentKnowledgeBase;
-    const setLoading = useGlobalStore().setLoading;
+    const setOpen = useKnowledgeBaseStore().setOpen;
+    const isEdit = useKnowledgeBaseStore().isEdit;
+    const currentKnowledgeBase = useKnowledgeBaseStore().currentKnowledgeBase;
+    const setLoading = useKnowledgeBaseStore().setLoading;
     const modelList: Model[] = modelUseGlobalStore().modelList;
     const dataSetList: DataSet[] = dataSetUseGlobalStore().dataSetList;
     const form: any = useForm({
@@ -57,7 +58,7 @@ export function KnowledgeBaseForm({ appId, containerType }: { appId: any, contai
             redis_history_ex: 0,
             model_ip_limit: 0,
             llm_history_len: 0,
-            system_message: DEFAULT_SYSTEM_PROMPT,
+            system_message: DEFAULT_INSTRUCTION,
             exact_search_limit: 1,
             fuzzy_search_limit: 3
 
@@ -103,13 +104,13 @@ export function KnowledgeBaseForm({ appId, containerType }: { appId: any, contai
     const modelSelectData: any = modelList.map((item: Model) => { return { label: item.name_alias, value: item.id } });
     const documentSelectData: any = dataSetList.filter((item: DataSet) => item.dataset_type == DataSetType.DOCUMENT).map((item: DataSet) => { return { label: item.name, value: item.id } });
     const qaSelectData: any = dataSetList.filter((item: DataSet) => item.dataset_type == DataSetType.QUESTION).map((item: DataSet) => { return { label: item.name, value: item.id } });
+    let pannelWidth = containerType !== ContainerType.CHAT ? '25%' : '33.33%';
     return <Flex
         mih={50}
         gap="md"
         justify="flex-start"
         align="flex-start"
-        direction="column"
-    >
+        direction="column">
         <Flex
             mih={50}
             gap="md"
@@ -117,78 +118,115 @@ export function KnowledgeBaseForm({ appId, containerType }: { appId: any, contai
             align="flex-start"
             direction="row"
             wrap="nowrap"
+            style={{
+                alignItems: 'stretch'
+            }}
         >
-            <div style={{ width: '50%' }}>
-
-                {containerType !== ContainerType.CHAT ? <Title order={4} mb={8}>基础设置</Title> : null}
-
-                <Paper shadow="xs" p="md" withBorder >
-                    {containerType !== ContainerType.CHAT ? <>
-                        <Title order={5} size="h5">智能体</Title>
-                        <Box maw={FORM_WIDTH_1280} pl={4} pr={4} >
-                            <TextInput withAsterisk label="名称" placeholder="输入智能体名称" {...form.getInputProps('name')} />
-                            <TextInput label="描述" placeholder="输入应用描述" {...form.getInputProps('description')} />
-                        </Box>
-                        <Divider my="sm" />
-                    </> : null}
-
-                    <Title order={5} size="h5">提示词</Title>
-                    <Box maw={FORM_WIDTH_1280} pl={4} pr={4} >
-                        <Textarea label="系统提示词" placeholder="输入系统提示词" {...form.getInputProps('system_message')} minRows={containerType !== ContainerType.CHAT ? 2 : 8} description="系统提示词作为第一个输入给大语言模型的文本，往往用来设定角色" />
-                        <Textarea label="提示词模板" placeholder="" {...form.getInputProps('prompt_template')} minRows={containerType !== ContainerType.CHAT ? 6 : 8} description="提示词模板可以将检索的结果context和用户的输入query整合到一起，最后整体输入给大语言模型" />
-                        {/* <TextInput label="停止提示词" placeholder="停止输出的token" {...form.getInputProps('stop')} /> */}
+            {containerType !== ContainerType.CHAT ?
+                <Paper shadow="xs" p="md" withBorder style={{ width: pannelWidth }}>
+                    <Title order={5} size="h5">智能体信息</Title>
+                    <Box pl={4} pr={4} >
+                        <TextInput withAsterisk label="名称" placeholder="输入智能体名称" {...form.getInputProps('name')} />
+                        <Textarea label="描述" placeholder="输入应用描述" description="请输入智能体的描述信息" {...form.getInputProps('description')} minRows={22} />
                     </Box>
-                    <Divider my="sm" />
+                </Paper> : null}
+            <Paper shadow="xs" p="md" withBorder style={{ width: pannelWidth }}>
+                <Title order={5} size="h5">调试指令</Title>
+                <Box pl={4} pr={4} >
+                    <Select
+                        data={INSTRUCTION_TEMPLATES}
+                        description=""
+                        defaultValue={DEFAULT_INSTRUCTION}
+                        {...form.getInputProps('system_message')}
+                        label="指令示例"
+                        placeholder=""
+                        onChange={(value: string) => {
+                            form.setValues({
+                                system_message: value
+                            })
+                        }}
+                    />
+                    <Textarea withAsterisk label="系统提示词" placeholder="输入系统提示词" {...form.getInputProps('system_message')} minRows={22} description="系统提示词可以作为对大语言模型的约束指令" />
+                    {/* <TextInput label="停止提示词" placeholder="停止输出的token" {...form.getInputProps('stop')} /> */}
+                </Box>
+            </Paper>
+            <Paper shadow="xs" p="md" withBorder style={{ width: pannelWidth }}>
+                <Flex justify={'space-between'} align={'center'}>
+                    <Title order={5} size="h5">LLM服务</Title>
+                    <IconRefresh cursor={'pointer'} onClick={getModelList} />
+                </Flex>
 
-                    <Title order={5} size="h5" >基础模型</Title>
-                    <Box maw={FORM_WIDTH_1280} pl={4} pr={4} mb={12}>
-                        <Select
-                            withAsterisk
-                            data={modelSelectData}
-                            description="LLM代理是大语言模型的代理服务，通过opneai范式的兼容，可以任意切换不同类型的LLM而不用修改业务代码"
-                            label="LLM代理"
-                            placeholder=""
-                            {...form.getInputProps('model_id')}
+                <Box pl={4} pr={4} mb={12}>
+                    <Select
+                        withAsterisk
+                        data={modelSelectData}
+                        description="LLM代理是大语言模型的代理服务，通过opneai范式的兼容，可以任意切换不同类型的LLM而不用修改业务代码"
+                        label="LLM代理"
+                        placeholder=""
+                        {...form.getInputProps('model_id')}
+                    />
+                </Box>
+                <Divider my="sm" />
+                <Title order={5} size="h5">LLM参数</Title>
+                <Box pl={4} pr={4} mt={4}>
+                    <Group grow>
+                        <TextInput withAsterisk label="temperature" placeholder="" {...form.getInputProps('temperature')} />
+                        <TextInput withAsterisk label="top_p" placeholder="" {...form.getInputProps('top_p')} />
+                    </Group>
+                    <Group grow>
+                        <TextInput withAsterisk label="n_sequences" placeholder="" {...form.getInputProps('n_sequences')} />
+                        <TextInput withAsterisk label="max_tokens" placeholder="" {...form.getInputProps('max_tokens')} />
+                    </Group>
+                    <Group grow>
+                        <TextInput withAsterisk label="presence_penalty" placeholder="" {...form.getInputProps('presence_penalty')} />
+                        <TextInput withAsterisk label="frequency_penalty" placeholder="" {...form.getInputProps('frequency_penalty')} />
+                    </Group>
+                    <TextInput label="logit_bias" placeholder="" {...form.getInputProps('logit_bias')} width={'50%'} />
+                </Box>
+            </Paper>
+
+            <Paper shadow="xs" p="md" withBorder style={{ width: pannelWidth }}>
+                <Flex justify={'space-between'} align={'center'}>
+                    <Title order={5} size="h5" >数据召回</Title>
+                    <IconRefresh cursor={'pointer'} onClick={getDataSetList} />
+                </Flex>
+                <Box pl={4} pr={4} >
+                    <Textarea label="召回提示词模板" placeholder="" {...form.getInputProps('prompt_template')} minRows={containerType !== ContainerType.CHAT ? 6 : 8} description="召回提示词模板可以将检索的结果context和用户的输入query整合到一起，最后整体输入给大语言模型" />
+                    {/* <TextInput label="停止提示词" placeholder="停止输出的token" {...form.getInputProps('stop')} /> */}
+                </Box>
+                <Divider my="sm" />
+                <Title order={5} size="h6" >召回数据集</Title>
+                <Box pl={4} pr={4} >
+                    <Group grow>
+                        <MultiSelect
+                            data={documentSelectData}
+                            description="文档数据集用来做模型检索"
+                            label="文档数据集"
+                            placeholder="添加模糊数据集"
+                            {...form.getInputProps('fuzzy_datasets')}
                         />
-                    </Box>
-                    <Divider my="sm" />
-                </Paper>
-            </div>
-            <div style={{ width: '50%' }}>
-                {containerType !== ContainerType.CHAT ? <Title order={4} mb={8} >高级设置</Title> : null}
-                <Paper shadow="xs" p="md" withBorder>
-                    <Title order={5} size="h5">数据集</Title>
-                    <Box maw={FORM_WIDTH_1280} pl={4} pr={4} >
-                        <Group grow>
-                            <MultiSelect
-                                data={documentSelectData}
-                                description="文档数据集用来做模型检索"
-                                label="文档数据集"
-                                placeholder="添加模糊数据集"
-                                {...form.getInputProps('fuzzy_datasets')}
-                            />
-                            <MultiSelect
-                                data={qaSelectData}
-                                description="问答数据集用来做精确匹配"
-                                label="问答数据集"
-                                placeholder="添加精准数据集"
-                                {...form.getInputProps('exact_datasets')}
-                            />
-                        </Group>
-                    </Box>
-                    <Divider my="sm" />
-                    <Title order={5} size="h5" >答案召回</Title>
-                    <Box maw={FORM_WIDTH_1280} pl={4} pr={4} mt={4}>
-                        <Group grow>
-                            <TextInput withAsterisk description="文档数据检索的精度，取值0-1之间，建议取0.6~0.8" label="文档结果召回精度" placeholder="" {...form.getInputProps('fuzzy_search_similarity')} />
-                            <TextInput withAsterisk description="问答数据检索的精度，取值0-1之间，建议取0.9~1" label="问答结果召回精度" placeholder="" {...form.getInputProps('exact_search_similarity')} />
-                        </Group>
-                        <Group grow>
-                            <NumberInput withAsterisk description="文档结果的召回数量，数量越多信息越丰富，但是首先于LLM上下文长度，不宜过长" label="文档结果召回数量" placeholder="" {...form.getInputProps('fuzzy_search_limit')} />
-                            <NumberInput withAsterisk description="问答结果的召回数量，数量越多信息越丰富，但是首先于LLM上下文长度，不宜过长" label="问答结果召回数量" placeholder="" {...form.getInputProps('exact_search_limit')} />
-                        </Group>
-                    </Box>
-                    {/* <Divider my="sm" />
+                        <MultiSelect
+                            data={qaSelectData}
+                            description="问答数据集用来做精确匹配"
+                            label="问答数据集"
+                            placeholder="添加精准数据集"
+                            {...form.getInputProps('exact_datasets')}
+                        />
+                    </Group>
+                </Box>
+                <Divider my="sm" />
+                <Title order={5} size="h6" >召回参数</Title>
+                <Box pl={4} pr={4} mt={4}>
+                    <Group grow>
+                        <TextInput withAsterisk description="文档数据检索的精度，取值0-1之间，建议取0.6~0.8" label="文档结果召回精度" placeholder="" {...form.getInputProps('fuzzy_search_similarity')} />
+                        <TextInput withAsterisk description="问答数据检索的精度，取值0-1之间，建议取0.9~1" label="问答结果召回精度" placeholder="" {...form.getInputProps('exact_search_similarity')} />
+                    </Group>
+                    <Group grow>
+                        <NumberInput withAsterisk description="文档结果的召回数量，数量越多信息越丰富，但是首先于LLM上下文长度，不宜过长" label="文档结果召回数量" placeholder="" {...form.getInputProps('fuzzy_search_limit')} />
+                        <NumberInput withAsterisk description="问答结果的召回数量，数量越多信息越丰富，但是首先于LLM上下文长度，不宜过长" label="问答结果召回数量" placeholder="" {...form.getInputProps('exact_search_limit')} />
+                    </Group>
+                </Box>
+                {/* <Divider my="sm" />
                 <Title order={5} size="h5">安全访问</Title>
                 <Box maw={FORM_WIDTH_1280} pl={4} pr={4}>
                     <Group grow>
@@ -200,7 +238,7 @@ export function KnowledgeBaseForm({ appId, containerType }: { appId: any, contai
                         <NumberInput label="描述" placeholder="限制历史记录保存的时间" {...form.getInputProps('redis_history_ex')} disabled />
                     </Group>
                 </Box> */}
-                    <Divider my="sm" />
+                {/* <Divider my="sm" />
                     <Title order={5} size="h5">大语言模型参数</Title>
                     <Box maw={FORM_WIDTH_1280} pl={4} pr={4} mt={4}>
                         <Group grow>
@@ -217,11 +255,10 @@ export function KnowledgeBaseForm({ appId, containerType }: { appId: any, contai
                         </Group>
                         <TextInput label="logit_bias" placeholder="" {...form.getInputProps('logit_bias')} width={'50%'} />
                     </Box>
-                    <Divider my="sm" />
-                </Paper>
-            </div>
+                    <Divider my="sm" /> */}
+            </Paper>
         </Flex>
-        <Box maw={FORM_WIDTH_1280} pt={4} style={{ textAlign: 'center', width: '100%' }}>
+        <Box pt={4} style={{ textAlign: 'center', width: '100%' }}>
             <Button style={{ width: '100%' }} onClick={async () => {
                 form.validate();
                 if (form.isValid()) {
@@ -243,24 +280,23 @@ export function KnowledgeBaseForm({ appId, containerType }: { appId: any, contai
     </Flex>
 }
 function AddOrUpdate({ appId }: any) {
-    const open = useGlobalStore().open;
-    const setOpen = useGlobalStore().setOpen;
-    const isEdit = useGlobalStore().isEdit;
-    const setEditStatus = useGlobalStore().setEditStatus;
+    const open = useKnowledgeBaseStore().open;
+    const setOpen = useKnowledgeBaseStore().setOpen;
+    const isEdit = useKnowledgeBaseStore().isEdit;
+    const setEditStatus = useKnowledgeBaseStore().setEditStatus;
 
 
     return (
-        <Modal opened={open} onClose={() => { setEditStatus(false); setOpen(false); }} title={isEdit ? "编辑智能体" : "创建智能体"} centered size="55%">
-
+        <Modal opened={open} onClose={() => { setEditStatus(false); setOpen(false); }} title={isEdit ? "编辑智能体" : "创建智能体"} centered size="90%">
             <KnowledgeBaseForm appId={appId} />
-
         </Modal>
     );
 }
 
 export function ChatDrawer({ appId }: KnowledgeBaseProps) {
-    const chatDrawer = useGlobalStore().chatDrawer;
-    const setChatDrawer = useGlobalStore().setChatDrawer;
+    const chatDrawer = useKnowledgeBaseStore().chatDrawer;
+    const setChatDrawer = useKnowledgeBaseStore().setChatDrawer;
+    const [checked, setChecked] = useState(true);
     return <Drawer
         opened={chatDrawer}
         onClose={() => { setChatDrawer(false) }}
@@ -273,12 +309,16 @@ export function ChatDrawer({ appId }: KnowledgeBaseProps) {
             mih={50}
             direction="row"
         >
-            <div style={{ width: '60%' }}>
+            <div style={{ flex: 'none', width: '64%', overflow: 'hidden', borderRight: '1px solid #eee', paddingRight: 8, marginRight: 12, display: checked ? 'block' : 'none' }}>
                 <div style={{ marginBottom: 12 }}><Badge color="orange" size="lg" radius="xs" variant="filled">智能体参数设置</Badge></div>
                 <KnowledgeBaseForm appId={appId} containerType={ContainerType.CHAT} />
             </div>
-            <div style={{ marginLeft: 12, borderLeft: '1px solid #eee', paddingLeft: 8, width: '40%' }}>
-                <div><Badge color="orange" size="lg" radius="xs" variant="filled">智能体问答</Badge></div>
+            <div style={{ flex: 1 }}>
+                <Flex justify="space-between"><Badge color="orange" size="lg" radius="xs" variant="filled">智能体问答</Badge>
+                    <Switch
+                        label={checked ? "关闭智能体参数配置" : "开启智能体参数配置"}
+                        checked={checked} onChange={(event) => setChecked(event.currentTarget.checked)}
+                    /></Flex>
                 <Chat />
             </div>
         </Flex>
@@ -286,12 +326,12 @@ export function ChatDrawer({ appId }: KnowledgeBaseProps) {
 }
 
 function List({ appId }: KnowledgeBaseProps) {
-    const knowledgeBaseList: KnowledgeBaseResponseData[] = useGlobalStore().knowledgeBaseList;
-    const setLoading = useGlobalStore().setLoading;
-    const updateCurrentKnowledgeBase = useGlobalStore().updateCurrentKnowledgeBase;
-    const setEditStatus = useGlobalStore().setEditStatus;
-    const setOpen = useGlobalStore().setOpen;
-    const setChatDrawer = useGlobalStore().setChatDrawer;
+    const knowledgeBaseList: KnowledgeBaseResponseData[] = useKnowledgeBaseStore().knowledgeBaseList;
+    const setLoading = useKnowledgeBaseStore().setLoading;
+    const updateCurrentKnowledgeBase = useKnowledgeBaseStore().updateCurrentKnowledgeBase;
+    const setEditStatus = useKnowledgeBaseStore().setEditStatus;
+    const setOpen = useKnowledgeBaseStore().setOpen;
+    const setChatDrawer = useKnowledgeBaseStore().setChatDrawer;
     const generateToken = async (agentId: number) => {
         try {
             setLoading(true);
@@ -332,7 +372,12 @@ function List({ appId }: KnowledgeBaseProps) {
             <td style={{ width: 20 }}>{element.id}</td>
             <td style={{ width: 120 }}><Link href={`/app/${appId}/knowledgeBase/${element.id}/detail`}>{element.name}</Link></td>
             <td style={{ width: 180 }}>{element.description}</td>
-            <td style={{ width: 200 }}>{element.system_message ? <CopyToClipboard value={element.system_message} content={element.system_message} width={300} /> : null}</td>
+            <td style={{ width: 200 }}>{element.system_message ?
+                <CopyToClipboard value={element.system_message} content={<Spoiler maxHeight={80} showLabel="显示更多" hideLabel="隐藏">
+                    {element.system_message}
+                </Spoiler>} width={300} />
+                : null}
+            </td>
             <td style={{ width: 300 }}>{element.prompt_template ? <CopyToClipboard value={element.prompt_template} content={element.prompt_template} width={300} /> : null}</td>
             <td >{element.token ? <CopyToClipboard value={element.token} content={element.token} truncate width={160} /> : <Button color="lime" size="xs" compact onClick={() => generateToken(element.id)}>生成访问令牌</Button>}</td>
             <td>{formatDateTime(element.created)}</td>
@@ -387,7 +432,6 @@ function List({ appId }: KnowledgeBaseProps) {
 
     return (
         <>
-
             <ChatDrawer appId={appId} />
             <Table striped withBorder withColumnBorders mt={12}  >
                 <thead>
@@ -411,7 +455,7 @@ function List({ appId }: KnowledgeBaseProps) {
 
 
 export function KnowledgeBasePage({ appId }: KnowledgeBaseProps) {
-    const loading: boolean = useGlobalStore().loading;
+    const loading: boolean = useKnowledgeBaseStore().loading;
     const items = [
         { title: '应用列表', href: '/app' },
         { title: '智能体', href: `/app/${appId}/knowledgeBase` },
@@ -421,15 +465,18 @@ export function KnowledgeBasePage({ appId }: KnowledgeBaseProps) {
         </Anchor>
     ));
 
-    const setOpen = useGlobalStore().setOpen;
-
+    const setOpen = useKnowledgeBaseStore().setOpen;
+    const setEditStatus = useKnowledgeBaseStore().setEditStatus;
     return (
         <div style={{ position: 'relative' }} >
             <LoadingOverlay visible={loading} overlayOpacity={0.3} />
             <Breadcrumbs>{items}</Breadcrumbs>
             <FeatureDescription title="领域知识智能体" description="领域知识智能体专注于传授知识，利用LLM对自然语言进行认知，结合RAG(Retrieval-Augmented Generation 检索增强生成)技术来将领域的信息进行有效的整合，然后通过图片，视频，可交互组件完成知识交付，" />
             <Box  >
-                <Button onClick={() => setOpen(true)}>
+                <Button onClick={() => {
+                    setEditStatus(false);
+                    setOpen(true)
+                }}>
                     新建领域知识智能体
                 </Button>
             </Box>

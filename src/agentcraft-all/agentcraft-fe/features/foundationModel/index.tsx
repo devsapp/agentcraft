@@ -9,7 +9,7 @@ import { useFoundationModelStore, getFoundationModelList, deleteFoundationModel 
 
 import FeatureDescription from '@/components/FeatureDescription';
 
-
+import { FM_NAME_MAP } from 'constants/foundation-model';
 import { formatDateTime } from 'utils/index';
 // import { FORM_WIDTH } from 'constants/index';
 // import styles from './index.module.scss';
@@ -38,7 +38,7 @@ function List() {
                 try {
                     await deleteFoundationModel(appName);
                     await getFoundationModelList();
-                }catch(e) {
+                } catch (e) {
                     console.log(e);
                 }
                 setLoading(false);
@@ -48,10 +48,16 @@ function List() {
     }
     const rows = foundationModelList.map((element: any) => (
         <tr key={element.name}>
-            <td><div style={{ width: 100, wordBreak: 'break-word' }}>  <Link href={`/foundationModel/${element.name}/detail`}>{element.name}</Link></div></td>
-            <td ><div style={{ width: 200, wordBreak: 'break-word' }}>{element.template}</div></td>
+            <td >
+                <div style={{ width: 200, wordBreak: 'break-word' }}>
+                    <Link href={`/foundationModel/${element.name}/detail`}>{FM_NAME_MAP[element.template]}</Link>
+                </div>
+                <div style={{ width: 200, wordBreak: 'break-word' }}>
+                    {element.name}
+                </div>
+            </td>
             <td>{formatDateTime(parseInt(element.createdTime))}</td>
-            <td><a href={`https://fcnext.console.aliyun.com/applications/${element.name}/env/default?tab=envDetail`} target="_blank">云资源访问地址</a> <Button ml={12} variant="filled" color="red" size="xs" onClick={() => removeFoundationModel(element.name)}>删除</Button></td>
+            <td> <a href={`https://fcnext.console.aliyun.com/applications/${element.name}/env/default?tab=envDetail`} target="_blank">访问云服务</a><Button ml={12} variant="filled" color="red" size="xs" onClick={() => removeFoundationModel(element.name)}>删除</Button></td>
         </tr>
     ));
     async function getAllFoundationModel() {
@@ -73,8 +79,7 @@ function List() {
             <Table striped withBorder withColumnBorders mt={12}  >
                 <thead>
                     <tr>
-                        <th>基础模型服务名称</th>
-                        <th>部署使用的模版</th>
+                        <th>基础模型</th>
                         <th>创建时间</th>
                         <th>操作</th>
                     </tr>
@@ -87,9 +92,7 @@ function List() {
 
 
 export function FoundationModel() {
-    const loading: boolean = useFoundationModelStore().loading;
     const router = useRouter()
-    const { query } = router;
     const items = [
         { title: 'AgentCraft', href: `/` },
         { title: '基础模型', href: `/foundationModel` },

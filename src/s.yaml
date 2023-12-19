@@ -77,10 +77,10 @@ resources:
             functionName: 'agentcraft-backend'
   agentcraft-frontend:
     component: fc3@0.0.14
-    actions:
-      pre-deploy:
-        - run: npm i --production -f
-          path: ./agentcraft-all/agentcraft-fe
+    # actions:
+    #   pre-deploy:
+    #     - run: npm i --production -f
+    #       path: ./agentcraft-all/agentcraft-fe
     props:
       region: ${vars.region}
       description: AgentCraft前端服务
@@ -89,12 +89,11 @@ resources:
       customRuntimeConfig:
         port: 3000
         command:
-          - npm
-          - start
+          - bootstrap
       layers:
         - acs:fc:${vars.region}:official:layers/Nodejs18/versions/1
         - >-
-          acs:fc:${vars.region}:1154600634854327:layers/agentcraft-frontend/versions/1
+          acs:fc:${vars.region}:1154600634854327:layers/agentcraft-frontend/versions/5
       runtime: custom.debian10
       instanceConcurrency: 5
       memorySize: 3072

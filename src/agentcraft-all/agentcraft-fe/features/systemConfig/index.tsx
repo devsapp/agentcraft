@@ -7,7 +7,7 @@ import { Notification, Paper, Stepper, Group, Anchor, Button, Box, Table, TextIn
 import EmbeddingConfig from 'features/systemConfig/embeddingConfig';
 import DataBaseConfig from 'features/systemConfig/databaseConfig';
 import CompleteConfirm from 'features/systemConfig/completeConfirm';
-import { useSystemConfigStore, updateSystemConfig } from '@/store/systemConfig';
+import { useSystemConfigStore, updateSystemConfig } from 'store/systemConfig';
 // import styles from './index.module.scss';
 
 

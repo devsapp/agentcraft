@@ -27,7 +27,7 @@ interface ApplicationStore {
 }
 
 
-export const useGlobalStore = create<ApplicationStore>()(devtools((set) => ({
+export const useAppStore = create<ApplicationStore>()(devtools((set) => ({
     appList: [],
     open: false,
     loading: false,
@@ -42,7 +42,7 @@ export const useGlobalStore = create<ApplicationStore>()(devtools((set) => ({
 })))
 
 export async function getApplications() {
-    const state = useGlobalStore.getState();
+    const state = useAppStore.getState();
     const updateAppList = state.updateAppList;
     const res: ResponseData = await request("/api/application/list");
     const data = res.data;

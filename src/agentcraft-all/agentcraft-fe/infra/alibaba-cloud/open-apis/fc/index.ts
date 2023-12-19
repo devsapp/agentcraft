@@ -7,7 +7,7 @@ import { InvokeFunctionRequest, InvokeFunctionHeaders, ListFunctionsHeaders, Lis
 import ServerlessDevsClient from "./serverlessDevsClient";
 import FcClient from "./fcClient";
 import FcClientV3 from "./fcClientV3";
-import { OpenApiConfig } from '../types';
+import { OpenApiConfig, FC3AsyncInvokeConfig } from '../types';
 
 
 
@@ -65,8 +65,8 @@ export class ServerlessBridgeFc {
     }
     createFcClient(config?: OpenApiConfig, accountId?: string) {
         const credential = config ?? {
-            accessKeyId: process.env.AK,
-            accessKeySecret: process.env.SK,
+            accessKeyId: process.env.ALIBABA_CLOUD_ACCESS_KEY_ID,
+            accessKeySecret: process.env.ALIBABA_CLOUD_ACCESS_KEY_SECRET,
         }
         credential.endpoint = `${accountId}.${process.env.Region}.fc.aliyuncs.com`
         const _config = new $OpenApi.Config(credential);
@@ -151,8 +151,8 @@ export class ServerlessBridgeFcV3 {
     }
     createFcClient(config?: OpenApiConfig, accountId?: string) {
         const credential = config ?? {
-            accessKeyId: process.env.AK,
-            accessKeySecret: process.env.SK,
+            accessKeyId: process.env.ALIBABA_CLOUD_ACCESS_KEY_ID,
+            accessKeySecret: process.env.ALIBABA_CLOUD_ACCESS_KEY_SECRET,
         }
         credential.endpoint = `${accountId}.${process.env.Region}.fc.aliyuncs.com`
         const _config = new $OpenApi.Config(credential);
@@ -176,5 +176,13 @@ export class ServerlessBridgeFcV3 {
         const headers: { [key: string]: string } = {};
         return await this.client.updateFunctionWithOptions(functionName, updateFunctionRequest, headers, runtime);
     }
+    async putAsyncInvokeConfig(functionName: string, config: FC3AsyncInvokeConfig) {
+        const putAsyncInvokeConfigRequest = new $FC20230330.PutAsyncInvokeConfigRequest({
+            body: config,
+        });
+        const runtime = new $Util.RuntimeOptions({});
+        const headers: { [key: string]: string } = {};
 
+        return await this.client.putAsyncInvokeConfigWithOptions(functionName, putAsyncInvokeConfigRequest, headers, runtime);
+    }
 }

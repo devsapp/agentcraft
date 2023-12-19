@@ -33,7 +33,24 @@ const components = {
         const isInternal = /^\/#/i.test(href);
         const target = isInternal ? "_self" : aProps.target ?? "_blank";
         return <a color="red" {...aProps} target={target} />;
-    }
+    },
+    video: ({ node, ...props }: any) => {
+        let videoNode: any = { props: {} };
+        try {
+          props.children.map((item: any) => {
+            if (item.props && item.type === 'source') {
+              videoNode = item;
+            }
+          })
+        } catch (e) {
+
+        }
+
+        return <video controls {...props}>
+          <source src={videoNode.props.src || ''} type={videoNode.props.type || 'video/mp4'} />
+          你的浏览器不支持video标签
+        </video>
+      }
 }
 
 

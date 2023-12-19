@@ -1,8 +1,8 @@
 import { useRouter } from 'next/router';
 import { Navbar, NavLink, Center, ActionIcon, Divider } from '@mantine/core';
-
-import { IconHome2, IconGauge, IconActivity, IconArrowBackUp, IconApps, IconVocabulary, IconServer, IconDatabasePlus, IconTrowel, IconRowInsertTop, IconDevicesPc, IconAlien } from '@tabler/icons-react';
-
+import { IconBrandGithubFilled } from '@tabler/icons-react';
+import { IconHome2, IconArrowBackUp, IconApps, IconVocabulary, IconServer, IconDatabasePlus, IconTrowel, IconRowInsertTop, IconDevicesPc, IconAlien } from '@tabler/icons-react';
+import styles from './index.module.scss';
 interface NavItem {
     name?: string,
     path: string,
@@ -66,12 +66,12 @@ export const Nav = () => {
                     path: "/app/[id]/knowledgeBase/[knowledgeBaseId]/chatlist",
                     icon: <IconHome2 size="1rem" stroke={1.5} />,
                 }]
-            }, 
-            // {
-            //     name: "Agent",
-            //     path: "/app/[id]/agent",
-            //     icon: <IconAlien size="1rem" stroke={1.5} />,
-            // }
+            },
+                // {
+                //     name: "Agent",
+                //     path: "/app/[id]/agent",
+                //     icon: <IconAlien size="1rem" stroke={1.5} />,
+                // }
             ]
         },
         {
@@ -102,22 +102,38 @@ export const Nav = () => {
                 path: "/foundationModel/create",
                 solo: true,
                 icon: <IconHome2 size="1rem" stroke={1.5} />,
-            },{
+            }, {
                 name: "基础模型详细",
                 solo: true,
                 path: "/foundationModel/[fmId]/detail",
                 icon: <IconHome2 size="1rem" stroke={1.5} />,
             }]
         },
-        // {
-        //     path: '/divider2',
-        //     type: 'divider',
-        // },
-        // {
-        //     name: "客户端接入",
-        //     path: "/clientAccess",
-        //     icon: <IconDevicesPc size="1rem" stroke={1.5} />,
-        // },
+        {
+            path: '/divider2',
+            type: 'divider',
+        },
+        {
+            name: "客户端接入",
+            path: "/clientAccess",
+            icon: <IconDevicesPc size="1rem" stroke={1.5} />,
+            subNav: [{
+                name: "创建客户端接入服务",
+                path: "/clientAccess/create",
+                solo: true,
+                icon: <IconHome2 size="1rem" stroke={1.5} />,
+            }, {
+                name: "创建机器人服务",
+                path: "/clientAccess/robot",
+                solo: true,
+                icon: <IconHome2 size="1rem" stroke={1.5} />,
+            }, {
+                name: "创建web独立站服务",
+                path: "/clientAccess/web",
+                solo: true,
+                icon: <IconHome2 size="1rem" stroke={1.5} />,
+            }]
+        },
         // {
         //     path: '/divider3',
         //     type: 'divider',
@@ -139,10 +155,10 @@ export const Nav = () => {
     ]
 
     const navItemsMap = flattenNavItems({}, navItems);
-   
+
     const currentNav: NavItem = navItemsMap[pathname] || {};
     let renderNavList: NavItem[] = [];
-    if(currentNav.solo) {
+    if (currentNav.solo) {
         renderNavList = [currentNav]; // 只有一个
     } else {
         renderNavList = Object.keys(navItemsMap).filter((key) => {
@@ -152,7 +168,7 @@ export const Nav = () => {
             return navItemsMap[key];
         })
     }
-   
+
 
     return (
         <Navbar className="navbar" width={{ base: 240 }} p="xs">
@@ -177,6 +193,9 @@ export const Nav = () => {
                         active={pathname === item.path ? true : false} />
                 }
             })}
+            <div className={styles['nav-bottom-config']} >
+                <IconBrandGithubFilled color='white' className={styles['git']} />
+            </div>
         </Navbar>
     )
 }

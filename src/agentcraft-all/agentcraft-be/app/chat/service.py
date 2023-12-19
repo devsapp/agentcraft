@@ -156,6 +156,19 @@ def chat(query: str, ip_addr: str, agent_id: int):
     if not agent:
         raise ValueError("agent does not exist")
     uid = f"chatcompl-{uuid.uuid4()}"
+    if not agent.prompt_template:  # 无提示词模版直接进行模型问答
+        chat_args = {
+            "query": query,
+            "prompt": query,
+            "history": [],
+            "search_choices": [],
+            "ip_addr": ip_addr,
+            "agent": agent,
+            "chat_type": 0,
+            "uid": uid,
+            "created": created
+        }
+        return model_chat(**chat_args)
     embedding = utils.embed(query)[0]
     search_args = {
         "agent_id": agent.id,
@@ -292,6 +305,7 @@ def chat_stream(query: str, ip_addr: str, agent_id: int):
         "exact_search_limit": agent.exact_search_limit,
         "fuzzy_search_limit": agent.fuzzy_search_limit
     }
+
     similarity_search_res, use_model = agent_dataset_database.similarity_search(
         **search_args)
     history = []  # get_history(ip_addr)

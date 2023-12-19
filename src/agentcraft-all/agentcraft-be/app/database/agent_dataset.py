@@ -64,13 +64,16 @@ def similarity_search(
     with Session(postgresql.postgres) as session:
         exact_datasets = session.query(AgentDataset.dataset_id).filter(
             AgentDataset.agent_id == agent_id, AgentDataset.dataset_type == 1).all()
+        print(f"{exact_datasets}")
         if exact_datasets:
             exact_similarity_search_sql = f'''
             SELECT doc_chunk, title, url, 1 - (embedding <=> '{embedding}') AS similarity 
-            FROM question WHERE ({" OR ".join([f"tag={dataset.dataset_id}" for dataset in exact_datasets])}) AND 1 - (embedding <=> '{embedding}') > {exact_search_similarity}
+            FROM question WHERE ({" OR ".join([f"tag={dataset.dataset_id}" for dataset in exact_datasets])}) AND 1 - (embedding <=> '{embedding}') >= {exact_search_similarity}
             ORDER BY similarity DESC LIMIT {exact_search_limit};
             '''
+            print(f"exact_similarity_search_sql: {exact_similarity_search_sql}")
             exact_similarity_search_res = session.execute(text(exact_similarity_search_sql)).all()
+            print(f"exact_similarity_search_res: {exact_similarity_search_res}")
             if exact_similarity_search_res:
                 return exact_similarity_search_res, False
         fuzzy_datasets = session.query(AgentDataset.dataset_id).filter(

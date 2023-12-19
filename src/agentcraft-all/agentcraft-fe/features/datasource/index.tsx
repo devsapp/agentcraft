@@ -3,20 +3,22 @@ import { useRouter } from 'next/router'
 import { Breadcrumbs, Anchor, Button, Box, Table, TextInput, Text, Highlight, LoadingOverlay, Modal, Textarea, Flex, Space, NumberInput, FileInput, rem } from '@mantine/core';
 import { useForm, UseFormReturnType } from '@mantine/form';
 import { modals } from '@mantine/modals';
-import CopyToClipboard from '@/components/CopyToClipboard';
+import CopyToClipboard from 'components/CopyToClipboard';
 import { IconFileUpload, IconUpload } from '@tabler/icons-react';
-import { getDataSourceList, useDataSourceStore, addDataSource, deleteDataSource, addDataSourceByUploadFile, updateDataSource } from '@/store/datasource';
-import { DataSource } from '@/types/datasource';
-import { DataSetType } from "@/types/dataset";
+import { getDataSourceList, useDataSourceStore, addDataSource, deleteDataSource, addDataSourceByUploadFile, updateDataSource } from 'store/datasource';
+import { DataSource } from 'types/datasource';
+import { DataSetType } from "types/dataset";
 
-import { DocumentRequestPayload, QuestionRequestPayload } from "@/types/datasource";
+import { DocumentRequestPayload, QuestionRequestPayload } from "types/datasource";
 import { formatDateTime } from 'utils/index';
+import { DEFAULT_CHUNK_SIZE } from 'constants/dataset';
 import { FORM_WIDTH } from 'constants/index';
 
 interface DatasourceProps {
     dataSetId: number,
     dataSetType: number
 }
+
 
 function DocumentForm({ form }: { form: UseFormReturnType<DocumentRequestPayload> }) {
     return <Box maw={FORM_WIDTH} mx="auto">
@@ -53,7 +55,7 @@ function AddOrUpdate() {
             title: '',
             content: '',
             url: '',
-            chunk_size: 512,
+            chunk_size: DEFAULT_CHUNK_SIZE,
             ext: 'txt',
             tag: dataSetId
         },
@@ -147,7 +149,7 @@ function UploadDataSource() {
         initialValues: {
             title: '',
             url: '',
-            chunk_size: 512,
+            chunk_size: DEFAULT_CHUNK_SIZE,
             ext: 'txt',
             tag: dataSetId
         },
@@ -297,6 +299,7 @@ export function Datasource() {
     ));
     const loading: boolean = useDataSourceStore().loading;
     const setOpen = useDataSourceStore().setOpen;
+    const setIsEdit = useDataSourceStore().setIsEdit;
     const setOpenUploadModel = useDataSourceStore().setOpenUploadModel;
     return (
         <>
@@ -310,7 +313,10 @@ export function Datasource() {
                     direction="row"
                     wrap="wrap"
                 >
-                    <Button onClick={() => setOpen(true)}>
+                    <Button onClick={() => {
+                        setIsEdit(false);
+                        setOpen(true);
+                    }}>
                         新建单条数据源
                     </Button>
                     <Space h="md" />

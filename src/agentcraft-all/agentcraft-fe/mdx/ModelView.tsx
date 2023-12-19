@@ -1,11 +1,10 @@
 import React from "react";
+import { Flex, Card, Text, Badge, Button, Group, } from '@mantine/core';
+import { IconBrandGithubFilled, IconExternalLink } from '@tabler/icons-react';
 
-import { Flex, Tabs, Card, Image, Text, Badge, Button, Group, } from '@mantine/core';
+import { FOUNDATION_MODEL_TEMPLATES } from 'constants/foundation-model';
 
-import { IconMessageCircle, IconBrandGithubFilled, IconExternalLink } from '@tabler/icons-react';
-
-import { FOUNDATION_MODEL_TEMPLATES } from '@/constants/foundationModelTemplate';
-import { ServerlessAppTemplate, } from '@/types/serverless-devs-app';
+import { ServerlessAppTemplate, } from 'types/serverless-devs-app';
 
 
 

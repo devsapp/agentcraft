@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { useRouter } from 'next/router'
-import { Paper, Button, Box, Table, TextInput, PasswordInput, Text, Textarea, Highlight, LoadingOverlay, Divider, Title, Select, Modal, Flex, Space, NumberInput, Stepper, Group } from '@mantine/core';
-import { ServerlessAppTemplate, TemplateParams, TemplatePropertyDetail } from '@/types/serverless-devs-app';
-import { FOUNDATION_MODEL_TEMPLATES } from '@/constants/foundationModelTemplate';
+import { Paper, Button, Box, Table, TextInput, PasswordInput, Text, Textarea, Divider, Title, Select, Modal, Flex, Space, NumberInput, Stepper, Group } from '@mantine/core';
+import { TemplatePropertyDetail } from '@/types/serverless-devs-app';
+import { FOUNDATION_MODEL_TEMPLATES } from 'constants/foundation-model';
 export default function QuickStart({ form }: any) {
 
     const fmTemplate: any = FOUNDATION_MODEL_TEMPLATES[0].templateParams;

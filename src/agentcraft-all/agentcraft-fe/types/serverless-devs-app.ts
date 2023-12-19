@@ -22,7 +22,10 @@ export interface TemplateParams {
     properties:  TemplateProperties
 }
 
-
+export interface DevsAppParamsBase {
+    name: string,
+    description: string
+}
 export const enum ModelType {
     LLM = 'llm',
     TEXT2IMG = 'text2img'

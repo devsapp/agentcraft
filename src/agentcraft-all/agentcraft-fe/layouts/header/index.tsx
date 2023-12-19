@@ -1,6 +1,6 @@
-import { Box, Header as MantineHeader, Text, Flex } from '@mantine/core';
+import { Box, Header as MantineHeader, Text, Flex, Anchor } from '@mantine/core';
 import { modals } from '@mantine/modals';
-import { IconBrandGithubFilled } from '@tabler/icons-react';
+
 import { useUserStore, getUserInfo } from '@/store/user';
 import { useRouter } from 'next/router';
 import { useAuthenticationStore } from '@/store/authentication';
@@ -37,7 +37,9 @@ export function Header() {
             <Box ml={5}>
                 <a href="https://github.com/devsapp/agentcraft" target="_blank">
                     <Flex align="center">
-                        <span style={{ marginRight: 12 }}>AgentCraft【Beta】</span>  <IconBrandGithubFilled color='white' />
+                        <Anchor href="https://agentcraft.serverless-developer.com/" color="white" target={'_blank'} mr={24}>访问官网</Anchor>
+                       
+
                     </Flex>
                 </a>
             </Box>

@@ -6,7 +6,7 @@ export default function handler(
     res: NextApiResponse
 ) {
     
-    const openApiUrl = process.env.openApiUrl; // 外部网络访问的url
+    const openApiUrl = `http://${process.env.openApiUrl}`; // 外部网络访问的url
     const innerApiUrl = process.env.baseUrl; // 内网可访问的url
  
     res.status(200).json({

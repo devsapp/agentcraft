@@ -2,15 +2,17 @@
 import { create } from "zustand";
 import { devtools } from "zustand/middleware";
 
-
 import { request } from '@/utils/clientRequest';
+
+import { AGENTCRAFT_FM_PREFIX } from 'constants/foundation-model';
+
 
 export const enum APP_STATUS {
     INIT = 1,
-    CREATING= 2,
+    CREATING = 2,
     SUCCESS = 3,
     FAILED = 4
-} 
+}
 
 interface FoundationModelStore {
     loading: boolean,
@@ -43,7 +45,7 @@ export const useFoundationModelStore = create<FoundationModelStore>()(devtools((
     appName: '',
     appStatus: APP_STATUS.INIT,
     currentFoundationModel: {},
-    setCurrentFoundationModel:(currentFoundationModel)=> set((_state) => {
+    setCurrentFoundationModel: (currentFoundationModel) => set((_state) => {
         return ({ currentFoundationModel })
     }),
     setAppStatus: (appStatus: number) => set((_state) => {
@@ -73,7 +75,7 @@ export const useFoundationModelStore = create<FoundationModelStore>()(devtools((
 export async function getFoundationModelList() {
     const state = useFoundationModelStore.getState();
     const updateFoundationModelList = state.updateFoundationModelList;
-    const res = await request(`/api/infra/alibaba-cloud/listApps`);
+    const res = await request(`/api/infra/alibaba-cloud/listApps?appFilter=${AGENTCRAFT_FM_PREFIX}`);
     const foundationModelList = res.data;
     if (foundationModelList)
         updateFoundationModelList(foundationModelList);
@@ -101,7 +103,7 @@ export async function deleteFoundationModel(appName: string) {
 }
 
 export async function addFoundationModel(template: string, payload: any) {
-    const res =  await request(`/api/infra/alibaba-cloud/createApp?template=${template}`, {
+    const res = await request(`/api/infra/alibaba-cloud/createApp?template=${template}`, {
         method: "POST",
         body: JSON.stringify(payload),
         headers: {

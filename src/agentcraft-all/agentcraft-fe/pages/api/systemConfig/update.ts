@@ -22,19 +22,14 @@ export default async function handler(
     }
     const serverlessBridgeService = new ServerlessBridgeService(credential, mainAccountId);
 
-    // await serverlessBridgeService.getMainOrCreateAccountRole();
     let status = 200;
     const data: any = {
         code: 200,
     }
-    // const serviceName = process.env.beServiceName || '';
+ 
     const functionName = process.env.beFunctionName || '';
     try {
-        // const functionInfo = await serverlessBridgeService.getFunction({
-        //     serviceName,
-        //     functionName,
-        //     qualifier: 'LATEST'
-        // });
+   
         const result = await serverlessBridgeService.getFunctionV3(functionName);
         const functionInfo = result?.body || {};
         const environmentVariables = functionInfo.environmentVariables;

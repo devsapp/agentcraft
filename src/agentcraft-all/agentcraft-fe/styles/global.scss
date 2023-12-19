@@ -1,5 +1,6 @@
 .language-shell {
     word-wrap: break-word;
+    white-space: normal !important;
 }
 
 .markdown-content  {
@@ -25,6 +26,7 @@
     font-size: 14px;
     line-height: 1.5;
     word-wrap: break-word;
+    width: 100%;
   
 }
 
@@ -735,7 +737,7 @@
     padding: 0;
     margin: 0;
     word-break: normal;
-    white-space: pre;
+    white-space: normal !important;
     background: transparent;
     border: 0;
 }

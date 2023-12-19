@@ -94,6 +94,7 @@ router.post(async (req: any, res: any) => {
 
 
     }
+
     for (const splitData of output) {
         const data = splitData.pageContent;
         const documentData: RequestDocumentData = {

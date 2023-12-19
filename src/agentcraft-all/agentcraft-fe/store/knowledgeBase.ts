@@ -1,8 +1,8 @@
 
 import { create } from "zustand";
 import { devtools } from "zustand/middleware";
-import { KnowledgeBaseRequestPayload, KnowledgeBaseResponseData, KnowledgeBase } from '@/types/knowledgeBase';
-import { request } from '@/utils/clientRequest';
+import { KnowledgeBaseRequestPayload, KnowledgeBaseResponseData, KnowledgeBase } from 'types/knowledgeBase';
+import { request } from 'utils/clientRequest';
 
 interface AccessUrl {
     openApiUrl: string
@@ -27,7 +27,7 @@ interface KnowledgeBaseStore {
 }
 
 
-export const useGlobalStore = create<KnowledgeBaseStore>()(devtools((set) => ({
+export const useKnowledgeBaseStore = create<KnowledgeBaseStore>()(devtools((set) => ({
     knowledgeBaseList: [],
     knowledgeBaseChatList: [],
     open: false,
@@ -65,7 +65,7 @@ export const useGlobalStore = create<KnowledgeBaseStore>()(devtools((set) => ({
 })))
 
 export async function getKnowledgeBaseList(appId: number) {
-    const state = useGlobalStore.getState();
+    const state = useKnowledgeBaseStore.getState();
     const updateKnowledgeBaseList = state.updateKnowledgeBaseList;
     const res = await request(`/api/knowledgeBase/list?appId=${appId}`);
     const knowledgeBaseList = res.data;

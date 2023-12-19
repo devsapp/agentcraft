@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { nanoid } from 'nanoid';
 import { useRouter } from 'next/router';
 import { useForm, UseFormReturnType } from '@mantine/form';
 import { Button, Title, Stepper, Group, Flex, LoadingOverlay, Anchor, Loader } from '@mantine/core';
@@ -8,7 +9,8 @@ import KnowledgeBase from 'features/overview/knowledgeBase';
 import { notifications } from '@mantine/notifications';
 import { useQuickStartStore, QuickStartStep, createFoundationModelOnly, checkFoundationModelStatusAndLLMProxy, createDataAll, createKnowledgeBaseApp } from "store/quickStart";
 import { PROMPT_TEMPLATE, DEFAULT_SYSTEM_PROMPT } from 'constants/index';
-
+import { AGENTCRAFT_FM_PREFIX } from 'constants/foundation-model';
+import { DEFAULT_CHUNK_SIZE } from 'constants/dataset'
 export function QuickStart() {
     const router = useRouter();
     const [appName, setAppName] = useState('');
@@ -31,7 +33,7 @@ export function QuickStart() {
         initialValues: {
             name: 'AgentCraft快速入门数据集',
             title: 'AgentCraft快速入门数据集',
-            chunk_size: 521,
+            chunk_size: DEFAULT_CHUNK_SIZE,
             url: `${window.location.protocol}/${window.location.host}/agentcraft.md`,
             file: ''
         },
@@ -84,11 +86,8 @@ export function QuickStart() {
     } = useQuickStartStore();
 
     const {
-        llm_proxy_config_ready,
         llm_proxy_create_loading,
-        data_all_config_ready,
         data_all_create_loading,
-        knowledge_base_config_ready,
         knowledge_base_create_loading,
     } = configStepStatus;
 
@@ -101,13 +100,14 @@ export function QuickStart() {
         setConfigStepStatus(configStepStatus);
         //处理
         const values = llmProxyForm.values;
+
         try {
-            const _appName = await createFoundationModelOnly(values);
+            const name = `${AGENTCRAFT_FM_PREFIX}_${nanoid()}`;
+            const _appName = await createFoundationModelOnly(Object.assign({}, values, { name }));
             setAppName(_appName);
             const modelId = await checkFoundationModelStatusAndLLMProxy(_appName, values);
             //结束
             configStepStatus.llm_proxy_create_loading = false;
-            configStepStatus.llm_proxy_config_ready = true;
             setConfigStepStatus(configStepStatus);
             setModelId(modelId);
             notifications.show({
@@ -124,7 +124,6 @@ export function QuickStart() {
                 color: 'red',
             });
             configStepStatus.llm_proxy_create_loading = false;
-            configStepStatus.llm_proxy_config_ready = false;
             setConfigStepStatus(configStepStatus);
         }
 
@@ -140,7 +139,6 @@ export function QuickStart() {
         try {
             const dataSetId = await createDataAll(dataAllForm.values);
             configStepStatus.data_all_create_loading = false;
-            configStepStatus.data_all_config_ready = true;
             setConfigStepStatus(configStepStatus);
             setDataSetId([dataSetId]);
             notifications.show({
@@ -157,7 +155,6 @@ export function QuickStart() {
                 color: 'red',
             });
             configStepStatus.data_all_create_loading = false;
-            configStepStatus.data_all_config_ready = false;
             setConfigStepStatus(configStepStatus);
         }
     }
@@ -172,7 +169,6 @@ export function QuickStart() {
             setConfigStepStatus(configStepStatus);
             const appId = await createKnowledgeBaseApp(knowledgeBaseForm.values);
             configStepStatus.knowledge_base_create_loading = false;
-            configStepStatus.knowledge_base_config_ready = true;
             setConfigStepStatus(configStepStatus);
             setAutoQuickStart(false); //关闭快速启动
             notifications.show({
@@ -190,7 +186,6 @@ export function QuickStart() {
                 color: 'red',
             });
             configStepStatus.knowledge_base_create_loading = false;
-            configStepStatus.knowledge_base_config_ready = false;
             setConfigStepStatus(configStepStatus);
         }
 
@@ -200,22 +195,14 @@ export function QuickStart() {
 
         if (activeStep === QuickStartStep.LLM_PROXY) {
             await createLLMProxy();
-            // if (!llm_proxy_config_ready) {
-
-            //     await createLLMProxy();
-            // }
         }
         if (activeStep === QuickStartStep.DATA_ALL) {
             await createAppAll();
-            // if (!data_all_config_ready) {
-            //     await createAppAll();
-            // }
+
         }
         if (activeStep === QuickStartStep.KNOWLEDGE_BASE) {
             await createKnowledgeBase();
-            // if (!knowledge_base_config_ready) {
-            //     await createKnowledgeBase();
-            // }
+
         }
 
     };
@@ -230,26 +217,20 @@ export function QuickStart() {
                 <Stepper.Step label="基础模型&LLM代理" description="进行LLM基础模型的创建以及LLM代理关联" loading={llm_proxy_create_loading}>
                     <div style={{ position: 'relative' }}>
                         <LoadingOverlay
-                            loader={<Flex align={'center'} direction="column"><Flex align={'center'} >部署基础模型和LLM代理预计需要5分钟，请耐心等待<Loader variant="bars" color={'pink'}  ml={12}/></Flex><Anchor href={`https://fcnext.console.aliyun.com/applications/${appName}/env/default?tab=envDetail`} target="_blank">点击查看应用创建日志</Anchor></Flex>}
+                            loader={<Flex align={'center'} direction="column"><Flex align={'center'} >部署基础模型和LLM代理预计需要1分钟左右，请耐心等待<Loader variant="bars" color={'pink'} ml={12} /></Flex><Anchor href={`https://fcnext.console.aliyun.com/applications/${appName}/env/default?tab=envDetail`} target="_blank">点击查看应用创建日志</Anchor></Flex>}
                             overlayOpacity={0.3}
                             overlayColor="#c5c5c5"
                             visible={llm_proxy_create_loading}
                         />
-                        {/* <div>{configStepStatus.llm_proxy_config_ready ? <div>该服务已经创建,点击下一步会自动忽略创建过程。<Button onClick={() => {
-                        createLLMProxy();
-                    }} compact variant="subtle">可点击再次创建</Button></div> : null}</div> */}
                         <div style={{ padding: 20 }}>
                             <LLMProxy form={llmProxyForm} />
                         </div>
                     </div>
                 </Stepper.Step>
                 <Stepper.Step label="创建数据集&数据源" description="创建数据集，上传数据源文件" loading={data_all_create_loading}>
-                    {/* <div>{configStepStatus.llm_proxy_config_ready ? <div>该服务已经创建,点击下一步会自动忽略创建过程。<Button onClick={() => {
-                        createLLMProxy();
-                    }} compact variant="subtle">可点击再次创建</Button></div> : null}</div> */}
                     <div style={{ position: 'relative' }}>
                         <LoadingOverlay
-                            loader={<Flex align={'center'} direction="column"><Flex align={'center'} >创建数据集&数据源预计花费1-2分钟，请耐心等待<Loader variant="bars" color={'pink'}  ml={12}/></Flex></Flex>}
+                            loader={<Flex align={'center'} direction="column"><Flex align={'center'} >创建数据集&数据源预计花费1-2分钟，请耐心等待<Loader variant="bars" color={'pink'} ml={12} /></Flex></Flex>}
                             overlayOpacity={0.3}
                             overlayColor="#c5c5c5"
                             visible={data_all_create_loading}
@@ -260,9 +241,6 @@ export function QuickStart() {
                     </div>
                 </Stepper.Step>
                 <Stepper.Step label="智能体应用创建" description="创建智能体" loading={knowledge_base_create_loading}>
-                    {/* <div>{configStepStatus.llm_proxy_config_ready ? <div>该服务已经创建,点击完成会自动忽略创建过程。<Button onClick={() => {
-                        createLLMProxy();
-                    }} compact variant="subtle">可点击再次创建</Button></div> : null}</div> */}
                     <div style={{ position: 'relative' }}>
                         <LoadingOverlay
                             loaderProps={{ size: 'sm', color: 'pink', variant: 'bars' }}

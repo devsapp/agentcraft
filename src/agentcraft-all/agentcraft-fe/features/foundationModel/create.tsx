@@ -1,13 +1,14 @@
 import React, { useEffect } from "react";
-import { useRouter } from 'next/router'
+import { useRouter } from 'next/router';
+import { nanoid } from 'nanoid';
 import { Breadcrumbs, Anchor, Flex, Tabs, Box, Card, Image, Text, Badge, Button, Group, Modal, TextInput, Select, PasswordInput, LoadingOverlay, Stepper, Loader, Notification } from '@mantine/core';
 import { useForm } from '@mantine/form';
 import { IconMessageCircle, IconBrandGithubFilled, IconExternalLink } from '@tabler/icons-react';
-import FeatureDescription from '@/components/FeatureDescription';
-import { useFoundationModelStore, addFoundationModel, getFoundationModel, APP_STATUS } from '@/store/foundationModel';
+import FeatureDescription from 'components/FeatureDescription';
+import { useFoundationModelStore, addFoundationModel, getFoundationModel, APP_STATUS } from 'store/foundationModel';
 import { FORM_WIDTH } from 'constants/index';
-import { FOUNDATION_MODEL_TEMPLATES } from '@/constants/foundationModelTemplate';
-import { ServerlessAppTemplate, TemplateParams, TemplatePropertyDetail } from '@/types/serverless-devs-app';
+import { FOUNDATION_MODEL_TEMPLATES, AGENTCRAFT_FM_PREFIX } from 'constants/foundation-model';
+import { ServerlessAppTemplate, TemplateParams, TemplatePropertyDetail } from 'types/serverless-devs-app';
 // import styles from './index.module.scss';
 
 function LoadingStepper() {
@@ -15,7 +16,7 @@ function LoadingStepper() {
 
     return <div>
 
-        <div style={{ wordBreak: 'break-all', width: 400, display: 'flex', alignItems: 'center' }}><span>该应基础模型创建预计需要3分钟，请耐心等待，你可以可以关闭此弹框，在基础模型列表查看您创建的基础模型列表</span><Loader /></div>
+        <div style={{ wordBreak: 'break-all', width: 400, display: 'flex', alignItems: 'center' }}><span>该应基础模型创建预计需要1-3分钟，请耐心等待，你可以可以关闭此弹框，在基础模型列表查看您创建的基础模型列表</span><Loader /></div>
         <Stepper active={appStatus} breakpoint="sm">
             <Stepper.Step label="初始化" description="" />
             <Stepper.Step label="创建中" description="" />
@@ -104,10 +105,7 @@ function FoundationModelForm() {
                 return accumulator;
             }, {});
 
-
-
             form.setValues(initFormData);
-
         }
     }, [fmTemplate])
 
@@ -124,13 +122,13 @@ function FoundationModelForm() {
                     form.validate();
                     if (form.isValid()) {
                         try {
+                            const appName = `${AGENTCRAFT_FM_PREFIX}_${nanoid()}`;
                             setCreateLoading(true);
                             setAppStatus(APP_STATUS.INIT);
-
-                            const data = await addFoundationModel(fmTemplate.template, form.values);
-
+                            const data = await addFoundationModel(fmTemplate.template, Object.assign({}, form.values, { name: appName }));
                             const name = data.name;
                             await checkAppStatus(name);
+
                         } catch (e) {
                             console.log(e);
                         }
@@ -148,9 +146,6 @@ function Add() {
     const open = useFoundationModelStore().open;
     const setOpen = useFoundationModelStore().setOpen;
     const createLoading = useFoundationModelStore().createLoading;
-
-
-
     return (
         <Modal opened={open} onClose={() => { setOpen(false) }} title="创建基础模型" centered size={'xl'}>
             <LoadingOverlay loader={<LoadingStepper />} visible={createLoading} overlayOpacity={0.8} overlayBlur={2} />

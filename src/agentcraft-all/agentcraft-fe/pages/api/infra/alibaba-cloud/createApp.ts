@@ -1,7 +1,7 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
-import { nanoid } from 'nanoid';
+
 import { ServerlessBridgeService } from '@/infra/alibaba-cloud/services/serverless-app';
-import { AGENTCRAFT_APP } from '@/constants/index';
+
 interface ServerlessAppRequestBody {
     name: string,
     description: string,
@@ -28,7 +28,7 @@ export default async function handler(
     const template: any = req.query.template;
     const body: any = req.body;
     const headers = req.headers;
-    const mainAccountId =  process.env.FC_ACCOUNT_ID || headers['x-fc-account-id'];
+    const mainAccountId = process.env.FC_ACCOUNT_ID || headers['x-fc-account-id'];
     const accessKeyId: any = process.env.ALIBABA_CLOUD_ACCESS_KEY_ID || headers['x-fc-access-key-id'];
     const accessKeySecret: any = process.env.ALIBABA_CLOUD_ACCESS_KEY_SECRET || headers['x-fc-access-key-secret'];
     const securityToken: any = process.env.ALIBABA_CLOUD_SECURITY_TOKEN || headers['x-fc-security-token'];
@@ -43,7 +43,8 @@ export default async function handler(
     const serverlessBridgeService = new ServerlessBridgeService(credential);
 
     const { description = '', name = '', ...parameters } = body;
-    const appName = name || `${AGENTCRAFT_APP}_${nanoid()}`;
+    //    region: process.env.Region || 'cn-hangzhou',
+    const appName = name;
     const appData: ServerlessAppRequestBody = {
         name: appName,
         description: description || '由AgentCraft创建，谨慎删除',

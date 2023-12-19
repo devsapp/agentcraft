@@ -18,7 +18,7 @@ export function Shell(props: any) {
                 main: { backgroundColor: theme.colorScheme === 'dark' ? theme.colors.dark[8] : theme.colors.gray[0] },
             })}
         >
-            <div style={{ paddingRight: 20 }}>
+            <div >
                 {props.children}
             </div>
         </AppShell> : <>{props.children}</>

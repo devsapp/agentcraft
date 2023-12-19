@@ -1,9 +1,10 @@
 
 
 
-import { ResponseData, HTTP_STATUS } from '@/types/httpStatus';
 import Router from "next/router";
-import { useAuthenticationStore } from '@/store/authentication';
+import { ResponseData, HTTP_STATUS } from 'types/httpStatus';
+import { useAuthenticationStore } from 'store/authentication';
+
 export async function request(url: string, data?: any): Promise<ResponseData> {
     const { token } = useAuthenticationStore.getState();
     if (!data) {

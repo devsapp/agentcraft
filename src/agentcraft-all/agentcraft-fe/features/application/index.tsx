@@ -3,7 +3,7 @@ import Link from 'next/link'
 import { Breadcrumbs, Anchor, Button, Box, Table, Modal, TextInput, Text, Highlight, LoadingOverlay, Textarea } from '@mantine/core';
 import { useForm } from '@mantine/form';
 import { modals } from '@mantine/modals';
-import { getApplications, useGlobalStore, ApplicationResponseData, addApplication, deleteApplication } from '@/store/application';
+import { getApplications, useAppStore, ApplicationResponseData, addApplication, deleteApplication } from '@/store/application';
 import FeatureDescription from '@/components/FeatureDescription';
 import { formatDateTime } from 'utils/index';
 import { FORM_WIDTH } from 'constants/index';
@@ -18,9 +18,9 @@ interface AppForm {
 
 
 function List() {
-    const appList: ApplicationResponseData[] = useGlobalStore().appList;
-    const loading = useGlobalStore().loading;
-    const setLoading = useGlobalStore().setLoading;
+    const appList: ApplicationResponseData[] = useAppStore().appList;
+    const loading = useAppStore().loading;
+    const setLoading = useAppStore().setLoading;
     const removeApplication = (app: ApplicationResponseData) => {
         const { id, name } = app;
         const deleteContent = `确定删除 ${name}?`;
@@ -88,9 +88,9 @@ function List() {
 }
 
 function Add() {
-    const open = useGlobalStore().open;
-    const setOpen = useGlobalStore().setOpen;
-    const setLoading = useGlobalStore().setLoading;
+    const open = useAppStore().open;
+    const setOpen = useAppStore().setOpen;
+    const setLoading = useAppStore().setLoading;
     const form = useForm({
         initialValues: {
             name: '',
@@ -135,7 +135,7 @@ export function ApplicationPage() {
             {item.title}
         </Anchor>
     ));
-    const setOpen = useGlobalStore().setOpen;
+    const setOpen = useAppStore().setOpen;
     return (
         <>
             <Breadcrumbs>{items}</Breadcrumbs>

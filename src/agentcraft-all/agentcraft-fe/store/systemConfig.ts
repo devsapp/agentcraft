@@ -8,6 +8,16 @@ export const enum SystemConfigStep {
     DATABASE = 1,
     COMPLETE = 2
 }
+export interface VpcInfo {
+    vpcName: string,
+    vpcId: string
+}
+export interface CompleteConfigData {
+    regionId: string,
+    EMBEDDING_URL: string,
+    vpcInfo: VpcInfo
+}
+
 
 
 export const useSystemConfigStore = create<any>(persist(
@@ -41,9 +51,9 @@ export const useSystemConfigStore = create<any>(persist(
 
 
 export async function getSystemConfig() {
-    const result:any = await request(`/api/systemConfig/init`);
- 
-    const state = useSystemConfigStore.getState();
+    const result: any = await request(`/api/systemConfig/init`);
+
+    const state: any = useSystemConfigStore.getState();
     const setCompleteConfig = state.setCompleteConfig;
     const setHiddenConfigView = state.setHiddenConfigView;
     setCompleteConfig(result?.data || {});
