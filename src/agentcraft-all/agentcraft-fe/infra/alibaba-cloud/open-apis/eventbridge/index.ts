@@ -88,7 +88,7 @@ export class ServerlessBridgeEventbridge {
             "resourceKey": "Body",
             "value": "{\n \"text\":\"$.data.responsePayload\"\n}",
             "form": "TEMPLATE",
-            template: "{\n   \"msgtype\": \"markdown\",\n    \"markdown\": {\n      \"title\": \"" + title + "\",\n      \"text\": \"${text}\"\n    }\n}"
+            template: "{\n   \"msgtype\": \"markdown\",\n    \"markdown\": {\n      \"title\": \"" + title + "\",\n      \"text\": \"${jsonEscape(text)}\"\n    }\n}"
         });
 
 
