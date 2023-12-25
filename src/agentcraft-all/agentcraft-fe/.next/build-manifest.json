@@ -5,8 +5,8 @@
   "devFiles": [],
   "ampDevFiles": [],
   "lowPriorityFiles": [
-    "static/NImMx_9CWnPhpIsOKVB4y/_buildManifest.js",
-    "static/NImMx_9CWnPhpIsOKVB4y/_ssgManifest.js"
+    "static/XVhmWa4Z4S0TPOuxP1Gc_/_buildManifest.js",
+    "static/XVhmWa4Z4S0TPOuxP1Gc_/_ssgManifest.js"
   ],
   "rootMainFiles": [],
   "pages": {
@@ -51,10 +51,10 @@
       "static/chunks/642-0798d8e6611da2dd.js",
       "static/chunks/194-3e27f515ab5f5b88.js",
       "static/css/3fa41ea7ef96924b.css",
-      "static/chunks/104-79d26339b959a00d.js",
+      "static/chunks/104-058db7542caea4eb.js",
       "static/chunks/958-258c14e3b8579879.js",
       "static/css/8c44e550bf2f3219.css",
-      "static/chunks/pages/app/[id]/knowledgeBase-ad3ec2cfaf340ef5.js"
+      "static/chunks/pages/app/[id]/knowledgeBase-454359a9fea44086.js"
     ],
     "/app/[id]/knowledgeBase/[knowledgeBaseId]/chatlist": [
       "static/chunks/webpack-a06fe140fe7e8fac.js",
@@ -79,7 +79,7 @@
       "static/chunks/642-0798d8e6611da2dd.js",
       "static/chunks/194-3e27f515ab5f5b88.js",
       "static/css/3fa41ea7ef96924b.css",
-      "static/chunks/104-79d26339b959a00d.js",
+      "static/chunks/104-058db7542caea4eb.js",
       "static/chunks/958-258c14e3b8579879.js",
       "static/css/8c44e550bf2f3219.css",
       "static/chunks/pages/app/[id]/knowledgeBase/[knowledgeBaseId]/detail-5eb63b9041e1ed5a.js"
@@ -142,7 +142,7 @@
       "static/chunks/322-ed07229dac4e752f.js",
       "static/chunks/754-6280b57a3b5426c3.js",
       "static/css/8c44e550bf2f3219.css",
-      "static/chunks/pages/dataset/[id]/datasource-5b3f0af603c16459.js"
+      "static/chunks/pages/dataset/[id]/datasource-1ab16dd04686c40a.js"
     ],
     "/foundationModel": [
       "static/chunks/webpack-a06fe140fe7e8fac.js",

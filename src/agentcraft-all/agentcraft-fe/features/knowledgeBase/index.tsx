@@ -80,7 +80,7 @@ export function KnowledgeBaseForm({ appId, containerType }: { appId: any, contai
                 app_id: currentKnowledgeBase?.app_id,
                 exact_datasets: datasets?.filter((item: Dataset) => item.dataset_type === DataSetType.QUESTION).map((item: Dataset) => item.dataset_id),
                 fuzzy_datasets: datasets?.filter((item: Dataset) => item.dataset_type === DataSetType.DOCUMENT).map((item: Dataset) => item.dataset_id),
-                exact_search_similarity: currentKnowledgeBase?.exact_search_limit,
+                exact_search_similarity: currentKnowledgeBase?.exact_search_similarity,
                 fuzzy_search_similarity: currentKnowledgeBase?.fuzzy_search_similarity,
                 temperature: currentKnowledgeBase?.temperature,
                 top_p: currentKnowledgeBase?.top_p,

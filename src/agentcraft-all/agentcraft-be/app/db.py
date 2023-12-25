@@ -104,7 +104,7 @@ CREATE_CHAT_TABLE = text(
     modified TIMESTAMP NOT NULL DEFAULT NOW(),
     agent_id BIGINT REFERENCES agent(id) ON DELETE SET NULL,
     model_id BIGINT REFERENCES model(id) ON DELETE SET NULL,
-    model_name VARCHAR(255) NOT NULL,
+    model_name VARCHAR(255),
     uid VARCHAR(255) NOT NULL UNIQUE
     );"""
 )
