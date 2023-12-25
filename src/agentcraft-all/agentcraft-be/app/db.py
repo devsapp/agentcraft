@@ -91,6 +91,19 @@ CREATE_AGENT_DATASET_TABLE = text(
     modified TIMESTAMP NOT NULL DEFAULT NOW()
     );"""
 )
+
+# CREATE_MEMORY_TABLE = text(
+#     """CREATE TABLE IF NOT EXISTS memory (
+#     id VARCHAR(255) PRIMARY KEY,
+#     name VARCHAR(255) NOT NULL,
+#     description VARCHAR(255) NOT NULL,
+#     content VARCHAR(255) NOT NULL,
+#     created TIMESTAMP NOT NULL DEFAULT NOW(),
+#     modified TIMESTAMP NOT NULL DEFAULT NOW(),
+#     agent_id BIGINT REFERENCES agent(id) ON DELETE CASCADE
+#     );"""
+# )
+
 CREATE_CHAT_TABLE = text(
     """CREATE TABLE IF NOT EXISTS chat (
     id BIGSERIAL PRIMARY KEY,

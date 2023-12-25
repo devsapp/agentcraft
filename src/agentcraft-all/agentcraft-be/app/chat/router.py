@@ -33,7 +33,7 @@ async def chat(req: ChatRequest, request: Request, token: AgentJWTData = Depends
     if req.stream:
         return EventSourceResponse(
             service.chat_stream(
-                req.messages[-1].content, request.client.host, token.agent_id),
+                req.messages, request.client.host, token.agent_id),
             media_type="text/event-stream")
     else:
         resp: dict[str, Any] = service.chat(
