@@ -2,14 +2,9 @@
   "/_app": "pages/_app.js",
   "/_error": "pages/_error.js",
   "/_document": "pages/_document.js",
+  "/app": "pages/app.js",
   "/app/[id]/knowledgeBase": "pages/app/[id]/knowledgeBase.js",
-  "/overview": "pages/overview.js",
-  "/api/systemConfig/init": "pages/api/systemConfig/init.js",
   "/app/[id]/knowledgeBase/[knowledgeBaseId]/detail": "pages/app/[id]/knowledgeBase/[knowledgeBaseId]/detail.js",
-  "/api/knowledgeBase/list": "pages/api/knowledgeBase/list.js",
-  "/api/model/list": "pages/api/model/list.js",
-  "/api/user": "pages/api/user.js",
-  "/api/knowledgeBase/get": "pages/api/knowledgeBase/get.js",
-  "/api/dataset/list": "pages/api/dataset/list.js",
-  "/api/chat": "pages/api/chat.js"
+  "/api/knowledgeBase/update": "pages/api/knowledgeBase/update.js",
+  "/login": "pages/login.js"
 }
