@@ -9,8 +9,8 @@
 /coverage
 
 # next.js
-/.next/
-
+/.next
+package-lock.json
 /out/
 
 # production
