@@ -37,7 +37,7 @@ class Chat(postgresql.BaseModel):
     modified = mapped_column(TIMESTAMP, default=func.now(), onupdate=func.now, nullable=False)
     agent_id = mapped_column(ForeignKey("agent.id", ondelete="setnull"), nullable=True)
     model_id = mapped_column(ForeignKey("model.id", ondelete="setnull"), nullable=True)
-    model_name = mapped_column(String, nullable=False)
+    model_name = mapped_column(String, nullable=True)
     uid = mapped_column(String, nullable=False)
 
 
