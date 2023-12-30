@@ -82,17 +82,13 @@ https://fcnext.console.aliyun.com/applications/create?template=fc-embedding-api�
 数据库可以创建一个RDS PostgreSQL实例 https://rdsbuy.console.aliyun.com/create/rds/mysql?spm=5176.19907444.0.0.64b11450FHIgeU
 + 依赖安装：
 **pip install -r  requirements.txt**
-+ 安装 libpq
-```
-brew install libpq
-```
 + 服务启动：
 ```shell
 export PYTHONPATH="${PYTHONPATH}:<your project path>"
 python3 -u app/main.py
 ```
 ### 前端工程 agentcraft-fe
-+ 配置准备：修改.env.example -> .env，将后端服务的域名填写为baseUrl的值，获得阿里云的AK,SK并填写为.env中的值（该配置在操作云资源的时候需要，如管理基础模型服务）
++ 配置准备：修改.env.example -> .env，将后端服务的域名填写为baseUrl的值，获得阿里云的AK,SK并填写为.env中的值ALIBABA_CLOUD_ACCESS_KEY_ID，ALIBABA_CLOUD_ACCESS_KEY_SECRET（该配置在操作云资源的时候需要，如管理基础模型服务）
 + 依赖安装：
 **npm install -f**
 + 服务启动
