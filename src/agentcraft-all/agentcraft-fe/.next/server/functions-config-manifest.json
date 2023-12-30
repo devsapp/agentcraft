@@ -1,1 +1,0 @@
-{"version":1,"functions":{"/api/dataset/[id]/datasource/upload":{},"/app/[id]/knowledgeBase/[knowledgeBaseId]/chatlist":{},"/app/[id]/knowledgeBase/[knowledgeBaseId]/detail":{},"/app/[id]/knowledgeBase":{},"/app/[id]/agent":{},"/dataset/[id]/datasource":{},"/foundationModel/[fmId]/detail":{}}}

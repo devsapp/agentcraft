@@ -82,6 +82,10 @@ https://fcnext.console.aliyun.com/applications/create?template=fc-embedding-api�
 数据库可以创建一个RDS PostgreSQL实例 https://rdsbuy.console.aliyun.com/create/rds/mysql?spm=5176.19907444.0.0.64b11450FHIgeU
 + 依赖安装：
 **pip install -r  requirements.txt**
++ 安装 libpq
+```
+brew install libpq
+```
 + 服务启动：
 ```shell
 export PYTHONPATH="${PYTHONPATH}:<your project path>"

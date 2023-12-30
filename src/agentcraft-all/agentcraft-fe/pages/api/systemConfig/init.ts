@@ -90,7 +90,7 @@ export default async function handler(
     } catch (e: any) {
         status = 500;
         data.code = status;
-        data.error = e.message
+        data.error = `Code: ${e.data.Code},Message: ${e.data.Message}`;
     }
     res.status(status).json(data);
 }
