@@ -20,3 +20,5 @@ beautifulsoup4
 sse_starlette
 gunicorn
 python-dotenv
+# pydantic==1.*
+# python-multipart

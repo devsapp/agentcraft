@@ -29,6 +29,14 @@ export default async function handler(
     const accessKeySecret: any = process.env.ALIBABA_CLOUD_ACCESS_KEY_SECRET || headers['x-fc-access-key-secret'];
     const securityToken: any = process.env.ALIBABA_CLOUD_SECURITY_TOKEN || headers['x-fc-security-token'];
     const regionId = process.env.Region || 'cn-hangzhou';
+    if (process.env.NODE_ENV === 'development') {
+        res.status(200).json({
+            code: 200,
+            data:
+                { regionId, EMBEDDING_URL: 'http://www.aliyun.com', vpcInfo: { vpcName: '', vpcId: '' } }
+        });
+        return;
+    }
     let credential = undefined;
     if (accessKeyId) {
         credential = {
