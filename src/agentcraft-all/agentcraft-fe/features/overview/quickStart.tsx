@@ -34,7 +34,7 @@ export function QuickStart() {
             name: 'AgentCraft快速入门数据集',
             title: 'AgentCraft快速入门数据集',
             chunk_size: DEFAULT_CHUNK_SIZE,
-            url: `${window.location.protocol}/${window.location.host}/agentcraft.md`,
+            url: `${window.location.protocol}//${window.location.host}/agentcraft.md`,
             file: ''
         },
         validate: {

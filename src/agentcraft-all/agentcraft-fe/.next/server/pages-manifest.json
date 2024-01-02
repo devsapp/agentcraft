@@ -2,5 +2,14 @@
   "/_app": "pages/_app.js",
   "/_error": "pages/_error.js",
   "/_document": "pages/_document.js",
-  "/api/systemConfig/init": "pages/api/systemConfig/init.js"
+  "/app/[id]/knowledgeBase": "pages/app/[id]/knowledgeBase.js",
+  "/dataset/[id]/datasource": "pages/dataset/[id]/datasource.js",
+  "/app": "pages/app.js",
+  "/clientAccess/robot": "pages/clientAccess/robot.js",
+  "/api/application/list": "pages/api/application/list.js",
+  "/api/knowledgeBase/list": "pages/api/knowledgeBase/list.js",
+  "/api/knowledgeBase/get": "pages/api/knowledgeBase/get.js",
+  "/api/model/list": "pages/api/model/list.js",
+  "/api/dataset/list": "pages/api/dataset/list.js",
+  "/api/chat": "pages/api/chat.js"
 }

@@ -295,7 +295,7 @@ def chat_stream(query: str, ip_addr: str, agent_id: int):
         }
         yield from model_chat_stream(**chat_args)
         return
-    
+
     embedding = utils.embed(query)[0]
     search_args = {
         "agent_id": agent.id,
@@ -531,13 +531,12 @@ def model_chat_stream(
             line = codecs.decode(line)
             if line.startswith("data:"):
                 line = line[5:].strip()
-                logger.info(line)
+                # logger.info(line)
                 try:
                     chunk = json.loads(line)
                     chunk["id"] = uid
                     chunk["created"] = created
                     chunk["model"] = model.name_alias
-                    print(f"hello{json.dumps(chunk)}")
                     yield json.dumps(chunk)
                     if "choices" in chunk and len(
                             chunk["choices"]) > 0 and "delta" in chunk["choices"][0] and "content" in chunk["choices"][0]["delta"]:
@@ -545,6 +544,24 @@ def model_chat_stream(
                                ] += chunk["choices"][0]["delta"]["content"]
                 except json.JSONDecodeError as err:
                     logger.info(err)
+
+    """添加检索来源信息"""
+    if len(search_choices) > 0:
+        result_text = "\n\n参考资料\n"
+        for index, item in enumerate(search_choices):
+            if item['message']['url']:
+                markdown_text = f"\[{index+1}\] [{item['message']['title']}]({item['message']['url']})\n"
+                result_text += markdown_text
+        search_info = {"choices":[]}
+        search_info["id"] = uid
+        search_info["created"] = created
+        search_info["model"] = model.name_alias
+        search_info["choices"].append({"index": 0,
+                                    "delta": {"role": "assistant",
+                                                "content": result_text},
+                                    "finish_reason": "null"})
+        yield json.dumps(search_info)
+
     yield DONE
     logger.info(answer)
     add_args = {
