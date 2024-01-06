@@ -16,9 +16,8 @@ import app.database.model as model_database
 from app.common.logger import logger
 from app.chat.green_client import is_legal
 from app.config import common as config
-from app.execute.instruction import call_agent
-DONE = "[DONE]"
 
+DONE = "[DONE]"
 
 
 def list_chats(agent_id: int, user_id: int, page: int, limit: int):
@@ -156,9 +155,7 @@ def chat(query: str, ip_addr: str, agent_id: int):
     created = int(time())
     if not agent:
         raise ValueError("agent does not exist")
-    return call_agent(query, agent)
     uid = f"chatcompl-{uuid.uuid4()}"
-
     if not agent.prompt_template:  # 无提示词模版直接进行模型问答
         chat_args = {
             "query": query,
@@ -171,7 +168,6 @@ def chat(query: str, ip_addr: str, agent_id: int):
             "uid": uid,
             "created": created
         }
-
         return model_chat(**chat_args)
     embedding = utils.embed(query)[0]
     search_args = {
@@ -182,6 +178,7 @@ def chat(query: str, ip_addr: str, agent_id: int):
         "exact_search_limit": agent.exact_search_limit,
         "fuzzy_search_limit": agent.fuzzy_search_limit
     }
+
     similarity_search_res, use_model = agent_dataset_database.similarity_search(
         **search_args)
     history = []  # get_history(ip_addr)
@@ -299,7 +296,7 @@ def chat_stream(query: str, ip_addr: str, agent_id: int):
         }
         yield from model_chat_stream(**chat_args)
         return
-
+    
     embedding = utils.embed(query)[0]
     search_args = {
         "agent_id": agent.id,
@@ -312,6 +309,7 @@ def chat_stream(query: str, ip_addr: str, agent_id: int):
 
     similarity_search_res, use_model = agent_dataset_database.similarity_search(
         **search_args)
+    print(f"{similarity_search_res}")
     history = []  # get_history(ip_addr)
     if not use_model:
         choices, answer = convert_exact_search_res_stream(
@@ -507,6 +505,7 @@ def model_chat_stream(
     messages = build_messages(prompt, history, agent.system_message)
     logger.info(messages)
     model = model_database.get_model_by_id(agent.model_id)
+   
     if not model:
         raise ValueError("model does not exist")
     headers = {
@@ -526,6 +525,7 @@ def model_chat_stream(
         "frequency_penalty": agent.frequency_penalty,
         "logit_bias": json.loads(agent.logit_bias) if agent.logit_bias else {}
     })
+
     logger.info(request_data)
     req = requests.post(model.url, headers=headers, data=request_data,
                         stream=True, timeout=model.timeout)
@@ -549,6 +549,24 @@ def model_chat_stream(
                                ] += chunk["choices"][0]["delta"]["content"]
                 except json.JSONDecodeError as err:
                     logger.info(err)
+    
+    """添加检索来源信息"""
+    if len(search_choices) > 0:
+        result_text = "\n\n参考资料\n"
+        for index, item in enumerate(search_choices):
+            if item['message']['url']:
+                markdown_text = f"\[{index+1}\] [{item['message']['title']}]({item['message']['url']})\n"
+                result_text += markdown_text
+        search_info = {"choices":[]}
+        search_info["id"] = uid
+        search_info["created"] = created
+        search_info["model"] = model.name_alias
+        search_info["choices"].append({"index": 0,
+                                    "delta": {"role": "assistant",
+                                                "content": result_text},
+                                    "finish_reason": "null"})
+        yield json.dumps(search_info)
+
     yield DONE
     logger.info(answer)
     add_args = {

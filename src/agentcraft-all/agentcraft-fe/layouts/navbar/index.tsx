@@ -54,24 +54,33 @@ export const Nav = () => {
             path: "/app",
             icon: <IconApps size="1rem" stroke={1.5} />,
             subNav: [{
-                name: "领域知识智能体",
+                name: "知识库",
                 path: "/app/[id]/knowledgeBase",
                 icon: <IconVocabulary size="1rem" stroke={1.5} />,
                 subNav: [{
-                    name: "智能体信息",
+                    name: "知识库信息",
                     path: "/app/[id]/knowledgeBase/[knowledgeBaseId]/detail",
                     icon: <IconHome2 size="1rem" stroke={1.5} />,
                 }, {
-                    name: "智能体解答记录",
+                    name: "知识库系统记录",
                     path: "/app/[id]/knowledgeBase/[knowledgeBaseId]/chatlist",
                     icon: <IconHome2 size="1rem" stroke={1.5} />,
                 }]
             },
-                // {
-                //     name: "Agent",
-                //     path: "/app/[id]/agent",
-                //     icon: <IconAlien size="1rem" stroke={1.5} />,
-                // }
+            {
+                name: "智能助手",
+                path: "/app/[id]/assistant",
+                icon: <IconVocabulary size="1rem" stroke={1.5} />,
+                subNav: [{
+                    name: "智能助手信息",
+                    path: "/app/[id]/assistant/[assistantId]/detail",
+                    icon: <IconHome2 size="1rem" stroke={1.5} />,
+                }, {
+                    name: "智能助手系统记录",
+                    path: "/app/[id]/assistant/[assistantId]/chatlist",
+                    icon: <IconHome2 size="1rem" stroke={1.5} />,
+                }]
+            },
             ]
         },
         {
@@ -88,6 +97,11 @@ export const Nav = () => {
             name: "LLM代理",
             path: "/model",
             icon: <IconServer size="1rem" stroke={1.5} />
+        },
+        {
+            name: "执行工具",
+            path: "/actionTools",
+            icon: <IconTrowel size="1rem" stroke={1.5} />,
         },
         {
             path: '/divider1',
@@ -109,6 +123,7 @@ export const Nav = () => {
                 icon: <IconHome2 size="1rem" stroke={1.5} />,
             }]
         },
+        
         {
             path: '/divider2',
             type: 'divider',
@@ -134,15 +149,11 @@ export const Nav = () => {
                 icon: <IconHome2 size="1rem" stroke={1.5} />,
             }]
         },
-        // {
-        //     path: '/divider3',
-        //     type: 'divider',
-        // },
-        // {
-        //     name: "LLM工具集",
-        //     path: "/toolformer",
-        //     icon: <IconTrowel size="1rem" stroke={1.5} />,
-        // },
+        {
+            path: '/divider3',
+            type: 'divider',
+        },
+       
         // {
         //     path: '/divider',
         //     type: 'divider',

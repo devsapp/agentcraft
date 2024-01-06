@@ -1,7 +1,7 @@
 import React, { useEffect } from "react";
 import { Breadcrumbs, Anchor, Button, Box, Text, TextInput, Group, Divider, Title, Paper, Flex, Badge, Tooltip, LoadingOverlay, Textarea, MultiSelect, NumberInput, Select, Drawer } from '@mantine/core';
 import { useForm } from '@mantine/form';
-import Chat from 'features/chat';
+import Chat from 'features/knowledgeBase/chat';
 import { getModelList, useGlobalStore as modelUseGlobalStore } from 'store/model';
 import { getDataSetList, useGlobalStore as dataSetUseGlobalStore } from 'store/dataset';
 import { IconRefresh } from '@tabler/icons-react';
@@ -9,7 +9,7 @@ import { Model } from 'types/model';
 import { DataSet, DataSetType } from 'types/dataset';
 import { useKnowledgeBaseStore, updateKnowledgeBase, getKnowledgeBase, getAccessUrl } from 'store/knowledgeBase';
 import { Dataset } from 'types/knowledgeBase';
-import { INSTRUCTION_TEMPLATES, DEFAULT_INSTRUCTION, DATA_RETRIVAL_PROMPT_TEMPLATE } from 'constants/instructions'
+import { INSTRUCTION_TEMPLATES, DEFAULT_KNOWLEDGE_BAE_INSTRUCTION, DATA_RETRIVAL_PROMPT_TEMPLATE } from 'constants/instructions'
 import FeatureDescription from 'components/FeatureDescription';
 import CopyToClipboard from 'components/CopyToClipboard';
 import MarkdownContent from "components/MarkdownContent";
@@ -62,7 +62,7 @@ export function KnowledgeBaseForm({ appId, containerType }: { appId: any, contai
 
         },
         validate: {
-            name: (value) => (!value ? '智能体名必填' : null)
+            name: (value) => (!value ? '知识库名必填' : null)
         },
     });
     useEffect(() => {
@@ -108,10 +108,10 @@ export function KnowledgeBaseForm({ appId, containerType }: { appId: any, contai
             alignItems: 'stretch'
         }}>
             {containerType !== ContainerType.CHAT ? <Paper shadow="xs" p="md" withBorder style={{ width: pannelWidth }} mr={12}>
-                <Title order={5} size="h5">智能体信息</Title>
+                <Title order={5} size="h5">知识库信息</Title>
                 <Box pl={4} pr={4} >
-                    <TextInput withAsterisk label="名称" placeholder="输入智能体名称" {...form.getInputProps('name')} />
-                    <Textarea label="描述" placeholder="输入应用描述" description="请输入智能体的描述信息" {...form.getInputProps('description')} minRows={22} />
+                    <TextInput withAsterisk label="名称" placeholder="输入知识库名称" {...form.getInputProps('name')} />
+                    <Textarea label="描述" placeholder="输入应用描述" description="请输入知识库的描述信息" {...form.getInputProps('description')} minRows={22} />
                 </Box>
             </Paper> : null}
             <Paper shadow="xs" p="md" withBorder style={{ width: pannelWidth }} mr={12} >
@@ -120,7 +120,7 @@ export function KnowledgeBaseForm({ appId, containerType }: { appId: any, contai
                     <Select
                         data={INSTRUCTION_TEMPLATES}
                         description=""
-                        defaultValue={DEFAULT_INSTRUCTION}
+                        defaultValue={DEFAULT_KNOWLEDGE_BAE_INSTRUCTION}
                         label="指令示例"
                         placeholder=""
                         onChange={(value: string) => {
@@ -258,12 +258,12 @@ function ChatDrawer() {
     return <Drawer
         opened={chatDrawer}
         onClose={() => { setChatDrawer(false) }}
-        title={<div><Text fz="xl" >智能体调试</Text><Text fz="sm">您可以通过提示词调整，数据集切换，模型服务，以及切换模型参数来调整智能体问答的效果</Text></div>}
+        title={<div><Text fz="xl" >知识库调试</Text><Text fz="sm">您可以通过提示词调整，数据集切换，模型服务，以及切换模型参数来调整知识库问答的效果</Text></div>}
         position="right"
         size="30%"
         overlayProps={{ opacity: 0.5, blur: 4 }}
     >
-        <div><Badge color="orange" size="lg" radius="xs" variant="filled">智能体问答</Badge></div>
+        <div><Badge color="orange" size="lg" radius="xs" variant="filled">知识库问答</Badge></div>
         <Chat />
     </Drawer>
 }
@@ -354,8 +354,8 @@ export function DetailPage({ appId, knowledgeBaseId }: DetailPageProps) {
     const updateCurrentKnowledgeBase = useKnowledgeBaseStore().updateCurrentKnowledgeBase;
     const items = [
         { title: '应用列表', href: '/app' },
-        { title: '领域知识智能体', href: `/app/${appId}/knowledgeBase` },
-        { title: '智能体详细', href: `/app/${appId}/knowledgeBase/${knowledgeBaseId}/detail` },
+        { title: '知识库', href: `/app/${appId}/knowledgeBase` },
+        { title: '知识库详细', href: `/app/${appId}/knowledgeBase/${knowledgeBaseId}/detail` },
     ].map((item, index) => (
         <Anchor href={item.href} key={index}>
             {item.title}
@@ -373,7 +373,7 @@ export function DetailPage({ appId, knowledgeBaseId }: DetailPageProps) {
         <Box pos="relative" >
             <LoadingOverlay visible={loading} overlayOpacity={0.3} />
             <Breadcrumbs>{items}</Breadcrumbs>
-            <FeatureDescription title="智能体详情" description="您可以查看修改智能体内容，以及查看API调用" />
+            <FeatureDescription title="知识库详情" description="您可以查看修改知识库内容，以及查看API调用" />
             <ChatDrawer />
             <Flex
                 mih={50}

@@ -88,7 +88,7 @@ export PYTHONPATH="${PYTHONPATH}:<your project path>"
 python3 -u app/main.py
 ```
 ### 前端工程 agentcraft-fe
-+ 配置准备：修改.env.example -> .env，将后端服务的域名填写为baseUrl的值，获得阿里云的AK,SK并填写为.env中的值（该配置在操作云资源的时候需要，如管理基础模型服务）
++ 配置准备：修改.env.example -> .env，将后端服务的域名填写为baseUrl的值，获得阿里云的AK,SK并填写为.env中的值ALIBABA_CLOUD_ACCESS_KEY_ID，ALIBABA_CLOUD_ACCESS_KEY_SECRET（该配置在操作云资源的时候需要，如管理基础模型服务）
 + 依赖安装：
 **npm install -f**
 + 服务启动

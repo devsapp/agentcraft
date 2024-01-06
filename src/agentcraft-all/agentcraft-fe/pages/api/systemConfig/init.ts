@@ -10,9 +10,7 @@ async function addVswitchIdV3(serverlessBridgeService: ServerlessBridgeService, 
             environmentVariables: functionInfo?.environmentVariables,
             vpcConfig: functionInfo.vpcConfig
         }
-        console.log('updateFunctionConfig', updateFunctionConfig);
         const updateResult = await serverlessBridgeService.updateFunctionV3(functionInfo.functionName, updateFunctionConfig);
-        console.log('updateResult', updateResult);
         return updateResult;
     } catch (e) {
         console.log(e);
@@ -90,7 +88,7 @@ export default async function handler(
     } catch (e: any) {
         status = 500;
         data.code = status;
-        data.error = e.message
+        data.error = `Code: ${e.data.Code},Message: ${e.data.Message}`;
     }
     res.status(status).json(data);
 }

@@ -1,7 +1,6 @@
 """Main Entry"""
 import os
 import uvicorn
-import os
 try:
     from dotenv import load_dotenv
     load_dotenv()  # take environment variables from .env.

@@ -1,6 +1,5 @@
 
-import { AgentPage } from "features/agent";
-
+import { AssistantPage } from "features/assistant";
 
 
 export function getServerSideProps(context: any) {
@@ -16,6 +15,6 @@ export function getServerSideProps(context: any) {
 export default function IndexPage({ appId }: any) {
 
   return (
-    <AgentPage appId={appId} />
+    <AssistantPage appId={appId} />
   );
 }

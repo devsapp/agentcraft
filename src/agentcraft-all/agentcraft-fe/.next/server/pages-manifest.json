@@ -1,0 +1,12 @@
+{
+  "/_app": "pages/_app.js",
+  "/_error": "pages/_error.js",
+  "/_document": "pages/_document.js",
+  "/app/[id]/assistant": "pages/app/[id]/assistant.js",
+  "/app/[id]/knowledgeBase": "pages/app/[id]/knowledgeBase.js",
+  "/app": "pages/app.js",
+  "/api/chat": "pages/api/chat.js",
+  "/api/systemConfig/init": "pages/api/systemConfig/init.js",
+  "/api/user": "pages/api/user.js",
+  "/api/assistant/list": "pages/api/assistant/list.js"
+}

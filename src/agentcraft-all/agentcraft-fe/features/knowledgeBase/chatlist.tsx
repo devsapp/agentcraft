@@ -89,7 +89,7 @@ function List({ knowledgeBaseId }: { knowledgeBaseId: any }) {
                         <th>答案</th>
                         <th>完整提示词</th>
                         <th>访问IP</th>
-                        <th>智能体结果</th>
+                        <th>知识库结果</th>
                         <th>使用模型</th>
                         <th>问答创建时间</th>
                     </tr>
@@ -105,7 +105,7 @@ export function ChatListPage({ appId, knowledgeBaseId }: ChatListPageProps) {
 
     const items = [
         { title: '应用列表', href: '/app' },
-        { title: '领域知识智能体', href: `/app/${appId}/knowledgeBase` },
+        { title: '知识库', href: `/app/${appId}/knowledgeBase` },
         { title: '问答记录', href: `/app/${appId}/knowledgeBase/${knowledgeBaseId}/chatlist` },
     ].map((item, index) => (
         <Anchor href={item.href} key={index}>
@@ -118,7 +118,7 @@ export function ChatListPage({ appId, knowledgeBaseId }: ChatListPageProps) {
     return (
         <Box pos="relative" >
             <Breadcrumbs>{items}</Breadcrumbs>
-            <FeatureDescription title="问答记录" description="您可以在此查看该智能体的问答历史记录" />
+            <FeatureDescription title="问答记录" description="您可以在此查看该知识库的问答历史记录" />
             <List knowledgeBaseId={knowledgeBaseId} />
         </Box>
 

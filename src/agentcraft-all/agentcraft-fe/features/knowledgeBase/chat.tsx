@@ -15,14 +15,7 @@ export default function Home() {
     const [userInput, setUserInput] = useState(defaultPrompt);
     const [loading, setLoading] = useState(false);
     const [messages, setMessages] = useState<ChatMessage[]>([
-        {
-            message: `你好！我是智能体小助手，请问有什么可以帮助您的`,
-            sourceIdx: -1,
-            type: MessageType.SYSTEM,
-            showFeedback: false,
-            liked: false,
-            disLiked: false,
-        },
+       
     ]);
 
     const messageListRef = useRef(null);
@@ -91,6 +84,7 @@ export default function Home() {
                 }
             })
             chatStream({
+                version: 'v1',
                 messages: requestMessage,
                 config: {
                     stream: true,
@@ -135,6 +129,7 @@ export default function Home() {
             };
             setUserInput("");
             chatStream({
+                version: 'v1',
                 messages: [{
                     role: 'user',
                     content: assistant

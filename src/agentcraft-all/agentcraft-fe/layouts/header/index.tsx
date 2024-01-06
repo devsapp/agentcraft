@@ -34,14 +34,14 @@ export function Header() {
     }, []);
     return <MantineHeader height={60} p="xs">
         <div className={styles['agentcraft-header']}>
-            <Box ml={5}>
-                <a href="https://github.com/devsapp/agentcraft" target="_blank">
-                    <Flex align="center">
-                        <Anchor href="https://agentcraft.serverless-developer.com/" color="white" target={'_blank'} mr={24}>访问官网</Anchor>
-                       
 
-                    </Flex>
-                </a>
+            <Box ml={5}
+            >
+
+                <Flex align="center">
+                    <Anchor href="https://agentcraft.serverless-developer.com/" color="white" target={'_blank'} mr={24}>访问官网</Anchor>
+                </Flex>
+
             </Box>
 
             {user.username ?

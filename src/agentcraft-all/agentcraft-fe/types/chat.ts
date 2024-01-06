@@ -64,7 +64,7 @@ export interface ChatCallBack {
 export interface ChatOptions {
   messages: RequestMessage[];
   config: LLMConfig;
-
+  version?: string;
   onUpdate?: (message: string, chunk: string) => void;
   onFinish: (message: string) => void;
   onError?: (err: Error) => void;

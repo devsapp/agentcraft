@@ -13,9 +13,9 @@ import FeatureDescription from 'components/FeatureDescription';
 import { getKnowledgeBaseList, useKnowledgeBaseStore, addKnowledgeBase, refreshToken, updateKnowledgeBase, getKnowledgeBase, deleteKnowledgeBase } from 'store/knowledgeBase';
 import { KnowledgeBaseResponseData, Dataset } from 'types/knowledgeBase';
 import { PROMPT_TEMPLATE } from 'constants/index';
-import { INSTRUCTION_TEMPLATES, DEFAULT_INSTRUCTION } from 'constants/instructions'
+import { INSTRUCTION_TEMPLATES, DEFAULT_KNOWLEDGE_BAE_INSTRUCTION } from 'constants/instructions'
 import CopyToClipboard from 'components/CopyToClipboard';
-import Chat from 'features/chat';
+import Chat from 'features/knowledgeBase/chat';
 // import styles from './index.module.scss';
 
 enum ContainerType {
@@ -58,13 +58,13 @@ export function KnowledgeBaseForm({ appId, containerType }: { appId: any, contai
             redis_history_ex: 0,
             model_ip_limit: 0,
             llm_history_len: 0,
-            system_message: DEFAULT_INSTRUCTION,
+            system_message: DEFAULT_KNOWLEDGE_BAE_INSTRUCTION,
             exact_search_limit: 1,
             fuzzy_search_limit: 3
 
         },
         validate: {
-            name: (value) => (!value ? '智能体名必填' : null)
+            name: (value) => (!value ? '知识库名必填' : null)
         },
     });
     useEffect(() => {
@@ -124,10 +124,10 @@ export function KnowledgeBaseForm({ appId, containerType }: { appId: any, contai
         >
             {containerType !== ContainerType.CHAT ?
                 <Paper shadow="xs" p="md" withBorder style={{ width: pannelWidth }}>
-                    <Title order={5} size="h5">智能体信息</Title>
+                    <Title order={5} size="h5">知识库信息</Title>
                     <Box pl={4} pr={4} >
-                        <TextInput withAsterisk label="名称" placeholder="输入智能体名称" {...form.getInputProps('name')} />
-                        <Textarea label="描述" placeholder="输入应用描述" description="请输入智能体的描述信息" {...form.getInputProps('description')} minRows={22} />
+                        <TextInput withAsterisk label="名称" placeholder="输入知识库名称" {...form.getInputProps('name')} />
+                        <Textarea label="描述" placeholder="输入应用描述" description="请输入知识库的描述信息" {...form.getInputProps('description')} minRows={22} />
                     </Box>
                 </Paper> : null}
             <Paper shadow="xs" p="md" withBorder style={{ width: pannelWidth }}>
@@ -136,7 +136,7 @@ export function KnowledgeBaseForm({ appId, containerType }: { appId: any, contai
                     <Select
                         data={INSTRUCTION_TEMPLATES}
                         description=""
-                        defaultValue={DEFAULT_INSTRUCTION}
+                        defaultValue={DEFAULT_KNOWLEDGE_BAE_INSTRUCTION}
                         {...form.getInputProps('system_message')}
                         label="指令示例"
                         placeholder=""
@@ -146,7 +146,7 @@ export function KnowledgeBaseForm({ appId, containerType }: { appId: any, contai
                             })
                         }}
                     />
-                    <Textarea withAsterisk label="系统提示词" placeholder="输入系统提示词" {...form.getInputProps('system_message')} minRows={22} description="系统提示词可以作为对大语言模型的约束指令" />
+                    <Textarea  label="系统指令" placeholder="输入系统指令" {...form.getInputProps('system_message')} minRows={22} description="系统提示词可以作为对大语言模型的约束指令" />
                     {/* <TextInput label="停止提示词" placeholder="停止输出的token" {...form.getInputProps('stop')} /> */}
                 </Box>
             </Paper>
@@ -287,7 +287,7 @@ function AddOrUpdate({ appId }: any) {
 
 
     return (
-        <Modal opened={open} onClose={() => { setEditStatus(false); setOpen(false); }} title={isEdit ? "编辑智能体" : "创建智能体"} centered size="90%">
+        <Modal opened={open} onClose={() => { setEditStatus(false); setOpen(false); }} title={isEdit ? "编辑知识库" : "创建知识库"} centered size="90%">
             <KnowledgeBaseForm appId={appId} />
         </Modal>
     );
@@ -300,7 +300,7 @@ export function ChatDrawer({ appId }: KnowledgeBaseProps) {
     return <Drawer
         opened={chatDrawer}
         onClose={() => { setChatDrawer(false) }}
-        title={<div><Text fz="xl" >智能体调试</Text><Text fz="sm">您可以通过提示词调整，数据集切换，模型服务，以及切换模型参数来调整智能体问答的效果</Text></div>}
+        title={<div><Text fz="xl" >知识库调试</Text><Text fz="sm">您可以通过提示词调整，数据集切换，模型服务，以及切换模型参数来调整知识库问答的效果</Text></div>}
         position="right"
         size="90%"
         overlayProps={{ opacity: 0.5, blur: 4 }}
@@ -310,13 +310,13 @@ export function ChatDrawer({ appId }: KnowledgeBaseProps) {
             direction="row"
         >
             <div style={{ flex: 'none', width: '64%', overflow: 'hidden', borderRight: '1px solid #eee', paddingRight: 8, marginRight: 12, display: checked ? 'block' : 'none' }}>
-                <div style={{ marginBottom: 12 }}><Badge color="orange" size="lg" radius="xs" variant="filled">智能体参数设置</Badge></div>
+                <div style={{ marginBottom: 12 }}><Badge color="orange" size="lg" radius="xs" variant="filled">知识库参数设置</Badge></div>
                 <KnowledgeBaseForm appId={appId} containerType={ContainerType.CHAT} />
             </div>
             <div style={{ flex: 1 }}>
-                <Flex justify="space-between"><Badge color="orange" size="lg" radius="xs" variant="filled">智能体问答</Badge>
+                <Flex justify="space-between"><Badge color="orange" size="lg" radius="xs" variant="filled">知识库问答</Badge>
                     <Switch
-                        label={checked ? "关闭智能体参数配置" : "开启智能体参数配置"}
+                        label={checked ? "关闭知识库参数配置" : "开启知识库参数配置"}
                         checked={checked} onChange={(event) => setChecked(event.currentTarget.checked)}
                     /></Flex>
                 <Chat />
@@ -348,7 +348,7 @@ function List({ appId }: KnowledgeBaseProps) {
         const { id, name } = knowledgeBase;
         const deleteContent = `确定删除 ${name}?`;
         modals.openConfirmModal({
-            title: '删除知识智能体',
+            title: '删除知识知识库',
             centered: true,
             children: (
                 <Text size="sm">
@@ -458,7 +458,7 @@ export function KnowledgeBasePage({ appId }: KnowledgeBaseProps) {
     const loading: boolean = useKnowledgeBaseStore().loading;
     const items = [
         { title: '应用列表', href: '/app' },
-        { title: '智能体', href: `/app/${appId}/knowledgeBase` },
+        { title: '知识库', href: `/app/${appId}/knowledgeBase` },
     ].map((item, index) => (
         <Anchor href={item.href} key={index}>
             {item.title}
@@ -471,13 +471,13 @@ export function KnowledgeBasePage({ appId }: KnowledgeBaseProps) {
         <div style={{ position: 'relative' }} >
             <LoadingOverlay visible={loading} overlayOpacity={0.3} />
             <Breadcrumbs>{items}</Breadcrumbs>
-            <FeatureDescription title="领域知识智能体" description="领域知识智能体专注于传授知识，利用LLM对自然语言进行认知，结合RAG(Retrieval-Augmented Generation 检索增强生成)技术来将领域的信息进行有效的整合，然后通过图片，视频，可交互组件完成知识交付，" />
+            <FeatureDescription title="知识库" description="知识库专注于传授知识，利用LLM对自然语言进行认知，结合RAG(Retrieval-Augmented Generation 检索增强生成)技术来将领域的信息进行有效的整合，然后通过图片，视频，可交互组件完成知识交付，" />
             <Box  >
                 <Button onClick={() => {
                     setEditStatus(false);
                     setOpen(true)
                 }}>
-                    新建领域知识智能体
+                    新建知识库
                 </Button>
             </Box>
             <AddOrUpdate appId={appId} />
