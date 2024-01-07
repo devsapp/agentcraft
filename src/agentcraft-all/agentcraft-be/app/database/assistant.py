@@ -18,6 +18,8 @@ class Assistant(postgresql.BaseModel):
     name = mapped_column(String, nullable=False)
     description = mapped_column(String, nullable=False)
     retrieval_prompt_template = mapped_column(String, nullable=False) # should contain {query} and {context} for replacement
+    prompt_starts = mapped_column(ARRAY(String, dimensions=1), default=[], nullable=False)
+    capabilities = mapped_column(ARRAY(String, dimensions=1), default=[], nullable=False)
     created = mapped_column(TIMESTAMP, default=func.now(), nullable=False)
     modified = mapped_column(TIMESTAMP, default=func.now(), onupdate=func.now(), nullable=False)
     user_id = mapped_column(ForeignKey("users.id", ondelete="cascade"))

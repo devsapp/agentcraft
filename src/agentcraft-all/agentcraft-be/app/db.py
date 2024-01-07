@@ -167,6 +167,8 @@ CREATE_ASSISTANT_TABLE = text(
     instruction TEXT,
     system_message TEXT ,
     retrieval_prompt_template TEXT,
+    prompt_starts TEXT[] NOT NULL DEFAULT '{}',
+    capabilities TEXT[] NOT NULL DEFAULT '{}',
     created TIMESTAMP NOT NULL DEFAULT NOW(),
     modified TIMESTAMP NOT NULL DEFAULT NOW(),
     user_id BIGINT REFERENCES users(id) ON DELETE CASCADE,
@@ -189,6 +191,22 @@ CREATE_ASSISTANT_TABLE = text(
     model_ip_limit INTEGER NOT NULL DEFAULT 50,
     exact_search_limit INTEGER NOT NULL DEFAULT 1,
     fuzzy_search_limit INTEGER NOT NULL DEFAULT 3
+    );"""
+)
+
+
+CREATE_ASSISTANT_ACTION_TOOLS_RUN_TABLE = text(
+    """CREATE TABLE IF NOT EXISTS assistant_action_tools_run (
+    id BIGSERIAL PRIMARY KEY,
+    name VARCHAR(255) NOT NULL,
+    type INTEGER NOT NULL ,
+    input  VARCHAR(255) NOT NULL,
+    output VARCHAR(255) ,
+    status INTEGER NOT NULL ,
+    assistant_id BIGINT REFERENCES assistant(id) ON DELETE CASCADE,
+    assistant_session_id BIGINT REFERENCES assistant_session(id) ON DELETE CASCADE,
+    created TIMESTAMP NOT NULL DEFAULT NOW(),
+    modified TIMESTAMP NOT NULL DEFAULT NOW()
     );"""
 )
 

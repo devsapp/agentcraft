@@ -17,7 +17,6 @@ import { DATA_RETRIVAL_PROMPT_TEMPLATE } from 'constants/instructions';
 import { INSTRUCTION_TEMPLATES, DEFAULT_ASSISTANT_INSTRUCTION } from 'constants/instructions';
 import CopyToClipboard from 'components/CopyToClipboard';
 import Chat from 'features/assistant/chat';
-
 enum ContainerType {
     ADD_OR_UPDATE = 1, // 增加和修改
     CHAT = 2, // 问答
@@ -25,6 +24,8 @@ enum ContainerType {
 interface AssistantProps {
     appId: number;
 }
+
+
 
 
 export function AssistantForm({ appId, containerType }: { appId: any, containerType?: ContainerType }) {
@@ -82,7 +83,7 @@ export function AssistantForm({ appId, containerType }: { appId: any, containerT
                 description: currentAssistant?.description,
                 retrieval_prompt_template: currentAssistant?.retrieval_prompt_template,
                 app_id: currentAssistant?.app_id,
-                action_tools: currentAssistant?.action_tools?.map((item:any)=> item.id),
+                action_tools: currentAssistant?.action_tools?.map((item: any) => item.id),
                 exact_datasets: datasets?.filter((item: Dataset) => item.dataset_type === DataSetType.QUESTION).map((item: Dataset) => item.dataset_id),
                 fuzzy_datasets: datasets?.filter((item: Dataset) => item.dataset_type === DataSetType.DOCUMENT).map((item: Dataset) => item.dataset_id),
                 exact_search_similarity: currentAssistant?.exact_search_similarity,
@@ -221,7 +222,7 @@ export function AssistantForm({ appId, containerType }: { appId: any, containerT
                 </Flex>
                 <Box pl={4} pr={4} >
                     <Textarea label="召回提示词模板" placeholder="" {...form.getInputProps('retrieval_prompt_template')} minRows={containerType !== ContainerType.CHAT ? 6 : 8} description="召回提示词模板可以将检索的结果context和用户的输入query整合到一起，最后整体输入给大语言模型" />
-                    
+
                 </Box>
                 <Divider my="sm" />
                 <Title order={5} size="h6" >召回数据集</Title>
@@ -255,36 +256,6 @@ export function AssistantForm({ appId, containerType }: { appId: any, containerT
                         <NumberInput withAsterisk description="问答结果的召回数量，数量越多信息越丰富，但是首先于LLM上下文长度，不宜过长" label="问答结果召回数量" placeholder="" {...form.getInputProps('exact_search_limit')} />
                     </Group>
                 </Box>
-                {/* <Divider my="sm" />
-                <Title order={5} size="h5">安全访问</Title>
-                <Box maw={FORM_WIDTH_1280} pl={4} pr={4}>
-                    <Group grow>
-                        <NumberInput withAsterisk label="历史记录保存数量" placeholder="" {...form.getInputProps('llm_history_len')} disabled />
-                        <NumberInput withAsterisk label="单个ip每天访问次数上限" placeholder="" {...form.getInputProps('model_ip_limit')} disabled />
-                    </Group>
-                    <Group grow>
-                        <NumberInput withAsterisk label="限制ip访问的时间" placeholder="" {...form.getInputProps('redis_ip_ex')} disabled />
-                        <NumberInput label="描述" placeholder="限制历史记录保存的时间" {...form.getInputProps('redis_history_ex')} disabled />
-                    </Group>
-                </Box> */}
-                {/* <Divider my="sm" />
-                    <Title order={5} size="h5">大语言模型参数</Title>
-                    <Box maw={FORM_WIDTH_1280} pl={4} pr={4} mt={4}>
-                        <Group grow>
-                            <TextInput withAsterisk label="temperature" placeholder="" {...form.getInputProps('temperature')} />
-                            <TextInput withAsterisk label="top_p" placeholder="" {...form.getInputProps('top_p')} />
-                        </Group>
-                        <Group grow>
-                            <TextInput withAsterisk label="n_sequences" placeholder="" {...form.getInputProps('n_sequences')} />
-                            <TextInput withAsterisk label="max_tokens" placeholder="" {...form.getInputProps('max_tokens')} />
-                        </Group>
-                        <Group grow>
-                            <TextInput withAsterisk label="presence_penalty" placeholder="" {...form.getInputProps('presence_penalty')} />
-                            <TextInput withAsterisk label="frequency_penalty" placeholder="" {...form.getInputProps('frequency_penalty')} />
-                        </Group>
-                        <TextInput label="logit_bias" placeholder="" {...form.getInputProps('logit_bias')} width={'50%'} />
-                    </Box>
-                    <Divider my="sm" /> */}
             </Paper>
         </Flex>
         <Box pt={4} style={{ textAlign: 'center', width: '100%' }}>
@@ -316,7 +287,17 @@ function AddOrUpdate({ appId }: any) {
 
 
     return (
-        <Modal opened={open} onClose={() => { setEditStatus(false); setOpen(false); }} title={isEdit ? "编辑智能助手" : "创建智能助手"} centered size="90%">
+        <Modal
+            opened={open}
+            onClose={() => {
+                setEditStatus(false);
+                setOpen(false);
+            }}
+            padding={0}
+            title={isEdit ? "编辑智能助手" : "创建智能助手"}
+            centered
+            fullScreen
+            transitionProps={{ transition: 'fade', duration: 200 }}>
             <AssistantForm appId={appId} />
         </Modal>
     );

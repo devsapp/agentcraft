@@ -30,7 +30,7 @@ interface AssistantStore {
 export const useAssistantStore = create<AssistantStore>()(devtools((set) => ({
     assistantList: [],
     assistantChatList: [],
-    open: false,
+    open: true,
     chatDrawer: false,
     loading: false,
     isEdit: false,
