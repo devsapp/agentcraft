@@ -27,10 +27,10 @@
       "static/chunks/main.js",
       "static/chunks/pages/app/[id]/assistant.js"
     ],
-    "/app/[id]/knowledgeBase": [
+    "/login": [
       "static/chunks/webpack.js",
       "static/chunks/main.js",
-      "static/chunks/pages/app/[id]/knowledgeBase.js"
+      "static/chunks/pages/login.js"
     ]
   },
   "ampFirstPages": []

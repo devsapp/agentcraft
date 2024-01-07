@@ -10,7 +10,7 @@ interface ModelStore {
     open: boolean,
     isEdit: boolean,
     currentModel?: Model,
-    updateCurrentModel: (_: Model) => void;
+    setCurrentModel: (_: Model) => void;
     updateModelList: (_: Model[]) => void;
     setLoading: (loading: boolean) => void;
     setEditStatus: (loading: boolean) => void;
@@ -18,12 +18,12 @@ interface ModelStore {
 }
 
 
-export const useGlobalStore = create<ModelStore>()(devtools((set) => ({
+export const useModelStore = create<ModelStore>()(devtools((set) => ({
     modelList: [],
     loading: false,
     open: false,
     isEdit: false,
-    updateCurrentModel: (currentModel: Model) => set((_state) => {
+    setCurrentModel: (currentModel: Model) => set((_state) => {
         return ({ currentModel })
     }),
     setEditStatus: (isEdit: boolean) => set((_state) => {
@@ -41,7 +41,7 @@ export const useGlobalStore = create<ModelStore>()(devtools((set) => ({
 })))
 
 export async function getModelList() {
-    const state = useGlobalStore.getState();
+    const state = useModelStore.getState();
     const updateModelList = state.updateModelList;
     const res = await request("/api/model/list");
     const modelList = await res.data;

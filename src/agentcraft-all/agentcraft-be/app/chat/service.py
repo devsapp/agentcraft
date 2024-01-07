@@ -309,7 +309,6 @@ def chat_stream(query: str, ip_addr: str, agent_id: int):
 
     similarity_search_res, use_model = agent_dataset_database.similarity_search(
         **search_args)
-    print(f"{similarity_search_res}")
     history = []  # get_history(ip_addr)
     if not use_model:
         choices, answer = convert_exact_search_res_stream(

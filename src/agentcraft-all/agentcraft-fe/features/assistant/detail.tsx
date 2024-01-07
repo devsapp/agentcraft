@@ -2,11 +2,12 @@ import React, { useEffect } from "react";
 import { Breadcrumbs, Anchor, Button, Box, Text, TextInput, Group, Divider, Title, Paper, Flex, Badge, Tooltip, LoadingOverlay, Textarea, MultiSelect, NumberInput, Select, Drawer } from '@mantine/core';
 import { useForm } from '@mantine/form';
 import Chat from 'features/assistant/chat';
-import { getModelList, useGlobalStore as modelUseGlobalStore } from 'store/model';
-import { getDataSetList, useGlobalStore as dataSetUseGlobalStore } from 'store/dataset';
+import { getModelList, useModelStore } from 'store/model';
+import { getDataSetList, useDataSetStore } from 'store/dataset';
 import { IconRefresh } from '@tabler/icons-react';
 import { Model } from 'types/model';
 import { DataSet, DataSetType } from 'types/dataset';
+import { getToolList, useActionToolStore } from 'store/actionTools';
 import { useAssistantStore, updateAssistant, getAssistant, getAccessUrl } from 'store/assistant';
 import { Dataset } from 'types/assistant';
 import { INSTRUCTION_TEMPLATES, DEFAULT_ASSISTANT_INSTRUCTION , DATA_RETRIVAL_PROMPT_TEMPLATE } from 'constants/instructions'
@@ -31,13 +32,15 @@ export function AssistantForm({ appId, containerType }: { appId: any, containerT
     // const isEdit = useGlobalStore().isEdit;
     const currentAssistant = useAssistantStore().currentAssistant;
     const setLoading = useAssistantStore().setLoading;
-    const modelList: Model[] = modelUseGlobalStore().modelList;
-    const dataSetList: DataSet[] = dataSetUseGlobalStore().dataSetList;
+    const modelList: Model[] = useModelStore().modelList;
+    const dataSetList: DataSet[] = useDataSetStore().dataSetList;
+    const { toolList } = useActionToolStore();
     const form: any = useForm({
         initialValues: {
             name: '',
             description: '',
-            prompt_template: DATA_RETRIVAL_PROMPT_TEMPLATE,
+
+            retrieval_prompt_template: DATA_RETRIVAL_PROMPT_TEMPLATE,
             app_id: parseInt(appId),
             exact_datasets: [],
             fuzzy_datasets: [],
@@ -68,12 +71,14 @@ export function AssistantForm({ appId, containerType }: { appId: any, containerT
     useEffect(() => {
         getModelList();
         getDataSetList();
+        getToolList();
         const datasets = currentAssistant?.datasets;
         form.setValues({
             id: currentAssistant?.id,
             name: currentAssistant?.name,
             description: currentAssistant?.description,
             retrieval_prompt_template: currentAssistant?.retrieval_prompt_template,
+            action_tools: currentAssistant?.action_tools?.map((item:any)=> item.id),
             app_id: currentAssistant?.app_id,
             exact_datasets: datasets?.filter((item: Dataset) => item.dataset_type === DataSetType.QUESTION).map((item: Dataset) => item.dataset_id),
             fuzzy_datasets: datasets?.filter((item: Dataset) => item.dataset_type === DataSetType.DOCUMENT).map((item: Dataset) => item.dataset_id),
@@ -93,6 +98,7 @@ export function AssistantForm({ appId, containerType }: { appId: any, containerT
             model_ip_limit: currentAssistant?.model_ip_limit,
             llm_history_len: currentAssistant?.llm_history_len,
             system_message: currentAssistant?.system_message,
+            instruction: currentAssistant?.instruction,
             exact_search_limit: currentAssistant?.exact_search_limit,
             fuzzy_search_limit: currentAssistant?.fuzzy_search_limit
         })
@@ -100,7 +106,7 @@ export function AssistantForm({ appId, containerType }: { appId: any, containerT
     const modelSelectData: any = modelList.map((item: Model) => { return { label: item.name_alias, value: item.id } });
     const documentSelectData: any = dataSetList.filter((item: DataSet) => item.dataset_type == DataSetType.DOCUMENT).map((item: DataSet) => { return { label: item.name, value: item.id } });
     const qaSelectData: any = dataSetList.filter((item: DataSet) => item.dataset_type == DataSetType.QUESTION).map((item: DataSet) => { return { label: item.name, value: item.id } });
-    const pannelWidth = '25%';
+    const pannelWidth = '20%';
     return <div style={{ width: '100%' }}>
 
 
@@ -129,9 +135,9 @@ export function AssistantForm({ appId, containerType }: { appId: any, containerT
                             })
                         }}
                     />
-                    <Textarea label="系统提示词" placeholder="输入系统提示词" {...form.getInputProps('system_message')} description="系统提示词可以作为对大语言模型的约束指令" minRows={22} />
+                    <Textarea label="系统提示词" placeholder="输入系统提示词" {...form.getInputProps('instruction')} description="系统提示词可以作为对大语言模型的约束指令" minRows={22} />
 
-                    {/* <TextInput label="停止提示词" placeholder="停止输出的token" {...form.getInputProps('stop')} /> */}
+                    <TextInput label="停止提示词" placeholder="停止输出的token" {...form.getInputProps('stop')} />
                 </Box>
                 {/* <Divider my="sm" /> */}
             </Paper>
@@ -168,9 +174,31 @@ export function AssistantForm({ appId, containerType }: { appId: any, containerT
                     <TextInput label="logit_bias" placeholder="" {...form.getInputProps('logit_bias')} width={'50%'} />
                 </Box>
             </Paper>
+            <Paper shadow="xs" p="md" withBorder style={{ width: pannelWidth }}>
+                <Flex justify={'space-between'} align={'center'}>
+                    <Title order={5} size="h5">执行工具</Title>
+                    <IconRefresh cursor={'pointer'} onClick={getToolList} />
+                </Flex>
+
+                <Box pl={4} pr={4} mb={12}>
+                    <MultiSelect
+                        data={toolList.map((item: any) => {
+                            return {
+                                label: item.name,
+                                value: item.id
+                            }
+                        })}
+                        description="执行工具是LLM可以调用的工具"
+                        label="执行工具"
+                        placeholder=""
+                        {...form.getInputProps('action_tools')}
+                    />
+                </Box>
+
+            </Paper>
             <Paper shadow="xs" p="md" withBorder style={{ width: pannelWidth }} >
                 <Title order={5} size="h5" >数据召回</Title>
-                <Textarea label="召回提示词模板" placeholder="" {...form.getInputProps('prompt_template')} minRows={6} description="召回提示词模板可以将检索的结果context和用户的输入query整合到一起，最后整体输入给大语言模型" />
+                {/* <Textarea label="召回提示词模板" placeholder="" {...form.getInputProps('prompt_template')} minRows={6} description="召回提示词模板可以将检索的结果context和用户的输入query整合到一起，最后整体输入给大语言模型" /> */}
                 <Flex justify={'space-between'} align={'center'}>
                     <Title order={5} size="h5" >召回数据集</Title>
                     <IconRefresh cursor={'pointer'} onClick={getDataSetList} />
@@ -281,7 +309,7 @@ export function APIAccess() {
 
     }, [])
     const curlExample = `curl -X 'POST' \
-    '${accessUrl.openApiUrl}/v1/chat/completions' \
+    '${accessUrl.openApiUrl}/v2/chat/completions' \
     -H 'accept: application/json' \
     -H 'Authorization: Bearer ${currentAssistant?.token}' \
     -H 'Content-Type: application/json' \

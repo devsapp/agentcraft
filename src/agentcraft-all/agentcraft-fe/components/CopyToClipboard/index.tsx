@@ -7,7 +7,8 @@ type CopyToClipboardProps = {
     value?: string,
     content?: any,
     width?: any,
-    truncate?: any
+    truncate?: any,
+    position?: any
 }
 
 export function useClipboard({ timeout = 2000 } = {}) {
@@ -61,10 +62,10 @@ export function useClipboard({ timeout = 2000 } = {}) {
 
     return { copy, reset, error, copied };
 }
-export default function CopyToClipboard({ value, content, truncate, width = 'auto' }: CopyToClipboardProps) {
+export default function CopyToClipboard({ value, content, truncate, width = 'auto', position = "right" }: CopyToClipboardProps) {
     const clipboard = useClipboard({ timeout: 500 });
 
-    return <Tooltip label={clipboard.copied ? '已复制' : '复制'} withArrow position="right" >
+    return <Tooltip label={clipboard.copied ? '已复制' : '复制'} withArrow position={position} >
         <Flex
             onClick={() => clipboard.copy(value)}
             mih={50}

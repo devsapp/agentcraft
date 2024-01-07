@@ -4,8 +4,8 @@ import { Tooltip, Spoiler, Breadcrumbs, Anchor, Button, Box, Table, TextInput, T
 import { useForm } from '@mantine/form';
 import { modals } from '@mantine/modals';
 import { IconRefresh } from '@tabler/icons-react';
-import { getModelList, useGlobalStore as modelUseGlobalStore } from 'store/model';
-import { getDataSetList, useGlobalStore as dataSetUseGlobalStore } from 'store/dataset';
+import { getModelList, useModelStore } from 'store/model';
+import { getDataSetList, useDataSetStore } from 'store/dataset';
 import { formatDateTime } from 'utils/index';
 import { Model } from 'types/model';
 import { DataSet, DataSetType } from 'types/dataset';
@@ -33,8 +33,8 @@ export function KnowledgeBaseForm({ appId, containerType }: { appId: any, contai
     const isEdit = useKnowledgeBaseStore().isEdit;
     const currentKnowledgeBase = useKnowledgeBaseStore().currentKnowledgeBase;
     const setLoading = useKnowledgeBaseStore().setLoading;
-    const modelList: Model[] = modelUseGlobalStore().modelList;
-    const dataSetList: DataSet[] = dataSetUseGlobalStore().dataSetList;
+    const modelList: Model[] = useModelStore().modelList;
+    const dataSetList: DataSet[] = useDataSetStore().dataSetList;
     const form: any = useForm({
         initialValues: {
             name: '',

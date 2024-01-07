@@ -4,8 +4,8 @@ import { Tooltip, Spoiler, Breadcrumbs, Anchor, Button, Box, Table, TextInput, T
 import { useForm } from '@mantine/form';
 import { modals } from '@mantine/modals';
 import { IconRefresh } from '@tabler/icons-react';
-import { getModelList, useGlobalStore as modelUseGlobalStore } from 'store/model';
-import { getDataSetList, useGlobalStore as dataSetUseGlobalStore } from 'store/dataset';
+import { getModelList, useModelStore } from 'store/model';
+import { getDataSetList, useDataSetStore } from 'store/dataset';
 import { formatDateTime } from 'utils/index';
 import { Model } from 'types/model';
 import { DataSet, DataSetType } from 'types/dataset';
@@ -13,11 +13,10 @@ import FeatureDescription from 'components/FeatureDescription';
 import { getAssistantList, useAssistantStore, addAssistant, refreshToken, updateAssistant, getAssistant, deleteAssistant } from 'store/assistant';
 import { getToolList, useActionToolStore } from 'store/actionTools';
 import { AssistantResponseData, Dataset } from 'types/assistant';
-import { PROMPT_TEMPLATE } from 'constants/index';
+import { DATA_RETRIVAL_PROMPT_TEMPLATE } from 'constants/instructions';
 import { INSTRUCTION_TEMPLATES, DEFAULT_ASSISTANT_INSTRUCTION } from 'constants/instructions';
 import CopyToClipboard from 'components/CopyToClipboard';
 import Chat from 'features/assistant/chat';
-// import styles from './index.module.scss';
 
 enum ContainerType {
     ADD_OR_UPDATE = 1, // 增加和修改
@@ -34,14 +33,14 @@ export function AssistantForm({ appId, containerType }: { appId: any, containerT
     const isEdit = useAssistantStore().isEdit;
     const currentAssistant = useAssistantStore().currentAssistant;
     const setLoading = useAssistantStore().setLoading;
-    const modelList: Model[] = modelUseGlobalStore().modelList;
-    const dataSetList: DataSet[] = dataSetUseGlobalStore().dataSetList;
+    const modelList: Model[] = useModelStore().modelList;
+    const dataSetList: DataSet[] = useDataSetStore().dataSetList;
     const { toolList } = useActionToolStore();
     const form: any = useForm({
         initialValues: {
             name: '',
             description: '',
-            retrieval_prompt_template: PROMPT_TEMPLATE,
+            retrieval_prompt_template: DATA_RETRIVAL_PROMPT_TEMPLATE,
             app_id: parseInt(appId),
             exact_datasets: [],
             fuzzy_datasets: [],
@@ -189,6 +188,7 @@ export function AssistantForm({ appId, containerType }: { appId: any, containerT
                         <TextInput withAsterisk label="frequency_penalty" placeholder="" {...form.getInputProps('frequency_penalty')} />
                     </Group>
                     <TextInput label="logit_bias" placeholder="" {...form.getInputProps('logit_bias')} width={'50%'} />
+                    <TextInput label="停止提示词" placeholder="停止输出的token" {...form.getInputProps('stop')} />
                 </Box>
             </Paper>
             <Paper shadow="xs" p="md" withBorder style={{ width: pannelWidth }}>
@@ -221,7 +221,7 @@ export function AssistantForm({ appId, containerType }: { appId: any, containerT
                 </Flex>
                 <Box pl={4} pr={4} >
                     <Textarea label="召回提示词模板" placeholder="" {...form.getInputProps('retrieval_prompt_template')} minRows={containerType !== ContainerType.CHAT ? 6 : 8} description="召回提示词模板可以将检索的结果context和用户的输入query整合到一起，最后整体输入给大语言模型" />
-                    {/* <TextInput label="停止提示词" placeholder="停止输出的token" {...form.getInputProps('stop')} /> */}
+                    
                 </Box>
                 <Divider my="sm" />
                 <Title order={5} size="h6" >召回数据集</Title>

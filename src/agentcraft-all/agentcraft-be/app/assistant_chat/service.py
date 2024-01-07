@@ -15,9 +15,8 @@ import app.database.model as model_database
 # import app.database.redis as redis
 from app.common.logger import logger
 from app.chat.green_client import is_legal
-from app.config import common as config
-from app.reasoning.reasoning import call_assistant
-# from app.reasoning.reasoning_stream import call_assistant_stream
+
+from app.reasoning.reasoning import Reasoning
 from app.reasoning.reasoning_stream import ReasoningStream
 DONE = "[DONE]"
 
@@ -118,38 +117,7 @@ def convert_exact_search_res_stream(search_res: list):
     return choices, answer
 
 
-def convert_exact_search_res(search_res: list):
-    """转换精确搜索结果"""
-    choices = []
-    answer = []
-    for i, (chunk, title, url, similarity) in enumerate(search_res):
-        choice = {"index": i,
-                  "message": {
-                      "content": chunk,
-                      "role": "assistant",
-                      "title": title,
-                      "url": url,
-                      "similarity": similarity
-                  }}
-        choices.append(choice)
-        answer.append(chunk)
-    return choices, answer
 
-
-def convert_fuzzy_search_res(search_res: list):
-    """转换模糊搜索结果"""
-    choices = []
-    for cnt, (title, url, similarity, chunk) in enumerate(search_res):
-        choice = {"index": cnt,
-                  "message": {
-                      "content": chunk,
-                      "role": "assistant",
-                      "title": title,
-                      "url": url,
-                      "similarity": similarity
-                  }}
-        choices.append(choice)
-    return choices
 
 
 def chat(query: str, ip_addr: str, assistant_id: int):
@@ -158,7 +126,10 @@ def chat(query: str, ip_addr: str, assistant_id: int):
     
     if not assistant:
         raise ValueError("assistant does not exist")
-    return call_assistant(query, assistant)
+    
+    reason = Reasoning(query, assistant)
+
+    return reason.call_assistant()
     
 
 
@@ -168,7 +139,7 @@ def chat_stream(query: str, ip_addr: str, assistant_id: int):
     if not assistant:
         raise ValueError("assistant does not exist")
     reason_stream = ReasoningStream(query, assistant)
-    yield from reason_stream.call_assistant_stream(query)
+    yield from reason_stream.call_assistant_stream()
     return
     
 

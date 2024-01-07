@@ -2,8 +2,8 @@ import React, { useEffect } from "react";
 import { Breadcrumbs, Anchor, Button, Box, Text, TextInput, Group, Divider, Title, Paper, Flex, Badge, Tooltip, LoadingOverlay, Textarea, MultiSelect, NumberInput, Select, Drawer } from '@mantine/core';
 import { useForm } from '@mantine/form';
 import Chat from 'features/knowledgeBase/chat';
-import { getModelList, useGlobalStore as modelUseGlobalStore } from 'store/model';
-import { getDataSetList, useGlobalStore as dataSetUseGlobalStore } from 'store/dataset';
+import { getModelList, useModelStore } from 'store/model';
+import { getDataSetList, useDataSetStore } from 'store/dataset';
 import { IconRefresh } from '@tabler/icons-react';
 import { Model } from 'types/model';
 import { DataSet, DataSetType } from 'types/dataset';
@@ -14,7 +14,7 @@ import FeatureDescription from 'components/FeatureDescription';
 import CopyToClipboard from 'components/CopyToClipboard';
 import MarkdownContent from "components/MarkdownContent";
 
-// import styles from './index.module.scss';
+
 
 enum ContainerType {
     ADD_OR_UPDATE = 1, // 增加和修改
@@ -31,8 +31,8 @@ export function KnowledgeBaseForm({ appId, containerType }: { appId: any, contai
     // const isEdit = useGlobalStore().isEdit;
     const currentKnowledgeBase = useKnowledgeBaseStore().currentKnowledgeBase;
     const setLoading = useKnowledgeBaseStore().setLoading;
-    const modelList: Model[] = modelUseGlobalStore().modelList;
-    const dataSetList: DataSet[] = dataSetUseGlobalStore().dataSetList;
+    const modelList: Model[] = useModelStore().modelList;
+    const dataSetList: DataSet[] = useDataSetStore().dataSetList;
     const form: any = useForm({
         initialValues: {
             name: '',
