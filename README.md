@@ -84,7 +84,7 @@ https://fcnext.console.aliyun.com/applications/create?template=fc-embedding-api�
 **pip install -r  requirements.txt**
 + 服务启动：
 ```shell
-export PYTHONPATH="${PYTHONPATH}:<your project path>"
+export PYTHONPATH="${PYTHONPATH}:$(pwd)"
 python3 -u app/main.py
 ```
 ### 前端工程 agentcraft-fe
