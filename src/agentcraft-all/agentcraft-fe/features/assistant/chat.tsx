@@ -15,7 +15,7 @@ export default function Home() {
     const [userInput, setUserInput] = useState(defaultPrompt);
     const [loading, setLoading] = useState(false);
     const [messages, setMessages] = useState<ChatMessage[]>([
-      
+
     ]);
 
     const messageListRef = useRef(null);
@@ -48,6 +48,9 @@ export default function Home() {
     };
 
     const handleSubmit = (e: any) => {
+        if (!currentAssistant?.id) {
+            return;
+        }
         e.preventDefault();
         if (userInput.trim() === "") {
             return;

@@ -163,7 +163,7 @@ CREATE_ASSISTANT_TABLE = text(
     """CREATE TABLE IF NOT EXISTS assistant (
     id BIGSERIAL PRIMARY KEY,
     name VARCHAR(255) NOT NULL,
-    description VARCHAR(255) NOT NULL,
+    description VARCHAR(255),
     instruction TEXT,
     system_message TEXT ,
     retrieval_prompt_template TEXT,

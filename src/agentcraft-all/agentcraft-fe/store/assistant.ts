@@ -30,7 +30,7 @@ interface AssistantStore {
 export const useAssistantStore = create<AssistantStore>()(devtools((set) => ({
     assistantList: [],
     assistantChatList: [],
-    open: true,
+    open: false,
     chatDrawer: false,
     loading: false,
     isEdit: false,
@@ -58,11 +58,9 @@ export const useAssistantStore = create<AssistantStore>()(devtools((set) => ({
     setOpen: (status: boolean) => set((_state) => {
         return ({ open: status })
     }),
-    updateAssistantList: (assistantList: AssistantResponseData[]) => set((_state: any) => ({ assistantList })),
+    updateAssistantList: (assistantList: AssistantResponseData[]) => set((_state: any) => ({ assistantList }))
+})));
 
-
-
-})))
 
 export async function getAssistantList(appId: number) {
     const state = useAssistantStore.getState();
@@ -86,19 +84,20 @@ export async function getAssistant(id: any): Promise<Assistant> {
 }
 
 export async function addAssistant(payload: AssistantRequestPayload) {
-
-    return await request("/api/assistant/create", {
+    const res = await request("/api/assistant/create", {
         method: "POST",
         body: JSON.stringify(payload),
         headers: {
             "Content-Type": "application/json",
         },
     });
+    const data = res.data;
+    return data;
 
 }
 
 export async function deleteAssistant(assistantId: any) {
-    return await request(`/api/assistant/delete?agentId=${assistantId}`, {
+    return await request(`/api/assistant/delete?assistantId=${assistantId}`, {
         method: "DELETE",
         headers: {
             "Content-Type": "application/json",
@@ -120,9 +119,9 @@ export async function updateAssistant(id: any, payload: AssistantRequestPayload)
 
 }
 
-export async function refreshToken(agentId: number) {
+export async function refreshToken(assistantId: number) {
 
-    return await request(`/api/assistant/token?agentId=${agentId}`, {
+    return await request(`/api/assistant/token?assistantId=${assistantId}`, {
         method: "GET",
         headers: {
             "Content-Type": "application/json",

@@ -16,7 +16,7 @@ class Assistant(postgresql.BaseModel):
 
     id = mapped_column(Integer, primary_key=True, index=True)
     name = mapped_column(String, nullable=False)
-    description = mapped_column(String, nullable=False)
+    description = mapped_column(String, nullable=True)
     retrieval_prompt_template = mapped_column(String, nullable=False) # should contain {query} and {context} for replacement
     prompt_starts = mapped_column(ARRAY(String, dimensions=1), default=[], nullable=False)
     capabilities = mapped_column(ARRAY(String, dimensions=1), default=[], nullable=False)
@@ -104,7 +104,7 @@ def add_assistant(exact_datasets: list[int], fuzzy_datasets: list[int], action_t
             _bulk_insert_action_tools(session, assistant.id, action_tools)
         if fuzzy_datasets:
             _bulk_insert_dataset(session, assistant.id, fuzzy_datasets, DatasetType.FUZZY_SEARCH.value)
-
+        return assistant.id
 
 
 def check_user_has_assistant(user_id: int, assistant_id: int):

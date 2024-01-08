@@ -42,8 +42,7 @@ export default function App(props: AppProps) {
           <ModalsProvider>
             {!hiddenConfigView ? < SystemConfig /> : <Shell >
               <Component {...pageProps} />
-            </Shell>}.
-
+            </Shell>}
           </ModalsProvider> : null}
       </MantineProvider>
     </>

@@ -20,12 +20,15 @@ async def list_assistants(app_id: int, page: int, limit: int, token: JWTData = D
     }
 
 
-@router.post('/add', response_model=BasicResponse)
+@router.post('/add', response_model=DictResponse)
 async def add_assistant(req: UpsertAssistantRequest, token: JWTData = Depends(validate_token)):
     """添加assistant"""
-    service.add_assistant(user_id=token.user_id, **vars(req))
+    id = service.add_assistant(user_id=token.user_id, **vars(req))
     return {
         "code": 201,
+        "data": {
+            "id": id
+        },
         "msg": "success",
     }
 
@@ -54,7 +57,8 @@ async def get_assistant(assistant_id: int, token: JWTData = Depends(validate_tok
 @router.put("/{assistant_id}", response_model=BasicResponse)
 async def update_assistant(assistant_id: int, req: UpsertAssistantRequest, token: JWTData = Depends(validate_token)):
     """更新assistant信息"""
-    service.update_assistant(assistant_id=assistant_id, user_id=token.user_id, **vars(req))
+    service.update_assistant(assistant_id=assistant_id,
+                             user_id=token.user_id, **vars(req))
     return {
         "code": 200,
         "msg": "success",

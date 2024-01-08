@@ -26,7 +26,7 @@ def list_assistants(app_id: int, user_id: int, page: int, limit: int) -> tuple[l
 
 def add_assistant(**kwargs):
     """添加assistant"""
-    database.add_assistant(**kwargs)
+    return database.add_assistant(**kwargs)
 
 
 def refresh_token(user_id: int, assistant_id: int):

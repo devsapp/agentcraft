@@ -5,12 +5,22 @@ import { Header } from 'layouts/header'
 import React from "react";
 
 
+function hasNoNavbar(pathname: string) {
+    const noNavbarPaths = ['/login', '/register', '/config', 'assistant/builder'];
+    for (let i = 0; i < noNavbarPaths.length; i++) {
+        if (pathname.indexOf(noNavbarPaths[i]) !== -1) {
+            return true;
+        }
+    }
+    return false;
+}
+
 export function Shell(props: any) {
     const router = useRouter();
     const { pathname } = router;
-    const isMainPage = pathname.indexOf('login') === -1 && pathname.indexOf('register') === -1 && pathname.indexOf('config') === -1;
+    const noNavBarPage = hasNoNavbar(pathname);
     return <>{
-        isMainPage ? <AppShell
+        !noNavBarPage ? <AppShell
             padding="md"
             navbar={<Nav />}
             header={<Header />}

@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { useRouter } from 'next/router';
 import Link from 'next/link';
 import { Tooltip, Spoiler, Breadcrumbs, Anchor, Button, Box, Table, TextInput, Text, Highlight, Switch, Group, Badge, MultiSelect, Select, Drawer, LoadingOverlay, Modal, Textarea, Flex, NumberInput, Paper, Title, Divider } from '@mantine/core';
 import { useForm } from '@mantine/form';
@@ -17,14 +18,15 @@ import { DATA_RETRIVAL_PROMPT_TEMPLATE } from 'constants/instructions';
 import { INSTRUCTION_TEMPLATES, DEFAULT_ASSISTANT_INSTRUCTION } from 'constants/instructions';
 import CopyToClipboard from 'components/CopyToClipboard';
 import Chat from 'features/assistant/chat';
+
 enum ContainerType {
     ADD_OR_UPDATE = 1, // 增加和修改
     CHAT = 2, // 问答
 }
 interface AssistantProps {
     appId: number;
+    router?: any
 }
-
 
 
 
@@ -293,11 +295,10 @@ function AddOrUpdate({ appId }: any) {
                 setEditStatus(false);
                 setOpen(false);
             }}
-            padding={0}
             title={isEdit ? "编辑智能助手" : "创建智能助手"}
             centered
-            fullScreen
-            transitionProps={{ transition: 'fade', duration: 200 }}>
+            size={'95%'}
+            >
             <AssistantForm appId={appId} />
         </Modal>
     );
@@ -335,7 +336,7 @@ export function ChatDrawer({ appId }: AssistantProps) {
     </Drawer>
 }
 
-function List({ appId }: AssistantProps) {
+function List({ appId,router }: AssistantProps) {
     const assistantList: AssistantResponseData[] = useAssistantStore().assistantList;
     const setLoading = useAssistantStore().setLoading;
     const updateCurrentAssistant = useAssistantStore().updateCurrentAssistant;
@@ -388,10 +389,10 @@ function List({ appId }: AssistantProps) {
                 </Spoiler>} width={300} />
                 : null}
             </td>
-            <td style={{ width: 300 }}>{element.retrieval_prompt_template ? <CopyToClipboard value={element.retrieval_prompt_template} content={element.retrieval_prompt_template} width={300} /> : null}</td>
+            {/* <td style={{ width: 300 }}>{element.retrieval_prompt_template ? <CopyToClipboard value={element.retrieval_prompt_template} content={element.retrieval_prompt_template} width={300} /> : null}</td> */}
             <td >{element.token ? <CopyToClipboard value={element.token} content={element.token} truncate width={160} /> : <Button color="lime" size="xs" compact onClick={() => generateToken(element.id)}>生成访问令牌</Button>}</td>
             <td>{formatDateTime(element.created)}</td>
-            <td style={{ width: 220 }}>
+            <td style={{ width: 420 }}>
                 {!element.token ? <Tooltip label="需要成访问令牌才可以访问此能力" >
                     <Button
                         color="grape"
@@ -422,12 +423,20 @@ function List({ appId }: AssistantProps) {
                     mr={4}>
                     编辑
                 </Button>
+                <Button variant="filled"
+                    size="xs"
+                    onClick={async () => {
+                        router && router.push(`/app/${appId}/assistant/builder?assistantId=${element.id}`)
+                    }}
+                    mr={4}>
+                    编辑GPT模式
+                </Button>
                 <Button variant="filled" color="red" size="xs" onClick={() => {
                     removeAssistant(element);
                 }}>删除</Button></td>
         </tr>
     ));
-    const getKonwledgeBase = async () => {
+    const getAssistantInfo = async () => {
         setLoading(true);
         try {
             await getAssistantList(appId);
@@ -437,7 +446,7 @@ function List({ appId }: AssistantProps) {
         setLoading(false);
     }
     useEffect(() => {
-        getKonwledgeBase();
+        getAssistantInfo();
     }, [appId]);
 
     return (
@@ -450,7 +459,7 @@ function List({ appId }: AssistantProps) {
                         <th>名称</th>
                         <th>描述</th>
                         <th>系统指令</th>
-                        <th>完整提示词</th>
+                        {/* <th>完整提示词</th> */}
                         <th>访问token</th>
                         <th>创建时间</th>
                         <th>操作</th>
@@ -465,6 +474,7 @@ function List({ appId }: AssistantProps) {
 
 
 export function AssistantPage({ appId }: AssistantProps) {
+    const router = useRouter();
     const loading: boolean = useAssistantStore().loading;
     const items = [
         { title: '应用列表', href: '/app' },
@@ -483,15 +493,22 @@ export function AssistantPage({ appId }: AssistantProps) {
             <Breadcrumbs>{items}</Breadcrumbs>
             <FeatureDescription title="智能助手" description="智能助手作为强有力的Agent实现，可以进行数据的召回" />
             <Box  >
-                <Button onClick={() => {
-                    setEditStatus(false);
-                    setOpen(true)
-                }}>
-                    新建智能助手
-                </Button>
+                <Flex>
+                    <Button mr={12} onClick={() => {
+                        setEditStatus(false);
+                        setOpen(true)
+                    }}>
+                        新建智能助手(普通模式)
+                    </Button>
+                    <Button onClick={() => {
+                        router.push(`/app/${appId}/assistant/builder`)
+                    }}>
+                        新建智能助手(GPT Builder模式)
+                    </Button>
+                </Flex>
             </Box>
             <AddOrUpdate appId={appId} />
-            <List appId={appId} />
+            <List appId={appId} router={router}/>
         </div>
 
     );

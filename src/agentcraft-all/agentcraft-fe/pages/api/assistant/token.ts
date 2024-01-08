@@ -6,8 +6,8 @@ export default async function handler(
     res: NextApiResponse
 ) {
 
-    const { agentId } = req.query;
+    const { assistantId } = req.query;
     request.defaults.headers.common['Authorization'] = req.headers.authorization;
-    const result = await request.get(`/assistant/refresh/${agentId}`);
+    const result = await request.get(`/assistant/refresh/${assistantId}`);
     res.status(result.status).json(result.data)
 }
