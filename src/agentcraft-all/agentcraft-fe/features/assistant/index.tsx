@@ -392,8 +392,8 @@ function List({ appId,router }: AssistantProps) {
             {/* <td style={{ width: 300 }}>{element.retrieval_prompt_template ? <CopyToClipboard value={element.retrieval_prompt_template} content={element.retrieval_prompt_template} width={300} /> : null}</td> */}
             <td >{element.token ? <CopyToClipboard value={element.token} content={element.token} truncate width={160} /> : <Button color="lime" size="xs" compact onClick={() => generateToken(element.id)}>生成访问令牌</Button>}</td>
             <td>{formatDateTime(element.created)}</td>
-            <td style={{ width: 420 }}>
-                {!element.token ? <Tooltip label="需要成访问令牌才可以访问此能力" >
+            <td >
+                {/* {!element.token ? <Tooltip label="需要成访问令牌才可以访问此能力" >
                     <Button
                         color="grape"
                         variant="filled"
@@ -422,14 +422,14 @@ function List({ appId,router }: AssistantProps) {
                     }}
                     mr={4}>
                     编辑
-                </Button>
+                </Button> */}
                 <Button variant="filled"
                     size="xs"
                     onClick={async () => {
                         router && router.push(`/app/${appId}/assistant/builder?assistantId=${element.id}`)
                     }}
                     mr={4}>
-                    编辑GPT模式
+                    编辑
                 </Button>
                 <Button variant="filled" color="red" size="xs" onClick={() => {
                     removeAssistant(element);
@@ -494,16 +494,16 @@ export function AssistantPage({ appId }: AssistantProps) {
             <FeatureDescription title="智能助手" description="智能助手作为强有力的Agent实现，可以进行数据的召回" />
             <Box  >
                 <Flex>
-                    <Button mr={12} onClick={() => {
+                    {/* <Button mr={12} onClick={() => {
                         setEditStatus(false);
                         setOpen(true)
                     }}>
                         新建智能助手(普通模式)
-                    </Button>
+                    </Button> */}
                     <Button onClick={() => {
                         router.push(`/app/${appId}/assistant/builder`)
                     }}>
-                        新建智能助手(GPT Builder模式)
+                        新建智能助手
                     </Button>
                 </Flex>
             </Box>

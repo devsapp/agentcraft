@@ -37,11 +37,8 @@ export function CreateClientAccess() {
                             alt="Norway"
                         />
                     </Card.Section>
-
                     <Group position="apart" mt="md" mb="xs">
-
                         <Text weight={500}>客户端接入</Text>
-
                     </Group>
                     <div style={{ height: 75 }}>
                         <Text size="sm" color="dimmed">
@@ -81,10 +78,8 @@ export function CreateClientAccess() {
                             alt="Norway"
                         />
                     </Card.Section>
-
                     <Group position="apart" mt="md" mb="xs">
                         <Text weight={500}>网站嵌入</Text>
-
                     </Group>
                     <div style={{ height: 75 }}>
                         <Text size="sm" color="dimmed">

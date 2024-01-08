@@ -8,13 +8,14 @@ import { useClientAccessStore, createChatBotBridgeService, createEventbus } from
 import { useSystemConfigStore } from 'store/systemConfig';
 import { checkAppStatus } from 'store/infra';
 import { getKnowledgeBase, getAccessUrl } from 'store/knowledgeBase';
+import { getAssistant } from 'store/assistant';
 import SetProxyService from 'features/clientAccess/robot/SetProxyService';
 import ServiceConfigPreview from 'features/clientAccess/robot/ServiceConfigPreview';
 import RobotWebhookConfig from 'features/clientAccess/robot/RobotWebhookConfig';
 import FeatureDescription from 'components/FeatureDescription';
 import { generateDingTalkToken } from 'utils/token';
 
-import { ROBOT_NAME_VALUE, ROBOT_CONFIG_STEP, DEFAULT_CLIENT_ACCESS_REGION, AGENTCRAFT_CLIENT_PREFIX, CHATBOT_APPNAME_MAP, CHATBOT_APPSERVER_MAP } from 'constants/client-access';
+import { ROBOT_NAME_VALUE, ROBOT_CONFIG_STEP, DEFAULT_CLIENT_ACCESS_REGION, AGENTCRAFT_CLIENT_PREFIX, CHATBOT_APPNAME_MAP, CHATBOT_APPSERVER_MAP,AGENT_TYPE } from 'constants/client-access';
 
 export function Robot() {
     const router = useRouter()
@@ -35,8 +36,8 @@ export function Robot() {
             chatBotType: ROBOT_NAME_VALUE.DING_TALK,
             appId: '',
             agentId: '',
+            agentType: AGENT_TYPE.KNOWLEDGEBASE,
             description: '桥接AgentCraft智能体到钉钉/微信的代理服务'
-
         },
         validate: {
             chatBotType: (value) => (!value ? '请选择一个机器人类型' : null),
@@ -65,14 +66,15 @@ export function Robot() {
         try {
             robotStepStatus.robot_proxy_service_create_loading = true;
             setRobotStepStatus(robotStepStatus);
-            const { agentId, description } = proxyServiceForm.values;
-            const agentDetail = await getKnowledgeBase(agentId);
+            const { agentId, description ,agentType } = proxyServiceForm.values;
+            const agentDetail =  agentType === AGENT_TYPE.KNOWLEDGEBASE? await getKnowledgeBase(agentId) : await getAssistant(agentId);
             const token = agentDetail.token;
             const agentAccess = await getAccessUrl();
             const agentAccessInfo = agentAccess.data || { openApiUrl: '', innerApiUrl: '' };
             const chatBotAppName: any = await createChatBotBridgeService(CHATBOT_APPNAME_MAP[chatBotType], {
                 region: completeConfig.regionId || DEFAULT_CLIENT_ACCESS_REGION,
                 TOKEN: token,
+                AGENT_TYPE: agentType,
                 BASE_LLM_SERVER: agentAccessInfo.openApiUrl,
                 name: `${AGENTCRAFT_CLIENT_PREFIX}_${nanoid()}`,
                 description,

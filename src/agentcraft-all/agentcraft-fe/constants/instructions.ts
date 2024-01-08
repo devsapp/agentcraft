@@ -222,4 +222,6 @@ export const DEFAULT_KNOWLEDGE_BAE_INSTRUCTION = `你是领域有文档的专家
 export const DEFAULT_ASSISTANT_INSTRUCTION = `你是一个智能小助手`
 
 
-export const DATA_RETRIVAL_PROMPT_TEMPLATE = `已知信息：【{context}】。你需要积极，简洁和专业地来回答\`\`\`中的问题。如果问题和已知信息没有关系，或者问题存在争议性，请说 “抱歉，无法回答该问题”，不允许编造。问题是：\`\`\`{query}\`\`\``;
+// export const DATA_RETRIVAL_PROMPT_TEMPLATE = `已知信息：【{context}】。你需要积极，简洁和专业地来回答\`\`\`中的问题。如果问题和已知信息没有关系，或者问题存在争议性，请说 “抱歉，无法回答该问题”，不允许编造。问题是：\`\`\`{query}\`\`\``;
+
+export const DATA_RETRIVAL_PROMPT_TEMPLATE =  '已知问题的相关的概念都存储在本地知识库中，如果从本地知识库中没有找到问题的答案 请说 “抱歉，无法回答该问题”，不允许编造。';

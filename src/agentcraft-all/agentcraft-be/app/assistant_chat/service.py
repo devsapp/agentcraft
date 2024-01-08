@@ -11,6 +11,7 @@ from app.common import utils
 import app.database.chat as database
 import app.database.assistant as assistant_database
 import app.database.assistant_dataset as assistant_dataset_database
+
 import app.database.model as model_database
 # import app.database.redis as redis
 from app.common.logger import logger
@@ -19,7 +20,6 @@ from app.chat.green_client import is_legal
 from app.reasoning.reasoning import Reasoning
 from app.reasoning.reasoning_stream import ReasoningStream
 DONE = "[DONE]"
-
 
 
 def list_chats(assistant_id: int, user_id: int, page: int, limit: int):
@@ -117,31 +117,38 @@ def convert_exact_search_res_stream(search_res: list):
     return choices, answer
 
 
-
-
-
-def chat(query: str, ip_addr: str, assistant_id: int):
+def chat(query: str, ip_addr: str, assistant_id: int, credential_dict):
     """Chat with assistant."""
     assistant = assistant_database.get_assistant_lite(assistant_id)
-    
+
     if not assistant:
         raise ValueError("assistant does not exist")
-    
-    reason = Reasoning(query, assistant)
+    relations = assistant_dataset_database.list_datasets_by_assistant_id(
+        assistant_id)
+    datasets = [{**vars(relation),
+                 "dataset_name": dataset_name}
+                for relation, dataset_name in relations]
+    reason = Reasoning(query, assistant, datasets, credential_dict)
 
     return reason.call_assistant()
-    
 
 
-def chat_stream(query: str, ip_addr: str, assistant_id: int):
+def chat_stream(query: str, ip_addr: str, assistant_id: int, credential_dict):
     """Chat with assistant."""
     assistant = assistant_database.get_assistant_lite(assistant_id)
     if not assistant:
         raise ValueError("assistant does not exist")
-    reason_stream = ReasoningStream(query, assistant)
+    relations = assistant_dataset_database.list_datasets_by_assistant_id(
+        assistant_id)
+    datasets = [{**vars(relation),
+                 "dataset_name": dataset_name}
+                for relation, dataset_name in relations]
+    reason_stream = ReasoningStream(
+        query, assistant, datasets, credential_dict)
+
     yield from reason_stream.call_assistant_stream()
     return
-    
+
 
 def build_messages(prompt: str, history: list[list], system_message: str) -> list:
     """构建消息"""
@@ -281,14 +288,14 @@ def model_chat_stream(
             if item['message']['url']:
                 markdown_text = f"\[{index+1}\] [{item['message']['title']}]({item['message']['url']})\n"
                 result_text += markdown_text
-        search_info = {"choices":[]}
+        search_info = {"choices": []}
         search_info["id"] = uid
         search_info["created"] = created
         search_info["model"] = model.name_alias
         search_info["choices"].append({"index": 0,
-                                    "delta": {"role": "assistant",
-                                                "content": result_text},
-                                    "finish_reason": "null"})
+                                       "delta": {"role": "assistant",
+                                                 "content": result_text},
+                                       "finish_reason": "null"})
         yield json.dumps(search_info)
 
     yield DONE

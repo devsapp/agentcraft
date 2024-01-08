@@ -11,7 +11,7 @@ class UpsertAssistantRequest(BaseModel):
     system_message: Optional[str] = Field(description="系统提示词，过期")
     retrieval_prompt_template: str = Field(description="数据召回提示词模板，应该包含{query}和{context}两个占位符，用于处理召回数据")
     prompt_starts: Optional[List[str]] = Field(description="Asssistant 对话开始示例")
-    capabilities: Optional[List[str]] = Field(description="Asssistant 具备的内置能力 ac-wanx-img-gen, web-browser, code-interpreter")
+    capabilities: Optional[List[str]] = Field(description="Asssistant 具备的内置能力 web_browser, code_interpreter")
     app_id: int = Field(description="Assistant的应用ID")
     action_tools: Optional[List[int]] = Field(description="工具函数ID列表")
     exact_datasets: Optional[List[int]] = Field(description="精确匹配数据集ID列表")

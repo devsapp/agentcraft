@@ -49,7 +49,6 @@ def get_assistant(_id: int, user_id: int):
     datasets_dict = [{**vars(relation),
                       "dataset_name": dataset_name}
                      for relation, dataset_name in relations]
-    print(f"relations_at{relations_at}")
     action_tools_dict = [id for id in relations_at]
     exp = ""
     if assistant.token:

@@ -15,14 +15,12 @@ import app.database.assistant_action_tools as assistant_action_tools_database
 
 from app.common.logger import logger
 from app.reasoning.tools_client import ToolsActionClient
-from app.reasoning.retrieval import data_retrieval
 
 DONE = "[DONE]"
 DEFAULT_INSTRUCTION = "You are a helpful assistant."
 
 TOOL_DESC = """{name_for_model}: Call this tool to interact with the {name_for_human} API. What is the {name_for_human} API useful for? {description_for_model} Parameters: {parameters}"""
 
-# ReAct prompting 的 instruction 模版，将包含插件的详细信息。
 PROMPT_REACT = """Answer the following questions as best you can. You have access to the following APIs:
 
 {tools_text}
@@ -44,14 +42,14 @@ Question: {query}"""
 
 
 class Reasoning:
-    def __init__(self, query, assistant):
+    def __init__(self, query, assistant, datasets, credential_dict):
         self.assistant = assistant
         self.query = query
+        self.datasets = datasets
 
     def final_result(self, resp_data: str):
         match = re.search(r'Final Answer: (.+)', resp_data)
         if match:
-            # 提取匹配的文本
             final_answer = match.group(1)
             return final_answer
         else:
@@ -79,11 +77,11 @@ class Reasoning:
                 planning_prompt + text, **kwargs)
             action, action_input, output = self.parse_latest_plugin_call(
                 output)
-            if action:  # 需要调用插件
+            if action: 
                 observation = self.call_plugin(action, action_input)
                 output += f'\nObservation: {observation}\nThought:'
                 text += output
-            else:  # 生成结束，并且不再需要调用插件
+            else: 
                 text += output
                 break
 
@@ -95,7 +93,7 @@ class Reasoning:
         resp_data["id"] = uid
         resp_data["created"] = created
         resp_data["choices"] = [{
-            "index":0,
+            "index": 0,
             "message": {"role": "assistant", "content": content},
             "finish_reason": 'null'
         }]
@@ -121,37 +119,26 @@ class Reasoning:
                 raise NotImplementedError
             tools_text.append(tool)
         tools_text = '\n\n'.join(tools_text)
-
-        # 候选插件的代号
         tools_name_text = ', '.join(
             [plugin_info["name_for_model"] for plugin_info in list_of_plugin_info])
 
         im_start = '<|im_start|>'
         im_end = '<|im_end|>'
-        retrieval_data = ''
-        if(self.assistant.retrieval_prompt_template):
-            retrieval_data = '\n有一些已知信息：' + \
-                data_retrieval(self.query, self.assistant) + \
-                '请按照已知信息进行回答，问题，如果没有答案，请不要乱说'
-        prompt = f'{im_start}system\n{system_instruction}{retrieval_data}{im_end}'
+        if(self.datasets):
+            retrieval_information = '\n' + self.assistant.retrieval_prompt_template+'\n'
+        prompt = f'{im_start}system\n{system_instruction}{retrieval_information}{im_end}'
         for i, (query, response) in enumerate(chat_history):
-            if list_of_plugin_info:  # 如果有候选插件
-                # 倒数第一轮或倒数第二轮对话填入详细的插件信息，但具体什么位置填可以自行判断
+            if list_of_plugin_info:  
                 if (len(chat_history) == 1) or (i == len(chat_history) - 2):
                     query = PROMPT_REACT.format(
                         tools_text=tools_text,
                         tools_name_text=tools_name_text,
                         query=query,
                     )
-            # 重要！若不 strip 会与训练时数据的构造方式产生差异。
             query = query.lstrip('\n').rstrip()
-            # 重要！若不 strip 会与训练时数据的构造方式产生差异。
             response = response.lstrip('\n').rstrip()
-            # 使用续写模式（text completion）时，需要用如下格式区分用户和AI：
             prompt += f"\n{im_start}user\n{query}{im_end}"
             prompt += f"\n{im_start}assistant\n{response}{im_end}"
-
-        assert prompt.endswith(f"\n{im_start}assistant\n{im_end}")
         prompt = prompt[: -len(f'{im_end}')]
         return prompt
 
@@ -166,7 +153,6 @@ class Reasoning:
             "content": input_text
         })
         # logger.info(messages)
-
         headers = {
             "Authorization": f"Bearer {kwargs['token']}",
             "Content-Type": "application/json"
@@ -214,11 +200,12 @@ class Reasoning:
         return plugin_name, plugin_args, text
 
     def call_plugin(self, plugin_name: str, plugin_args: str) -> str:
-        tools_client = ToolsActionClient()
+        tools_client = ToolsActionClient(self.credential_dict)
         invoke_result = tools_client.invoke(plugin_name, plugin_args)
         return invoke_result
 
     def call_assistant(self):
+        self.time = time()
         text_input = self.query
         action_tools = []
         assistant = self.assistant
@@ -234,14 +221,18 @@ class Reasoning:
                 }
                 for item in action_tools
             ]
-
+            if(self.datasets):
+                action_tools.append({
+                    'name_for_human': 'local search',
+                    'name_for_model': 'data_retrieval',
+                    'description_for_model': 'For information that has been stored locally, local search (data_retrieval) is a more effective knowledge search tool.',
+                    'parameters': "[ { 'name': 'user_question', 'description': 'User input issues', 'required': True, 'schema': {'type': 'string'}, } ]",
+                })
         except Exception as e:
             logger.error(e)
 
         history = []
-
         model = model_database.get_model_by_id(assistant.model_id)
-
         llm_plugin_args = {
             "created": int(time()),
             "uid": f"assistant-compl-{uuid.uuid4()}",

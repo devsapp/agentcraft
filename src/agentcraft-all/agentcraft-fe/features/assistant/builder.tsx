@@ -99,8 +99,8 @@ export function AssistantForm({ appId, form }: { appId: any, form: any }) {
                     }}
                 >
                     <Group mt="xs">
-                        <Checkbox value="web-browser" label="Web浏览" />
-                        <Checkbox value="code-interpreter" label="代码解释器" disabled />
+                        <Checkbox value="web_browser" label="Web浏览" />
+                        <Checkbox value="code_interpreter" label="代码解释器" disabled />
                     </Group>
                 </Checkbox.Group>
             </Box>
@@ -167,7 +167,7 @@ export function AssistantBuilder({ appId }: AssistantProps) {
             exact_search_limit: 1,
             fuzzy_search_limit: 3,
             prompt_starts: [],
-            capabilities: ['ac-img-gen', 'web-browser']
+            capabilities: ['ac_img_gen', 'web_browser']
         },
         validate: {
             name: (value) => (!value ? '智能助手名必填' : null)

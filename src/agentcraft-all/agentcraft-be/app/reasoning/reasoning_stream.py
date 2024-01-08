@@ -5,7 +5,6 @@ import requests
 import codecs
 from time import time
 import re
-
 import uuid
 import app.database.model as model_database
 import app.database.assistant_action_tools as assistant_action_tools_database
@@ -39,57 +38,21 @@ Question: {query}"""
 
 
 class ReasoningStream:
-    def __init__(self, query, assistant):
+    def __init__(self, query, assistant, datasets, credential_dict):
         self.assistant = assistant
         self.query = query
+        self.datasets = datasets
+        self.credential_dict = credential_dict
         self.time = time()
 
     def final_result(self, resp_data: str):
         match = re.search(r'Final Answer: (.+)', resp_data)
         if match:
-            # 提取匹配的文本
             final_answer = match.group(1)
             return final_answer
         else:
             return ''
 
-    def intent_extraction(self, input_text: str):
-        assistant = self.assistant
-        messages = []
-        messages.append({
-            "role": "user",
-            "content": input_text
-        })
-        # print(messages)
-
-        headers = {
-            "Authorization": f"Bearer {assistant['token']}",
-            "Content-Type": "application/json"
-        }
-        request_data = json.dumps({
-            "model": assistant['model'],
-            "messages": messages,
-            "temperature": assistant['temperature'],
-            "top_p": assistant['top_p'],
-            "n": assistant['n'],
-            "max_tokens": assistant['max_tokens'],
-            "stop": assistant['stop_words'],
-            "presence_penalty": assistant['presence_penalty'],
-            "frequency_penalty": assistant['frequency_penalty'],
-            "logit_bias":  {}
-        })
-        # resp = requests.post(kwargs['url'], headers=headers,
-        #                      data=request_data, timeout=kwargs['timeout'])
-        # if resp.status_code != 200:
-        #     logger.error(resp.text)
-        #     raise ValueError("model request failed")
-        # resp_data = resp.json()
-        # if isinstance(resp_data, str):
-        #     resp_data = json.loads(resp_data)
-        # answer = [ans["message"]["content"]
-        #           for ans in resp_data["choices"] if ans["message"]["role"] == "assistant"]
-
-        # output = answer[0]
     def generator_text_completion(self, input_text: str, **kwargs):
         result = yield from self.text_completion(
             input_text, **kwargs)
@@ -109,7 +72,6 @@ class ReasoningStream:
         stream_response["model"] = model
         planning_prompt = self.build_input_text(
             chat_history, list_of_plugin_info, kwargs['instruction'])
-        # print(f"the planning_prompt is:\n {planning_prompt}")
         text = ''
 
         end_time = time()
@@ -121,7 +83,7 @@ class ReasoningStream:
                 planning_prompt + text, **kwargs)
             action, action_input, output = self.parse_latest_plugin_call(
                 output)
-            if action:  # 需要调用插件
+            if action: 
                 stream_response = {"choices": []}
                 stream_response["choices"].append({"index": 0,
                                                    "delta": {"role": "assistant",
@@ -129,17 +91,13 @@ class ReasoningStream:
                                                    "finish_reason": "null"})
                 yield json.dumps(stream_response)
                 end_time = time()
-
                 observation = self.call_plugin(action, action_input)
-
                 print(f"{action}工具调用结果：{observation}")
-
                 execution_time = end_time - self.time
                 print("Execution 调用工具" + action, execution_time, "seconds")
-
                 output += f'\nObservation: {observation}\nThought:'
                 text += output
-            else:  # 生成结束，并且不再需要调用插件
+            else:  
                 text += output
                 break
         yield DONE
@@ -165,15 +123,13 @@ class ReasoningStream:
                 raise NotImplementedError
             tools_text.append(tool)
         tools_text = '\n\n'.join(tools_text)
-
-        # 候选插件的代号
         tools_name_text = ', '.join(
             [plugin_info["name_for_model"] for plugin_info in list_of_plugin_info])
 
         im_start = '<|im_start|>'
         im_end = '<|im_end|>'
         retrieval_information = ''
-        if(self.assistant.retrieval_prompt_template):
+        if(self.datasets):
             retrieval_information = '\n' + self.assistant.retrieval_prompt_template+'\n'
         prompt = f'{im_start}system\n{system_instruction}{retrieval_information}{im_end}'
         for i, (query, response) in enumerate(chat_history):
@@ -198,6 +154,7 @@ class ReasoningStream:
         return prompt
 
     def text_completion(self, input_text: str, **kwargs) -> str:  # 作为一个文本续写模型来使用
+        web_browser = True if 'web_browser' in self.assistant.capabilities else False
         created = kwargs['created']
         uid = kwargs['uid']
         model = kwargs['model']
@@ -226,7 +183,8 @@ class ReasoningStream:
             "stop": stop_words,
             "presence_penalty": kwargs['presence_penalty'],
             "frequency_penalty": kwargs['frequency_penalty'],
-            "logit_bias":  {}
+            "logit_bias":  {},
+            "web_browser": web_browser
         })
         resp = requests.post(kwargs['url'], headers=headers,
                              data=request_data, timeout=kwargs['timeout'])
@@ -296,7 +254,7 @@ class ReasoningStream:
             user_question = plugin_args["user_question"]
             return data_retrieval(user_question, self.assistant)
         else:
-            tools_client = ToolsActionClient()
+            tools_client = ToolsActionClient(self.credential_dict)
             invoke_result = tools_client.invoke(plugin_name, plugin_args)
             return invoke_result
 
@@ -317,15 +275,15 @@ class ReasoningStream:
                 }
                 for item in action_tools
             ]
-            action_tools.append({
-                'name_for_human': 'local search',
-                'name_for_model': 'data_retrieval',
-                'description_for_model': 'For information that has been stored locally, local search (data_retrieval) is a more effective knowledge search tool.',
-                'parameters': "[ { 'name': 'user_question', 'description': 'User input issues', 'required': True, 'schema': {'type': 'string'}, } ]",
-            })
+            if(self.datasets):
+                action_tools.append({
+                    'name_for_human': 'local search',
+                    'name_for_model': 'data_retrieval',
+                    'description_for_model': 'For information that has been stored locally, local search (data_retrieval) is a more effective knowledge search tool.',
+                    'parameters': "[ { 'name': 'user_question', 'description': 'User input issues', 'required': True, 'schema': {'type': 'string'}, } ]",
+                })
         except Exception as e:
             logger.error(e)
-
         end_time = time()
         execution_time = end_time - self.time
         print("Execution  工具构建时间:", execution_time, "seconds")
