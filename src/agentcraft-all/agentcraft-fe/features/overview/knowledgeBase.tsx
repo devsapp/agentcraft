@@ -1,16 +1,15 @@
 import React, { useEffect, useState } from "react";
-import { useRouter } from 'next/router'
+
 import { Paper, Button, Box, Table, TextInput, MultiSelect, FileInput, PasswordInput, Text, Textarea, Highlight, LoadingOverlay, Divider, Title, Select, Modal, Flex, Space, NumberInput, Stepper, Group, rem } from '@mantine/core';
-import { getModelList, useGlobalStore as useModelStore } from '@/store/model';
-import { getDataSetList, useGlobalStore as useDatasetStore } from '@/store/dataset';
+import { getModelList, useModelStore } from '@/store/model';
+import { getDataSetList, useDataSetStore } from 'store/dataset';
 import { useQuickStartStore } from "store/quickStart";
-import { Model } from '@/types/model';
-import { DataSet, DataSetType } from '@/types/dataset';
+import { Model } from 'types/model';
+import { DataSet, DataSetType } from 'types/dataset';
 
 export default function KnowledgeBase({ form }: any) {
-
     const modelList: Model[] = useModelStore().modelList;
-    const dataSetList: DataSet[] = useDatasetStore().dataSetList;
+    const dataSetList: DataSet[] = useDataSetStore().dataSetList;
     const { dataSetId, modelId } = useQuickStartStore();
     const modelSelectData: any = modelList.map((item: Model) => { return { label: item.name_alias, value: item.id } });
     const documentSelectData: any = dataSetList.filter((item: DataSet) => item.dataset_type == DataSetType.DOCUMENT).map((item: DataSet) => { return { label: item.name, value: item.id } });

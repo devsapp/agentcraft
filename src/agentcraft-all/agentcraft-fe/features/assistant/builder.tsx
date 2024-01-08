@@ -100,7 +100,6 @@ export function AssistantForm({ appId, form }: { appId: any, form: any }) {
                 >
                     <Group mt="xs">
                         <Checkbox value="web-browser" label="Web浏览" />
-                        <Checkbox value="ac-img-gen" label="文生图" />
                         <Checkbox value="code-interpreter" label="代码解释器" disabled />
                     </Group>
                 </Checkbox.Group>
