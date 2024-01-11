@@ -14,16 +14,21 @@ import app.database.assistant_action_tools as assistant_action_tools_database
 # import app.database.redis as redis
 
 from app.common.logger import logger
+from app.reasoning.retrieval import data_retrieval, llm_retrieval_instruction
 from app.reasoning.tools_client import ToolsActionClient
 
 DONE = "[DONE]"
 DEFAULT_INSTRUCTION = "You are a helpful assistant."
+
+RETRIEVAL_ARGUMRNTED = """已知【{local_datasets}】是本地的知识库数据集，当你没有问题的答案或者被提问{local_datasets}相关问题的时候可以使用[data_retrieval]这个API工具"""
 
 TOOL_DESC = """{name_for_model}: Call this tool to interact with the {name_for_human} API. What is the {name_for_human} API useful for? {description_for_model} Parameters: {parameters}"""
 
 PROMPT_REACT = """Answer the following questions as best you can. You have access to the following APIs:
 
 {tools_text}
+
+We must pay attention to only making practical discussions on the results of calling the tool. If it is, it means it is there, and if it is not, it is not. Do not make excessive interpretations.
 
 Use the following format:
 
@@ -45,7 +50,9 @@ class Reasoning:
     def __init__(self, query, assistant, datasets, credential_dict):
         self.assistant = assistant
         self.query = query
+        self.credential_dict = credential_dict
         self.datasets = datasets
+        self.tool_name_dict = {}
 
     def final_result(self, resp_data: str):
         match = re.search(r'Final Answer: (.+)', resp_data)
@@ -54,7 +61,16 @@ class Reasoning:
             return final_answer
         else:
             return ''
-
+        
+    def extract_json_content(self, text):
+        start_index = text.find('{')
+        end_index = text.rfind('}')
+        if start_index != -1 and end_index != -1:
+            json_content = text[start_index:end_index+1]
+            return json_content
+        else:
+            return '{}'
+        
     def generator_text_completion(self, input_text: str, **kwargs):
         result = self.text_completion(
             input_text, **kwargs)
@@ -78,9 +94,19 @@ class Reasoning:
             action, action_input, output = self.parse_latest_plugin_call(
                 output)
             if action: 
+                logger.info(f"调用工具【{self.tool_name_dict[action]}】 \n'")
                 observation = self.call_plugin(action, action_input)
                 output += f'\nObservation: {observation}\nThought:'
+
+                logger.info(f"{action}工具调用结果：{observation}")
+
                 text += output
+                if(action == 'data_retrieval'):  # 知识库召回特殊处理
+                    plugin_args = json.loads(action_input)
+                    user_question = plugin_args["user_question"]
+                    kwargs['retrieval_prompt_template'] = self.assistant.retrieval_prompt_template
+                    text = 'Final Answer:' + llm_retrieval_instruction(user_question, observation, **kwargs)
+                    break
             else: 
                 text += output
                 break
@@ -100,7 +126,9 @@ class Reasoning:
         resp_data["object"] = "chat.completion"
         resp_data["model"] = model
         return resp_data
-
+    def get_dataset_names(self, datasets):
+        names = [dataset['dataset_name'] for dataset in datasets]
+        return ', '.join(names)
     def build_input_text(self, chat_history, list_of_plugin_info, system_instruction) -> str:
         tools_text = []
         for plugin_info in list_of_plugin_info:
@@ -125,7 +153,8 @@ class Reasoning:
         im_start = '<|im_start|>'
         im_end = '<|im_end|>'
         if(self.datasets):
-            retrieval_information = '\n' + self.assistant.retrieval_prompt_template+'\n'
+            local_datasets = self.get_dataset_names(self.datasets)
+            retrieval_information = '\n' + RETRIEVAL_ARGUMRNTED.format(local_datasets=local_datasets) +'\n'
         prompt = f'{im_start}system\n{system_instruction}{retrieval_information}{im_end}'
         for i, (query, response) in enumerate(chat_history):
             if list_of_plugin_info:  
@@ -200,9 +229,19 @@ class Reasoning:
         return plugin_name, plugin_args, text
 
     def call_plugin(self, plugin_name: str, plugin_args: str) -> str:
-        tools_client = ToolsActionClient(self.credential_dict)
-        invoke_result = tools_client.invoke(plugin_name, plugin_args)
-        return invoke_result
+        plugin_args = self.extract_json_content(plugin_args)
+        if(plugin_name == 'data_retrieval'):
+            plugin_args = json.loads(plugin_args)
+            user_question = plugin_args["user_question"]
+            return data_retrieval(user_question, self.assistant)
+        else:
+            try:
+                tools_client = ToolsActionClient(self.credential_dict)
+                invoke_result = tools_client.invoke(plugin_name, plugin_args)
+                return invoke_result['body']
+            except Exception as e:
+                logger.error(e)
+                return ''
 
     def call_assistant(self):
         self.time = time()
@@ -231,6 +270,8 @@ class Reasoning:
         except Exception as e:
             logger.error(e)
 
+        self.tool_name_dict = {tool['name_for_model']: tool['name_for_human'] for tool in action_tools}
+
         history = []
         model = model_database.get_model_by_id(assistant.model_id)
         llm_plugin_args = {
@@ -252,6 +293,8 @@ class Reasoning:
             "model_name": model.name_alias if model else None,
             "url": model.url if model else None,
         }
+
+        logger.info(f"LLM Plugin Args: {llm_plugin_args}")
 
         return self.llm_with_plugin(
             prompt=text_input, list_of_plugin_info=action_tools, **llm_plugin_args)

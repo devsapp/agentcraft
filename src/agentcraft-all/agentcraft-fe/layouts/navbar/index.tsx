@@ -99,14 +99,19 @@ export const Nav = () => {
             icon: <IconServer size="1rem" stroke={1.5} />
         },
         {
+            path: '/divider1',
+            type: 'divider',
+        },
+        {
             name: "执行工具",
             path: "/actionTools",
             icon: <IconTrowel size="1rem" stroke={1.5} />,
         },
         {
-            path: '/divider1',
+            path: '/divider4',
             type: 'divider',
         },
+        
         {
             name: "基础模型",
             path: "/foundationModel",

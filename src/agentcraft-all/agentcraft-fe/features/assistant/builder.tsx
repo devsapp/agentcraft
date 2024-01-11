@@ -115,7 +115,7 @@ export function AssistantForm({ appId, form }: { appId: any, form: any }) {
                 <MultiSelect
                     data={toolList.map((item: any) => {
                         return {
-                            label: item.name,
+                            label: `${item.alias}(${item.name})`,
                             value: item.id
                         }
                     })}
@@ -138,37 +138,38 @@ export function AssistantBuilder({ appId }: AssistantProps) {
     const updateCurrentAssistant = useAssistantStore().updateCurrentAssistant;
     const currentAssistant = useAssistantStore().currentAssistant;
     const modelList: Model[] = useModelStore().modelList;
+    const initFormValue = {
+        name: '',
+        description: '',
+        retrieval_prompt_template: DATA_RETRIVAL_PROMPT_TEMPLATE,
+        app_id: parseInt(appId),
+        exact_datasets: [],
+        fuzzy_datasets: [],
+        action_tools: [],
+        exact_search_similarity: 0.9,
+        fuzzy_search_similarity: 0.6,
+        temperature: 0.5,
+        top_p: 1.0,
+        n_sequences: 1,
+        max_tokens: 1024,
+        stop: [],
+        presence_penalty: 0,
+        frequency_penalty: 0,
+        logit_bias: '',
+        model_id: '',
+        redis_ip_ex: 0,
+        redis_history_ex: 0,
+        model_ip_limit: 0,
+        llm_history_len: 0,
+        system_message: '',
+        instruction: '',
+        exact_search_limit: 1,
+        fuzzy_search_limit: 3,
+        prompt_starts: [],
+        capabilities: ['ac_img_gen', 'web_browser']
+    }
     const form: any = useForm({
-        initialValues: {
-            name: '',
-            description: '',
-            retrieval_prompt_template: DATA_RETRIVAL_PROMPT_TEMPLATE,
-            app_id: parseInt(appId),
-            exact_datasets: [],
-            fuzzy_datasets: [],
-            action_tools: [],
-            exact_search_similarity: 0.9,
-            fuzzy_search_similarity: 0.6,
-            temperature: 0.5,
-            top_p: 1.0,
-            n_sequences: 1,
-            max_tokens: 1024,
-            stop: [],
-            presence_penalty: 0,
-            frequency_penalty: 0,
-            logit_bias: '',
-            model_id: '',
-            redis_ip_ex: 0,
-            redis_history_ex: 0,
-            model_ip_limit: 0,
-            llm_history_len: 0,
-            system_message: '',
-            instruction: '',
-            exact_search_limit: 1,
-            fuzzy_search_limit: 3,
-            prompt_starts: [],
-            capabilities: ['ac_img_gen', 'web_browser']
-        },
+        initialValues: initFormValue,
         validate: {
             name: (value) => (!value ? '智能助手名必填' : null)
         },
@@ -180,11 +181,13 @@ export function AssistantBuilder({ appId }: AssistantProps) {
                 const assistant = await getAssistant(assistantId);
                 updateCurrentAssistant(assistant);
             })()
+        } else {
+            form.setValues(initFormValue)
         }
     }, []);
   
     useEffect(() => {
-        if (currentAssistant) {
+        if (currentAssistant && assistantId) {
             const datasets = currentAssistant?.datasets;
             form.setValues({
                 id: currentAssistant?.id,

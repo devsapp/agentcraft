@@ -98,6 +98,8 @@ export function AssistantForm({ appId, containerType }: { appId: any, containerT
             model_ip_limit: currentAssistant?.model_ip_limit,
             llm_history_len: currentAssistant?.llm_history_len,
             system_message: currentAssistant?.system_message,
+            prompt_starts: currentAssistant?.prompt_starts,
+            capabilities: currentAssistant?.capabilities,
             instruction: currentAssistant?.instruction,
             exact_search_limit: currentAssistant?.exact_search_limit,
             fuzzy_search_limit: currentAssistant?.fuzzy_search_limit
@@ -184,7 +186,7 @@ export function AssistantForm({ appId, containerType }: { appId: any, containerT
                     <MultiSelect
                         data={toolList.map((item: any) => {
                             return {
-                                label: item.name,
+                                label: `${item.alias}(${item.name})`,
                                 value: item.id
                             }
                         })}
@@ -198,7 +200,7 @@ export function AssistantForm({ appId, containerType }: { appId: any, containerT
             </Paper>
             <Paper shadow="xs" p="md" withBorder style={{ width: pannelWidth }} >
                 <Title order={5} size="h5" >数据召回</Title>
-                {/* <Textarea label="召回提示词模板" placeholder="" {...form.getInputProps('prompt_template')} minRows={6} description="召回提示词模板可以将检索的结果context和用户的输入query整合到一起，最后整体输入给大语言模型" /> */}
+                <Textarea label="召回提示词模板" placeholder="" {...form.getInputProps('retrieval_prompt_template')} minRows={6} description="召回提示词模板可以将检索的结果context和用户的输入query整合到一起，最后整体输入给大语言模型" />
                 <Flex justify={'space-between'} align={'center'}>
                     <Title order={5} size="h5" >召回数据集</Title>
                     <IconRefresh cursor={'pointer'} onClick={getDataSetList} />

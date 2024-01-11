@@ -37,7 +37,6 @@ class ToolsActionClient:
         config.endpoint = f'{account_id}.{region}.fc.aliyuncs.com'
         return OpenApiClient(config)
 
-
     def create_api_info(
         self,
         function_name: str,
@@ -60,7 +59,6 @@ class ToolsActionClient:
         )
         return params
 
- 
     def invoke(
         self,
         function_name: str,
@@ -70,11 +68,11 @@ class ToolsActionClient:
             os.environ['ALIBABA_CLOUD_ACCESS_KEY_ID'], os.environ['ALIBABA_CLOUD_ACCESS_KEY_SECRET'])
         params = self.create_api_info(function_name)
         body = BytesIO(function_param.encode('utf-8'))
-        runtime = util_models.RuntimeOptions()
+        runtime = util_models.RuntimeOptions(read_timeout=60000,
+                                             connect_timeout=60000)
         request = open_api_models.OpenApiRequest(stream=body)
         result = client.call_api(params, request, runtime)
         return result
-
 
     def invoke_async(
         self,

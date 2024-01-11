@@ -61,7 +61,7 @@ export const useClientAccessStore = create<any>(devtools(
 
 
 
-export async function createChatBotBridgeService(appName: string, params: DING_TALK_BRIDGE_APP_PARAMS & DevsAppParamsBase) {
+export async function createChatBotBridgeService(appName: string, params: any) {
     return await createServerlessApp(appName, params);
 
 }

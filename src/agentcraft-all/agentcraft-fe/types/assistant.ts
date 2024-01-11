@@ -39,6 +39,8 @@ export interface Assistant {
     exp: number;
     datasets: Dataset[];
     action_tools: [];
+    capabilities:[];
+    prompt_starts: [];
     model_name: string;
     token: string;
     presence_penalty: number;

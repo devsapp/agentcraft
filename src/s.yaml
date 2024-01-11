@@ -46,6 +46,7 @@ resources:
         EMBEDDING_URL: ''
         EMBEDDING_DIM: ''
         JWT_SECRET: {{ JWT_SECRET }}
+        REGION: ${vars.region}
       functionName: 'agentcraft-backend'
       code: ./agentcraft-all/agentcraft-be
       asyncInvokeConfig: {}

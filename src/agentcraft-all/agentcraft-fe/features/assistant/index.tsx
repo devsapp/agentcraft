@@ -429,7 +429,7 @@ function List({ appId,router }: AssistantProps) {
                         router && router.push(`/app/${appId}/assistant/builder?assistantId=${element.id}`)
                     }}
                     mr={4}>
-                    编辑
+                    调试
                 </Button>
                 <Button variant="filled" color="red" size="xs" onClick={() => {
                     removeAssistant(element);

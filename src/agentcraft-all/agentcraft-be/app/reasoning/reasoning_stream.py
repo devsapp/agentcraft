@@ -8,7 +8,7 @@ import re
 import uuid
 import app.database.model as model_database
 import app.database.assistant_action_tools as assistant_action_tools_database
-from app.reasoning.retrieval import data_retrieval
+from app.reasoning.retrieval import data_retrieval, llm_retrieval_instruction_stream
 from app.common.logger import logger
 from app.reasoning.tools_client import ToolsActionClient
 
@@ -17,9 +17,14 @@ DEFAULT_INSTRUCTION = "You are a helpful assistant."
 
 TOOL_DESC = """{name_for_model}: Call this tool to interact with the {name_for_human} API. What is the {name_for_human} API useful for? {description_for_model} Parameters: {parameters}"""
 
-PROMPT_REACT = """Answer the following questions as best you can. You have access to the following APIs If you encounter a search task, please use the "data_retrieval" tool first: 
+RETRIEVAL_ARGUMRNTED = """已知【{local_datasets}】是本地的知识库数据集，当你没有问题的答案或者被提问{local_datasets}相关问题的时候可以使用[data_retrieval]这个API工具"""
+
+
+PROMPT_REACT = """Answer the following questions as best you can. You have access to the following APIs: 
 
 {tools_text}
+
+We must pay attention to only making practical discussions on the results of calling the tool. If it is, it means it is there, and if it is not, it is not. Do not make excessive interpretations.
 
 Use the following format:
 
@@ -44,6 +49,7 @@ class ReasoningStream:
         self.datasets = datasets
         self.credential_dict = credential_dict
         self.time = time()
+        self.tool_name_dict = {}
 
     def final_result(self, resp_data: str):
         match = re.search(r'Final Answer: (.+)', resp_data)
@@ -52,14 +58,20 @@ class ReasoningStream:
             return final_answer
         else:
             return ''
-
+    def extract_json_content(self, text):
+        start_index = text.find('{')
+        end_index = text.rfind('}')
+        if start_index != -1 and end_index != -1:
+            json_content = text[start_index:end_index+1]
+            return json_content
+        else:
+            return '{}'
     def generator_text_completion(self, input_text: str, **kwargs):
         result = yield from self.text_completion(
             input_text, **kwargs)
         return result
 
     def llm_with_plugin(self, prompt: str, list_of_plugin_info=(), **kwargs):
-
         created = kwargs['created']
         uid = kwargs['uid']
         model = kwargs['model']
@@ -72,6 +84,7 @@ class ReasoningStream:
         stream_response["model"] = model
         planning_prompt = self.build_input_text(
             chat_history, list_of_plugin_info, kwargs['instruction'])
+        logger.info(f'Planing Prompt: {planning_prompt}')
         text = ''
 
         end_time = time()
@@ -83,28 +96,37 @@ class ReasoningStream:
                 planning_prompt + text, **kwargs)
             action, action_input, output = self.parse_latest_plugin_call(
                 output)
-            if action: 
+            if action:
                 stream_response = {"choices": []}
                 stream_response["choices"].append({"index": 0,
                                                    "delta": {"role": "assistant",
-                                                             "content": f'工具函数【{action}】 \n'},
+                                                             "content": f'调用工具【{self.tool_name_dict[action]}】 \n'},
                                                    "finish_reason": "null"})
                 yield json.dumps(stream_response)
                 end_time = time()
                 observation = self.call_plugin(action, action_input)
                 print(f"{action}工具调用结果：{observation}")
+
                 execution_time = end_time - self.time
                 print("Execution 调用工具" + action, execution_time, "seconds")
                 output += f'\nObservation: {observation}\nThought:'
                 text += output
-            else:  
+                if(action == 'data_retrieval'):  # 知识库召回特殊处理
+                    plugin_args = json.loads(action_input)
+                    user_question = plugin_args["user_question"]
+                    kwargs['retrieval_prompt_template'] = self.assistant.retrieval_prompt_template
+                    yield from llm_retrieval_instruction_stream(user_question, observation, **kwargs)
+                    break
+            else:
                 text += output
                 break
         yield DONE
         new_history = []
         new_history.extend(history)
         new_history.append({'user': prompt, 'bot': text})
-
+    def get_dataset_names(self, datasets):
+        names = [dataset['dataset_name'] for dataset in datasets]
+        return ', '.join(names)
     def build_input_text(self, chat_history, list_of_plugin_info, system_instruction) -> str:
         tools_text = []
         for plugin_info in list_of_plugin_info:
@@ -130,22 +152,19 @@ class ReasoningStream:
         im_end = '<|im_end|>'
         retrieval_information = ''
         if(self.datasets):
-            retrieval_information = '\n' + self.assistant.retrieval_prompt_template+'\n'
+            local_datasets = self.get_dataset_names(self.datasets)
+            retrieval_information = '\n' + RETRIEVAL_ARGUMRNTED.format(local_datasets=local_datasets) +'\n'
         prompt = f'{im_start}system\n{system_instruction}{retrieval_information}{im_end}'
         for i, (query, response) in enumerate(chat_history):
-            if list_of_plugin_info:  # 如果有候选插件
-                # 倒数第一轮或倒数第二轮对话填入详细的插件信息，但具体什么位置填可以自行判断
+            if list_of_plugin_info: 
                 if (len(chat_history) == 1) or (i == len(chat_history) - 2):
                     query = PROMPT_REACT.format(
                         tools_text=tools_text,
                         tools_name_text=tools_name_text,
                         query=query,
                     )
-            # 重要！若不 strip 会与训练时数据的构造方式产生差异。
             query = query.lstrip('\n').rstrip()
-            # 重要！若不 strip 会与训练时数据的构造方式产生差异。
             response = response.lstrip('\n').rstrip()
-            # 使用续写模式（text completion）时，需要用如下格式区分用户和AI：
             prompt += f"\n{im_start}user\n{query}{im_end}"
             prompt += f"\n{im_start}assistant\n{response}{im_end}"
 
@@ -153,8 +172,7 @@ class ReasoningStream:
         prompt = prompt[: -len(f'{im_end}')]
         return prompt
 
-    def text_completion(self, input_text: str, **kwargs) -> str:  # 作为一个文本续写模型来使用
-        web_browser = True if 'web_browser' in self.assistant.capabilities else False
+    def text_completion(self, input_text: str, **kwargs) -> str:
         created = kwargs['created']
         uid = kwargs['uid']
         model = kwargs['model']
@@ -183,10 +201,9 @@ class ReasoningStream:
             "stop": stop_words,
             "presence_penalty": kwargs['presence_penalty'],
             "frequency_penalty": kwargs['frequency_penalty'],
-            "logit_bias":  {},
-            "web_browser": web_browser
+            "logit_bias":  {}
         })
-        resp = requests.post(kwargs['url'], headers=headers,
+        resp = requests.post(kwargs['url'], headers=headers, stream=True,
                              data=request_data, timeout=kwargs['timeout'])
         end_time = time()
         execution_time = end_time - self.time
@@ -204,7 +221,6 @@ class ReasoningStream:
                         chunk["id"] = uid
                         chunk["created"] = created
                         chunk["model"] = model
-                        # print(f"LLM Begin Response: {chunk}")
                         if "choices" in chunk and len(
                                 chunk["choices"]) > 0 and "delta" in chunk["choices"][0] and "content" in chunk["choices"][0]["delta"]:
                             content = chunk["choices"][0]["delta"]["content"]
@@ -226,10 +242,6 @@ class ReasoningStream:
         output = answer[0]
         print(f"Final Answer: {output}")
 
-        end_time = time()
-        execution_time = end_time - self.time
-        print("Execution 得到 FinalAnswer:", execution_time, "seconds")
-
         return output
 
     def parse_latest_plugin_call(self, text):
@@ -237,11 +249,9 @@ class ReasoningStream:
         i = text.rfind('\nAction:')
         j = text.rfind('\nAction Input:')
         k = text.rfind('\nObservation:')
-        if 0 <= i < j:  # If the text has `Action` and `Action input`,
-            if k < j:  # but does not contain `Observation`,
-                # then it is likely that `Observation` is ommited by the LLM,
-                # because the output text may have discarded the stop word.
-                text = text.rstrip() + '\nObservation:'  # Add it back.
+        if 0 <= i < j:  
+            if k < j: 
+                text = text.rstrip() + '\nObservation:'  
             k = text.rfind('\nObservation:')
             plugin_name = text[i + len('\nAction:'): j].strip()
             plugin_args = text[j + len('\nAction Input:'): k].strip()
@@ -249,14 +259,19 @@ class ReasoningStream:
         return plugin_name, plugin_args, text
 
     def call_plugin(self, plugin_name: str, plugin_args: str) -> str:
+        plugin_args = self.extract_json_content(plugin_args)
         if(plugin_name == 'data_retrieval'):
             plugin_args = json.loads(plugin_args)
             user_question = plugin_args["user_question"]
             return data_retrieval(user_question, self.assistant)
         else:
-            tools_client = ToolsActionClient(self.credential_dict)
-            invoke_result = tools_client.invoke(plugin_name, plugin_args)
-            return invoke_result
+            try:
+                tools_client = ToolsActionClient(self.credential_dict)
+                invoke_result = tools_client.invoke(plugin_name, plugin_args)
+                return invoke_result['body']
+            except Exception as e:
+                logger.error(e)
+                return ''
 
     def call_assistant_stream(self):
         self.time = time()
@@ -277,17 +292,18 @@ class ReasoningStream:
             ]
             if(self.datasets):
                 action_tools.append({
-                    'name_for_human': 'local search',
+                    'name_for_human': '本地数据集搜索',
                     'name_for_model': 'data_retrieval',
-                    'description_for_model': 'For information that has been stored locally, local search (data_retrieval) is a more effective knowledge search tool.',
-                    'parameters': "[ { 'name': 'user_question', 'description': 'User input issues', 'required': True, 'schema': {'type': 'string'}, } ]",
+                    'description_for_model': '搜索本地数据集.经常在联网的搜索工具使用之前使用',
+                    'parameters': "[ { 'name': 'user_question', 'description': 'The extracted user questions should be prioritized in vector retrieval.', 'required': True, 'schema': {'type': 'string'}, } ]",
                 })
         except Exception as e:
             logger.error(e)
+
+        self.tool_name_dict = {tool['name_for_model']: tool['name_for_human'] for tool in action_tools}
         end_time = time()
         execution_time = end_time - self.time
         print("Execution  工具构建时间:", execution_time, "seconds")
-
         history = []
         model = model_database.get_model_by_id(assistant.model_id)
         llm_plugin_args = {
