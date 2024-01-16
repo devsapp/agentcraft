@@ -185,7 +185,7 @@ export function AssistantBuilder({ appId }: AssistantProps) {
             form.setValues(initFormValue)
         }
     }, []);
-  
+
     useEffect(() => {
         if (currentAssistant && assistantId) {
             const datasets = currentAssistant?.datasets;
@@ -254,9 +254,9 @@ export function AssistantBuilder({ appId }: AssistantProps) {
                                     const result = await addAssistant(values);
                                     const assistantId = result.id;
                                     if (assistantId) {
-                                        await refreshToken(assistantId);
+                                        const { token } = await refreshToken(assistantId);
                                         window.history.pushState({}, '', `?assistantId=${assistantId}`);
-                                        updateCurrentAssistant(Object.assign({}, values, { id: assistantId }));
+                                        updateCurrentAssistant(Object.assign({}, values, { id: assistantId, token }));
                                     }
                                 }
 

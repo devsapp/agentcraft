@@ -121,12 +121,14 @@ export async function updateAssistant(id: any, payload: AssistantRequestPayload)
 
 export async function refreshToken(assistantId: number) {
 
-    return await request(`/api/assistant/token?assistantId=${assistantId}`, {
+    const res = await request(`/api/assistant/token?assistantId=${assistantId}`, {
         method: "GET",
         headers: {
             "Content-Type": "application/json",
         },
     });
+
+    return  res.data;
 
 
 }
