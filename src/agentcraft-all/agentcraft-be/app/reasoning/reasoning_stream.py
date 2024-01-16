@@ -11,7 +11,6 @@ import app.database.assistant_action_tools as assistant_action_tools_database
 from app.reasoning.retrieval import data_retrieval, llm_retrieval_instruction_stream
 from app.common.logger import logger
 from app.reasoning.tools_client import ToolsActionClient
-
 DONE = "[DONE]"
 DEFAULT_INSTRUCTION = "You are a helpful assistant."
 
@@ -70,7 +69,7 @@ class ReasoningStream:
         result = yield from self.text_completion(
             input_text, **kwargs)
         return result
-
+    
     def llm_with_plugin(self, prompt: str, list_of_plugin_info=(), **kwargs):
         created = kwargs['created']
         uid = kwargs['uid']

@@ -372,7 +372,7 @@ export function DetailPage({ appId, knowledgeBaseId }: DetailPageProps) {
     return (
         <Box pos="relative" >
             <LoadingOverlay visible={loading} overlayOpacity={0.3} />
-            <Breadcrumbs>{items}</Breadcrumbs>
+            {/* <Breadcrumbs>{items}</Breadcrumbs> */}
             <FeatureDescription title="知识库详情" description="您可以查看修改知识库内容，以及查看API调用" />
             <ChatDrawer />
             <Flex

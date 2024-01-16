@@ -1,9 +1,6 @@
-
-
-
 import { Box, Drawer, Flex, Title, Text } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
-
+import styles from './index.module.scss';
 type FeatureDescriptionProps = {
     title: string,
     description?: string,
@@ -28,7 +25,7 @@ function InfoDetail({ detail, title }: { detail?: string, title: string }) {
 export default function FeatureDescription(props: FeatureDescriptionProps) {
 
     const { title, description, detail, mt, mb } = props;
-    return <Box mt={mt || 24} mb={mb || 24}>
+    return <Box pt={36} className={styles['feature-description']}>
         <Flex
             mih={20}
             gap="md"
@@ -37,10 +34,10 @@ export default function FeatureDescription(props: FeatureDescriptionProps) {
             direction="row"
             wrap="wrap"
         >
-            <Title order={2}>{title}</Title>
+            <Title className={styles['title']}>{title}</Title>
             <InfoDetail title={title} detail={detail} />
         </Flex>
-        {description ? <Text lineClamp={4}>
+        {description ? <Text lineClamp={4} className={styles['description']}> 
             {description}
         </Text> : null}
     </Box>

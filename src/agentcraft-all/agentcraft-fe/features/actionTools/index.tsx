@@ -207,7 +207,7 @@ export function ActionToolsPage() {
 
     return (
         <>
-            <Breadcrumbs>{items}</Breadcrumbs>
+            {/* <Breadcrumbs>{items}</Breadcrumbs> */}
             <FeatureDescription title="执行工具" description="执行工具是Agent能力非常核心的部分，当你需要进行高级功能的Agent开发，执行工具是必不可少的" />
             <Box mt={12} >
                 <Button onClick={() => {

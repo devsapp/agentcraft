@@ -103,7 +103,7 @@ export function ClientAccess() {
 
     return (
         <>
-            <Breadcrumbs>{items}</Breadcrumbs>
+            {/* <Breadcrumbs>{items}</Breadcrumbs> */}
             <FeatureDescription title="客户端接入" description="AgentCraft可以通过构建客户端接入服务，帮助您将智能服务接入到独立的web服务， 钉钉，微信机器人，以及嵌入您的网站" />
             <Box >
                 <Flex

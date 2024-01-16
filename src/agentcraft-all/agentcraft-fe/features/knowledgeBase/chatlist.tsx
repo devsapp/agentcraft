@@ -117,7 +117,7 @@ export function ChatListPage({ appId, knowledgeBaseId }: ChatListPageProps) {
 
     return (
         <Box pos="relative" >
-            <Breadcrumbs>{items}</Breadcrumbs>
+            {/* <Breadcrumbs>{items}</Breadcrumbs> */}
             <FeatureDescription title="问答记录" description="您可以在此查看该知识库的问答历史记录" />
             <List knowledgeBaseId={knowledgeBaseId} />
         </Box>

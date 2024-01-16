@@ -303,7 +303,7 @@ export function Datasource() {
     const setOpenUploadModel = useDataSourceStore().setOpenUploadModel;
     return (
         <>
-            <Breadcrumbs>{items}</Breadcrumbs>
+            {/* <Breadcrumbs>{items}</Breadcrumbs> */}
             <Box mt={12} >
                 <Flex
                     mih={50}

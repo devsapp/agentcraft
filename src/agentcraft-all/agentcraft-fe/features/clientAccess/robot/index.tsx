@@ -178,7 +178,7 @@ export function Robot() {
 
     return (
         <>
-            <Breadcrumbs>{items}</Breadcrumbs>
+            {/* <Breadcrumbs>{items}</Breadcrumbs> */}
             <FeatureDescription title="机器人接入" description="将智能体服务接入机器人" />
             <Stepper active={activeStep} onStepClick={setActiveStep}>
                 <Stepper.Step label="配置机器人服务" description="" loading={robotStepStatus.robot_proxy_service_create_loading}>

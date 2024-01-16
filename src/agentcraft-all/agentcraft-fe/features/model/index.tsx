@@ -178,7 +178,7 @@ export function ModelPage() {
     const setEditStatus = useModelStore().setEditStatus;
     return (
         <>
-            <Breadcrumbs>{items}</Breadcrumbs>
+            {/* <Breadcrumbs>{items}</Breadcrumbs> */}
             <FeatureDescription title="LLM代理" description="AgentCraft的LLM代理是基于基础大语言模型服务比如通义千问等构建出的一个代理层服务，主要是为了抹平不同模型服务之间的接口数据差异，方便在业务中快速切换更加适合的模型服务" />
             <Box mt={12} >
                 <Button onClick={() => { setEditStatus(false); setOpen(true) }}>

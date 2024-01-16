@@ -4,11 +4,14 @@ import Head from "next/head";
 import { MantineProvider } from "@mantine/core";
 import { ModalsProvider } from '@mantine/modals';
 import { Notifications } from '@mantine/notifications';
-import { Shell } from 'layouts/shell';
-import { useSystemConfigStore, getSystemConfig } from '@/store/systemConfig';
-import { SystemConfig } from '@/features/systemConfig';
+import { Main } from 'layouts/shell';
+import { useSystemConfigStore, getSystemConfig } from 'store/systemConfig';
+import { SystemConfig } from 'features/systemConfig';
+import THEME from './theme';
+
 import '../styles/global.scss';
 import '../styles/markdown.scss';
+
 
 
 export default function App(props: AppProps) {
@@ -18,7 +21,7 @@ export default function App(props: AppProps) {
   useEffect(() => {
     setRender(true);
     getSystemConfig();
-  },[]);
+  }, []);
   return (
     <>
       <Head>
@@ -33,16 +36,15 @@ export default function App(props: AppProps) {
       <MantineProvider
         withGlobalStyles
         withNormalizeCSS
-        theme={{
-          colorScheme: "dark",
-        }}
+        theme={THEME}
       >
         <Notifications />
         {render ?
           <ModalsProvider>
-            {!hiddenConfigView ? < SystemConfig /> : <Shell >
+            {!hiddenConfigView ? < SystemConfig /> : <Main><Component {...pageProps} /></Main>}
+            {/* {!hiddenConfigView ? < SystemConfig /> : <Shell >
               <Component {...pageProps} />
-            </Shell>}
+            </Shell>} */}
           </ModalsProvider> : null}
       </MantineProvider>
     </>

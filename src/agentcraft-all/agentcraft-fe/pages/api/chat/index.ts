@@ -1,21 +1,21 @@
 import { Readable } from "stream";
 import { NextApiRequest, NextApiResponse } from "next";
-
-import { ChatOptions } from '@/types/chat';
+import { getTokenFromRequest } from 'utils/token';
+import { ChatOptions } from 'types/chat';
 
 const baseUrl = process.env.baseUrl;
 export default async function handle(req: NextApiRequest, res: NextApiResponse) {
-
+    const token = getTokenFromRequest(req);
     const data: ChatOptions & { token: string } = req.body;
     const { version = 'v1' } = req.query;
-    const { token, ...payload } = data;
+    const { ...payload } = data;
     const { messages, config } = payload;
     const { ...chatData } = config;
     const response: any = await fetch(`${baseUrl}/${version}/chat/completions`, {
         method: "POST",
         headers: {
             "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
+            Authorization: `${token}`,
 
         },
         body: JSON.stringify(Object.assign({}, chatData, { messages })),

@@ -150,7 +150,7 @@ export function DataSetPage() {
 
     return (
         <>
-            <Breadcrumbs>{items}</Breadcrumbs>
+            {/* <Breadcrumbs>{items}</Breadcrumbs> */}
             <FeatureDescription title="数据集" description="AgentCraft中的数据集是对业务数据的高层抽象，您可以构建多个业务场景的数据集，并将他们进行知识库的关联"/>
             <Box mt={12} >
                 <Button onClick={() => setOpen(true)}>

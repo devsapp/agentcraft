@@ -1,7 +1,9 @@
 import { useRouter } from 'next/router';
-import { Navbar, NavLink, Center, ActionIcon, Divider } from '@mantine/core';
+import { Navbar, NavLink, Center, ActionIcon, Box, Divider } from '@mantine/core';
 import { IconBrandGithubFilled } from '@tabler/icons-react';
-import { IconHome2, IconArrowBackUp, IconApps, IconVocabulary, IconServer, IconDatabasePlus, IconTrowel, IconRowInsertTop, IconDevicesPc, IconAlien } from '@tabler/icons-react';
+import { IconHome2, IconArrowBackUp, IconApps, IconVocabulary, IconServer, IconDatabasePlus, IconTrowel, IconRowInsertTop, IconDevicesPc } from '@tabler/icons-react';
+import { WorkSpace } from 'features/application/workspace';
+import { PageProps } from 'types/page';
 import styles from './index.module.scss';
 interface NavItem {
     name?: string,
@@ -34,12 +36,11 @@ const flattenNavItems = (result: { [key: string]: NavItem }, navItems: NavItem[]
     }, result);
 };
 
-export const Nav = () => {
+export const Nav = (props: PageProps) => {
     const router = useRouter();
     const { pathname, query } = router;
-    const id: any = query.id;
+    let id: any = query.id;
     const knowledgeBaseId: any = query.knowledgeBaseId;
-
     const handleClick = (path: string) => {
         router.push(`${path.replace('[id]', id).replace('[knowledgeBaseId]', knowledgeBaseId)}`)
     };
@@ -50,39 +51,52 @@ export const Nav = () => {
             icon: <IconHome2 size="1rem" stroke={1.5} />,
         },
         {
-            name: "应用",
-            path: "/app",
+            name: "智能体",
+            path: "/agent",
             icon: <IconApps size="1rem" stroke={1.5} />,
-            subNav: [{
-                name: "知识库",
-                path: "/app/[id]/knowledgeBase",
-                icon: <IconVocabulary size="1rem" stroke={1.5} />,
-                subNav: [{
-                    name: "知识库信息",
-                    path: "/app/[id]/knowledgeBase/[knowledgeBaseId]/detail",
-                    icon: <IconHome2 size="1rem" stroke={1.5} />,
-                }, {
-                    name: "知识库系统记录",
-                    path: "/app/[id]/knowledgeBase/[knowledgeBaseId]/chatlist",
-                    icon: <IconHome2 size="1rem" stroke={1.5} />,
-                }]
-            },
-            {
-                name: "智能助手",
-                path: "/app/[id]/assistant",
-                icon: <IconVocabulary size="1rem" stroke={1.5} />,
-                subNav: [{
-                    name: "智能助手信息",
-                    path: "/app/[id]/assistant/[assistantId]/detail",
-                    icon: <IconHome2 size="1rem" stroke={1.5} />,
-                }, {
-                    name: "智能助手系统记录",
-                    path: "/app/[id]/assistant/[assistantId]/chatlist",
-                    icon: <IconHome2 size="1rem" stroke={1.5} />,
-                }]
-            },
+            subNav: [
+                {
+                    name: "智能助手",
+                    path: "/agent/[id]/assistant/builder",
+                    icon: <IconVocabulary size="1rem" stroke={1.5} />,
+                }
             ]
         },
+        // {
+        //     name: "应用",
+        //     path: "/app",
+        //     icon: <IconApps size="1rem" stroke={1.5} />,
+        //     subNav: [
+        //         {
+        //             name: "知识库",
+        //             path: "/app/[id]/knowledgeBase",
+        //             icon: <IconVocabulary size="1rem" stroke={1.5} />,
+        //             subNav: [{
+        //                 name: "知识库信息",
+        //                 path: "/app/[id]/knowledgeBase/[knowledgeBaseId]/detail",
+        //                 icon: <IconHome2 size="1rem" stroke={1.5} />,
+        //             }, {
+        //                 name: "知识库系统记录",
+        //                 path: "/app/[id]/knowledgeBase/[knowledgeBaseId]/chatlist",
+        //                 icon: <IconHome2 size="1rem" stroke={1.5} />,
+        //             }]
+        //         },
+        //         {
+        //             name: "智能助手",
+        //             path: "/app/[id]/assistant",
+        //             icon: <IconVocabulary size="1rem" stroke={1.5} />,
+        //             subNav: [{
+        //                 name: "智能助手信息",
+        //                 path: "/app/[id]/assistant/[assistantId]/detail",
+        //                 icon: <IconHome2 size="1rem" stroke={1.5} />,
+        //             }, {
+        //                 name: "智能助手系统记录",
+        //                 path: "/app/[id]/assistant/[assistantId]/chatlist",
+        //                 icon: <IconHome2 size="1rem" stroke={1.5} />,
+        //             }]
+        //         }
+        //     ]
+        // },
         {
             name: "数据集",
             path: "/dataset",
@@ -111,7 +125,7 @@ export const Nav = () => {
             path: '/divider4',
             type: 'divider',
         },
-        
+
         {
             name: "基础模型",
             path: "/foundationModel",
@@ -128,7 +142,7 @@ export const Nav = () => {
                 icon: <IconHome2 size="1rem" stroke={1.5} />,
             }]
         },
-        
+
         {
             path: '/divider2',
             type: 'divider',
@@ -158,7 +172,7 @@ export const Nav = () => {
             path: '/divider3',
             type: 'divider',
         },
-       
+
         // {
         //     path: '/divider',
         //     type: 'divider',
@@ -173,22 +187,23 @@ export const Nav = () => {
     const navItemsMap = flattenNavItems({}, navItems);
 
     const currentNav: NavItem = navItemsMap[pathname] || {};
-    let renderNavList: NavItem[] = [];
-    if (currentNav.solo) {
-        renderNavList = [currentNav]; // 只有一个
-    } else {
-        renderNavList = Object.keys(navItemsMap).filter((key) => {
-            const navItem = navItemsMap[key];
-            return navItem.level === currentNav.level && navItem.parentPath === currentNav.parentPath;
-        }).map((key) => {
-            return navItemsMap[key];
-        })
-    }
+    let renderNavList: NavItem[] = navItems;
 
-
+    // if (currentNav.solo) {
+    //     renderNavList = [currentNav]; // 只有一个
+    // } else {
+    //     renderNavList = Object.keys(navItemsMap).filter((key) => {
+    //         const navItem = navItemsMap[key];
+    //         return navItem.level === currentNav.level && navItem.parentPath === currentNav.parentPath;
+    //     }).map((key) => {
+    //         return navItemsMap[key];
+    //     })
+    // }
+    const parentPath = currentNav.parentPath as string;
     return (
-        <Navbar className="navbar" width={{ base: 240 }} p="xs">
-            {currentNav.parentPath ?
+        <Navbar className={styles.navbar} width={{ base: parentPath ? 72 : 220 }} p="xs">
+            <WorkSpace {...props} parentPath={parentPath} />
+            {/* {currentNav.parentPath ?
                 <Center h={40} mx="auto">
                     <ActionIcon onClick={() => {
                         let parentPath = currentNav.parentPath?.replace('[id]', id).replace('[knowledgeBaseId]', knowledgeBaseId) || '';
@@ -196,22 +211,34 @@ export const Nav = () => {
                     }}>
                         <IconArrowBackUp />
                     </ActionIcon>
-                </Center> : null}
+                </Center> : null} */}
             {renderNavList.map((item: NavItem) => {
                 if (item.type === 'divider') {
+                    if (parentPath) {
+                        return null;
+                    }
                     return <Divider mt={8} mb={8} key={item.path} />
                 } else {
+                    if (parentPath) {
+                        return <NavLink key={item.path}
+                            label={null}
+                            icon={<Box pl={6}>{item.icon}</Box>}
+                            variant="filled"
+                            onClick={() => handleClick(item.path)}
+                            active={item.path.indexOf(parentPath) === 0 ? true : false}
+                        />
+                    }
                     return <NavLink key={item.path}
-                        label={item.name}
+                        label={<Box pl={12}>{item.name}</Box>}
                         icon={item.icon}
                         variant="filled"
                         onClick={() => handleClick(item.path)}
-                        active={pathname === item.path ? true : false} />
+                        active={(pathname === item.path) ? true : false} />
                 }
             })}
-            <div className={styles['nav-bottom-config']} >
+            {/* <div className={styles['nav-bottom-config']} >
                 <IconBrandGithubFilled color='white' className={styles['git']} />
-            </div>
+            </div> */}
         </Navbar>
     )
 }

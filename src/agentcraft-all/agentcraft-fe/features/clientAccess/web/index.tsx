@@ -95,7 +95,7 @@ export function Web() {
 
     return (
         <>
-            <Breadcrumbs>{items}</Breadcrumbs>
+            {/* <Breadcrumbs>{items}</Breadcrumbs> */}
             <FeatureDescription title="Web独立站" description="构建独立的Web站点提供智能体服务" />
             <Stepper active={activeStep} onStepClick={setActiveStep}>
                 <Stepper.Step label="独立站点配置" description="" loading={robotStepStatus.robot_proxy_service_create_loading}>

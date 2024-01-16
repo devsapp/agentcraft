@@ -1,6 +1,6 @@
 
 export const SYSTEM_AGENTCRAFT_PREFIX = 'SYSTEM_AGPENTCRAFT';  // AgentCraft的核心服务
-
+export const DEFAULT_EMBEDDING_DIM = 1024; //默认向量维度
 export const AGENTCRAFT_SERVICE = 'AgentCraftService';
 export const AGENTCRAFT_FUNCTION = 'AgentCraftFunction';
 export const EMBEDDING_TEMPLATE_NAME = 'fc-embedding-api';

@@ -236,7 +236,7 @@ export function AssistantBuilder({ appId }: AssistantProps) {
                 <Flex justify={'space-between'} align={'center'} h={'100%'} >
                     <Flex align={'center'} h={'100%'} >
                         <ActionIcon onClick={() => {
-                            router.push(pathname.replace('/builder', '').replace('[id]', appId))
+                            router.push('/agent')
                         }}>
                             <IconArrowBackUp />
                         </ActionIcon>

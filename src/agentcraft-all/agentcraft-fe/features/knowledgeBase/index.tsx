@@ -470,7 +470,7 @@ export function KnowledgeBasePage({ appId }: KnowledgeBaseProps) {
     return (
         <div style={{ position: 'relative' }} >
             <LoadingOverlay visible={loading} overlayOpacity={0.3} />
-            <Breadcrumbs>{items}</Breadcrumbs>
+            {/* <Breadcrumbs>{items}</Breadcrumbs> */}
             <FeatureDescription title="知识库" description="知识库专注于传授知识，利用LLM对自然语言进行认知，结合RAG(Retrieval-Augmented Generation 检索增强生成)技术来将领域的信息进行有效的整合，然后通过图片，视频，可交互组件完成知识交付，" />
             <Box  >
                 <Button onClick={() => {
