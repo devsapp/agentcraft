@@ -3,27 +3,25 @@ import { useRouter } from 'next/router';
 import Link from 'next/link';
 import { Center, ActionIcon, Tooltip, Spoiler, Breadcrumbs, Anchor, Button, Checkbox, Box, Table, TextInput, Text, Highlight, Switch, Group, Badge, MultiSelect, Select, Drawer, LoadingOverlay, Modal, Textarea, Flex, NumberInput, Paper, Title, Divider } from '@mantine/core';
 import { useForm } from '@mantine/form';
-import { modals } from '@mantine/modals';
-import { IconRefresh, IconArrowBackUp } from '@tabler/icons-react';
+
+import { IconRefresh } from '@tabler/icons-react'; 
 import { getModelList, useModelStore } from 'store/model';
 import { getDataSetList, useDataSetStore } from 'store/dataset';
-import { formatDateTime } from 'utils/index';
+
 import { Model } from 'types/model';
 import { DataSet, DataSetType } from 'types/dataset';
-import FeatureDescription from 'components/FeatureDescription';
-import { getToolList, useActionToolStore } from 'store/actionTools';
-import { AssistantResponseData } from 'types/assistant';
-import { DATA_RETRIVAL_PROMPT_TEMPLATE } from 'constants/instructions';
-import { getKnowledgeBaseList, useKnowledgeBaseStore, addKnowledgeBase, refreshToken, updateKnowledgeBase, getKnowledgeBase } from 'store/knowledgeBase';
-import { KnowledgeBaseResponseData, Dataset } from 'types/knowledgeBase';
+
+import { useKnowledgeBaseStore, addKnowledgeBase, refreshToken, updateKnowledgeBase, getKnowledgeBase } from 'store/knowledgeBase';
+import {  Dataset } from 'types/knowledgeBase';
 import { PROMPT_TEMPLATE } from 'constants/index';
-import { INSTRUCTION_TEMPLATES, DEFAULT_KNOWLEDGE_BAE_INSTRUCTION } from 'constants/instructions'
+import { INSTRUCTION_TEMPLATES, DEFAULT_CHAT_INSTRUCTION } from 'constants/instructions'
 import KnowledgeBaseChat from 'features/knowledgeBase/chat';
 
 enum ContainerType {
     ADD_OR_UPDATE = 1, // 增加和修改
     CHAT = 2, // 问答
 }
+
 interface AssistantProps {
     workspaceId: any;
 }
@@ -45,10 +43,10 @@ export function KnowledgeBaseForm({ workspaceId, form }: { workspaceId: any, for
         <Paper shadow="xs" p="md" withBorder mt={12}>
             <Title order={5} size="h5">调试指令</Title>
             <Box pl={4} pr={4} >
-                {/* <Select
+                <Select
                     data={INSTRUCTION_TEMPLATES}
                     description=""
-                    defaultValue={DEFAULT_KNOWLEDGE_BAE_INSTRUCTION}
+                    defaultValue={DEFAULT_CHAT_INSTRUCTION}
                     {...form.getInputProps('system_message')}
                     label="指令示例"
                     placeholder=""
@@ -57,7 +55,7 @@ export function KnowledgeBaseForm({ workspaceId, form }: { workspaceId: any, for
                             system_message: value
                         })
                     }}
-                /> */}
+                />
                 <Textarea label="系统指令" placeholder="输入系统指令" {...form.getInputProps('system_message')} minRows={12} description="系统提示词可以作为对大语言模型的约束指令" />
                 {/* <TextInput label="停止提示词" placeholder="停止输出的token" {...form.getInputProps('stop')} /> */}
             </Box>
@@ -87,7 +85,7 @@ export function KnowledgeBaseForm({ workspaceId, form }: { workspaceId: any, for
                 <IconRefresh cursor={'pointer'} onClick={getDataSetList} />
             </Flex>
             <Box pl={4} pr={4} >
-                <Textarea withAsterisk label="召回提示词模板" placeholder="" {...form.getInputProps('prompt_template')} minRows={6} description="召回提示词模板可以将检索的结果context和用户的输入query整合到一起，最后整体输入给大语言模型" />
+                <Textarea label="召回提示词模板" placeholder="" {...form.getInputProps('prompt_template')} minRows={6} description="召回提示词模板可以将检索的结果context和用户的输入query整合到一起，最后整体输入给大语言模型" />
                 {/* <TextInput label="停止提示词" placeholder="停止输出的token" {...form.getInputProps('stop')} /> */}
             </Box>
             <Divider my="sm" />
@@ -95,7 +93,6 @@ export function KnowledgeBaseForm({ workspaceId, form }: { workspaceId: any, for
             <Box pl={4} pr={4} >
                 <Group grow>
                     <MultiSelect
-                        withAsterisk
                         data={documentSelectData}
                         description="文档数据集用来做模型检索"
                         label="文档数据集"
@@ -130,7 +127,7 @@ export function KnowledgeBaseForm({ workspaceId, form }: { workspaceId: any, for
 export function BuilderForm({ workspaceId }: AssistantProps) {
     const router = useRouter();
     const { query } = router;
-    const knowledgeBaseId = query.knowledgeBaseId;
+    const instructionChatId = query.instructionChatId;
     const { setLoading, currentKnowledgeBase, updateCurrentKnowledgeBase } = useKnowledgeBaseStore();
     const modelList: Model[] = useModelStore().modelList;
     const initFormValue = {
@@ -155,23 +152,22 @@ export function BuilderForm({ workspaceId }: AssistantProps) {
         redis_history_ex: 0,
         model_ip_limit: 0,
         llm_history_len: 0,
-        system_message: DEFAULT_KNOWLEDGE_BAE_INSTRUCTION,
+        system_message: DEFAULT_CHAT_INSTRUCTION,
         exact_search_limit: 1,
         fuzzy_search_limit: 3
     }
     const form: any = useForm({
         initialValues: initFormValue,
         validate: {
-            name: (value) => (!value ? '智能助手名必填' : null),
-            prompt_template: (value) => (!value ? '召回提示词必填' : null)
+            name: (value) => (!value ? '问答名必填' : null)
         },
     });
     useEffect(() => {
         getModelList();
         getDataSetList();
-        if (knowledgeBaseId) {
+        if (instructionChatId) {
             (async () => {
-                const knowledgeBase = await getKnowledgeBase(knowledgeBaseId);
+                const knowledgeBase = await getKnowledgeBase(instructionChatId);
                 updateCurrentKnowledgeBase(knowledgeBase);
             })()
         } else {
@@ -180,7 +176,7 @@ export function BuilderForm({ workspaceId }: AssistantProps) {
     }, []);
 
     useEffect(() => {
-        if (currentKnowledgeBase && knowledgeBaseId) {
+        if (currentKnowledgeBase && instructionChatId) {
             const datasets = currentKnowledgeBase?.datasets;
             form.setValues({
                 id: currentKnowledgeBase?.id,
@@ -245,16 +241,15 @@ export function BuilderForm({ workspaceId }: AssistantProps) {
                             if (form.isValid()) {
                                 setLoading(true);
                                 const values: any = form.values;
-                                if (knowledgeBaseId) {
-                                    await updateKnowledgeBase(knowledgeBaseId, values);
+                                if (instructionChatId) {
+                                    await updateKnowledgeBase(instructionChatId, values);
                                 } else {
                                     const result = await addKnowledgeBase(values);
-                                    const knowledgeBaseId = result.id;
-                                    if (knowledgeBaseId) {
-                                        const { token } = await refreshToken(knowledgeBaseId);
-                                        console.log(token,'token');
-                                        window.history.pushState({}, '', `?knowledgeBaseId=${knowledgeBaseId}`);
-                                        updateCurrentKnowledgeBase(Object.assign({}, values, { id: knowledgeBaseId, token }));
+                                    const instructionChatId = result.id;
+                                    if (instructionChatId) {
+                                        const { token } = await refreshToken(instructionChatId);
+                                        window.history.pushState({}, '', `?instructionChatId=${instructionChatId}`);
+                                        updateCurrentKnowledgeBase(Object.assign({}, values, { id: instructionChatId, token }));
                                     }
                                 }
 

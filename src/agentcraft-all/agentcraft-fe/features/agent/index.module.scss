@@ -15,7 +15,7 @@
     padding: 12px;
     cursor: pointer;
     &:hover {
-        background: rgba(241, 236, 253, 0.5);
+        box-shadow: 2px 4px 7px 3px rgba(127, 105, 196, 0.1);
     }
 
     .agent-delete-btn {
@@ -82,11 +82,11 @@
 }
 
 .agent-model {
-    width: 546px;
+    width: 760px;
     height: 242px;
 
     .agent-name-input {
-        width: 438px;
+        width: 664px;
     }
 
     .agent-footer-btn {

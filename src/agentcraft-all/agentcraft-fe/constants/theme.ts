@@ -1,5 +1,3 @@
-import { ButtonStylesParams } from '@mantine/core';
-
 const THEME: any = {
     colorScheme: "light",
     colors: {
@@ -58,7 +56,7 @@ const THEME: any = {
             }
         },
         Button: {
-            styles: (theme: any, params: ButtonStylesParams, { variant }: any) => ({
+            styles: (theme: any, params: any, { variant }: any) => ({
                 root: {
                     height: 32,
                     // backgroundColor:

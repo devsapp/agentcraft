@@ -85,7 +85,6 @@ const LoginPage = () => {
                         {...form.getInputProps('password')}
                     />
                     <Button
-                        color="blue"
                         fullWidth
                         style={{ marginTop: '1rem' }}
                         onClick={() => { handleSubmit() }}

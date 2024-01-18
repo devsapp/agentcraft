@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
 import { useRouter } from 'next/router';
-import Link from 'next/link'
 import { Button, Box, Flex, TextInput, Text, Highlight, LoadingOverlay, Radio, Divider, Modal } from '@mantine/core';
 import { IconPlus, IconTrash } from '@tabler/icons-react';
 import { modals } from '@mantine/modals';
@@ -9,6 +8,7 @@ import { getAssistantList, useAssistantStore, deleteAssistant } from 'store/assi
 import { useAgentStore } from 'store/agent';
 import FeatureDescription from 'components/FeatureDescription';
 import { KnowledgeBaseResponseData } from 'types/knowledgeBase';
+import { Assistant } from 'types/assistant';
 import CopyToClipboard from 'components/CopyToClipboard';
 
 
@@ -27,11 +27,12 @@ type IAgentItem = {
     modified: string,
     capabilities: any[],
     id: number,
-    type: 'assistant' | 'knowledgeBase'
+    type: 'assistant' | 'knowledgeBase' | 'instructionChat'
 }
 const AGENT_TAG_MAP = {
     'assistant': '智能助手',
-    'knowledgeBase': '知识库问答'
+    'knowledgeBase': '知识库',
+    'instructionChat': '简单问答'
 }
 
 function AgentCard({ data, workspaceId, onDelete, router }: { data: IAgentItem, workspaceId: any, onDelete: any, router: any }) {
@@ -72,7 +73,7 @@ function List(props: any) {
         const { id, name } = assistant;
         const deleteContent = `确定删除 ${name}?`;
         modals.openConfirmModal({
-            title: '删除知识智能助手',
+            title: '删除',
             centered: true,
             children: (
                 <Text size="sm">
@@ -95,7 +96,7 @@ function List(props: any) {
         const { id, name } = knowledgeBase;
         const deleteContent = `确定删除 ${name}?`;
         modals.openConfirmModal({
-            title: '删除知识知识库',
+            title: '删除',
             centered: true,
             children: (
                 <Text size="sm">
@@ -132,7 +133,7 @@ function List(props: any) {
             type: 'assistant'
         };
     })
-    const _knowledgeBaseList: IAgentItem[] = knowledgeBaseList.map((item) => {
+    const _knowledgeBaseList: IAgentItem[] = knowledgeBaseList.filter((item) => item.prompt_template).map((item) => {
         return {
             id: item.id,
             key: `knowledgeBase-${item.id}`,
@@ -144,7 +145,21 @@ function List(props: any) {
             type: 'knowledgeBase'
         };
     });
-    const _list: IAgentItem[] = _assistantList.concat(_knowledgeBaseList);
+    const _instructionChatList: IAgentItem[] = knowledgeBaseList.filter((item) => !item.prompt_template).map((item) => {
+        return {
+            id: item.id,
+            key: `instructionChat-${item.id}`,
+            name: item.name,
+            instruction: item.system_message,
+            created: item.created,
+            modified: item.modified,
+            capabilities: [],
+            type: 'instructionChat'
+        };
+    });
+    const _list: IAgentItem[] = _assistantList.concat(_knowledgeBaseList).concat(_instructionChatList).sort((a:IAgentItem, b: IAgentItem) => {
+        return new Date(b.created).getTime() - new Date(a.created).getTime();
+    });
     return (
         <Box pos="relative" >
             <LoadingOverlay visible={false} overlayOpacity={0.3} />
@@ -172,17 +187,22 @@ function List(props: any) {
 
 function ChooseAgentDialog(props: any) {
     const { open, setOpen } = useAgentStore();
-    const [agentType, setAgentType] = useState('assistant');
+    const [agentType, setAgentType] = useState('instructionChat');
+    const { updateCurrentAssistant } = useAssistantStore();
     const router = useRouter();
     const { workspaceId } = props;
     const agentTypeList = [{
+        label: '简单问答',
+        value: 'instructionChat',
+        description: '直接提问或者设定指令问答'
+    }, {
+        label: '知识库',
+        value: 'knowledgeBase',
+        description: '基于专有知识库的问答'
+    }, {
         label: '智能助手',
         value: 'assistant',
         description: '调用多种工具，完成进阶任务'
-    }, {
-        label: '知识问答',
-        value: 'knowledgeBase',
-        description: '基于专有知识库的问答'
     }]
     return (
         <Modal opened={open} onClose={() => { setOpen(false) }} title={<div className={styles['agent-container-title']}>新建智能体</div>} centered size="auto">
@@ -194,7 +214,7 @@ function ChooseAgentDialog(props: any) {
                             agentTypeList.map((item) =>
                                 <Box className={`${styles['agent-tag']} ${item.value === agentType ? styles['active'] : ''}`} key={item.value} onClick={() => { setAgentType(item.value) }}>
                                     <Flex >
-                                        <Radio mr={5} checked={item.value === agentType} size='xs' />
+                                        <Radio mr={5} checked={item.value === agentType} size='xs' onChange={(value: any) => { }} />
                                         <Box mt={-4}>
                                             <Text className={styles['agent-type-name']}>{item.label}</Text>
                                             <Text className={styles['agent-type-desc']}>{item.description}</Text>
@@ -213,10 +233,13 @@ function ChooseAgentDialog(props: any) {
                 <Flex justify={'flex-end'}>
                     <Box>
                         <Button mr={8} className={styles['agent-footer-btn']} color="#FFF" onClick={() => {
+                            updateCurrentAssistant({} as Assistant);
                             if (agentType === 'assistant') {
-                                router.push(`/agent/${workspaceId}/assistant`)
-                            } else {
-                                router.push(`/agent/${workspaceId}/knowledgeBase`)
+                                router.push(`/agent/${workspaceId}/assistant`);
+                            } else if(agentType === 'knowledgeBase') {
+                                router.push(`/agent/${workspaceId}/knowledgeBase`);
+                            } else if(agentType === 'instructionChat') {
+                                router.push(`/agent/${workspaceId}/instructionChat`);
                             }
                             setOpen(false);
                         }}>确定</Button>

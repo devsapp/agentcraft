@@ -7,7 +7,7 @@ import { Notifications } from '@mantine/notifications';
 import { Main } from 'layouts/shell';
 import { SystemConfig } from 'features/systemConfig';
 import { useSystemConfigStore, getSystemConfig } from 'store/systemConfig';
-import THEME from './theme';
+import THEME from 'constants/theme';
 import '../styles/global.scss';
 import '../styles/markdown.scss';
 

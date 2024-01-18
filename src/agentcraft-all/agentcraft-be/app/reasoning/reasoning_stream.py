@@ -260,7 +260,12 @@ class ReasoningStream:
                         print(err)
 
         output = answer[0]
-        print(f"Output: {output}")
+        action, action_input, output_inner = self.parse_latest_plugin_call(
+                output)
+        if(action == '' and know_anwser == False): #无法触发 Final Answer 但又确实推理出结果的时候
+            reveal_all["choices"][0]["delta"]["content"] = output_inner
+            yield json.dumps(reveal_all)
+            (f"Output: {output_inner}")
         return output
 
     def parse_latest_plugin_call(self, text):

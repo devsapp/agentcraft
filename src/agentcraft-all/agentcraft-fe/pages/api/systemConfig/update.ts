@@ -20,13 +20,14 @@ export default async function handler(
         const functionInfo = result?.body || {};
         const environmentVariables = functionInfo.environmentVariables;
         const completeEnvs = Object.assign({}, environmentVariables, env);
-        completeEnvs.EMBEDDING_DIM = DEFAULT_EMBEDDING_DIM;
+        completeEnvs.EMBEDDING_DIM = `${DEFAULT_EMBEDDING_DIM}`;
         const updateResult = await serverlessBridgeService.updateFunctionV3(functionName, {
             environmentVariables: completeEnvs
         });
         data.data = updateResult.body;
 
     } catch (e: any) {
+        console.log(e)
         status = 500;
         data.code = status;
         data.error = e.message

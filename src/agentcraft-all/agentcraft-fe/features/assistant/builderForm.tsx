@@ -230,59 +230,60 @@ export function BuilderForm({ workspaceId }: AssistantProps) {
     }, [modelList]);
     const modelSelectData: any = modelList.map((item: Model) => { return { label: item.name_alias, value: item.id } });
     return (<Flex h={'100%'} style={{ overflow: 'hidden' }}>
-    <Box w="50%" h="100%" style={{ borderRight: '1px solid rgba(217,217,227,.15)' }}>
-        <Center maw={'100%'} h={38} mx="auto" pos={'relative'} mt={12} mb={12} >
-            <Box style={{ position: 'absolute', top: 0, left: 0, bottom: 0 }}>
-                <Flex justify={'flex-start'} align={'center'}>
-                    <Select
-                        ml={8}
-                        mr={8}
-                        withAsterisk
-                        data={modelSelectData}
-                        placeholder=""
-                        variant="unstyled"
-                        {...form.getInputProps('model_id')}
-                    />
-                    <IconRefresh cursor={'pointer'} onClick={getModelList} />
-                </Flex>
-            </Box >
-            <Text fw={700}>配置</Text>
-            <Box style={{ position: 'absolute', top: 0, right: 0 }}>
-                <Flex justify={'flex-end'} align={'center'}>
-                    <Button h={32} mr={12} onClick={async () => {
-                        form.validate();
-                        if (form.isValid()) {
-                            setLoading(true);
-                            const values: any = form.values;
-                            if (assistantId) {
-                                await updateAssistant(assistantId, values);
-                            } else {
-                                const result = await addAssistant(values);
-                                const assistantId = result.id;
-                                if (assistantId) {
-                                    const { token } = await refreshToken(assistantId);
-                                    window.history.pushState({}, '', `?assistantId=${assistantId}`);
-                                    updateCurrentAssistant(Object.assign({}, values, { id: assistantId, token }));
+        <Box w="50%" h="100%" style={{ borderRight: '1px solid rgba(217,217,227,.15)' }}>
+            <Center maw={'100%'} h={38} mx="auto" pos={'relative'} mt={12} mb={12} >
+                <Box style={{ position: 'absolute', top: 0, left: 0, bottom: 0 }}>
+                    <Flex justify={'flex-start'} align={'center'}>
+                        <Select
+                            ml={8}
+                            mr={8}
+                            withAsterisk
+                            data={modelSelectData}
+                            placeholder=""
+                            variant="unstyled"
+                            {...form.getInputProps('model_id')}
+                        />
+                        <IconRefresh cursor={'pointer'} onClick={getModelList} />
+                    </Flex>
+                </Box >
+                <Text fw={700}>配置</Text>
+                <Box style={{ position: 'absolute', top: 0, right: 0 }}>
+                    <Flex justify={'flex-end'} align={'center'}>
+                        <Button h={32} mr={12} onClick={async () => {
+                            form.validate();
+                            if (form.isValid()) {
+                                setLoading(true);
+                                const values: any = form.values;
+                                console.log(currentAssistant,'sss')
+                                if (assistantId || currentAssistant?.id) {
+                                    await updateAssistant(assistantId, values);
+                                } else {
+                                    const result = await addAssistant(values);
+                                    const assistantId = result.id;
+                                    if (assistantId) {
+                                        const { token } = await refreshToken(assistantId);
+                                        window.history.pushState({}, '', `?assistantId=${assistantId}`);
+                                        updateCurrentAssistant(Object.assign({}, values, { id: assistantId, token }));
+                                    }
                                 }
+
+
+                                setLoading(false);
                             }
-
-
-                            setLoading(false);
-                        }
-                    }}>保存</Button>
-                </Flex>
+                        }}>保存</Button>
+                    </Flex>
+                </Box>
+            </Center>
+            <Box h={'calc(100vh - 142px)'} style={{ overflowY: 'auto', paddingBottom: 64 }}>
+                <AssistantForm workspaceId={workspaceId} form={form} />
             </Box>
-        </Center>
-        <Box h={'calc(100vh - 142px)'} style={{ overflowY: 'auto', paddingBottom: 64 }}>
-            <AssistantForm workspaceId={workspaceId} form={form} />
         </Box>
-    </Box>
-    <Box w="50%" h="100%" p={16}>
-        <Center maw={'100%'} h={38} mx="auto">
-            <Text fw={700}>预览</Text>
-        </Center>
-        {currentAssistant?.id ? <AssistantChat /> : null}
+        <Box w="50%" h="100%" p={16}>
+            <Center maw={'100%'} h={38} mx="auto">
+                <Text fw={700}>预览</Text>
+            </Center>
+            {currentAssistant?.id ? <AssistantChat /> : null}
 
-    </Box>
-</Flex>);
+        </Box>
+    </Flex>);
 }
