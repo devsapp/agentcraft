@@ -212,7 +212,7 @@ class ReasoningStream:
             "top_p": kwargs['top_p'],
             "n": kwargs['n'],
             "stream": True,
-            "max_tokens": 4096, #kwargs['max_tokens'],
+            "max_tokens": kwargs['max_tokens'],
             "stop": stop_words,
             "presence_penalty": kwargs['presence_penalty'],
             "frequency_penalty": kwargs['frequency_penalty'],
