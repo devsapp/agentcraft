@@ -37,18 +37,19 @@ async def chat(req: ChatRequest, request: Request, token: AgentJWTData = Depends
         "access_key_id": access_key_id,
         "access_key_secret": access_key_secret,
         "security_token": security_token
-  
+
     }
     if req.messages[-1].role != "user":
-        raise HTTPException(status_code=400, detail="The last message must be from the user.")
+        raise HTTPException(
+            status_code=400, detail="The last message must be from the user.")
     if req.stream:
         return EventSourceResponse(
             service.chat_stream(
-                req.messages[-1].content, request.client.host, token.agent_id,credential_dict),
+                req.messages[-1].content, request.client.host, token.agent_id, credential_dict),
             media_type="text/event-stream")
     else:
         resp: dict[str, Any] = service.chat(
-            req.messages[-1].content, request.client.host, token.agent_id,credential_dict)
+            req.messages[-1].content, request.client.host, token.agent_id, credential_dict)
         print(f"resp: {resp}")
         return ChatCompletionResponse(**resp)
 

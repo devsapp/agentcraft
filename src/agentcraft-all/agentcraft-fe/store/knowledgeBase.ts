@@ -1,4 +1,3 @@
-
 import { create } from "zustand";
 import { devtools } from "zustand/middleware";
 import { KnowledgeBaseRequestPayload, KnowledgeBaseResponseData, KnowledgeBase } from 'types/knowledgeBase';
@@ -58,10 +57,7 @@ export const useKnowledgeBaseStore = create<KnowledgeBaseStore>()(devtools((set)
     setOpen: (status: boolean) => set((_state) => {
         return ({ open: status })
     }),
-    updateKnowledgeBaseList: (knowledgeBaseList: KnowledgeBaseResponseData[]) => set((_state: any) => ({ knowledgeBaseList })),
-
-
-
+    updateKnowledgeBaseList: (knowledgeBaseList: KnowledgeBaseResponseData[]) => set((_state: any) => ({ knowledgeBaseList }))
 })))
 
 export async function getKnowledgeBaseList(appId: number) {
@@ -86,14 +82,15 @@ export async function getKnowledgeBase(id: any): Promise<KnowledgeBase> {
 }
 
 export async function addKnowledgeBase(payload: KnowledgeBaseRequestPayload) {
-
-    return await request("/api/knowledgeBase/create", {
+    const res = await request("/api/knowledgeBase/create", {
         method: "POST",
         body: JSON.stringify(payload),
         headers: {
             "Content-Type": "application/json",
         },
     });
+    const data = res.data;
+    return data;
 
 }
 
@@ -108,7 +105,6 @@ export async function deleteKnowledgeBase(knowledgeBaseId: any) {
 }
 
 export async function updateKnowledgeBase(id: any, payload: KnowledgeBaseRequestPayload) {
-
     return await request(`/api/knowledgeBase/update?id=${id}`, {
         method: "POST",
         body: JSON.stringify(payload),
@@ -121,15 +117,13 @@ export async function updateKnowledgeBase(id: any, payload: KnowledgeBaseRequest
 }
 
 export async function refreshToken(agentId: number) {
-
-    return await request(`/api/knowledgeBase/token?agentId=${agentId}`, {
+    const res = await request(`/api/knowledgeBase/token?agentId=${agentId}`, {
         method: "GET",
         headers: {
             "Content-Type": "application/json",
         },
     });
-
-
+    return res.data;
 }
 
 

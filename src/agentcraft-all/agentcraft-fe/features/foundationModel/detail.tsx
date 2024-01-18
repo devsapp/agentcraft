@@ -1,15 +1,9 @@
 import React, { useEffect } from "react";
 import { useRouter } from 'next/router'
-import { Breadcrumbs, Anchor, Box, Text, Title, Paper, Flex } from '@mantine/core';
-
-
-import FeatureDescription from '@/components/FeatureDescription';
-import { useFoundationModelStore, getFoundationModel } from '@/store/foundationModel';
-
-import CopyToClipboard from '@/components/CopyToClipboard';
-import { FORM_WIDTH_1280 } from 'constants/index';
-
-
+import { Anchor, Box, Text, Title, Paper, Flex, ActionIcon } from '@mantine/core';
+import { IconArrowBackUp } from '@tabler/icons-react';
+import { useFoundationModelStore, getFoundationModel } from 'store/foundationModel';
+import CopyToClipboard from 'components/CopyToClipboard';
 // import styles from './index.module.scss';
 
 const FM_TEMPLATE_ACCESS_API_FUNCTION_MAP: any = {
@@ -69,38 +63,34 @@ function FoundationModelView({ fmId }: any) {
     const servcieURL = getLLMServiceUrl(currentFoundationModel);
     const deployStatus = FM_APP_STATUS[currentFoundationModel?.status] || { color: 'grey', text: '初始化' }
     return <div>
-
         <div>
-            <Title order={4} mb={8}>基础模型服务信息</Title>
+            <Title order={5} mb={8}>基础模型服务信息</Title>
             <Paper shadow="xs" p="md" withBorder mb={12}>
-                <Title order={5} size="h5">应用信息</Title>
-                <Box maw={FORM_WIDTH_1280} pl={4} pr={4} >
+                <Title order={6} size="h6">应用信息</Title>
+                <Box pl={4} pr={4} >
                     <div>
-                        <Flex align={'center'}>应用访问状态：<Text color={deployStatus.color}>{deployStatus.text}</Text></Flex>
+                        <Flex align={'center'}>应用访问状态：<Text size="h6" color={deployStatus.color}>{deployStatus.text}</Text></Flex>
                     </div>
                 </Box>
             </Paper>
-            <Title order={4} mb={8}>访问接入</Title>
+            <Title order={5} mb={8}>访问接入</Title>
             <Paper shadow="xs" p="md" withBorder mb={12}>
-                <Title order={5} size="h5">基础模型服务访问信息</Title>
-
+                <Title order={6} size="h6">基础模型服务访问信息</Title>
                 {servcieURL ?
-                    <Box maw={FORM_WIDTH_1280} pl={4} pr={4} >
-
+                    <Box pl={4} pr={4} >
                         <div>
-                            <Flex align={'center'}>API访问地址：<CopyToClipboard width={800} content={`http://${servcieURL}/v1/chat/completions`} value={`http://${servcieURL}/v1/chat/completions`} /></Flex>
+                            <Flex align={'center'}>API访问地址：<CopyToClipboard content={`http://${servcieURL}/v1/chat/completions`} value={`http://${servcieURL}/v1/chat/completions`} /></Flex>
                         </div>
                         <div>
                             <span>API访问文档：<Anchor href={`http://${servcieURL}/docs`} target="_blank">访问文档</Anchor></span>
                         </div>
-
                     </Box> : null}
             </Paper>
-            <Title order={4} mb={8}>云资源信息</Title>
+            <Title order={5} mb={8}>云资源信息</Title>
             <Paper shadow="xs" p="md" withBorder >
 
-                <Title order={5} size="h5">函数计算应用信息</Title>
-                <Box maw={FORM_WIDTH_1280} pl={4} pr={4} >
+                <Title order={6} size="h6">函数计算应用信息</Title>
+                <Box pl={4} pr={4} >
                     <div>
                         <span>应用名：{`${currentFoundationModel?.appName}`}</span>
                     </div>
@@ -128,12 +118,20 @@ export function FoundationModelDetail() {
     return (
         <>
             {/* <Breadcrumbs>{items}</Breadcrumbs> */}
-            <FeatureDescription title={`${fmId}详情`} description="依托阿里云Serverless的丰富应用模版以及完整的工具链，AgentCraft可以创建丰富多样的基础模型服务" />
+            <Flex justify={'flex-start'} align={'center'} mt={12} >
+                <Flex align={'center'} h={'100%'} >
+                    <ActionIcon onClick={() => {
+                        router.push('/foundationModel')
+                    }}>
+                        <IconArrowBackUp />
+                    </ActionIcon>
+                    <Title order={4}>基础模型详细</Title>
+                </Flex>
+            </Flex>
+            {/* <FeatureDescription title={`${fmId}详情`} description="依托阿里云Serverless的丰富应用模版以及完整的工具链，AgentCraft可以创建丰富多样的基础模型服务" /> */}
             <Box mt={12} >
                 <FoundationModelView fmId={fmId} />
             </Box>
-
         </>
-
     );
 }

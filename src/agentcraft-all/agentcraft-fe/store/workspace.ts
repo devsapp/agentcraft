@@ -30,6 +30,7 @@ interface WorkspaceStore {
 }
 
 
+
 export const useWorkspaceStore = create<WorkspaceStore>()(devtools((set) => ({
     workspaceList: [],
     open: false,

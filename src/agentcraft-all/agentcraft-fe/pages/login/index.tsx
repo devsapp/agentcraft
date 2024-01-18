@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
 import Link from 'next/link'
 import { Paper, TextInput, PasswordInput, Button, LoadingOverlay, Flex, Loader } from '@mantine/core';
+import { notifications } from '@mantine/notifications';
 import { useForm } from '@mantine/form';
 import { useRouter } from 'next/router';
-import { HTTP_STATUS } from 'types/httpStatus';
-import { login, useAuthenticationStore } from '@/store/authentication';
-import { notifications } from '@mantine/notifications';
+import { login } from 'store/authentication';
+
 
 const LoginPage = () => {
     const router = useRouter();
@@ -24,8 +24,6 @@ const LoginPage = () => {
     const handleSubmit = async () => {
         form.validate();
         if(form.isValid()) {
-
-
              try {
                 setLoading(true)
                 const { username, password } = form.values;

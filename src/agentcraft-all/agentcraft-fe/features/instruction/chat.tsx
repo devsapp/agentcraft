@@ -4,18 +4,18 @@ import MarkdownContent from 'components/MarkdownContent';
 import MDXContainer from 'components/MDXContainer';
 import { chatStream } from 'store/chat';
 import { MessageType, ChatMessage } from 'types/chat';
-import { Assistant } from 'types/assistant';
-import { useAssistantStore } from 'store/assistant';
+import { KnowledgeBase } from 'types/knowledgeBase';
+import { useKnowledgeBaseStore } from 'store/knowledgeBase';
 import styles from 'styles/chat.module.scss';
 
 const defaultPrompt = ``;
 
-export default function Chat() {
-    const currentAssistant: Assistant = useAssistantStore().currentAssistant as Assistant;
+export default function Home() {
+    const currentKnowledgeBase: KnowledgeBase = useKnowledgeBaseStore().currentKnowledgeBase as KnowledgeBase;
     const [userInput, setUserInput] = useState(defaultPrompt);
     const [loading, setLoading] = useState(false);
     const [messages, setMessages] = useState<ChatMessage[]>([
-
+       
     ]);
 
     const messageListRef = useRef(null);
@@ -48,9 +48,6 @@ export default function Chat() {
     };
 
     const handleSubmit = (e: any) => {
-        if (!currentAssistant?.id) {
-            return;
-        }
         e.preventDefault();
         if (userInput.trim() === "") {
             return;
@@ -87,8 +84,8 @@ export default function Chat() {
                 }
             })
             chatStream({
+                version: 'v1',
                 messages: requestMessage,
-                version: 'v2',
                 config: {
                     stream: true,
                     max_tokens: 1024
@@ -100,7 +97,7 @@ export default function Chat() {
                     newMessage.message += delta;
                     setMessages([..._preMessages, newMessage]);
                 }
-            }, currentAssistant.token);
+            }, currentKnowledgeBase.token);
 
         } catch (e) {
             handleError(e);
@@ -132,7 +129,7 @@ export default function Chat() {
             };
             setUserInput("");
             chatStream({
-                version: 'v2',
+                version: 'v1',
                 messages: [{
                     role: 'user',
                     content: assistant
@@ -148,7 +145,7 @@ export default function Chat() {
                     newMessage.message += delta;
                     setMessages([..._preMessages, newMessage]);
                 }
-            }, currentAssistant.token);
+            }, currentKnowledgeBase.token);
 
         } catch (e) {
             handleError(e);

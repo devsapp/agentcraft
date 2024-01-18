@@ -106,19 +106,10 @@ export function FoundationModel() {
         <>
             {/* <Breadcrumbs>{items}</Breadcrumbs> */}
             <FeatureDescription title="基础模型" description="AgentCraft可以构建通义千问的商业化大语言模型服务也能够对魔搭社区，huggingface社区的开源模型进行托管。由此构建的基础模型服务可以作为您的AIGC应用的核心" />
-            <Box >
-                <Flex
-                    mih={50}
-                    gap="md"
-                    justify="flex-start"
-                    align="flex-start"
-                    direction="row"
-                    wrap="wrap"
-                >
-                    <Button onClick={() => router.push('/foundationModel/create')}>
-                        创建基础模型
-                    </Button>
-                </Flex>
+            <Box mt={12}>
+                <Button onClick={() => router.push('/foundationModel/create')}>
+                    创建基础模型
+                </Button>
             </Box>
             <List />
         </>

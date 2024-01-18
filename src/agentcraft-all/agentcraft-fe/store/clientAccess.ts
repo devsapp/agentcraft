@@ -5,7 +5,7 @@ import { DING_TALK_BRIDGE_APP_PARAMS } from 'types/clientAccess';
 import { DevsAppParamsBase } from 'types/serverless-devs-app';
 import { createServerlessApp } from 'store/infra';
 import { AGENTCRAFT_CLIENT_DINGTALK, ROBOT_CONFIG_STEP, AGENTCRAFT_CLIENT_PREFIX } from 'constants/client-access';
-import { request } from '@/utils/clientRequest';
+import { request } from 'utils/clientRequest';
 
 
 export interface RobotProxyServiceConfig {

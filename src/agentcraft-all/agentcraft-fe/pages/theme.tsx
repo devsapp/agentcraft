@@ -1,13 +1,17 @@
+import { ButtonStylesParams } from '@mantine/core';
+
 const THEME: any = {
     colorScheme: "light",
+    colors: {
+        brand: ['#f8f6fe', '#f1ecfd', '#e6defc', '#ab91f8', '#622eef', '#5719e6', '#7f69c4', '#4516c5', '#7F56FB'],
+    },
+    primaryColor: 'brand',
     components: {
         AppShell: {
             styles: {
                 main: {
-                    // paddingLeft: 220,
                     height: '100hv'
                 },
-
             }
         },
         Navbar: {
@@ -15,7 +19,6 @@ const THEME: any = {
                 root: {
                     backgroundColor: '#F6F7F9'
                 },
-
             }
         },
         Tabs: {
@@ -39,8 +42,6 @@ const THEME: any = {
                         borderTopLeftRadius: '20px',
                         borderTopRightRadius: '20px'
                     },
-
-
                 }
             }
         },
@@ -50,20 +51,27 @@ const THEME: any = {
                     "&[data-active]": {
                         height: 36,
                         lineHeight: '36px',
-                        // width: 188,
                         margin: '0 auto',
                         backgroundColor: '#1A1A1A !important'
                     }
                 }
             }
         },
-        // Button: {
-        //     styles: {
-        //         root: {
-        //             backgroundColor: '#7F56FB'
-        //         }
-        //     }
-        // },
+        Button: {
+            styles: (theme, params: ButtonStylesParams, { variant }) => ({
+                root: {
+                    height: 32,
+                    // backgroundColor:
+                    //     variant === 'filled'
+                    //         ? '#7F56FB'
+                    //         : undefined,
+                    // bordeColor:
+                    //     variant === 'filled'
+                    //         ? '#7F56FB'
+                    //         : '#EDEDED'
+                },
+            }),
+        },
         UnstyledButton: {
             styles: {
                 root: {

@@ -51,12 +51,13 @@ class ReasoningStream:
         self.tool_name_dict = {}
 
     def final_result(self, resp_data: str):
-        match = re.search(r'Final Answer: (.+)', resp_data)
+        match = re.search(r'Final Answer: (.+)', resp_data, re.S)
         if match:
             final_answer = match.group(1)
             return final_answer
         else:
             return ''
+
     def extract_json_content(self, text):
         start_index = text.find('{')
         end_index = text.rfind('}')
@@ -65,11 +66,12 @@ class ReasoningStream:
             return json_content
         else:
             return '{}'
+
     def generator_text_completion(self, input_text: str, **kwargs):
         result = yield from self.text_completion(
             input_text, **kwargs)
         return result
-    
+
     def llm_with_plugin(self, prompt: str, list_of_plugin_info=(), **kwargs):
         created = kwargs['created']
         uid = kwargs['uid']
@@ -83,6 +85,8 @@ class ReasoningStream:
         stream_response["model"] = model
         planning_prompt = self.build_input_text(
             chat_history, list_of_plugin_info, kwargs['instruction'])
+        kwargs['need_react'] = True if len(
+            list_of_plugin_info) > 0 else False  # 补充
         logger.info(f'Planing Prompt: {planning_prompt}')
         text = ''
 
@@ -96,10 +100,17 @@ class ReasoningStream:
             action, action_input, output = self.parse_latest_plugin_call(
                 output)
             if action:
+                tool_name = ''
+                try:
+                    tool_name = self.tool_name_dict[action]
+                except KeyError:
+                    print(
+                        f"Error: The action '{action}' is not found in the tool name dictionary.")
+
                 stream_response = {"choices": []}
                 stream_response["choices"].append({"index": 0,
                                                    "delta": {"role": "assistant",
-                                                             "content": f'调用工具【{self.tool_name_dict[action]}】 \n'},
+                                                             "content": f'调用工具【{tool_name}】 \n'},
                                                    "finish_reason": "null"})
                 yield json.dumps(stream_response)
                 end_time = time()
@@ -123,9 +134,11 @@ class ReasoningStream:
         new_history = []
         new_history.extend(history)
         new_history.append({'user': prompt, 'bot': text})
+
     def get_dataset_names(self, datasets):
         names = [dataset['dataset_name'] for dataset in datasets]
         return ', '.join(names)
+
     def build_input_text(self, chat_history, list_of_plugin_info, system_instruction) -> str:
         tools_text = []
         for plugin_info in list_of_plugin_info:
@@ -152,10 +165,12 @@ class ReasoningStream:
         retrieval_information = ''
         if(self.datasets):
             local_datasets = self.get_dataset_names(self.datasets)
-            retrieval_information = '\n' + RETRIEVAL_ARGUMRNTED.format(local_datasets=local_datasets) +'\n'
+            retrieval_information = '\n' + \
+                RETRIEVAL_ARGUMRNTED.format(
+                    local_datasets=local_datasets) + '\n'
         prompt = f'{im_start}system\n{system_instruction}{retrieval_information}{im_end}'
         for i, (query, response) in enumerate(chat_history):
-            if list_of_plugin_info: 
+            if list_of_plugin_info:
                 if (len(chat_history) == 1) or (i == len(chat_history) - 2):
                     query = PROMPT_REACT.format(
                         tools_text=tools_text,
@@ -175,6 +190,7 @@ class ReasoningStream:
         created = kwargs['created']
         uid = kwargs['uid']
         model = kwargs['model']
+        need_react = kwargs['need_react']
         stop_words = kwargs['stop_words'].split(',')
         im_end = '<|im_end|>'
         if im_end not in stop_words:
@@ -196,7 +212,7 @@ class ReasoningStream:
             "top_p": kwargs['top_p'],
             "n": kwargs['n'],
             "stream": True,
-            "max_tokens": kwargs['max_tokens'],
+            "max_tokens": 4096, #kwargs['max_tokens'],
             "stop": stop_words,
             "presence_penalty": kwargs['presence_penalty'],
             "frequency_penalty": kwargs['frequency_penalty'],
@@ -210,6 +226,7 @@ class ReasoningStream:
 
         know_anwser = False
         answer = [""]
+        reveal_all = {}
         for line in resp.iter_lines():
             if line:
                 line = codecs.decode(line)
@@ -220,27 +237,30 @@ class ReasoningStream:
                         chunk["id"] = uid
                         chunk["created"] = created
                         chunk["model"] = model
+                        reveal_all = chunk
                         if "choices" in chunk and len(
                                 chunk["choices"]) > 0 and "delta" in chunk["choices"][0] and "content" in chunk["choices"][0]["delta"]:
                             content = chunk["choices"][0]["delta"]["content"]
 
                             answer[chunk["choices"][0]["index"]
                                    ] += content
-                            if(know_anwser):
+                            if need_react == True:
+                                if(know_anwser):
+                                    yield json.dumps(chunk)
+                                final_content = self.final_result(
+                                    answer[chunk["choices"][0]["index"]])
+                                if(know_anwser == False and final_content != ''):
+                                    chunk["choices"][0]["delta"]["content"] = final_content
+                                    yield json.dumps(chunk)
+                                    know_anwser = True
+                            else:
                                 yield json.dumps(chunk)
-                            final_content = self.final_result(
-                                answer[chunk["choices"][0]["index"]])
-                            if(know_anwser == False and final_content != ''):
-                                chunk["choices"][0]["delta"]["content"] = final_content
-                                yield json.dumps(chunk)
-                                know_anwser = True
 
                     except json.JSONDecodeError as err:
                         print(err)
 
         output = answer[0]
-        print(f"Final Answer: {output}")
-
+        print(f"Output: {output}")
         return output
 
     def parse_latest_plugin_call(self, text):
@@ -248,9 +268,9 @@ class ReasoningStream:
         i = text.rfind('\nAction:')
         j = text.rfind('\nAction Input:')
         k = text.rfind('\nObservation:')
-        if 0 <= i < j:  
-            if k < j: 
-                text = text.rstrip() + '\nObservation:'  
+        if 0 <= i < j:
+            if k < j:
+                text = text.rstrip() + '\nObservation:'
             k = text.rfind('\nObservation:')
             plugin_name = text[i + len('\nAction:'): j].strip()
             plugin_args = text[j + len('\nAction Input:'): k].strip()
@@ -299,7 +319,8 @@ class ReasoningStream:
         except Exception as e:
             logger.error(e)
 
-        self.tool_name_dict = {tool['name_for_model']: tool['name_for_human'] for tool in action_tools}
+        self.tool_name_dict = {
+            tool['name_for_model']: tool['name_for_human'] for tool in action_tools}
         end_time = time()
         execution_time = end_time - self.time
         print("Execution  工具构建时间:", execution_time, "seconds")

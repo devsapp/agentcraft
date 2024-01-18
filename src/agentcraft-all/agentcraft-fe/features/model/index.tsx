@@ -8,7 +8,7 @@ import { formatDateTime } from 'utils/index';
 import CopyToClipboard from 'components/CopyToClipboard';
 import { DEFAULT_MODEL_REQUEST_TIMEOUT } from 'constants/index';
 import FeatureDescription from 'components/FeatureDescription';
-
+import { FORM_WIDTH } from 'constants/index';
 function List() {
     const modelList: Model[] = useModelStore().modelList;
     const loading: boolean = useModelStore().loading;
@@ -128,7 +128,7 @@ function AddOrUpdate() {
 
     return (
         <Modal opened={open} onClose={() => { setOpen(false) }} title={isEdit ? "修改LLM代理" : "创建LLM代理"} centered>
-            <Box maw={640} mx="auto">
+            <Box maw={FORM_WIDTH} mx="auto">
                 <TextInput withAsterisk label="LLM代理名" placeholder="" {...form.getInputProps('name_alias')} description="LLM代理的名称" />
                 <TextInput withAsterisk label="模型名" placeholder="" {...form.getInputProps('name')} description="基础模型服务需要的模型参数，通过LLM代理透传给基础模型服务，比如访问千问的模型明示qwen-plus或qwen-turbo" />
 
@@ -137,7 +137,7 @@ function AddOrUpdate() {
                 <NumberInput label="访问超时时间(s)" placeholder="" {...form.getInputProps('timeout')} description="AgentCraft访问基础模型服务的超时时间" />
                 <Textarea label="描述" placeholder="输入数据集描述" {...form.getInputProps('description')} />
             </Box>
-            <Box maw={640} mx="auto" pt={12} style={{ textAlign: 'right' }}>
+            <Box maw={FORM_WIDTH} mx="auto" pt={12} style={{ textAlign: 'right' }}>
                 <Button onClick={async () => {
                     form.validate();
                     if (form.isValid()) {

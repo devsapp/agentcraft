@@ -87,7 +87,7 @@ def add_agent(exact_datasets: list[int], fuzzy_datasets: list[int], **kwargs):
             _bulk_insert_dataset(session, agent.id, exact_datasets, DatasetType.EXACT_SEARCH.value)
         if fuzzy_datasets:
             _bulk_insert_dataset(session, agent.id, fuzzy_datasets, DatasetType.FUZZY_SEARCH.value)
-
+        return agent.id
 
 
 def check_user_has_agent(user_id: int, agent_id: int):

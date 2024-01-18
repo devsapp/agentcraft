@@ -3,7 +3,7 @@ import { create } from "zustand";
 import { persist } from "zustand/middleware";
 import { AGENTCRAFT_FM_QWEN_BIZ } from 'constants/foundation-model';
 import { AGENTCRAFT_QUICK_START } from 'constants/index';
-import { request } from '@/utils/clientRequest';
+import { request } from 'utils/clientRequest';
 export const enum QuickStartStep {
     LLM_PROXY = 0,
     DATA_ALL = 1,

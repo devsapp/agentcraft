@@ -1,10 +1,8 @@
 
 import { create } from "zustand";
 import { devtools } from "zustand/middleware";
-
-import { DataSetRequestPayload, DataSet } from '@/types/dataset'
-
-import { request } from '@/utils/clientRequest';
+import { DataSetRequestPayload, DataSet } from 'types/dataset'
+import { request } from 'utils/clientRequest';
 interface DataSetStore {
     loading: boolean,
     dataSetList: DataSet[],

@@ -87,6 +87,7 @@ class Reasoning:
         planning_prompt = self.build_input_text(
             chat_history, list_of_plugin_info, kwargs['instruction'])
         logger.info(f"the planning_prompt is:\n {planning_prompt}")
+        kwargs['need_react'] = True if len(list_of_plugin_info) > 0 else False #补充
         text = ''
         while True:
             output = self.text_completion(
@@ -114,7 +115,7 @@ class Reasoning:
         new_history = []
         new_history.extend(history)
         new_history.append({'user': prompt, 'bot': text})
-        content = self.final_result(text)
+        content = self.final_result(text) if kwargs['need_react'] == True else text
         resp_data = {}
         resp_data["id"] = uid
         resp_data["created"] = created
@@ -152,6 +153,7 @@ class Reasoning:
 
         im_start = '<|im_start|>'
         im_end = '<|im_end|>'
+        retrieval_information = ''
         if(self.datasets):
             local_datasets = self.get_dataset_names(self.datasets)
             retrieval_information = '\n' + RETRIEVAL_ARGUMRNTED.format(local_datasets=local_datasets) +'\n'

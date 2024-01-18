@@ -1,4 +1,4 @@
-export type PageProps = {
+export interface PageProps  {
     workspaceId: any,
     workspaceList: any[]
 }

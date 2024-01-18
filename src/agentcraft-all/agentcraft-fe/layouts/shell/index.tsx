@@ -4,6 +4,8 @@ import { AppShell } from '@mantine/core';
 import { Nav } from 'layouts/navbar';
 import { TabContainer } from 'layouts/tabContainer';
 import { getWorkspaceList, useWorkspaceStore } from 'store/workspace';
+import { getNavAndCurrentPath } from 'utils/nav';
+import { EXPAND_NAV_WIDTH, CLOSE_NAV_WIDTH } from 'constants/index';
 
 type MainProps = {
     children: any
@@ -19,18 +21,27 @@ function hasNoNavbar(pathname: string) {
 }
 
 function Shell(props: any) {
+    const router = useRouter();
     const { currentWorkspace, workspaceList } = useWorkspaceStore();
+    const { renderNavList, currentNav } = getNavAndCurrentPath(router);
+    const subComponentProps = {
+        workspaceId: currentWorkspace,
+        workspaceList,
+        renderNavList,
+        currentNav
+    }
     useEffect(() => {
         getWorkspaceList();
     }, []);
+    const parentPath = currentNav.parentPath as string;
     return <AppShell
         padding="md"
-        navbar={<Nav workspaceId={currentWorkspace} workspaceList={workspaceList} />}
+        navbar={<Nav {...subComponentProps} />}
         styles={(theme) => ({
-            main: { backgroundColor: theme.colorScheme === 'dark' ? theme.colors.dark[8] : theme.colors.gray[0] },
+            main: { backgroundColor: theme.colorScheme === 'dark' ? theme.colors.dark[8] : theme.colors.gray[0] ,paddingLeft: parentPath ? CLOSE_NAV_WIDTH : EXPAND_NAV_WIDTH ,overflow: 'hidden'},
         })}
     >
-        <TabContainer workspaceId={currentWorkspace} >
+        <TabContainer {...subComponentProps} >
             {props.children}
         </TabContainer>
     </AppShell>

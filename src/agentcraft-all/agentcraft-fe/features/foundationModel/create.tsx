@@ -147,7 +147,7 @@ function Add() {
     const setOpen = useFoundationModelStore().setOpen;
     const createLoading = useFoundationModelStore().createLoading;
     return (
-        <Modal opened={open} onClose={() => { setOpen(false) }} title="创建基础模型" centered size={'xl'}>
+        <Modal opened={open} onClose={() => { setOpen(false) }} title="创建基础模型" centered >
             <LoadingOverlay loader={<LoadingStepper />} visible={createLoading} overlayOpacity={0.8} overlayBlur={2} />
             {open && <FoundationModelForm />}
         </Modal>
@@ -277,7 +277,7 @@ export function CreateFoundationModel() {
         <>
             {/* <Breadcrumbs>{items}</Breadcrumbs> */}
             <FeatureDescription title="创建基础模型" description="依托阿里云Serverless的丰富应用模版以及完整的工具链，AgentCraft可以创建丰富多样的基础模型服务" />
-            <Notification title="基础模型创建提示">
+            <Notification title="基础模型创建提示" mt={12}>
                 <Flex align={'center'}>
                     使用非阿里云主账号部署的AgentCraft,请选择使用<Text c="yellow" fw={700}>”云创建“</Text>跳转到<a href="https://fcnext.console.aliyun.com/applications?tab=all" target="_blank">函数计算控制台</a>进行基础模型的服务创建，在云端创建的时候请注意使用AgentCraft前缀作为应用名
                 </Flex>

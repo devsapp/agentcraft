@@ -1,5 +1,12 @@
 body {
     background-color: #F6F7F9 !important;
+    overflow: hidden;
+}
+.page-container {
+    height: 100%;
+    overflow-y: auto;
+    padding-left: 32px;
+    padding-right: 32px;
 }
 .language-shell {
     word-wrap: break-word;

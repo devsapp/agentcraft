@@ -2,9 +2,10 @@ import React, { useEffect, useState } from "react";
 import { useRouter } from 'next/router';
 import { Center, ActionIcon, Tooltip, Spoiler, Breadcrumbs, Anchor, Button, Checkbox, Box, Table, TextInput, Text, Highlight, Switch, Group, Badge, MultiSelect, Select, Drawer, LoadingOverlay, Modal, Textarea, Flex, NumberInput, Paper, Title, Divider } from '@mantine/core';
 import { IconArrowBackUp } from '@tabler/icons-react';
-import { getAssistantList, useAssistantStore, addAssistant, refreshToken, updateAssistant, getAssistant, deleteAssistant } from 'store/assistant';
-import { BuilderForm } from 'features/assistant/builderForm';
-import { APIAccess } from 'features/assistant/apiAccess';
+import { useKnowledgeBaseStore } from 'store/knowledgeBase';
+import { BuilderForm } from 'features/knowledgeBase/builderForm';
+import { APIAccess } from 'features/knowledgeBase/apiAccess';
+import { ChatHistory } from 'features/knowledgeBase/history';
 import { Tabs } from '@mantine/core';
 enum ContainerType {
     ADD_OR_UPDATE = 1, // 增加和修改
@@ -15,12 +16,12 @@ interface AssistantProps {
 }
 
 
-export function AssistantBuilder({ workspaceId }: AssistantProps) {
+export function KnowledgeBaseBuilder({ workspaceId }: AssistantProps) {
     const router = useRouter();
     const { query } = router;
-    const assistantId = query.assistantId;
-    const loading: boolean = useAssistantStore().loading;
-    const [innerTab,setInnerTab] = useState('chat')
+    const knowledgeBaseId = query.knowledgeBaseId;
+    const loading: boolean = useKnowledgeBaseStore().loading;
+    const [innerTab, setInnerTab] = useState('chat')
 
 
     return (
@@ -35,12 +36,12 @@ export function AssistantBuilder({ workspaceId }: AssistantProps) {
                             }}>
                                 <IconArrowBackUp />
                             </ActionIcon>
-                            <Title order={4}>{assistantId ? '编辑智能助手' : '新建智能助手'}</Title>
+                            <Title order={4}>{knowledgeBaseId ? '编辑智能问答' : '新建智能问答'}</Title>
                         </Flex>
                     </Flex>
-                    {assistantId ? <Tabs
-                        value={innerTab} 
-                        onTabChange={(value:string) => {
+                    {knowledgeBaseId ? <Tabs
+                        value={innerTab}
+                        onTabChange={(value: string) => {
                             setInnerTab(value)
                         }}
                         unstyled
@@ -83,17 +84,23 @@ export function AssistantBuilder({ workspaceId }: AssistantProps) {
                         })}
                     >
                         <Tabs.List >
-                            <Tabs.Tab value="chat">对话测试</Tabs.Tab>
+                            <Tabs.Tab value="chat">
+                                对话测试
+                            </Tabs.Tab>
                             <Tabs.Tab value="access" >
                                 访问接入
+                            </Tabs.Tab>
+                            <Tabs.Tab value="history" >
+                                对话历史
                             </Tabs.Tab>
                         </Tabs.List>
                     </Tabs> : null}
                 </Flex>
             </Box>
             <Box w="100%" style={{ height: 'calc(100vh - 106px)' }} >
-                {innerTab === 'chat' ? <BuilderForm workspaceId={workspaceId} />: null }
-                {innerTab === 'access' ? <APIAccess />: null }
+                {innerTab === 'chat' ? <BuilderForm workspaceId={workspaceId} /> : null}
+                {innerTab === 'access' ? <APIAccess /> : null}
+                {innerTab === 'history' ? <ChatHistory /> : null}
             </Box>
         </div>
     );

@@ -5,10 +5,9 @@ import { MantineProvider } from "@mantine/core";
 import { ModalsProvider } from '@mantine/modals';
 import { Notifications } from '@mantine/notifications';
 import { Main } from 'layouts/shell';
-import { useSystemConfigStore, getSystemConfig } from 'store/systemConfig';
 import { SystemConfig } from 'features/systemConfig';
+import { useSystemConfigStore, getSystemConfig } from 'store/systemConfig';
 import THEME from './theme';
-
 import '../styles/global.scss';
 import '../styles/markdown.scss';
 
@@ -32,7 +31,6 @@ export default function App(props: AppProps) {
           content="minimum-scale=1, initial-scale=1, width=device-width"
         />
       </Head>
-
       <MantineProvider
         withGlobalStyles
         withNormalizeCSS
@@ -42,10 +40,9 @@ export default function App(props: AppProps) {
         {render ?
           <ModalsProvider>
             {!hiddenConfigView ? < SystemConfig /> : <Main><Component {...pageProps} /></Main>}
-            {/* {!hiddenConfigView ? < SystemConfig /> : <Shell >
-              <Component {...pageProps} />
-            </Shell>} */}
-          </ModalsProvider> : null}
+          </ModalsProvider> :
+          null
+        }
       </MantineProvider>
     </>
   );

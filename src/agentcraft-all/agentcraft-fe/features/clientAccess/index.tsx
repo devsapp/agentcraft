@@ -105,19 +105,10 @@ export function ClientAccess() {
         <>
             {/* <Breadcrumbs>{items}</Breadcrumbs> */}
             <FeatureDescription title="客户端接入" description="AgentCraft可以通过构建客户端接入服务，帮助您将智能服务接入到独立的web服务， 钉钉，微信机器人，以及嵌入您的网站" />
-            <Box >
-                <Flex
-                    mih={50}
-                    gap="md"
-                    justify="flex-start"
-                    align="flex-start"
-                    direction="row"
-                    wrap="wrap"
-                >
-                    <Button onClick={() => router.push('/clientAccess/create')}>
-                        创建基础客户端接入
-                    </Button>
-                </Flex>
+            <Box mt={12}>
+                <Button onClick={() => router.push('/clientAccess/create')}>
+                    创建基础客户端接入
+                </Button>
             </Box>
             <List />
         </>

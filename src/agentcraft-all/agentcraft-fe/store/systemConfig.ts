@@ -1,8 +1,8 @@
 
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
-import { AGENTCRAFT_SYSTEMCONFIG_COMPLETED } from '@/constants/index';
-import { request } from '@/utils/clientRequest';
+import { AGENTCRAFT_SYSTEMCONFIG_COMPLETED } from 'constants/index';
+import { request } from 'utils/clientRequest';
 export const enum SystemConfigStep {
     EMBEDDING_SERVICE = 0,
     DATABASE = 1,

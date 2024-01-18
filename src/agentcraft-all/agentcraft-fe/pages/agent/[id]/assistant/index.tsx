@@ -1,20 +1,19 @@
 
-import { AssistantPage } from "features/assistant";
+import { AssistantBuilder } from "features/assistant/builder";
 
 
 export function getServerSideProps(context: any) {
   const { params } = context;
-  const appId = params.id;
+  const workspaceId = params.id;
   return {
     props: {
-      appId,
+      workspaceId,
     },
   }
 }
 
-export default function IndexPage({ appId }: any) {
-
+export default function IndexPage({ workspaceId }: any) {
   return (
-    <AssistantPage appId={appId} />
+    <AssistantBuilder workspaceId={workspaceId} />
   );
 }
