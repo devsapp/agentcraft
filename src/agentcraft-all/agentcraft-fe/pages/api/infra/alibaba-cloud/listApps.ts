@@ -12,10 +12,10 @@ export default async function handler(
 
     const headers = req.headers;
     const { appFilter } = req.query;
+
     // const accessKeyId: any = process.env.ALIBABA_CLOUD_ACCESS_KEY_ID || headers['x-fc-access-key-id'];
     // const accessKeySecret: any = process.env.ALIBABA_CLOUD_ACCESS_KEY_SECRET || headers['x-fc-access-key-secret'];
     // const securityToken: any = process.env.ALIBABA_CLOUD_SECURITY_TOKEN || headers['x-fc-security-token'];
-    
     // let credential = undefined;
     // if (accessKeyId) {
     //     credential = {

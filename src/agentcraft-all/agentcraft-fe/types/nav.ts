@@ -2,7 +2,7 @@ export interface NavItem {
     name?: string,
     path: string,
     type?: string,
-    icon?: JSX.Element,
+    icon?: any,
     subNav?: NavItem[],
     parentPath?: string,
     level?: number,

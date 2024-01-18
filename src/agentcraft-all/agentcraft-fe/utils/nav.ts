@@ -18,12 +18,7 @@ export const flattenNavItems = (result: { [key: string]: NavItem }, navItems: Na
 };
 
 export function getNavAndCurrentPath(router: any) {
-    const { pathname, query } = router;
-    let id: any = query.id;
-    const knowledgeBaseId: any = query.knowledgeBaseId;
-    const handleClick = (path: string) => {
-        router.push(`${path.replace('[id]', id).replace('[knowledgeBaseId]', knowledgeBaseId)}`)
-    };
+    const { pathname } = router;
     const navItems: NavItem[] = [
         {
             name: "概览",

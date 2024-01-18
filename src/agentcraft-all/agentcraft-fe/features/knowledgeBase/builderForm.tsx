@@ -12,7 +12,7 @@ import { Model } from 'types/model';
 import { DataSet, DataSetType } from 'types/dataset';
 import FeatureDescription from 'components/FeatureDescription';
 import { getToolList, useActionToolStore } from 'store/actionTools';
-import { AssistantResponseData, Dataset } from 'types/assistant';
+import { AssistantResponseData } from 'types/assistant';
 import { DATA_RETRIVAL_PROMPT_TEMPLATE } from 'constants/instructions';
 import { getKnowledgeBaseList, useKnowledgeBaseStore, addKnowledgeBase, refreshToken, updateKnowledgeBase, getKnowledgeBase } from 'store/knowledgeBase';
 import { KnowledgeBaseResponseData, Dataset } from 'types/knowledgeBase';

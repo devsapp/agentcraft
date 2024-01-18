@@ -58,7 +58,7 @@ const THEME: any = {
             }
         },
         Button: {
-            styles: (theme, params: ButtonStylesParams, { variant }) => ({
+            styles: (theme: any, params: ButtonStylesParams, { variant }: any) => ({
                 root: {
                     height: 32,
                     // backgroundColor:

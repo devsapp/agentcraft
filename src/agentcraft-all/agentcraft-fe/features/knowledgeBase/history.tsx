@@ -11,7 +11,7 @@ import CopyToClipboard from 'components/CopyToClipboard';
 
 function List() {
     const currentKnowledgeBase = useKnowledgeBaseStore().currentKnowledgeBase;
-    const knowledgeBaseId = currentKnowledgeBase.id;
+    const knowledgeBaseId = currentKnowledgeBase?.id;
     const chatList: ChatItem[] = useChatStore().chatList;
     const loading: boolean = useChatStore().loading;
     const setLoading = useChatStore().setLoading;

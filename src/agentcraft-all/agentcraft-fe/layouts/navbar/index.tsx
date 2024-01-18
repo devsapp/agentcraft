@@ -12,7 +12,7 @@ interface NavProps extends PageProps {
     currentNav: any
 }
 
-function cloneIconComponent(icon) {
+function cloneIconComponent(icon: any) {
     return React.createElement(icon, {
         size: '1rem',
         stroke: 1.5

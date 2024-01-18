@@ -47,7 +47,7 @@ function AgentCard({ data, workspaceId, onDelete, router }: { data: IAgentItem, 
                 <Text className={styles['agent-title']}>{data.name}</Text>
                 <Text className={styles['agent-tag']}>{AGENT_TAG_MAP[data.type]}</Text>
                 <Box className={`${styles['agent-delete-btn']} delete-agent`}>
-                    <IconTrash  onClick={onDelete} className={`${styles['agent-delete-icon']}`} />
+                    <IconTrash onClick={onDelete} className={`${styles['agent-delete-icon']}`} />
                 </Box>
             </Box>
             <Divider mt={11.5} mb={12.5} />
@@ -149,12 +149,12 @@ function List(props: any) {
         <Box pos="relative" >
             <LoadingOverlay visible={false} overlayOpacity={0.3} />
             <Flex align={'center'} wrap={'wrap'}>
-                {_list.map((item: IAgentItem) => {
+                {_list.map((item: any) => {
                     return <AgentCard
                         key={item.key}
                         data={item}
                         workspaceId={workspaceId}
-                        onDelete={(e) => {
+                        onDelete={(e: any) => {
                             e.stopPropagation();
                             if (item.type === 'assistant') {
                                 removeAssistant(item);
