@@ -25,7 +25,7 @@ PROMPT_REACT = """Answer the following questions as best you can. You have acces
 
 We must pay attention to only making practical discussions on the results of calling the tool. If it is, it means it is there, and if it is not, it is not. Do not make excessive interpretations.
 
-Use the following format:
+Strictly use the following format. For example, to find the final answer,"Final Answer” cannot be omitted:
 
 Question: the input question you must answer
 Thought: you should always think about what to do
@@ -49,14 +49,22 @@ class ReasoningStream:
         self.credential_dict = credential_dict
         self.time = time()
         self.tool_name_dict = {}
-
+    def extract_final_answer(self, text):
+        if not isinstance(text, str):
+            raise ValueError("Input must be a string")
+        keyword = "Final Answer:"
+        keyword_index = text.find(keyword)
+        if keyword_index != -1:
+            return text[keyword_index + len(keyword):].strip()
+        return ''
     def final_result(self, resp_data: str):
-        match = re.search(r'Final Answer: (.+)', resp_data, re.S)
-        if match:
-            final_answer = match.group(1)
-            return final_answer
-        else:
-            return ''
+        return self.extract_final_answer(resp_data)
+        # match = re.search(r'Final Answer: (.+)', resp_data, re.S)
+        # if match:
+        #     final_answer = match.group(1)
+        #     return final_answer
+        # else:
+        #     return ''
 
     def extract_json_content(self, text):
         start_index = text.find('{')
@@ -92,41 +100,44 @@ class ReasoningStream:
 
         end_time = time()
         execution_time = end_time - self.time
-        print("Execution 提示词构建时间:", execution_time, "seconds")
+        logger.info(f"Execution 提示词构建时间: {execution_time} seconds")
 
         while True:
             output = yield from self.text_completion(
                 planning_prompt + text, **kwargs)
             action, action_input, output = self.parse_latest_plugin_call(
                 output)
+            logger.info(f"工具：{action}")
+            logger.info(f"工具输入：{action_input}")
             if action:
                 tool_name = ''
                 try:
                     tool_name = self.tool_name_dict[action]
+                    stream_response = {"choices": []}
+                    stream_response["choices"].append({"index": 0,
+                                                    "delta": {"role": "assistant",
+                                                                "content": f'调用工具【{tool_name}】 \n'},
+                                                    "finish_reason": "null"})
+                    yield json.dumps(stream_response)
+                    end_time = time()
+                    observation = self.call_plugin(action, action_input)
+                    logger.info(f"{action}工具调用结果：{observation}")
+                    execution_time = end_time - self.time
+                    logger.info(f"Execution 调用工具{action} {execution_time} seconds")
+                    output += f'\nObservation: {observation}\nThought:'
+                    text += output
+                    if(action == 'data_retrieval'):  # 知识库召回特殊处理
+                        plugin_args = json.loads(action_input)
+                        user_question = plugin_args["user_question"]
+                        kwargs['retrieval_prompt_template'] = self.assistant.retrieval_prompt_template
+                        yield from llm_retrieval_instruction_stream(user_question, observation, **kwargs)
+                        break
                 except KeyError:
-                    print(
-                        f"Error: The action '{action}' is not found in the tool name dictionary.")
-
-                stream_response = {"choices": []}
-                stream_response["choices"].append({"index": 0,
-                                                   "delta": {"role": "assistant",
-                                                             "content": f'调用工具【{tool_name}】 \n'},
-                                                   "finish_reason": "null"})
-                yield json.dumps(stream_response)
-                end_time = time()
-                observation = self.call_plugin(action, action_input)
-                print(f"{action}工具调用结果：{observation}")
-
-                execution_time = end_time - self.time
-                print("Execution 调用工具" + action, execution_time, "seconds")
-                output += f'\nObservation: {observation}\nThought:'
-                text += output
-                if(action == 'data_retrieval'):  # 知识库召回特殊处理
-                    plugin_args = json.loads(action_input)
-                    user_question = plugin_args["user_question"]
-                    kwargs['retrieval_prompt_template'] = self.assistant.retrieval_prompt_template
-                    yield from llm_retrieval_instruction_stream(user_question, observation, **kwargs)
-                    break
+                    names_for_model_list = [plugin['name_for_model'] for plugin in list_of_plugin_info]
+                    names_for_model_str = ','.join(names_for_model_list)
+                    text += f"The action '{action}' is not found in the tool name dictionary. please find them in 【{names_for_model_str}】"
+                    # logger.error(
+                    #     f"Error: The action '{action}' is not found in the tool name dictionary. please find them in {names_for_model_str}")
             else:
                 text += output
                 break
@@ -222,7 +233,7 @@ class ReasoningStream:
                              data=request_data, timeout=kwargs['timeout'])
         end_time = time()
         execution_time = end_time - self.time
-        print("Execution 完成大语言模型响应时间:", execution_time, "seconds")
+        logger.info(f"Execution 完成大语言模型响应时间: {execution_time} seconds")
 
         know_anwser = False
         answer = [""]
@@ -328,7 +339,7 @@ class ReasoningStream:
             tool['name_for_model']: tool['name_for_human'] for tool in action_tools}
         end_time = time()
         execution_time = end_time - self.time
-        print("Execution  工具构建时间:", execution_time, "seconds")
+        logger.info(f"Execution  工具构建时间: {execution_time} seconds")
         history = []
         model = model_database.get_model_by_id(assistant.model_id)
         llm_plugin_args = {
@@ -353,7 +364,7 @@ class ReasoningStream:
 
         end_time = time()
         execution_time = end_time - self.time
-        print("Execution 参数构建时间:", execution_time, "seconds")
+        logger.info(f"Execution 参数构建时间: {execution_time} seconds")
 
         yield from self.llm_with_plugin(
             prompt=text_input, list_of_plugin_info=action_tools, **llm_plugin_args)

@@ -6,6 +6,7 @@ import { Button, Title, Stepper, Group, Flex, LoadingOverlay, Anchor, Loader } f
 import LLMProxy from 'features/overview/llmProxy';
 import DataAll from 'features/overview/dataAll';
 import KnowledgeBase from 'features/overview/knowledgeBase';
+import Agent from 'features/overview/agent';
 import { notifications } from '@mantine/notifications';
 import { useQuickStartStore, QuickStartStep, createFoundationModelOnly, checkFoundationModelStatusAndLLMProxy, createDataAll, createKnowledgeBaseApp } from "store/quickStart";
 import { PROMPT_TEMPLATE, DEFAULT_SYSTEM_PROMPT } from 'constants/index';
@@ -212,7 +213,7 @@ export function QuickStart() {
     };
     return (
         <>
-            <Flex align={'center'} mb={18}><Title order={3} >快速开始</Title><Button onClick={() => { setAutoQuickStart(false) }} compact variant="subtle">关闭</Button></Flex>
+            <Flex align={'center'} mb={18} mt={18}><Title order={3} >快速开始</Title><Button onClick={() => { setAutoQuickStart(false) }} compact variant="subtle">关闭</Button></Flex>
             <Stepper active={activeStep} onStepClick={setActiveStep}>
                 <Stepper.Step label="基础模型&LLM代理" description="进行LLM基础模型的创建以及LLM代理关联" loading={llm_proxy_create_loading}>
                     <div style={{ position: 'relative' }}>
@@ -227,7 +228,7 @@ export function QuickStart() {
                         </div>
                     </div>
                 </Stepper.Step>
-                <Stepper.Step label="创建数据集&数据源" description="创建数据集，上传数据源文件" loading={data_all_create_loading}>
+                {/* <Stepper.Step label="创建数据集&数据源" description="创建数据集，上传数据源文件" loading={data_all_create_loading}>
                     <div style={{ position: 'relative' }}>
                         <LoadingOverlay
                             loader={<Flex align={'center'} direction="column"><Flex align={'center'} >创建数据集&数据源预计花费1-2分钟，请耐心等待<Loader variant="bars" color={'pink'} ml={12} /></Flex></Flex>}
@@ -239,8 +240,8 @@ export function QuickStart() {
                             <DataAll form={dataAllForm} />
                         </div>
                     </div>
-                </Stepper.Step>
-                <Stepper.Step label="智能体应用创建" description="创建智能体" loading={knowledge_base_create_loading}>
+                </Stepper.Step> */}
+                <Stepper.Step label="智能体创建" description="创建智能体" loading={knowledge_base_create_loading}>
                     <div style={{ position: 'relative' }}>
                         <LoadingOverlay
                             loaderProps={{ size: 'sm', color: 'pink', variant: 'bars' }}
@@ -249,7 +250,7 @@ export function QuickStart() {
                             visible={knowledge_base_create_loading}
                         />
                         <div style={{ padding: 20 }}>
-                            <KnowledgeBase form={knowledgeBaseForm} />
+                            <Agent />
                         </div>
                     </div>
 

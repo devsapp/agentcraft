@@ -1,7 +1,7 @@
 import { AgentPage } from 'features/agent';
-import { useWorkspaceStore } from 'store/workspace';
+import { useLocalWorkspaceStore } from 'store/workspace';
 export default function AgentPageIndex() {
-    const { currentWorkspace } = useWorkspaceStore();
+    const { currentWorkspace } = useLocalWorkspaceStore();
     return (
         <AgentPage workspaceId={currentWorkspace} />
     );

@@ -166,7 +166,7 @@ export function BuilderForm({ workspaceId }: AssistantProps) {
         exact_search_limit: 1,
         fuzzy_search_limit: 3,
         prompt_starts: [],
-        capabilities: ['ac_img_gen', 'web_browser']
+        capabilities: []
     }
     const form: any = useForm({
         initialValues: initFormValue,
@@ -218,16 +218,21 @@ export function BuilderForm({ workspaceId }: AssistantProps) {
                 exact_search_limit: currentAssistant?.exact_search_limit,
                 fuzzy_search_limit: currentAssistant?.fuzzy_search_limit
             })
-        }
-    }, [currentAssistant])
-
-    useEffect(() => {
-        if (modelList.length > 0) {
+        } else if (modelList.length > 0 && !assistantId) {
             form.setValues({
                 model_id: modelList[0].id
             })
         }
-    }, [modelList]);
+    }, [currentAssistant, modelList])
+
+    // useEffect(() => {
+    //     if (modelList.length > 0) {
+    //         form.setValues({
+    //             model_id: modelList[0].id
+    //         })
+    //     }
+    // }, [modelList]);
+
     const modelSelectData: any = modelList.map((item: Model) => { return { label: item.name_alias, value: item.id } });
     return (<Flex h={'100%'} style={{ overflow: 'hidden' }}>
         <Box w="50%" h="100%" style={{ borderRight: '1px solid rgba(217,217,227,.15)' }}>
@@ -254,7 +259,7 @@ export function BuilderForm({ workspaceId }: AssistantProps) {
                             if (form.isValid()) {
                                 setLoading(true);
                                 const values: any = form.values;
-                                console.log(currentAssistant,'sss')
+                                console.log(currentAssistant, 'sss')
                                 if (assistantId || currentAssistant?.id) {
                                     await updateAssistant(assistantId, values);
                                 } else {

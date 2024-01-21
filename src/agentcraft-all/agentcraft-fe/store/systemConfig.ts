@@ -56,7 +56,7 @@ export async function getSystemConfig() {
     const setCompleteConfig = state.setCompleteConfig;
     const setHiddenConfigView = state.setHiddenConfigView;
     setCompleteConfig(result?.data || {});
-    result?.data?.EMBEDDING_URL ? setHiddenConfigView(true) : setHiddenConfigView(false);
+    result?.data?.systemReady ? setHiddenConfigView(true) : setHiddenConfigView(false);
 }
 
 

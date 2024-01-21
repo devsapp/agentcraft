@@ -209,16 +209,20 @@ export function BuilderForm({ workspaceId }: AssistantProps) {
                 exact_search_limit: currentKnowledgeBase?.exact_search_limit,
                 fuzzy_search_limit: currentKnowledgeBase?.fuzzy_search_limit
             })
-        }
-    }, [currentKnowledgeBase])
-
-    useEffect(() => {
-        if (modelList.length > 0) {
+        } else if (modelList.length > 0 && !knowledgeBaseId) {
             form.setValues({
                 model_id: modelList[0].id
             })
         }
-    }, [modelList]);
+    }, [currentKnowledgeBase, modelList])
+
+    // useEffect(() => {
+    //     if (modelList.length > 0) {
+    //         form.setValues({
+    //             model_id: modelList[0].id
+    //         })
+    //     }
+    // }, [modelList]);
     const modelSelectData: any = modelList.map((item: Model) => { return { label: item.name_alias, value: item.id } });
     return (<Flex h={'100%'} style={{ overflow: 'hidden' }}>
         <Box w="50%" h="100%" style={{ borderRight: '1px solid rgba(217,217,227,.15)' }}>
@@ -252,7 +256,7 @@ export function BuilderForm({ workspaceId }: AssistantProps) {
                                     const knowledgeBaseId = result.id;
                                     if (knowledgeBaseId) {
                                         const { token } = await refreshToken(knowledgeBaseId);
-                                        console.log(token,'token');
+                                        console.log(token, 'token');
                                         window.history.pushState({}, '', `?knowledgeBaseId=${knowledgeBaseId}`);
                                         updateCurrentKnowledgeBase(Object.assign({}, values, { id: knowledgeBaseId, token }));
                                     }

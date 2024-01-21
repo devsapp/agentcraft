@@ -8,6 +8,15 @@ body {
     padding-left: 32px;
     padding-right: 32px;
 }
+
+.content-container {
+    height: calc(100vh - 120px);
+    overflow-y: auto;
+}
+
+.content-container::-webkit-scrollbar {
+    display: none;
+}
 .language-shell {
     word-wrap: break-word;
     white-space: normal !important;

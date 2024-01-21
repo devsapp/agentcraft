@@ -4,7 +4,7 @@ import Link from 'next/link';
 import { Center, ActionIcon, Tooltip, Spoiler, Breadcrumbs, Anchor, Button, Checkbox, Box, Table, TextInput, Text, Highlight, Switch, Group, Badge, MultiSelect, Select, Drawer, LoadingOverlay, Modal, Textarea, Flex, NumberInput, Paper, Title, Divider } from '@mantine/core';
 import { useForm } from '@mantine/form';
 
-import { IconRefresh } from '@tabler/icons-react'; 
+import { IconRefresh } from '@tabler/icons-react';
 import { getModelList, useModelStore } from 'store/model';
 import { getDataSetList, useDataSetStore } from 'store/dataset';
 
@@ -12,15 +12,11 @@ import { Model } from 'types/model';
 import { DataSet, DataSetType } from 'types/dataset';
 
 import { useKnowledgeBaseStore, addKnowledgeBase, refreshToken, updateKnowledgeBase, getKnowledgeBase } from 'store/knowledgeBase';
-import {  Dataset } from 'types/knowledgeBase';
+import { Dataset } from 'types/knowledgeBase';
 import { PROMPT_TEMPLATE } from 'constants/index';
 import { INSTRUCTION_TEMPLATES, DEFAULT_CHAT_INSTRUCTION } from 'constants/instructions'
 import KnowledgeBaseChat from 'features/knowledgeBase/chat';
 
-enum ContainerType {
-    ADD_OR_UPDATE = 1, // 增加和修改
-    CHAT = 2, // 问答
-}
 
 interface AssistantProps {
     workspaceId: any;
@@ -28,13 +24,9 @@ interface AssistantProps {
 
 
 export function KnowledgeBaseForm({ workspaceId, form }: { workspaceId: any, form: any }) {
-    const dataSetList: DataSet[] = useDataSetStore().dataSetList;
-    const documentSelectData: any = dataSetList.filter((item: DataSet) => item.dataset_type == DataSetType.DOCUMENT).map((item: DataSet) => { return { label: item.name, value: item.id } });
-    const qaSelectData: any = dataSetList.filter((item: DataSet) => item.dataset_type == DataSetType.QUESTION).map((item: DataSet) => { return { label: item.name, value: item.id } });
-
     return <Box pr={32}>
         <Paper shadow="xs" p="md" withBorder mt={12}>
-            <Title order={5} size="h5">知识库信息</Title>
+            <Title order={5} size="h5">问答信息</Title>
             <Box pl={4} pr={4} >
                 <TextInput withAsterisk label="名称" placeholder="输入知识库名称" {...form.getInputProps('name')} />
                 <Textarea label="描述" placeholder="输入应用描述" description="请输入知识库的描述信息" {...form.getInputProps('description')} />
@@ -78,49 +70,6 @@ export function KnowledgeBaseForm({ workspaceId, form }: { workspaceId: any, for
                 <TextInput label="logit_bias" placeholder="" {...form.getInputProps('logit_bias')} width={'50%'} />
             </Box>
         </Paper>
-
-        <Paper shadow="xs" p="md" withBorder mt={12}>
-            <Flex justify={'space-between'} align={'center'}>
-                <Title order={5} size="h5" >数据召回</Title>
-                <IconRefresh cursor={'pointer'} onClick={getDataSetList} />
-            </Flex>
-            <Box pl={4} pr={4} >
-                <Textarea label="召回提示词模板" placeholder="" {...form.getInputProps('prompt_template')} minRows={6} description="召回提示词模板可以将检索的结果context和用户的输入query整合到一起，最后整体输入给大语言模型" />
-                {/* <TextInput label="停止提示词" placeholder="停止输出的token" {...form.getInputProps('stop')} /> */}
-            </Box>
-            <Divider my="sm" />
-            <Title order={5} size="h6" >召回数据集</Title>
-            <Box pl={4} pr={4} >
-                <Group grow>
-                    <MultiSelect
-                        data={documentSelectData}
-                        description="文档数据集用来做模型检索"
-                        label="文档数据集"
-                        placeholder="添加模糊数据集"
-                        {...form.getInputProps('fuzzy_datasets')}
-                    />
-                    <MultiSelect
-                        data={qaSelectData}
-                        description="问答数据集用来做精确匹配"
-                        label="问答数据集"
-                        placeholder="添加精准数据集"
-                        {...form.getInputProps('exact_datasets')}
-                    />
-                </Group>
-            </Box>
-            <Divider my="sm" />
-            <Title order={5} size="h6" >召回参数</Title>
-            <Box pl={4} pr={4} mt={4}>
-                <Group grow>
-                    <TextInput withAsterisk description="文档数据检索的精度，取值0-1之间，建议取0.6~0.8" label="文档结果召回精度" placeholder="" {...form.getInputProps('fuzzy_search_similarity')} />
-                    <TextInput withAsterisk description="问答数据检索的精度，取值0-1之间，建议取0.9~1" label="问答结果召回精度" placeholder="" {...form.getInputProps('exact_search_similarity')} />
-                </Group>
-                <Group grow>
-                    <NumberInput withAsterisk description="文档结果的召回数量，数量越多信息越丰富，但是首先于LLM上下文长度，不宜过长" label="文档结果召回数量" placeholder="" {...form.getInputProps('fuzzy_search_limit')} />
-                    <NumberInput withAsterisk description="问答结果的召回数量，数量越多信息越丰富，但是首先于LLM上下文长度，不宜过长" label="问答结果召回数量" placeholder="" {...form.getInputProps('exact_search_limit')} />
-                </Group>
-            </Box>
-        </Paper>
     </Box>
 }
 
@@ -133,7 +82,7 @@ export function BuilderForm({ workspaceId }: AssistantProps) {
     const initFormValue = {
         name: '',
         description: '',
-        prompt_template: PROMPT_TEMPLATE,
+        prompt_template: '',
         app_id: parseInt(workspaceId),
         exact_datasets: [],
         fuzzy_datasets: [],
@@ -205,16 +154,14 @@ export function BuilderForm({ workspaceId }: AssistantProps) {
                 exact_search_limit: currentKnowledgeBase?.exact_search_limit,
                 fuzzy_search_limit: currentKnowledgeBase?.fuzzy_search_limit
             })
-        }
-    }, [currentKnowledgeBase])
-
-    useEffect(() => {
-        if (modelList.length > 0) {
+        } else if (modelList.length > 0 && !instructionChatId) {
             form.setValues({
                 model_id: modelList[0].id
             })
         }
-    }, [modelList]);
+    }, [currentKnowledgeBase, modelList])
+
+
     const modelSelectData: any = modelList.map((item: Model) => { return { label: item.name_alias, value: item.id } });
     return (<Flex h={'100%'} style={{ overflow: 'hidden' }}>
         <Box w="50%" h="100%" style={{ borderRight: '1px solid rgba(217,217,227,.15)' }}>

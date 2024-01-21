@@ -23,7 +23,7 @@ export default async function handler(
         code: 200,
         data: {
             regionId,
-            EMBEDDING_URL: '',
+            system_ready: '',
             vpcInfo:
             {
                 vpcName: '',
@@ -36,6 +36,7 @@ export default async function handler(
         const result = await serverlessBridgeService.getFunctionV3(functionName);
         const functionInfo = result?.body || {};
         const embedding_url = functionInfo.environmentVariables?.EMBEDDING_URL;
+        const system_ready = functionInfo.environmentVariables?.SYSTEM_READY;
         const vpcConfig = functionInfo.vpcConfig || {};
         let _vpcName = ''
 
@@ -63,12 +64,12 @@ export default async function handler(
             await addVswitchIdV3(serverlessBridgeService, functionInfo, vSwitchId);
         }
 
-        data.data = { regionId, EMBEDDING_URL: embedding_url, vpcInfo: { vpcName: _vpcName, vpcId: vpcConfig.vpcId } }
+        data.data = { regionId, systemReady: embedding_url || system_ready , vpcInfo: { vpcName: _vpcName, vpcId: vpcConfig.vpcId } }
     } catch (e: any) {
         status = 500;
         data.code = status;
         data.error = `Code: ${e.data.Code},Message: ${e.data.Message}`;
     }
-    data.data.EMBEDDING_URL = process.env.NODE_ENV === 'development' ? true: data.data.EMBEDDING_URL
+    data.data.systemReady = process.env.NODE_ENV === 'development' ? true: data.data.systemReady;
     res.status(status).json(data);
 }

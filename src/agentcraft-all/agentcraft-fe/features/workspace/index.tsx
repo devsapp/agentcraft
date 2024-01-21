@@ -2,6 +2,7 @@ import React, { useEffect } from "react";
 import Link from 'next/link'
 import { Select, Button, Box, Table, Modal, TextInput, Text, Highlight, LoadingOverlay, Textarea } from '@mantine/core';
 import { PageProps } from 'types/page';
+import { useLocalWorkspaceStore } from 'store/workspace';
 import styles from './index.module.scss';
 
 
@@ -123,6 +124,7 @@ import styles from './index.module.scss';
 
 export function WorkSpace(props: PageProps & { parentPath: any }) {
     const { workspaceList, workspaceId, parentPath } = props;
+    const { setCurrentWorkspace } = useLocalWorkspaceStore();
     return (
         <>
             <Text className={styles.title}>
@@ -146,6 +148,7 @@ export function WorkSpace(props: PageProps & { parentPath: any }) {
                     })}
                     onChange={(value: any) => {
                             console.log(value);
+                            setCurrentWorkspace(value);
                         }
                     }
                 />

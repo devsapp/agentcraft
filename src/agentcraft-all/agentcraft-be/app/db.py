@@ -281,6 +281,7 @@ CREATE_ASSISTANT_SESSION_TABLE = text(
     title VARCHAR(255) NOT NULL,
     assistant_id BIGINT REFERENCES assistant(id) ON DELETE CASCADE,
     share_id VARCHAR(255),
+    status INTEGER DEFAULT 1,
     fingerprint_id VARCHAR(255) NOT NULL,
     created TIMESTAMP NOT NULL DEFAULT NOW(),
     modified TIMESTAMP NOT NULL DEFAULT NOW()
@@ -291,15 +292,18 @@ CREATE_ASSISTANT_SESSION_TABLE = text(
 CREATE_ASSISTANT_CHAT_TABLE = text(
     """CREATE TABLE IF NOT EXISTS assistant_chat (
     id BIGSERIAL PRIMARY KEY,
-    ip VARCHAR(255) NOT NULL,
+    ip VARCHAR(255) ,
     question TEXT NOT NULL,
-    prompt TEXT NOT NULL,
-    source TEXT NOT NULL,
+    prompt TEXT,
+    source TEXT,
     answer TEXT NOT NULL,
-    type INTEGER NOT NULL DEFAULT 0,
+    answer_type INTEGER DEFAULT 1,
+    reasoning_log TEXT,
+    type INTEGER NOT NULL DEFAULT 1,
     created TIMESTAMP NOT NULL DEFAULT NOW(),
     modified TIMESTAMP NOT NULL DEFAULT NOW(),
     assistant_id BIGINT REFERENCES assistant(id) ON DELETE SET NULL,
+    run_id BIGINT,
     model_id BIGINT REFERENCES model(id) ON DELETE SET NULL,
     model_name VARCHAR(255),
     uid VARCHAR(255) NOT NULL UNIQUE

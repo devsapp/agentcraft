@@ -111,7 +111,7 @@ export default function EmbeddingConfig({ form }: any) {
             <LoadingOverlay loader={<LoadingStepper />} visible={createLoading} overlayOpacity={0.8} overlayBlur={2} />
             <TextInput withAsterisk label="向量维度" description="向量的维度设置，跟使用embedding算法相关，并且在数据库持久化的时候不能修改" defaultValue={'1024'} placeholder="" {...form.getInputProps('EMBEDDING_DIM')} />
             <Flex align={'center'}>
-                <TextInput withAsterisk label="embedding服务访问地址" description="AgentCraft需要访问embedding服务地址，进行上下文的向量化处理" style={{ width: '85%' }} {...form.getInputProps('EMBEDDING_URL')} defaultValue={completeConfig.EMBEDDING_URL || ''} /> <Button variant="subtle" mt={42} ml={4} onClick={createEmbeddingService}>快速获取embedding服务</Button>
+                <TextInput label="embedding服务访问地址" description="AgentCraft需要访问embedding服务地址，进行上下文的向量化处理, 在知识库场景下是必须要依赖的选项" style={{ width: '85%' }} {...form.getInputProps('EMBEDDING_URL')} defaultValue={completeConfig.EMBEDDING_URL || ''} /> <Button variant="subtle" mt={42} ml={4} onClick={createEmbeddingService}>快速获取embedding服务</Button>
             </Flex>
         </Paper>
     );

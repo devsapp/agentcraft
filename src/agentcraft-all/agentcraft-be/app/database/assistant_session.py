@@ -14,6 +14,7 @@ class AssistantSession(postgresql.BaseModel):
     title = mapped_column(String, nullable=False)
     assistant_id = mapped_column(ForeignKey("assistant.id", ondelete="cascade"))
     share_id= mapped_column(String, nullable=True)
+    status= mapped_column(Integer, default=0, nullable=False)  # 1: normal, 2: testing, 3: deleted  default 1
     fingerprint_id = mapped_column(String, nullable=False)
     created = mapped_column(TIMESTAMP, default=func.now(), nullable=False)
     modified = mapped_column(TIMESTAMP, default=func.now(), onupdate=func.now(), nullable=False)

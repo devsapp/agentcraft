@@ -3,7 +3,7 @@ import { useRouter } from 'next/router';
 import { AppShell } from '@mantine/core';
 import { Nav } from 'layouts/navbar';
 import { TabContainer } from 'layouts/tabContainer';
-import { getWorkspaceList, useWorkspaceStore } from 'store/workspace';
+import { getWorkspaceListAndSetCurrent, useWorkspaceStore, useLocalWorkspaceStore } from 'store/workspace';
 import { getNavAndCurrentPath } from 'utils/nav';
 import { EXPAND_NAV_WIDTH, CLOSE_NAV_WIDTH } from 'constants/index';
 
@@ -22,7 +22,8 @@ function hasNoNavbar(pathname: string) {
 
 function Shell(props: any) {
     const router = useRouter();
-    const { currentWorkspace, workspaceList } = useWorkspaceStore();
+    const { workspaceList } = useWorkspaceStore();
+    const { currentWorkspace } = useLocalWorkspaceStore();
     const { renderNavList, currentNav } = getNavAndCurrentPath(router);
     const subComponentProps = {
         workspaceId: currentWorkspace,
@@ -31,14 +32,14 @@ function Shell(props: any) {
         currentNav
     }
     useEffect(() => {
-        getWorkspaceList();
+        getWorkspaceListAndSetCurrent();
     }, []);
     const parentPath = currentNav.parentPath as string;
     return <AppShell
         padding="md"
         navbar={<Nav {...subComponentProps} />}
         styles={(theme) => ({
-            main: { backgroundColor: theme.colorScheme === 'dark' ? theme.colors.dark[8] : theme.colors.gray[0] ,paddingLeft: parentPath ? CLOSE_NAV_WIDTH : EXPAND_NAV_WIDTH ,overflow: 'hidden'},
+            main: { backgroundColor: theme.colorScheme === 'dark' ? theme.colors.dark[8] : theme.colors.gray[0], paddingLeft: parentPath ? CLOSE_NAV_WIDTH : EXPAND_NAV_WIDTH, overflow: 'hidden' },
         })}
     >
         <TabContainer {...subComponentProps} >

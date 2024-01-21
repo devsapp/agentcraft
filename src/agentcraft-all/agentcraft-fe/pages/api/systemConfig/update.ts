@@ -15,11 +15,10 @@ export default async function handler(
 
     const functionName = process.env.beFunctionName || '';
     try {
-
         const result = await serverlessBridgeService.getFunctionV3(functionName);
         const functionInfo = result?.body || {};
         const environmentVariables = functionInfo.environmentVariables;
-        const completeEnvs = Object.assign({}, environmentVariables, env);
+        const completeEnvs = Object.assign({}, environmentVariables, env, { SYSTEM_READY: 'true' });
         completeEnvs.EMBEDDING_DIM = `${DEFAULT_EMBEDDING_DIM}`;
         const updateResult = await serverlessBridgeService.updateFunctionV3(functionName, {
             environmentVariables: completeEnvs

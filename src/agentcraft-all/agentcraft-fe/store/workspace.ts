@@ -1,9 +1,9 @@
 
 import { create } from "zustand";
-import { devtools } from "zustand/middleware";
+import { devtools, persist } from "zustand/middleware";
 import { ResponseData } from 'types/httpStatus';
 import { request } from 'utils/clientRequest';
-
+import { AGENTCRAFT_WORKSPACE } from 'constants/workspace';
 export interface WorkspaceResponseData {
     created: string,
     description: string,
@@ -22,24 +22,28 @@ interface WorkspaceStore {
     workspaceList: WorkspaceResponseData[],
     open: boolean,
     loading: boolean,
-    currentWorkspace: any,
     updateAppList: (_: WorkspaceResponseData[]) => void;
-    setCurrentWorkspace: (currentWorkspace: any) => void;
     setLoading: (loading: boolean) => void;
     setOpen: (open: boolean) => void;
 }
 
-
+export const useLocalWorkspaceStore = create<any>(persist(
+    (set) => ({
+        currentWorkspace: null,
+        setCurrentWorkspace: (currentWorkspace: any) => set((_state: any) => {
+            return ({ currentWorkspace })
+        }),
+    }),
+    {
+        name: AGENTCRAFT_WORKSPACE,
+    }
+))
 
 export const useWorkspaceStore = create<WorkspaceStore>()(devtools((set) => ({
     workspaceList: [],
     open: false,
     loading: false,
-    currentWorkspace: null,
     updateAppList: (workspaceList: WorkspaceResponseData[]) => set((_state: any) => ({ workspaceList })),
-    setCurrentWorkspace: (currentWorkspace: any) => set((_state) => {
-        return ({ currentWorkspace })
-    }),
     setLoading: (status: boolean) => set((_state) => {
         return ({ loading: status })
     }),
@@ -49,18 +53,27 @@ export const useWorkspaceStore = create<WorkspaceStore>()(devtools((set) => ({
 
 })))
 
-export async function getWorkspaceList() {
+export async function getWorkspaceListAndSetCurrent() {
     const state = useWorkspaceStore.getState();
-    const { updateAppList, currentWorkspace, setCurrentWorkspace } = state;
-    const res: ResponseData = await request("/api/workspace/list");
-    const data = res.data;
+    const _localState = useLocalWorkspaceStore.getState();
+    const { updateAppList, } = state;
+    const { currentWorkspace, setCurrentWorkspace } = _localState;
+    const data = await getWorkspaceList();
     if (data) {
         updateAppList(data);
-        if(!currentWorkspace) {
+        if (!currentWorkspace) {
             setCurrentWorkspace(data[0].id);
+        } else {
+            setCurrentWorkspace(currentWorkspace);
         }
     }
 
+}
+
+export async function getWorkspaceList() {
+    const res: ResponseData = await request("/api/workspace/list");
+    const data = res.data;
+    return data;
 }
 
 export async function deleteWorkspace(id: number) {

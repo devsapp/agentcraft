@@ -161,7 +161,7 @@ function List(props: any) {
         return new Date(b.created).getTime() - new Date(a.created).getTime();
     });
     return (
-        <Box pos="relative" >
+        <Box pos="relative" className={'content-container'} pb={124} >
             <LoadingOverlay visible={false} overlayOpacity={0.3} />
             <Flex align={'center'} wrap={'wrap'}>
                 {_list.map((item: any) => {
