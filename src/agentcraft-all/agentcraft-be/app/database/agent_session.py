@@ -19,15 +19,14 @@ class AgentSession(postgresql.BaseModel):
     modified = mapped_column(TIMESTAMP, default=func.now(), onupdate=func.now(), nullable=False)
 
 
-
 def list_sessions(agent_id: int, page: int = 0, limit: int = 3000) -> tuple[list[Session], int]:
     """获取sessions列表"""
     with Session(postgresql.postgres) as session:
         data = session.query(AgentSession).filter(
-            Session.agent_id == agent_id).order_by(
-            Session.modified.desc()).offset(
+            AgentSession.agent_id == agent_id).order_by(
+            AgentSession.modified.desc()).offset(
             page * limit).limit(limit).all()
-        total = session.query(Session).filter(Session.agent_id == agent_id).count()
+        total = session.query(AgentSession).filter(AgentSession.agent_id == agent_id).count()
         return data, total
 
 
