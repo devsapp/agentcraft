@@ -64,7 +64,7 @@ function AgentCard({ data, workspaceId, onDelete, router }: { data: IAgentItem, 
     );
 }
 
-function List(props: any) {
+export function List(props: any) {
     const router = useRouter();
     const { workspaceId } = props;
     const { knowledgeBaseList, setLoading } = useKnowledgeBaseStore();
@@ -161,7 +161,7 @@ function List(props: any) {
         return new Date(b.created).getTime() - new Date(a.created).getTime();
     });
     return (
-        <Box pos="relative" className={'content-container'} pb={124} >
+        <Box pos="relative">
             <LoadingOverlay visible={false} overlayOpacity={0.3} />
             <Flex align={'center'} wrap={'wrap'}>
                 {_list.map((item: any) => {
@@ -263,7 +263,9 @@ export function AgentPage(props: any) {
                     新建
                 </Button>
             </Box>
-            <List {...props} />
+            <Box className={'content-container'} >
+                <List {...props} />
+            </Box>
             <ChooseAgentDialog {...props} />
         </>
 

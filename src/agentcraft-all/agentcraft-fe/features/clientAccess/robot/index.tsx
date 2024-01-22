@@ -2,7 +2,7 @@ import React from "react";
 import { nanoid } from 'nanoid';
 import { useRouter } from 'next/router';
 import { useForm, UseFormReturnType } from '@mantine/form';
-import { Breadcrumbs, Anchor, Stepper, Group, Button, LoadingOverlay, Flex, Loader } from '@mantine/core';
+import { Anchor, Stepper, Group, Button, LoadingOverlay, Flex, Loader } from '@mantine/core';
 import { notifications } from '@mantine/notifications';
 import { useClientAccessStore, createChatBotBridgeService, createEventbus } from "store/clientAccess";
 import { useSystemConfigStore } from 'store/systemConfig';
@@ -14,22 +14,22 @@ import ServiceConfigPreview from 'features/clientAccess/robot/ServiceConfigPrevi
 import RobotWebhookConfig from 'features/clientAccess/robot/RobotWebhookConfig';
 import FeatureDescription from 'components/FeatureDescription';
 import { generateDingTalkToken } from 'utils/token';
-
-import { ROBOT_NAME_VALUE, ROBOT_CONFIG_STEP, DEFAULT_CLIENT_ACCESS_REGION, AGENTCRAFT_CLIENT_PREFIX, CHATBOT_APPNAME_MAP, CHATBOT_APPSERVER_MAP,AGENT_TYPE } from 'constants/client-access';
+import { ROBOT_NAME_VALUE, ROBOT_CONFIG_STEP, DEFAULT_CLIENT_ACCESS_REGION, AGENTCRAFT_CLIENT_PREFIX, CHATBOT_APPNAME_MAP, CHATBOT_APPSERVER_MAP } from 'constants/client-access';
+import { AGENT_TYPE } from 'constants/agent';
 
 export function Robot() {
     const router = useRouter()
     const { activeStep, setActiveStep, robotStepStatus, setRobotStepStatus, robotConfig, setRobotConfig } = useClientAccessStore();
     const completeConfig = useSystemConfigStore().completeConfig;
 
-    const items = [
-        { title: 'AgentCraft', href: '/' },
-        { title: '客户端接入', href: '/clientAccess' }
-    ].map((item, index) => (
-        <Anchor href={item.href} key={index}>
-            {item.title}
-        </Anchor>
-    ));
+    // const items = [
+    //     { title: 'AgentCraft', href: '/' },
+    //     { title: '客户端接入', href: '/clientAccess' }
+    // ].map((item, index) => (
+    //     <Anchor href={item.href} key={index}>
+    //         {item.title}
+    //     </Anchor>
+    // ));
 
     const proxyServiceForm: UseFormReturnType<any> = useForm({
         initialValues: {
@@ -66,8 +66,8 @@ export function Robot() {
         try {
             robotStepStatus.robot_proxy_service_create_loading = true;
             setRobotStepStatus(robotStepStatus);
-            const { agentId, description ,agentType } = proxyServiceForm.values;
-            const agentDetail =  agentType === AGENT_TYPE.KNOWLEDGEBASE? await getKnowledgeBase(agentId) : await getAssistant(agentId);
+            const { agentId, description, agentType } = proxyServiceForm.values;
+            const agentDetail = agentType === AGENT_TYPE.KNOWLEDGEBASE ? await getKnowledgeBase(agentId) : await getAssistant(agentId);
             const token = agentDetail.token;
             const agentAccess = await getAccessUrl();
             const agentAccessInfo = agentAccess.data || { openApiUrl: '', innerApiUrl: '' };

@@ -130,7 +130,9 @@ export function WorkSpace(props: PageProps & { parentPath: any }) {
             <Text className={styles.title}>
                 {parentPath ? 'AC' : 'AgentCraft'}
             </Text>
-            {parentPath ? <Box></Box> : <Box mt={12} className={styles.workspace}>
+            {parentPath ? <Box mt={12} className={styles['workspace-short']}>
+                {workspaceList[0]?.name?.substring(0, 1)}
+            </Box> : <Box mt={12} className={styles.workspace}>
                 <Text className={styles['workspace-namespace-title']}>
                     工作空间
                 </Text>
@@ -147,9 +149,9 @@ export function WorkSpace(props: PageProps & { parentPath: any }) {
                         }
                     })}
                     onChange={(value: any) => {
-                            console.log(value);
-                            setCurrentWorkspace(value);
-                        }
+                        console.log(value);
+                        setCurrentWorkspace(value);
+                    }
                     }
                 />
             </Box>}

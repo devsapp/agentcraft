@@ -85,7 +85,7 @@ export function AssistantForm({ workspaceId, form }: { workspaceId: any, form: a
         </Paper>
         <Paper shadow="xs" p="md" withBorder style={{ width: pannelWidth }}>
             <Flex justify={'space-between'} align={'center'}>
-                <Title order={5} size="h5" >内置能力</Title>
+                <Title order={5} size="h5" >内置能力（待开放）</Title>
             </Flex>
 
             <Box pl={4} pr={4} >
@@ -99,7 +99,7 @@ export function AssistantForm({ workspaceId, form }: { workspaceId: any, form: a
                     }}
                 >
                     <Group mt="xs">
-                        <Checkbox value="web_browser" label="Web浏览" />
+                        {/* <Checkbox value="web_browser" label="Web浏览" /> */}
                         <Checkbox value="code_interpreter" label="代码解释器" disabled />
                     </Group>
                 </Checkbox.Group>

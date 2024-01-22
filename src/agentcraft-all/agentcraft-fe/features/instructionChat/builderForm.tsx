@@ -23,7 +23,7 @@ interface AssistantProps {
 }
 
 
-export function KnowledgeBaseForm({ workspaceId, form }: { workspaceId: any, form: any }) {
+export function InstructionChatForm({ workspaceId, form }: { workspaceId: any, form: any }) {
     return <Box pr={32}>
         <Paper shadow="xs" p="md" withBorder mt={12}>
             <Title order={5} size="h5">问答信息</Title>
@@ -207,7 +207,7 @@ export function BuilderForm({ workspaceId }: AssistantProps) {
                 </Box>
             </Center>
             <Box h={'calc(100vh - 142px)'} style={{ overflowY: 'auto', paddingBottom: 64 }}>
-                <KnowledgeBaseForm workspaceId={workspaceId} form={form} />
+                <InstructionChatForm workspaceId={workspaceId} form={form} />
             </Box>
         </Box>
         <Box w="50%" h="100%" p={16}>

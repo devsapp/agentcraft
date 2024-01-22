@@ -10,7 +10,8 @@ import CopyToClipboard from 'components/CopyToClipboard';
 import { DEFAULT_MODEL_REQUEST_TIMEOUT } from 'constants/index';
 import FeatureDescription from 'components/FeatureDescription';
 import { FORM_WIDTH } from 'constants/index';
-function List() {
+
+export function List() {
     const modelList: Model[] = useModelStore().modelList;
     const loading: boolean = useModelStore().loading;
     const setLoading = useModelStore().setLoading;
@@ -182,14 +183,14 @@ function AddOrUpdate() {
 
 export function ModelPage() {
 
-    const items = [
-        { title: 'AgentCraft', href: '#' },
-        { title: 'LLM代理', href: '/model' },
-    ].map((item, index) => (
-        <Anchor href={item.href} key={index}>
-            {item.title}
-        </Anchor>
-    ));
+    // const items = [
+    //     { title: 'AgentCraft', href: '#' },
+    //     { title: 'LLM代理', href: '/model' },
+    // ].map((item, index) => (
+    //     <Anchor href={item.href} key={index}>
+    //         {item.title}
+    //     </Anchor>
+    // ));
     const setOpen = useModelStore().setOpen;
     const setEditStatus = useModelStore().setEditStatus;
     return (

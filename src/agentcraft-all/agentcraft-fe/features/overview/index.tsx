@@ -1,13 +1,28 @@
 import React, { useEffect } from "react";
-import { Paper, Text, Title, Button, Divider, Flex, Box, Anchor } from '@mantine/core';
+import Link from 'next/link'
+import { Paper, Text, Title, Button, Card, Flex, Box, Anchor, Group, Badge } from '@mantine/core';
 import { QuickStart } from "features/overview/quickStart";
+import { List as AgentList } from 'features/agent/index';
 import { useQuickStartStore } from "store/quickStart";
-import { useKnowledgeBaseStore, getAccessUrl } from '@/store/knowledgeBase';
+import { useKnowledgeBaseStore, getAccessUrl } from 'store/knowledgeBase';
+import { useAssistantStore } from 'store/assistant';
+import { useLocalWorkspaceStore } from 'store/workspace';
+import { getModelList, useModelStore } from 'store/model';
+import { getDataSetList, useDataSetStore } from 'store/dataset';
+import { DataSet } from 'types/dataset';
+import { Model } from 'types/model';
 export function OverView() {
     const { autoQuickStart, setAutoQuickStart } = useQuickStartStore();
+    const { currentWorkspace } = useLocalWorkspaceStore();
+    const { knowledgeBaseList } = useKnowledgeBaseStore();
+    const modelList: Model[] = useModelStore().modelList;
+    const { assistantList } = useAssistantStore();
+    const dataSetList: DataSet[] = useDataSetStore().dataSetList;
     const accessUrl = useKnowledgeBaseStore().accessUrl;
     const setAccessUrl = useKnowledgeBaseStore().setAccessUrl;
     useEffect(() => {
+        getDataSetList();
+        getModelList();
         (async () => {
             const result = await getAccessUrl();
             const data = result.data || { openApiUrl: '', innerApiUrl: '' }
@@ -17,7 +32,7 @@ export function OverView() {
     return (
         <>
             {autoQuickStart && <Paper shadow="xs" p="xl" mt={24} >
-                <QuickStart />
+                <QuickStart workspaceId={currentWorkspace} />
             </Paper>}
             {!autoQuickStart &&
                 <Box className={'content-container'} mt={24} >
@@ -25,10 +40,50 @@ export function OverView() {
                         <Flex gap="xs">
                             <Flex direction="column" style={{ width: '68%' }}>
                                 <Paper shadow="xs" p="xl" mb={24} withBorder >
-                                  
+                                    <Flex justify={'space-around'}>
+                                        <Card shadow="sm" padding="lg" radius="md" withBorder style={{ width: '33%' }}>
+                                            <Group position="apart" mt="md" mb="xs">
+                                                <Text weight={500}>智能体数量</Text>
+                                                <Badge color="green" variant="light" mr={4}>
+                                                    <Link href="/agent">
+                                                        <Text size="sm" color="dimmed">
+                                                            {assistantList.length + knowledgeBaseList.length}
+                                                        </Text>
+                                                    </Link>
+                                                </Badge>
+                                            </Group>
+                                        </Card>
+                                        <Card shadow="sm" padding="lg" radius="md" withBorder style={{ width: '33%' }}>
+                                            <Group position="apart" mt="md" mb="xs">
+                                                <Text weight={500}>数据集数量</Text>
+                                                <Badge color="green" variant="light" mr={4}>
+                                                    <Link href="/dataset">
+                                                        <Text size="sm" color="dimmed">
+                                                            {dataSetList.length}
+                                                        </Text>
+                                                    </Link>
+                                                </Badge>
+                                            </Group>
+                                        </Card>
+                                        <Card shadow="sm" padding="lg" radius="md" withBorder style={{ width: '33%' }}>
+                                            <Group position="apart" mt="md" mb="xs">
+                                                <Text weight={500}>LLM代理数量</Text>
+                                                <Badge color="green" variant="light" mr={4}>
+                                                    <Link href="/model">
+                                                        <Text size="sm" color="dimmed">
+                                                            {modelList.length}
+                                                        </Text>
+                                                    </Link>
+                                                </Badge>
+                                            </Group>
+                                        </Card>
+                                    </Flex>
                                 </Paper>
-                                <Paper shadow="xs" p="xl" mb={24} withBorder >
-                                    
+                                <Paper shadow="xs" p="xl" withBorder >
+                                    <Box mt={12}>
+                                        <Title order={5} mb={12}>智能体列表</Title>
+                                        <AgentList workspaceId={currentWorkspace} />
+                                    </Box>
                                 </Paper>
                             </Flex>
 

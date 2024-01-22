@@ -49,6 +49,16 @@ export function getNavAndCurrentPath(router: any) {
                     name: "编辑知识库问答",
                     path: "/agent/[id]/knowledgeBase/[knowledgeBaseId]",
                     icon: IconVocabulary,
+                },
+                {
+                    name: "新增简单问答",
+                    path: "/agent/[id]/instructionChat",
+                    icon: IconVocabulary,
+                },
+                {
+                    name: "编辑简单问答",
+                    path: "/agent/[id]/instructionChat/[instructionChatId]",
+                    icon: IconVocabulary,
                 }
             ]
         },
