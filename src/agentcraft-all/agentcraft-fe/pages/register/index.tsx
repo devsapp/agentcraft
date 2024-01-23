@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useRouter } from 'next/router';
 import Link from 'next/link'
-import { Paper, Col, TextInput, PasswordInput, Button, LoadingOverlay, Flex, Loader } from '@mantine/core';
+import { Paper, TextInput, PasswordInput, Button, LoadingOverlay, Flex, Loader } from '@mantine/core';
 import { useForm } from '@mantine/form';
 import { notifications } from '@mantine/notifications';
 import { DEFAULT_WORKSPACE_NAME, DEFAULT_WORKSPACE_DESCRIPTION } from 'constants/workspace';
@@ -49,7 +49,7 @@ const LoginPage = () => {
                     notifications.show({
                         title: '注册失败',
                         message: '账号已存在',
-                        color: 'read',
+                        color: 'red',
                     });
                 }
             } catch (e) {

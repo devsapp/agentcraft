@@ -12,7 +12,7 @@ export function Agent(props: any) {
         currentAgentType,
         setCurrentAgentType
     } = useQuickStartStore();
-    const { instructionChatForm, knowledgeBaseForm, assistantForm, modelSelectData } = props;
+    const { instructionChatForm, knowledgeBaseForm, assistantForm, modelSelectData, openDatasetModel } = props;
     const agentTypeList = [{
         label: '简单问答',
         value: AGENT_TYPE.INSTRUCTIO_CHAT,
@@ -51,8 +51,8 @@ export function Agent(props: any) {
             <Box w="100%" style={{ overflowY: 'auto', paddingBottom: 64 }}>
                 <Box h={'calc(100vh - 600px)'} >
                     {currentAgentType === AGENT_TYPE.INSTRUCTIO_CHAT && <InstructionChatForm form={instructionChatForm} modelSelectData={modelSelectData} />}
-                    {currentAgentType === AGENT_TYPE.KNOWLEDGEBASE && <KnowledgeBaseForm form={knowledgeBaseForm} modelSelectData={modelSelectData} />}
-                    {currentAgentType === AGENT_TYPE.ASSISTANT && <AssistantForm form={assistantForm} modelSelectData={modelSelectData} />}
+                    {currentAgentType === AGENT_TYPE.KNOWLEDGEBASE && <KnowledgeBaseForm form={knowledgeBaseForm} modelSelectData={modelSelectData} openDatasetModel={openDatasetModel} />}
+                    {currentAgentType === AGENT_TYPE.ASSISTANT && <AssistantForm form={assistantForm} modelSelectData={modelSelectData} openDatasetModel={openDatasetModel} />}
                 </Box>
             </Box>
         </Box>

@@ -131,10 +131,11 @@ export function BuilderForm({ workspaceId }: AssistantProps) {
     const router = useRouter();
     const { query } = router;
     const knowledgeBaseId = query.knowledgeBaseId;
+    const initialAgentName = query.initialAgentName;
     const { setLoading, currentKnowledgeBase, updateCurrentKnowledgeBase } = useKnowledgeBaseStore();
     const modelList: Model[] = useModelStore().modelList;
     const initFormValue = {
-        name: '',
+        name: initialAgentName,
         description: '',
         prompt_template: PROMPT_TEMPLATE,
         app_id: parseInt(workspaceId),

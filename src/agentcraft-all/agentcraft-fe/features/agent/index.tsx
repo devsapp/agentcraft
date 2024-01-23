@@ -157,7 +157,7 @@ export function List(props: any) {
             type: 'instructionChat'
         };
     });
-    const _list: IAgentItem[] = _assistantList.concat(_knowledgeBaseList).concat(_instructionChatList).sort((a:IAgentItem, b: IAgentItem) => {
+    const _list: IAgentItem[] = _assistantList.concat(_knowledgeBaseList).concat(_instructionChatList).sort((a: IAgentItem, b: IAgentItem) => {
         return new Date(b.created).getTime() - new Date(a.created).getTime();
     });
     return (
@@ -186,6 +186,7 @@ export function List(props: any) {
 }
 
 function ChooseAgentDialog(props: any) {
+    const [agentName, setAgentName] = useState('');
     const { open, setOpen } = useAgentStore();
     const [agentType, setAgentType] = useState('instructionChat');
     const { updateCurrentAssistant } = useAssistantStore();
@@ -227,7 +228,7 @@ function ChooseAgentDialog(props: any) {
                 <Flex className={styles['agent-type']} justify={'space-between'} >
                     <Text className={styles['agent-title']}>智能体名称</Text>
                     <Box className={styles['agent-container']}>
-                        <TextInput className={styles['agent-name-input']} />
+                        <TextInput className={styles['agent-name-input']} onChange={(event) => setAgentName(event.currentTarget.value)} value={agentName} />
                     </Box>
                 </Flex>
                 <Flex justify={'flex-end'}>
@@ -235,11 +236,11 @@ function ChooseAgentDialog(props: any) {
                         <Button mr={8} className={styles['agent-footer-btn']} color="#FFF" onClick={() => {
                             updateCurrentAssistant({} as Assistant);
                             if (agentType === 'assistant') {
-                                router.push(`/agent/${workspaceId}/assistant`);
-                            } else if(agentType === 'knowledgeBase') {
-                                router.push(`/agent/${workspaceId}/knowledgeBase`);
-                            } else if(agentType === 'instructionChat') {
-                                router.push(`/agent/${workspaceId}/instructionChat`);
+                                router.push(`/agent/${workspaceId}/assistant?initialAgentName=${agentName}`);
+                            } else if (agentType === 'knowledgeBase') {
+                                router.push(`/agent/${workspaceId}/knowledgeBase?initialAgentName=${agentName}`);
+                            } else if (agentType === 'instructionChat') {
+                                router.push(`/agent/${workspaceId}/instructionChat?initialAgentName=${agentName}`);
                             }
                             setOpen(false);
                         }}>确定</Button>

@@ -1,15 +1,17 @@
 import React, { useEffect } from "react";
-import Link from 'next/link'
-import { Breadcrumbs, Anchor, Button, Box, Table, Modal, TextInput, Text, Highlight, LoadingOverlay, Select, Textarea,Code } from '@mantine/core';
+import { Card, Flex, Button, Box, Table, Modal, TextInput, Text, Highlight, LoadingOverlay, Select, Textarea, Code, Loader, Badge } from '@mantine/core';
 import { useForm } from '@mantine/form';
 import { modals } from '@mantine/modals';
+import { notifications } from '@mantine/notifications';
 import CopyToClipboard from 'components/CopyToClipboard';
 import { getToolList, useActionToolStore, addTool, deleteTool, updateTool, getFunctionList } from 'store/actionTools';
+import { createServerlessApp, checkAppStatus } from 'store/infra';
+import { useSystemConfigStore } from 'store/systemConfig';
 import { IActionTool, ActionToolType, ActionToolStatus } from 'types/actionTools';
-
 import FeatureDescription from 'components/FeatureDescription';
 import { formatDateTime } from 'utils/index';
-import { FORM_WIDTH } from 'constants/index';
+import { ACTION_TOOL_TEMPLATES } from 'constants/action-tools';
+import styles from './index.module.scss';
 
 const ACTION_TOOL_TYPE_NAME_MAP = {
     [ActionToolType.FUNCTION]: '函数',
@@ -65,22 +67,22 @@ function AddOrUpdate() {
     }, [currentActionTool])
     return (
         <Modal opened={open} onClose={() => { setOpen(false) }} title={isEdit ? '编辑执行工具' : '创建执行工具'} centered size="50%">
-            <Box  mx="auto">
+            <Box mx="auto">
                 <Select
                     withAsterisk
                     searchable
-                    label={<span >执行函数<a href="https://fcnext.console.aliyun.com/cn-hangzhou/functions/create" target="_blank" style={{marginLeft: 12}}>还没有执行函数？点击前往创建</a></span>}
+                    label={<span >执行函数<a href="https://fcnext.console.aliyun.com/cn-hangzhou/functions/create" target="_blank" style={{ marginLeft: 12 }}>还没有执行函数？点击前往创建</a></span>}
                     placeholder="请选择执行函数"
                     data={functionList}
                     {...form.getInputProps('name')}
                 />
                 <TextInput label="名称" placeholder="工具名" {...form.getInputProps('alias')} />
-                <Textarea withAsterisk label="描述" placeholder="输入工具描述" {...form.getInputProps('description')} description={<div><span >参考示例：</span><CopyToClipboard value={"文生图是一个AI绘画（图像生成）服务，输入文本描述，返回根据文本作画得到的图片的URL"} content={"文生图是一个AI绘画（图像生成）服务，输入文本描述，返回根据文本作画得到的图片的URL"}  position={"none"} /> </div>} />
-                <Textarea withAsterisk label="输入参数" placeholder="输入参数" {...form.getInputProps('input_schema')} description={<div><span >参考示例：</span><CopyToClipboard value={"[ { 'name': 'prompt', 'description': '英文关键词，描述了希望图像具有什么内容', 'required': True, 'schema': {'type': 'string'}, } ]"} content={"[ { 'name': 'prompt', 'description': '英文关键词，描述了希望图像具有什么内容', 'required': True, 'schema': {'type': 'string'}, } ]"}  position={"none"} /> </div>} />
+                <Textarea withAsterisk label="描述" placeholder="输入工具描述" {...form.getInputProps('description')} description={<div><span >参考示例：</span><CopyToClipboard value={"文生图是一个AI绘画（图像生成）服务，输入文本描述，返回根据文本作画得到的图片的URL"} content={"文生图是一个AI绘画（图像生成）服务，输入文本描述，返回根据文本作画得到的图片的URL"} position={"none"} /> </div>} />
+                <Textarea withAsterisk label="输入参数" placeholder="输入参数" {...form.getInputProps('input_schema')} description={<div><span >参考示例：</span><CopyToClipboard value={"[ { 'name': 'prompt', 'description': '英文关键词，描述了希望图像具有什么内容', 'required': True, 'schema': {'type': 'string'}, } ]"} content={"[ { 'name': 'prompt', 'description': '英文关键词，描述了希望图像具有什么内容', 'required': True, 'schema': {'type': 'string'}, } ]"} position={"none"} /> </div>} />
                 <Textarea label="输出参数" placeholder="输入参数" {...form.getInputProps('output_schema')} />
                 <TextInput label="作者" placeholder="请输入作者" {...form.getInputProps('author')} />
             </Box>
-            <Box  mx="auto" pt={12} style={{ textAlign: 'right' }}>
+            <Box mx="auto" pt={12} style={{ textAlign: 'right' }}>
                 <Button onClick={async () => {
                     form.validate();
                     if (form.isValid()) {
@@ -98,7 +100,100 @@ function AddOrUpdate() {
     );
 }
 
+function ActionToolCard(props: any) {
+    const item = props.data;
+    return <Card shadow="sm" padding="lg" radius="md" withBorder style={{ width: 240, height: 120, cursor: 'pointer' }}>
+        {/* <Card.Section >
+        <Image
+            src={item.icon}
+            style={{ margin: '10px auto' }}
+            height={160}
+            width={160}
+            alt={item.tag.join('')}
+        />
+    </Card.Section> */}
 
+        <div>
+            {item.tag.map((tag: string, index: number) => {
+                return <Badge color="green" variant="light" key={`template-${index}-${tag}`} mr={4}>
+                    {tag}
+                </Badge>
+            })}
+        </div>
+        <Text size="sm" color="dimmed">
+            {item.description}
+        </Text>
+    </Card>
+}
+
+export function ChooseModal() {
+    const { openToChoose, setOpenToChoose, setLoadingForChoose, setOpen, loadingForChoose } = useActionToolStore();
+
+    const createActionTools = async (item: any) => {
+        setLoadingForChoose(true);
+        const createAppPayload = {
+            description: item.description,
+            region: useSystemConfigStore?.completeConfig?.regionId || 'cn-hangzhou',
+            name: item.functionConfig.functionName,
+        }
+        const appName: any = await createServerlessApp(item.functionConfig.template, createAppPayload);
+        if (appName) {
+            await checkAppStatus(appName);
+        }
+        const data = await addTool({
+            name: item.functionConfig.functionName,
+            alias: item.name,
+            description: item.description,
+            input_schema: item.input_schema,
+            type: 1,
+            status: 2,
+            output_schema: '',
+            author: '',
+            proxy_url: '',
+        });
+        if (data) {
+            await getToolList();
+        } else {
+            notifications.show({
+                title: '创建工具失败',
+                message: '请检查是否已经存在该工具',
+                color: 'red',
+            });
+        }
+
+
+
+        setOpenToChoose(false);
+        setLoadingForChoose(false);
+
+    }
+    return (
+        <Modal opened={openToChoose} onClose={() => { setOpenToChoose(false) }} title={'执行工具'} centered size="50%" closeOnClickOutside={false} >
+            <LoadingOverlay visible={loadingForChoose} overlayOpacity={0.6} loader={<Flex align={'center'} direction="column"><Flex align={'center'} >部署执行工具大约需要1分钟，请耐心等待<Loader variant="bars" color={'pink'} ml={12} /></Flex></Flex>} />
+            <Flex wrap={'wrap'} justify={'flex-start'} pb={24} pl={12}>
+                {ACTION_TOOL_TEMPLATES.map((item: any, index: number) => {
+                    return <Box key={`template-${index}-${item.tag.join('-')}`} mr={12} mb={12} onClick={() => createActionTools(item)} className={styles['action-tool-card']}>
+                        <ActionToolCard data={item} />
+                    </Box>
+                })}
+                <Box >
+                    <Card shadow="sm" radius="md" withBorder style={{ width: 240, height: 120 }}>
+                        <Button
+                            variant={'outline'}
+                            onClick={() => {
+                                setOpenToChoose(false);
+                                setOpen(true);
+                            }}
+                            h={'100%'}
+                            w={'100%'} >
+                            <Text size={18}>+ 自定义</Text>
+                        </Button>
+                    </Card>
+                </Box>
+            </Flex>
+        </Modal>
+    );
+}
 
 
 function List() {
@@ -133,8 +228,8 @@ function List() {
             <td>{element.alias}</td>
             <td>{element.name}</td>
             {/* <td >{ACTION_TOOL_STATUS_NAME_MAP[element.status]}</td> */}
-            <td style={{ width: 200 }}>{<CopyToClipboard value={element.description} content={element.description}  position={"none"} />}</td>
-            <td style={{ width: 200 }}><CopyToClipboard value={element.input_schema} content={<Code color="teal">{element.input_schema}</Code>}  position={"none"} /></td>
+            <td style={{ width: 200 }}>{<CopyToClipboard value={element.description} content={element.description} position={"none"} />}</td>
+            <td style={{ width: 200 }}><CopyToClipboard value={element.input_schema} content={<Code color="teal">{element.input_schema}</Code>} position={"none"} /></td>
             <td>{element.output_schema}</td>
             <td>{ACTION_TOOL_TYPE_NAME_MAP[element.type]}</td>
             <td>{element.author}</td>
@@ -195,15 +290,15 @@ function List() {
 
 
 export function ActionToolsPage() {
-    const { setOpen, setEditStatus } = useActionToolStore();
-    const items = [
-        { title: 'AgentCraft', href: '#' },
-        { title: '执行工具', href: '/actionTools' },
-    ].map((item, index) => (
-        <Anchor href={item.href} key={index}>
-            {item.title}
-        </Anchor>
-    ));
+    const { setOpenToChoose, setEditStatus } = useActionToolStore();
+    // const items = [
+    //     { title: 'AgentCraft', href: '#' },
+    //     { title: '执行工具', href: '/actionTools' },
+    // ].map((item, index) => (
+    //     <Anchor href={item.href} key={index}>
+    //         {item.title}
+    //     </Anchor>
+    // ));
 
     return (
         <>
@@ -212,12 +307,13 @@ export function ActionToolsPage() {
             <Box mt={12} >
                 <Button onClick={() => {
                     setEditStatus(false);
-                    setOpen(true)
+                    setOpenToChoose(true);
                 }}>
                     新建执行工具
                 </Button>
             </Box>
             <AddOrUpdate />
+            <ChooseModal />
             <List />
         </>
 

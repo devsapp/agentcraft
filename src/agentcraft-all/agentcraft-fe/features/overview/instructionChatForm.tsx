@@ -1,10 +1,10 @@
 import React from "react";
 
-import { Center, Button, Box, Table, TextInput, Text, Group, Badge, MultiSelect, Select, Drawer, LoadingOverlay, Modal, Textarea, Flex, NumberInput, Paper, Title, Divider } from '@mantine/core';
-
+import { Box, TextInput, Group, Select, Textarea, Flex, Paper, Title, Divider } from '@mantine/core';
+import { IconRefresh } from '@tabler/icons-react';
 import { INSTRUCTION_TEMPLATES, DEFAULT_CHAT_INSTRUCTION } from 'constants/instructions'
 
-
+import { getModelList } from 'store/model';
 
 
 
@@ -18,7 +18,11 @@ export function InstructionChatForm({ form, modelSelectData }: any) {
             </Box>
         </Paper>
         <Paper shadow="xs" p="md" withBorder mt={12}>
-            <Title order={5} size="h5">模型</Title>
+
+            <Flex justify={'space-between'} align={'center'} mb={4} >
+                <Title order={5} size="h5">LLM代理</Title>
+                <IconRefresh cursor={'pointer'} onClick={getModelList} />
+            </Flex>
             <Box pl={4} pr={4} >
                 <Select
                     data={modelSelectData}

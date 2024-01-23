@@ -1,17 +1,16 @@
-import React, { useEffect, useState } from "react";
-import { useRouter } from 'next/router';
-import Link from 'next/link';
-import { Center, ActionIcon, Tooltip, Spoiler, Breadcrumbs, Anchor, Button, Checkbox, Box, Table, TextInput, Text, Highlight, Switch, Group, Badge, MultiSelect, Select, Drawer, LoadingOverlay, Modal, Textarea, Flex, NumberInput, Paper, Title, Divider } from '@mantine/core';
-import { useForm } from '@mantine/form';
-import { modals } from '@mantine/modals';
-import { IconRefresh, IconArrowBackUp } from '@tabler/icons-react';
-import { getModelList, useModelStore } from 'store/model';
+import React, { useEffect } from "react";
+
+import { Button, Checkbox, Box, TextInput, Text, Highlight, Switch, Group, Badge, MultiSelect, Select, Textarea, Flex, NumberInput, Paper, Title, Divider } from '@mantine/core';
+
+import { IconRefresh } from '@tabler/icons-react';
+import { ChooseModal } from 'features/actionTools';
+import { getModelList } from 'store/model';
 import { getDataSetList, useDataSetStore } from 'store/dataset';
 import { DataSet, DataSetType } from 'types/dataset';
 import { getToolList, useActionToolStore } from 'store/actionTools';
 
-export function AssistantForm({ form, modelSelectData }: any) {
-
+export function AssistantForm({ form, modelSelectData, openDatasetModel }: any) {
+    const { setOpenToChoose } = useActionToolStore();
     const dataSetList: DataSet[] = useDataSetStore().dataSetList;
     const { toolList } = useActionToolStore();
     useEffect(() => {
@@ -24,7 +23,7 @@ export function AssistantForm({ form, modelSelectData }: any) {
     const qaSelectData: any = dataSetList.filter((item: DataSet) => item.dataset_type == DataSetType.QUESTION).map((item: DataSet) => { return { label: item.name, value: item.id } });
 
     return <Box>
-
+        <ChooseModal />
         <Paper shadow="xs" p="md" withBorder mt={12}>
             <Title order={5} size="h5">智能助手信息</Title>
             <Box pl={4} pr={4} >
@@ -39,7 +38,10 @@ export function AssistantForm({ form, modelSelectData }: any) {
             </Box>
         </Paper>
         <Paper shadow="xs" p="md" withBorder mt={12}>
-            <Title order={5} size="h5">模型</Title>
+            <Flex justify={'space-between'} align={'center'} mb={4} >
+                <Title order={5} size="h5">LLM代理</Title>
+                <IconRefresh cursor={'pointer'} onClick={getModelList} />
+            </Flex>
             <Box pl={4} pr={4} >
                 <Select
                     data={modelSelectData}
@@ -59,7 +61,11 @@ export function AssistantForm({ form, modelSelectData }: any) {
         </Paper>
         <Paper shadow="xs" p="md" withBorder mt={12}>
             <Flex justify={'space-between'} align={'center'} mb={4} >
-                <Title order={5} size="h5">知识库</Title>
+
+                <Flex align={'center'}>
+                    <Title order={5} size="h5">知识库</Title>
+                    <Button size={'xs'} h={20} ml={12} variant={'outline'} onClick={openDatasetModel}>快速添加</Button>
+                </Flex>
                 <IconRefresh cursor={'pointer'} onClick={getDataSetList} />
             </Flex>
 
@@ -95,7 +101,10 @@ export function AssistantForm({ form, modelSelectData }: any) {
         </Paper>
         <Paper shadow="xs" p="md" withBorder mt={12}>
             <Flex justify={'space-between'} align={'center'}>
-                <Title order={5} size="h5">执行工具</Title>
+                <Flex align={'center'}>
+                    <Title order={5} size="h5">执行工具</Title>
+                    <Button size={'xs'} h={20} ml={12} variant={'outline'} onClick={() => { setOpenToChoose(true) }}>快速添加</Button>
+                </Flex>
                 <IconRefresh cursor={'pointer'} onClick={getToolList} />
             </Flex>
 

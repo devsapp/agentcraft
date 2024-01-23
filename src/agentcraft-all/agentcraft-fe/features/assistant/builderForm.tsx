@@ -131,7 +131,8 @@ export function AssistantForm({ workspaceId, form }: { workspaceId: any, form: a
 
 export function BuilderForm({ workspaceId }: AssistantProps) {
     const router = useRouter();
-    const { pathname, query } = router;
+    const { query } = router;
+    const initialAgentName = query.initialAgentName;
     const assistantId = query.assistantId;
     const setLoading = useAssistantStore().setLoading;
     const loading: boolean = useAssistantStore().loading;
@@ -139,7 +140,7 @@ export function BuilderForm({ workspaceId }: AssistantProps) {
     const currentAssistant = useAssistantStore().currentAssistant;
     const modelList: Model[] = useModelStore().modelList;
     const initFormValue = {
-        name: '',
+        name: initialAgentName,
         description: '',
         retrieval_prompt_template: DATA_RETRIVAL_PROMPT_TEMPLATE,
         app_id: parseInt(workspaceId),

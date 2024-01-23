@@ -1,12 +1,12 @@
 import React from "react";
-import { Box, TextInput, Group, MultiSelect, Textarea, Flex, NumberInput, Paper, Title, Divider, Select } from '@mantine/core';
+import { Box, TextInput, Group, MultiSelect, Textarea, Flex, NumberInput, Paper, Title, Divider, Select, Button } from '@mantine/core';
 import { IconRefresh } from '@tabler/icons-react';
 import { getDataSetList, useDataSetStore } from 'store/dataset';
 import { DataSet, DataSetType } from 'types/dataset';
+import { getModelList } from 'store/model';
 
 
-
-export function KnowledgeBaseForm({ form, modelSelectData }: any) {
+export function KnowledgeBaseForm({ form, modelSelectData, openDatasetModel }: any) {
     const dataSetList: DataSet[] = useDataSetStore().dataSetList;
     const documentSelectData: any = dataSetList.filter((item: DataSet) => item.dataset_type == DataSetType.DOCUMENT).map((item: DataSet) => { return { label: item.name, value: item.id } });
     const qaSelectData: any = dataSetList.filter((item: DataSet) => item.dataset_type == DataSetType.QUESTION).map((item: DataSet) => { return { label: item.name, value: item.id } });
@@ -27,7 +27,10 @@ export function KnowledgeBaseForm({ form, modelSelectData }: any) {
             </Box>
         </Paper>
         <Paper shadow="xs" p="md" withBorder mt={12}>
-            <Title order={5} size="h5">模型</Title>
+            <Flex justify={'space-between'} align={'center'} mb={4} >
+                <Title order={5} size="h5">LLM代理</Title>
+                <IconRefresh cursor={'pointer'} onClick={getModelList} />
+            </Flex>
             <Box pl={4} pr={4} >
                 <Select
                     data={modelSelectData}
@@ -60,14 +63,21 @@ export function KnowledgeBaseForm({ form, modelSelectData }: any) {
         <Paper shadow="xs" p="md" withBorder mt={12}>
             <Flex justify={'space-between'} align={'center'}>
                 <Title order={5} size="h5" >数据召回</Title>
-                <IconRefresh cursor={'pointer'} onClick={getDataSetList} />
+
             </Flex>
             <Box pl={4} pr={4} >
                 <Textarea withAsterisk label="召回提示词模板" placeholder="" {...form.getInputProps('prompt_template')} minRows={6} description="召回提示词模板可以将检索的结果context和用户的输入query整合到一起，最后整体输入给大语言模型" />
                 {/* <TextInput label="停止提示词" placeholder="停止输出的token" {...form.getInputProps('stop')} /> */}
             </Box>
             <Divider my="sm" />
-            <Title order={5} size="h6" >召回数据集</Title>
+
+            <Flex justify={'space-between'} align={'center'} mb={4} >
+                <Flex align={'center'}>
+                    <Title order={5} size="h5">召回数据集</Title>
+                    <Button size={'xs'} h={20} ml={12} variant={'outline'} onClick={openDatasetModel}>快速添加</Button>
+                </Flex>
+                <IconRefresh cursor={'pointer'} onClick={getDataSetList} />
+            </Flex>
             <Box pl={4} pr={4} >
                 <Group grow>
                     <MultiSelect

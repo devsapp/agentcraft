@@ -130,7 +130,7 @@ function AddOrUpdate() {
     }, [currentModel]);
 
     return (
-        <Modal opened={open} onClose={() => { setOpen(false) }} title={isEdit ? "修改LLM代理" : "创建LLM代理"} centered>
+        <Modal opened={open} onClose={() => { setOpen(false) }} title={isEdit ? "修改LLM代理" : "创建LLM代理"} centered size={'lg'}>
             <Box maw={FORM_WIDTH} mx="auto">
                 <TextInput withAsterisk label="LLM代理名" placeholder="" {...form.getInputProps('name_alias')} description="LLM代理的名称" />
                 <Select withAsterisk

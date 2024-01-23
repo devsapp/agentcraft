@@ -231,7 +231,7 @@ CREATE_ACTION_TOOLS_TABLE = text(
     input_schema TEXT NOT NULL,
     output_schema TEXT NOT NULL,
     type INTEGER NOT NULL,
-    proxy_url TEXT NOT NULL,
+    proxy_url TEXT,
     author TEXT NOT NULL,
     status INTEGER NOT NULL DEFAULT 1,
     user_id BIGINT REFERENCES users(id) ON DELETE CASCADE,

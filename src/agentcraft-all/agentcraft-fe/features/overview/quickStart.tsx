@@ -3,26 +3,82 @@ import { nanoid } from 'nanoid';
 import { useRouter } from 'next/router';
 import { notifications } from '@mantine/notifications';
 import { useForm, UseFormReturnType } from '@mantine/form';
-import { Button, Title, Stepper, Group, Flex, LoadingOverlay, Anchor, Loader } from '@mantine/core';
+import { Button, Title, Stepper, Group, Flex, LoadingOverlay, Anchor, Loader, Modal, Box } from '@mantine/core';
 import LLMProxy from 'features/overview/llmProxy';
-// import DataAll from 'features/overview/dataAll';
-// import KnowledgeBase from 'features/overview/knowledgeBase';
+import DataAll from 'features/overview/dataAll';
 import { DEFAULT_CHAT_INSTRUCTION } from 'constants/instructions'
 import { Agent } from 'features/overview/agent';
 import { useQuickStartStore, QuickStartStep, createFoundationModelOnly, checkFoundationModelStatusAndLLMProxy, createDataAll } from "store/quickStart";
 import { addAssistant, refreshToken as refreshAssistantToken } from 'store/assistant';
 import { addKnowledgeBase, refreshToken } from 'store/knowledgeBase';
 import { getModelList, useModelStore } from 'store/model';
+import { getDataSetList, useDataSetStore } from 'store/dataset';
+import { DataSetRequestPayload } from 'types/dataset';
 import { PROMPT_TEMPLATE, DEFAULT_SYSTEM_PROMPT } from 'constants/index';
 import { DATA_RETRIVAL_PROMPT_TEMPLATE } from 'constants/instructions';
 import { AGENTCRAFT_FM_PREFIX } from 'constants/foundation-model';
 import { DEFAULT_CHUNK_SIZE } from 'constants/dataset';
 import { AGENT_TYPE } from 'constants/agent';
 import { Model } from 'types/model';
+
+
+function Add() {
+    const open = useDataSetStore().open;
+    const setOpen = useDataSetStore().setOpen;
+    const loading = useDataSetStore().loading;
+    const setLoading = useDataSetStore().setLoading;
+    const dataAllForm: UseFormReturnType<any> = useForm({
+        initialValues: {
+            name: 'AgentCraft快速入门数据集',
+            title: 'AgentCraft快速入门数据集',
+            chunk_size: DEFAULT_CHUNK_SIZE,
+            url: `${window.location.protocol}//${window.location.host}/agentcraft.md`,
+            file: ''
+        },
+        validate: {
+            name: (value) => (!value ? '名称必填' : null),
+            chunk_size: (value) => (!value ? '切片数字必填' : null),
+            file: (value) => (!value ? '上传文档必填' : null)
+        },
+    });
+
+    return (
+        <Modal opened={open} onClose={() => { setOpen(false) }} title="创建数据集" centered size={'lg'}>
+            <div style={{ position: 'relative'}}>
+                <LoadingOverlay
+                    loader={<Flex align={'center'} direction="column"><Flex align={'center'} bg="white" p={12}>创建数据集&数据源预计花费1-2分钟，请耐心等待<Loader variant="bars" color={'pink'} ml={12} /></Flex></Flex>}
+                    overlayOpacity={0.3}
+                    overlayColor="#c5c5c5"
+                    visible={loading}
+                />
+                <DataAll form={dataAllForm} />
+                <Box mx="auto" pt={12} style={{ textAlign: 'right' }}>
+                    <Button onClick={async () => {
+                        dataAllForm.validate();
+                        if (dataAllForm.isValid()) {
+                            setLoading(true);
+                            const datasetData: DataSetRequestPayload = dataAllForm?.values || {};
+                            await createDataAll(datasetData);
+                            await getDataSetList();
+                            setOpen(false);
+                            setLoading(false);
+                        }
+
+                    }}>确认</Button>
+                </Box>
+            </div>
+        </Modal>
+    );
+}
+
+
+
+
 export function QuickStart({ workspaceId }: any) {
     const router = useRouter();
 
     const modelList: Model[] = useModelStore().modelList;
+    const setOpen = useDataSetStore().setOpen;
     const [appName, setAppName] = useState('');
     const llmProxyForm: UseFormReturnType<any> = useForm({
         initialValues: {
@@ -84,20 +140,7 @@ export function QuickStart({ workspaceId }: any) {
             return false
         }
     }
-    const dataAllForm: UseFormReturnType<any> = useForm({
-        initialValues: {
-            name: 'AgentCraft快速入门数据集',
-            title: 'AgentCraft快速入门数据集',
-            chunk_size: DEFAULT_CHUNK_SIZE,
-            url: `${window.location.protocol}//${window.location.host}/agentcraft.md`,
-            file: ''
-        },
-        validate: {
-            name: (value) => (!value ? '名称必填' : null),
-            chunk_size: (value) => (!value ? '切片数字必填' : null),
-            file: (value) => (!value ? '上传文档必填' : null)
-        },
-    });
+
     const knowledgeBaseForm: UseFormReturnType<any> = useForm({
         initialValues: {
             name: '',
@@ -252,6 +295,7 @@ export function QuickStart({ workspaceId }: any) {
     const nextStep = async () => {
         if (activeStep === QuickStartStep.LLM_PROXY) {
             await createLLMProxy();
+            await getModelList();
         }
         if (activeStep === QuickStartStep.AGENT) {
             configStepStatus.knowledge_base_create_loading = true;
@@ -318,19 +362,7 @@ export function QuickStart({ workspaceId }: any) {
                         </div>
                     </div>
                 </Stepper.Step>
-                {/* <Stepper.Step label="创建数据集&数据源" description="创建数据集，上传数据源文件" loading={data_all_create_loading}>
-                    <div style={{ position: 'relative' }}>
-                        <LoadingOverlay
-                            loader={<Flex align={'center'} direction="column"><Flex align={'center'} >创建数据集&数据源预计花费1-2分钟，请耐心等待<Loader variant="bars" color={'pink'} ml={12} /></Flex></Flex>}
-                            overlayOpacity={0.3}
-                            overlayColor="#c5c5c5"
-                            visible={data_all_create_loading}
-                        />
-                        <div style={{ padding: 20 }}>
-                            <DataAll form={dataAllForm} />
-                        </div>
-                    </div>
-                </Stepper.Step> */}
+        
                 <Stepper.Step label="智能体创建" description="创建智能体" loading={knowledge_base_create_loading}>
                     <div style={{ position: 'relative' }}>
                         <LoadingOverlay
@@ -339,7 +371,12 @@ export function QuickStart({ workspaceId }: any) {
                             overlayColor="#c5c5c5"
                             visible={knowledge_base_create_loading}
                         />
-                        <Agent instructionChatForm={instructionChatForm} knowledgeBaseForm={knowledgeBaseForm} assistantForm={assistantForm} modelSelectData={modelSelectData} />
+                        <Agent
+                            instructionChatForm={instructionChatForm}
+                            knowledgeBaseForm={knowledgeBaseForm}
+                            assistantForm={assistantForm}
+                            modelSelectData={modelSelectData}
+                            openDatasetModel={() => setOpen(true)} />
                     </div>
                 </Stepper.Step>
             </Stepper>
@@ -348,6 +385,7 @@ export function QuickStart({ workspaceId }: any) {
                 {activeStep === QuickStartStep.LLM_PROXY ? <Button onClick={nextStep} disabled={llm_proxy_create_loading}>下一步</Button> : null}
                 {activeStep === QuickStartStep.AGENT ? <Button onClick={nextStep} disabled={knowledge_base_create_loading}>完成</Button> : null}
             </Group>
+            <Add />
         </>
     );
 }
