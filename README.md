@@ -7,6 +7,10 @@
 <p align="center">
   <a href="./README.md">简体中文</a> 
 </p>
+<video controls width="640" height="360">
+  <source src="https://cloud.video.taobao.com/play/u/null/p/1/e/6/t/1/447331749716.mp4" type="video/mp4">
+  Your browser does not support the video tag.
+</video>
 
 AgentCraft是一个依托于阿里云Serverless基础设施的开源开放智能体平台，提供Agent能力的编排和业务连接能力，帮助企业或个人开发者快速启动AI能力的建设，如基础模型服务的托管，数据的向量化处理，知识库的构建等，自定义工具能力的构建等。此外可以便捷的将生成的AI能力进行输出，如以API方式透出以及接入到钉钉机器人，微信等各类客户端
 
@@ -48,9 +52,9 @@ AgentCraft是一个依托于阿里云Serverless基础设施的开源开放智能
    - [x] 支持问答记录查询，修正
    - [x] 支持提示词预置模版
    - [x] 支持指令、LLM、数据集自由组合
-   - [ ] 指令、LLM、数据集、工具，上下文自由组合
-   - [ ] 工具能力在线构建和发布
-   - [ ] 可视化编排Agent
+   - [x] 指令、LLM、数据集、工具，上下文自由组合
+   - [x] 工具能力在线构建和发布
+   - [x] 可视化编排Agent
    
 `4`  API透出
    - [x] 支持 Agent Api token访问
@@ -62,6 +66,7 @@ AgentCraft是一个依托于阿里云Serverless基础设施的开源开放智能
    - [x] 提供独立web站一键部署服务
    - [ ] 嵌入脚本，sdk等接入方式
    - [ ] 其他平台对接
+   
 `6` 生成式UI
    - [x] 支持内置自定义渲染组件
    - [x] 支持自定义组件LUI渲染
