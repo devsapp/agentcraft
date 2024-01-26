@@ -29,7 +29,7 @@ def list_sessions(assistant_id: int, page: int = 0, limit: int = 3000) -> tuple[
             AssistantSession.modified.desc()).offset(
             page * limit).limit(limit).all()
         total = session.query(AssistantSession).filter(AssistantSession.assistant_id == assistant_id).count()
-        return data, total
+        return [vars(session) for session in data], total
 
 
 def get_test_session(assistant_id: int) -> Session:
