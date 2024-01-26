@@ -42,13 +42,15 @@ Question: {query}"""
 
 
 class ReasoningStream:
-    def __init__(self, query, assistant, datasets, credential_dict):
+    def __init__(self, query, assistant, datasets, credential_dict, history):
         self.assistant = assistant
         self.query = query
         self.datasets = datasets
         self.credential_dict = credential_dict
         self.time = time()
         self.tool_name_dict = {}
+        self.history = history
+        self.result = None
     def extract_final_answer(self, text):
         if not isinstance(text, str):
             raise ValueError("Input must be a string")
@@ -84,8 +86,9 @@ class ReasoningStream:
         created = kwargs['created']
         uid = kwargs['uid']
         model = kwargs['model']
-        history = []
-        chat_history = [(x['user'], x['bot'])
+        history = self.history
+        # [{ user: '', assistant: '', }]
+        chat_history = [(x['user'], x['assistant'])
                         for x in history] + [(prompt, '')]
         stream_response = {}
         stream_response["id"] = uid
@@ -145,6 +148,8 @@ class ReasoningStream:
         new_history = []
         new_history.extend(history)
         new_history.append({'user': prompt, 'bot': text})
+        self.result = (text, self.final_result(text), planning_prompt)
+        return
 
     def get_dataset_names(self, datasets):
         names = [dataset['dataset_name'] for dataset in datasets]

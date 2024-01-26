@@ -81,6 +81,7 @@ class Reasoning:
         uid = kwargs['uid']
         model = kwargs['model']
         history = []
+        # TODO: 这里实现 history
         chat_history = [(x['user'], x['bot'])
                         for x in history] + [(prompt, '')]
 

@@ -282,7 +282,7 @@ CREATE_ASSISTANT_SESSION_TABLE = text(
     assistant_id BIGINT REFERENCES assistant(id) ON DELETE CASCADE,
     share_id VARCHAR(255),
     status INTEGER DEFAULT 1,
-    fingerprint_id VARCHAR(255) NOT NULL,
+    fingerprint_id VARCHAR(255),
     created TIMESTAMP NOT NULL DEFAULT NOW(),
     modified TIMESTAMP NOT NULL DEFAULT NOW()
     );"""
