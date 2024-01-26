@@ -42,4 +42,3 @@ class JWTData(BaseModel):
 class AgentJWTData(BaseModel):
     """JWT with Agent ID"""
     agent_id: int = Field(alias="sub")
-    user_id: int = Field(alias="sub")

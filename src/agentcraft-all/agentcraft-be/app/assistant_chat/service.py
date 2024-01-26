@@ -26,20 +26,20 @@ def create_assistant_session(**add_args):
         raise ValueError("assistant does not exist")
     return assistant_session_database.add_session(**add_args)
 
-def list_assistant_chats_id_by_session_id(assistant_id: int, session_id: int, user_id: int, **kv):
+def list_assistant_chats_id_by_session_id(assistant_id: int, session_id: int, **kv):
     """根据 session_id 获取 assistant_chats_id 的列表"""
     assistant = assistant_database.get_assistant_lite(assistant_id)
     if not assistant:
         raise ValueError("assistant does not exist")
-    if not assistant_database.check_user_has_assistant(user_id, assistant_id):
+    if not assistant_database.check_user_has_assistant(assistant.user_id, assistant_id):
         raise ValueError("user does not have this assistant")
     limit = kv.get("limit") or assistant.llm_history_len or 20
     data, total = assistant_session_chat_database.list_assistant_session_chat_id_by_session_id(session_id, 0, limit)
     return data, total
 
-def list_assistant_chats_history_by_session_id(assistant_id: int, session_id: int, user_id: int, limit = None):
+def list_assistant_chats_history_by_session_id(assistant_id: int, session_id: int, limit = None):
     """根据 session_id 列出问答历史记录"""
-    data, total = list_assistant_chats_id_by_session_id(assistant_id, session_id, user_id, limit = limit)
+    data, total = list_assistant_chats_id_by_session_id(assistant_id, session_id, limit = limit)
     history = []
     for item in data:
         # pdb.set_trace()
@@ -80,7 +80,7 @@ def chat(query: str, ip_addr: str, assistant_id: int, credential_dict):
     return reason.call_assistant()
 
 
-def chat_stream(assistant_session_id: int, query: str, ip_addr: str, assistant_id: int, credential_dict, history, uid):
+def chat_stream(assistant_session_id: int, query: str, ip_addr: str, assistant_id: int, credential_dict, history):
     """Chat with assistant."""
     assistant = assistant_database.get_assistant_lite(assistant_id)
     if not assistant:
@@ -102,9 +102,10 @@ def chat_stream(assistant_session_id: int, query: str, ip_addr: str, assistant_i
     reasoning_log, answer, prompt = reason_stream.result
     model_id = reason_stream.assistant.id
     model_name = reason_stream.assistant.name
+    user_id = reason_stream.assistant.user_id
 
     chat_id = add_assistant_chat(query, prompt, answer, reasoning_log,
-                                 ip_addr, uid, assistant_id, model_id=model_id, model_name=model_name)
+                                 ip_addr, user_id, assistant_id, model_id=model_id, model_name=model_name)
     add_assistant_session_chat(assistant_session_id, chat_id)
     return
 

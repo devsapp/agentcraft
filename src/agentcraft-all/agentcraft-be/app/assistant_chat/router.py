@@ -52,13 +52,13 @@ async def chat(req: ChatRequest, request: Request, token: AgentJWTData = Depends
         # [[query, reasoning_log], []]
         # list_chart_by_session
     print(f'assistant_session_id: {assistant_session_id}')
-    history = service.list_assistant_chats_history_by_session_id(assistant_id, assistant_session_id, token.user_id)
+    history = service.list_assistant_chats_history_by_session_id(assistant_id, assistant_session_id)
     print(f'history::: {history}')
     # return {}
     if req.stream:
         return EventSourceResponse(
             service.chat_stream(
-                assistant_session_id, query, request.client.host, assistant_id, credential_dict, history, token.user_id),
+                assistant_session_id, query, request.client.host, assistant_id, credential_dict, history),
             media_type="text/event-stream")
     else:
         resp: dict[str, Any] = service.chat(
