@@ -64,7 +64,7 @@ def update_chat(uid: str, assistant_id: int, **kwargs):
     assistant_chat_database.update_chat(uid, assistant_id, **kwargs)
 
 
-def chat(query: str, ip_addr: str, assistant_id: int, credential_dict):
+def chat(assistant_session_id: int,query: str, ip_addr: str, assistant_id: int, credential_dict, history):
     """Chat with assistant."""
     assistant = assistant_database.get_assistant_lite(assistant_id)
 
@@ -75,9 +75,14 @@ def chat(query: str, ip_addr: str, assistant_id: int, credential_dict):
     datasets = [{**vars(relation),
                  "dataset_name": dataset_name}
                 for relation, dataset_name in relations]
-    reason = Reasoning(query, assistant, datasets, credential_dict)
+    reason = Reasoning(query, assistant, datasets, credential_dict, history)
+    res = reason.call_assistant()
 
-    return reason.call_assistant()
+    reasoning_log, answer, prompt = reason.result
+    chat_id = add_assistant_chat(query, prompt, answer, reasoning_log,
+                                 ip_addr, assistant.user_id, assistant_id, model_id=reason.model.id, model_name=reason.model.name)
+    add_assistant_session_chat(assistant_session_id, chat_id)
+    return res
 
 
 def chat_stream(assistant_session_id: int, query: str, ip_addr: str, assistant_id: int, credential_dict, history):
@@ -91,22 +96,16 @@ def chat_stream(assistant_session_id: int, query: str, ip_addr: str, assistant_i
                  "dataset_name": dataset_name}
                 for relation, dataset_name in relations]
 
-    # history_dict = [{"user": d["question"], "assistant": d["reasoning_log"]} for d in history]
-    history_dict = [{"user": d["question"], "assistant": d["answer"]} for d in history]
     reason_stream = ReasoningStream(
-        query, assistant, datasets, credential_dict, history_dict)
+        query, assistant, datasets, credential_dict, history)
 
     yield from reason_stream.call_assistant_stream()
 
     # reasoning_log: 完整的推理日志
     # answer: 展示用户的答案
     reasoning_log, answer, prompt = reason_stream.result
-    model_id = reason_stream.assistant.id
-    model_name = reason_stream.assistant.name
-    user_id = reason_stream.assistant.user_id
-
     chat_id = add_assistant_chat(query, prompt, answer, reasoning_log,
-                                 ip_addr, user_id, assistant_id, model_id=model_id, model_name=model_name)
+                                 ip_addr, assistant.user_id, assistant_id, model_id=reason_stream.model.id, model_name=reason_stream.model.name)
     add_assistant_session_chat(assistant_session_id, chat_id)
     return
 

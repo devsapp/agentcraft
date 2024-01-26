@@ -51,15 +51,17 @@ async def chat(req: ChatRequest, request: Request, token: AgentJWTData = Depends
         assistant_session_id = service.get_assistant_session_id(req.status, assistant_id)
     print(f'assistant_session_id: {assistant_session_id}')
     history = service.list_assistant_chats_history_by_session_id(assistant_id, assistant_session_id)
+    # history_dict = [{"user": d["question"], "assistant": d["reasoning_log"]} for d in history]
+    history_dict = [{"user": d["question"], "assistant": d["answer"]} for d in history]
     # return {}
     if req.stream:
         return EventSourceResponse(
             service.chat_stream(
-                assistant_session_id, query, request.client.host, assistant_id, credential_dict, history),
+                assistant_session_id, query, request.client.host, assistant_id, credential_dict, history_dict),
             media_type="text/event-stream")
     else:
         resp: dict[str, Any] = service.chat(
-            query, request.client.host, assistant_id, credential_dict)
+            assistant_session_id, query, request.client.host, assistant_id, credential_dict, history_dict)
         print(f"resp: {resp}")
         return ChatCompletionResponse(**resp)
 

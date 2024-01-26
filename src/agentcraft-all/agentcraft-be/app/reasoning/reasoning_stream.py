@@ -50,6 +50,7 @@ class ReasoningStream:
         self.time = time()
         self.tool_name_dict = {}
         self.history = history
+        self.model = None
         self.result = None
     def extract_final_answer(self, text):
         if not isinstance(text, str):
@@ -87,8 +88,6 @@ class ReasoningStream:
         uid = kwargs['uid']
         model = kwargs['model']
         history = self.history
-        # [{ user: '', assistant: '', }]
-        print(f'history::: {history}')
         chat_history = [(x['user'], x['assistant'])
                         for x in history] + [(prompt, '')]
         stream_response = {}
@@ -347,6 +346,7 @@ class ReasoningStream:
         execution_time = end_time - self.time
         logger.info(f"Execution  工具构建时间: {execution_time} seconds")
         model = model_database.get_model_by_id(assistant.model_id)
+        self.model = model
         llm_plugin_args = {
             "created": int(time()),
             "uid": f"assistant-compl-{uuid.uuid4()}",

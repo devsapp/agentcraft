@@ -47,12 +47,15 @@ Question: {query}"""
 
 
 class Reasoning:
-    def __init__(self, query, assistant, datasets, credential_dict):
+    def __init__(self, query, assistant, datasets, credential_dict, history):
         self.assistant = assistant
         self.query = query
         self.credential_dict = credential_dict
         self.datasets = datasets
         self.tool_name_dict = {}
+        self.history = history
+        self.model = None
+        self.result = None
 
     def final_result(self, resp_data: str):
         match = re.search(r'Final Answer: (.+)', resp_data)
@@ -80,9 +83,8 @@ class Reasoning:
         created = kwargs['created']
         uid = kwargs['uid']
         model = kwargs['model']
-        history = []
-        # TODO: 这里实现 history
-        chat_history = [(x['user'], x['bot'])
+        history = self.history
+        chat_history = [(x['user'], x['assistant'])
                         for x in history] + [(prompt, '')]
 
         planning_prompt = self.build_input_text(
@@ -127,6 +129,7 @@ class Reasoning:
         }]
         resp_data["object"] = "chat.completion"
         resp_data["model"] = model
+        self.result = (text, content, planning_prompt)
         return resp_data
     def get_dataset_names(self, datasets):
         names = [dataset['dataset_name'] for dataset in datasets]
@@ -275,8 +278,8 @@ class Reasoning:
 
         self.tool_name_dict = {tool['name_for_model']: tool['name_for_human'] for tool in action_tools}
 
-        history = []
         model = model_database.get_model_by_id(assistant.model_id)
+        self.model = model
         llm_plugin_args = {
             "created": int(time()),
             "uid": f"assistant-compl-{uuid.uuid4()}",
