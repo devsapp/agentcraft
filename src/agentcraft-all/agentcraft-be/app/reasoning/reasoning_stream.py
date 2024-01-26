@@ -88,6 +88,7 @@ class ReasoningStream:
         model = kwargs['model']
         history = self.history
         # [{ user: '', assistant: '', }]
+        print(f'history::: {history}')
         chat_history = [(x['user'], x['assistant'])
                         for x in history] + [(prompt, '')]
         stream_response = {}
@@ -345,7 +346,6 @@ class ReasoningStream:
         end_time = time()
         execution_time = end_time - self.time
         logger.info(f"Execution  工具构建时间: {execution_time} seconds")
-        history = []
         model = model_database.get_model_by_id(assistant.model_id)
         llm_plugin_args = {
             "created": int(time()),

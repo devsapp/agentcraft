@@ -49,11 +49,8 @@ async def chat(req: ChatRequest, request: Request, token: AgentJWTData = Depends
     history = []
     if assistant_session_id is None:
         assistant_session_id = service.get_assistant_session_id(req.status, assistant_id)
-        # [[query, reasoning_log], []]
-        # list_chart_by_session
     print(f'assistant_session_id: {assistant_session_id}')
     history = service.list_assistant_chats_history_by_session_id(assistant_id, assistant_session_id)
-    print(f'history::: {history}')
     # return {}
     if req.stream:
         return EventSourceResponse(

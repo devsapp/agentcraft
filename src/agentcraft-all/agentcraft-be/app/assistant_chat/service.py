@@ -91,6 +91,7 @@ def chat_stream(assistant_session_id: int, query: str, ip_addr: str, assistant_i
                  "dataset_name": dataset_name}
                 for relation, dataset_name in relations]
 
+    # history_dict = [{"user": d["question"], "assistant": d["reasoning_log"]} for d in history]
     history_dict = [{"user": d["question"], "assistant": d["answer"]} for d in history]
     reason_stream = ReasoningStream(
         query, assistant, datasets, credential_dict, history_dict)
