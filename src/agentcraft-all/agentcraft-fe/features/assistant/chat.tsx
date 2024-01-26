@@ -91,7 +91,8 @@ export default function Chat() {
                 version: 'v2',
                 config: {
                     stream: true,
-                    max_tokens: 1024
+                    max_tokens: 1024,
+                    status: 0,
                 },
                 onFinish: (msg) => {
                     setLoading(false);
@@ -139,7 +140,8 @@ export default function Chat() {
                 }],
                 config: {
                     stream: true,
-                    max_tokens: 1024
+                    max_tokens: 1024,
+                    status: 0,
                 },
                 onFinish: (msg) => {
                     setLoading(false);

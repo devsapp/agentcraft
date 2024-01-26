@@ -47,6 +47,11 @@ stream_field = Field(
     description="Whether to stream the results as they are generated. Useful for chatbots.",
 )
 
+assistant_session_id_field = Field(
+    default=None,
+    description="Assistant multi-round session identification.",
+)
+
 repeat_penalty_field = Field(
     default=1.1,
     ge=0.0,
@@ -83,6 +88,10 @@ class ChatRequest(BaseModel):
         default=[], description="A list of messages to generate completions for."
     )
     stream: bool = stream_field
+    assistant_session_id: int = assistant_session_id_field
+    status: int = Field(
+        default=None, description="If 0, it means it is a test question"
+    )
 
 
 # class CreateChatCompletionRequest(BaseModel):

@@ -42,14 +42,27 @@ async def chat(req: ChatRequest, request: Request, token: AgentJWTData = Depends
     if req.messages[-1].role != "user":
         raise HTTPException(
             status_code=400, detail="The last message must be from the user.")
+    assistant_session_id = req.assistant_session_id
+    assistant_id = token.agent_id
+    query = req.messages[-1].content
+
+    history = []
+    if assistant_session_id is None:
+        assistant_session_id = service.get_assistant_session_id(req.status, assistant_id)
+        # [[query, reasoning_log], []]
+        # list_chart_by_session
+    print(f'assistant_session_id: {assistant_session_id}')
+    history = service.list_assistant_chats_history_by_session_id(assistant_id, assistant_session_id, token.user_id)
+    print(f'history::: {history}')
+    # return {}
     if req.stream:
         return EventSourceResponse(
             service.chat_stream(
-                req.messages[-1].content, request.client.host, token.agent_id, credential_dict),
+                assistant_session_id, query, request.client.host, assistant_id, credential_dict, history, token.user_id),
             media_type="text/event-stream")
     else:
         resp: dict[str, Any] = service.chat(
-            req.messages[-1].content, request.client.host, token.agent_id, credential_dict)
+            query, request.client.host, assistant_id, credential_dict)
         print(f"resp: {resp}")
         return ChatCompletionResponse(**resp)
 

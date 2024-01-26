@@ -19,6 +19,8 @@ export interface LLMConfig {
   stream?: boolean;
   presence_penalty?: number;
   frequency_penalty?: number;
+  status?: number; // status 如果为0，则表示测试的会话
+  assistant_session_id?: number;
 }
 
 export const enum MessageType {

@@ -25,25 +25,32 @@ def list_sessions(assistant_id: int, page: int = 0, limit: int = 3000) -> tuple[
     """获取sessions列表"""
     with Session(postgresql.postgres) as session:
         data = session.query(AssistantSession).filter(
-            Session.assistant_id == assistant_id).order_by(
-            Session.modified.desc()).offset(
+            AssistantSession.assistant_id == assistant_id).order_by(
+            AssistantSession.modified.desc()).offset(
             page * limit).limit(limit).all()
-        total = session.query(Session).filter(Session.assistant_id == assistant_id).count()
+        total = session.query(AssistantSession).filter(AssistantSession.assistant_id == assistant_id).count()
         return data, total
 
+
+def get_test_session(assistant_id: int) -> Session:
+    """获取assistant 的测试 session"""
+    with Session(postgresql.postgres) as session:
+        return session.query(AssistantSession).filter(
+            AssistantSession.assistant_id == assistant_id,
+            AssistantSession.status == 0).first()
 
 
 def delete_session(sessions_id: int, user_id: int):
     """删除sessions"""
     with Session(postgresql.postgres) as session:
-        session.query(Session).filter(Session.id == sessions_id, Session.user_id == user_id).delete()
+        session.query(AssistantSession).filter(AssistantSession.id == sessions_id, AssistantSession.user_id == user_id).delete()
         session.commit()
 
 
 def add_session(**kwargs):
     """添加sessions"""
     with Session(postgresql.postgres) as session:
-        sessions = Session(**kwargs)
+        sessions = AssistantSession(**kwargs)
         session.add(sessions)
         session.commit()
         return sessions.id
@@ -52,13 +59,13 @@ def add_session(**kwargs):
 def get_session(sessions_id: int) -> Session:
     """获取sessions信息"""
     with Session(postgresql.postgres) as session:
-        return session.query(Session).filter(
-            Session.id == sessions_id).order_by(Session.modified.desc()).first()
+        return session.query(AssistantSession).filter(
+            AssistantSession.id == sessions_id).order_by(AssistantSession.modified.desc()).first()
 
 
 def update_session(sessions_id: int, **kwargs):
     """更新sessions信息"""
     with Session(postgresql.postgres) as session:
-        session.query(Session).filter(
-            Session.id == sessions_id).update(kwargs)
+        session.query(AssistantSession).filter(
+            AssistantSession.id == sessions_id).update(kwargs)
         session.commit()
