@@ -306,7 +306,7 @@ CREATE_ASSISTANT_CHAT_TABLE = text(
     run_id BIGINT,
     model_id BIGINT REFERENCES model(id) ON DELETE SET NULL,
     model_name VARCHAR(255),
-    uid VARCHAR(255) NOT NULL UNIQUE
+    uid VARCHAR(255) NOT NULL
     );"""
 )
 
