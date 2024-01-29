@@ -1,6 +1,7 @@
 """Chat Service"""
 # pylint: disable = no-member
 from typing import Any
+import uuid
 # from app.database.redis import redis_db
 import app.database.assistant_chat as assistant_chat_database
 import app.database.assistant as assistant_database
@@ -10,6 +11,7 @@ import app.database.assistant_session as assistant_session_database
 
 from app.reasoning.reasoning import Reasoning
 from app.reasoning.reasoning_stream import ReasoningStream
+
 DONE = "[DONE]"
 
 def get_assistant_session_id(status: int, assistant_id: int, **kv):
@@ -48,7 +50,7 @@ def list_assistant_chats_history_by_session_id(assistant_id: int, session_id: in
             print(f'No information found for assistant_chat id({item.get("chat_id")})')
             continue
         history.append(assistant_chat_data)
-    return history
+    return history[::-1]
 
 def list_chats(assistant_id: int, user_id: int, page: int, limit: int):
     """列出问答历史记录"""
@@ -105,13 +107,13 @@ def chat_stream(assistant_session_id: int, query: str, ip_addr: str, assistant_i
     # answer: 展示用户的答案
     reasoning_log, answer, prompt = reason_stream.result
     chat_id = add_assistant_chat(query, prompt, answer, reasoning_log,
-                                 ip_addr, assistant.user_id, assistant_id, model_id=reason_stream.model.id, model_name=reason_stream.model.name)
+                                 ip_addr, assistant_id, model_id=reason_stream.model.id, model_name=reason_stream.model.name)
     add_assistant_session_chat(assistant_session_id, chat_id)
     return
 
 def add_assistant_chat(
         query: str, prompt: str, answer: str, reasoning_log: str,
-        ip_addr: str, uid, assistant_id, chat_type: int = 1, model_id = None, model_name = None):
+        ip_addr: str, assistant_id, chat_type: int = 1, model_id = None, model_name = None):
     """添加到assistant_chat数据库"""
 
     add_args = {
@@ -124,7 +126,7 @@ def add_assistant_chat(
         "assistant_id": assistant_id,
         "model_id": model_id,
         "model_name": model_name,
-        "uid": uid,
+        "uid": f"as-chat-{uuid.uuid4()}",
     }
 
     chat_id = assistant_chat_database.add_chat(**add_args)

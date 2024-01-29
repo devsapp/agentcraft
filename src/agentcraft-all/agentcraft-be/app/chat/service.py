@@ -453,18 +453,20 @@ def model_chat(
         "Authorization": f"Bearer {model.token}",
         "Content-Type": "application/json"
     }
-    request_data = json.dumps({
+    llm_request_options = {
         "model": model.name,
         "messages": messages,
         "temperature": agent.temperature,
         "top_p": agent.top_p,
         "n": agent.n_sequences,
         "max_tokens": agent.max_tokens,
-        "stop": agent.stop,
         "presence_penalty": agent.presence_penalty,
         "frequency_penalty": agent.frequency_penalty,
         "logit_bias": json.loads(agent.logit_bias) if agent.logit_bias else {}
-    })
+    }
+    if(agent.stop != []):
+        llm_request_options['stop'] = agent.stop
+    request_data = json.dumps(llm_request_options)
     logger.info(request_data)
     resp = requests.post(model.url, headers=headers,
                          data=request_data, timeout=model.timeout)
@@ -511,21 +513,23 @@ def model_chat_stream(
         "Authorization": f"Bearer {model.token}",
         "Content-Type": "application/json"
     }
-    request_data = json.dumps({
+    llm_request_options = {
         "model": model.name,
         "messages": messages,
         "stream": True,
         "temperature": agent.temperature,
         "top_p": agent.top_p,
+        "top_k": 50,
         "n": agent.n_sequences,
         "max_tokens": agent.max_tokens,
-        "stop": agent.stop,
         "presence_penalty": agent.presence_penalty,
         "frequency_penalty": agent.frequency_penalty,
         "logit_bias": json.loads(agent.logit_bias) if agent.logit_bias else {}
-    })
-
-    logger.info(request_data)
+    }
+    if(agent.stop != []):
+        llm_request_options['stop'] = agent.stop
+    request_data = json.dumps(llm_request_options)
+    logger.info(f"req{request_data}")
     req = requests.post(model.url, headers=headers, data=request_data,
                         stream=True, timeout=model.timeout)
     answer = [""]*agent.n_sequences
@@ -534,7 +538,7 @@ def model_chat_stream(
             line = codecs.decode(line)
             if line.startswith("data:"):
                 line = line[5:].strip()
-                logger.info(line)
+                # logger.info(line)
                 try:
                     chunk = json.loads(line)
                     chunk["id"] = uid

@@ -1,6 +1,7 @@
 """Chat Router"""
 from typing import Any
 from fastapi import APIRouter, Request, Depends, HTTPException
+from app.common.logger import logger
 from sse_starlette.sse import EventSourceResponse
 from app.auth.schema import AgentJWTData, JWTData
 from app.assistant_chat import service
@@ -49,10 +50,11 @@ async def chat(req: ChatRequest, request: Request, token: AgentJWTData = Depends
     history = []
     if assistant_session_id is None:
         assistant_session_id = service.get_assistant_session_id(req.status, assistant_id)
-    print(f'assistant_session_id: {assistant_session_id}')
+    logger.info(f'assistant_session_id: {assistant_session_id}')
     history = service.list_assistant_chats_history_by_session_id(assistant_id, assistant_session_id)
     # history_dict = [{"user": d["question"], "assistant": d["reasoning_log"]} for d in history]
     history_dict = [{"user": d["question"], "assistant": d["answer"]} for d in history]
+    logger.info(f"history: {history_dict}")
     # return {}
     if req.stream:
         return EventSourceResponse(

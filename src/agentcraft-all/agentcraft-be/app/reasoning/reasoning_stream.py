@@ -145,10 +145,10 @@ class ReasoningStream:
                 text += output
                 break
         yield DONE
-        new_history = []
-        new_history.extend(history)
-        new_history.append({'user': prompt, 'bot': text})
-        self.result = (text, self.final_result(text), planning_prompt)
+        answer = self.final_result(text)
+        if not answer:  # 检查 final_answer 是否为空值，包括 None、空字符串或其他可Falsy对象
+            answer = text
+        self.result = (text, answer, planning_prompt)
         return
 
     def get_dataset_names(self, datasets):
