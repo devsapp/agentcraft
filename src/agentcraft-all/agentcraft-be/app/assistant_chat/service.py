@@ -14,38 +14,40 @@ from app.reasoning.reasoning_stream import ReasoningStream
 
 DONE = "[DONE]"
 
-def get_assistant_session_id(status: int, assistant_id: int, **kv):
-    if status == 0:
-       data = assistant_session_database.get_test_session(assistant_id)
-       if data:
-           return data.id
-    return create_assistant_session(
-        title='测试会话', assistant_id=assistant_id, status=status, **kv
-    )
-
-def create_assistant_session(**add_args):
-    if not assistant_database.get_assistant_lite(add_args.get('assistant_id')):
-        raise ValueError("assistant does not exist")
-    return assistant_session_database.add_session(**add_args)
-
-def list_assistant_chats_id_by_session_id(assistant_id: int, session_id: int, **kv):
-    """根据 session_id 获取 assistant_chats_id 的列表"""
+def get_assistant_lite(assistant_id: int):
     assistant = assistant_database.get_assistant_lite(assistant_id)
     if not assistant:
         raise ValueError("assistant does not exist")
     if not assistant_database.check_user_has_assistant(assistant.user_id, assistant_id):
         raise ValueError("user does not have this assistant")
-    limit = kv.get("limit") or assistant.llm_history_len or 20
+    return assistant
+
+def get_assistant_session_id(status: int, assistant_id: int, **kv):
+    if status == 0:
+       data = assistant_session_database.get_test_session(assistant_id)
+       if data:
+           return data.id
+    add_args = {
+        "title": "测试会话",
+        "assistant_id": assistant_id,
+        "status": status,
+    }
+    add_args.update(kv)
+    return assistant_session_database.add_session(**add_args)
+    
+
+def list_assistant_chats_id_by_session_id(session_id: int, **kv):
+    """根据 session_id 获取 assistant_chats_id 的列表"""
+    limit = kv.get("limit") or 20
     data, total = assistant_session_chat_database.list_assistant_session_chat_id_by_session_id(session_id, 0, limit)
     return data, total
 
-def list_assistant_chats_history_by_session_id(assistant_id: int, session_id: int, limit = None):
+def list_assistant_chats_history_by_session_id(session_id: int, limit):
     """根据 session_id 列出问答历史记录"""
-    data, total = list_assistant_chats_id_by_session_id(assistant_id, session_id, limit = limit)
+    data, total = list_assistant_chats_id_by_session_id(session_id, limit = limit)
     history = []
     for item in data:
-        # pdb.set_trace()
-        assistant_chat_data = assistant_chat_database.get_assistant_lite(item.get("chat_id"))
+        assistant_chat_data = assistant_chat_database.get_assistant_chat_lite(item.get("chat_id"))
         if not assistant_chat_data:
             print(f'No information found for assistant_chat id({item.get("chat_id")})')
             continue
@@ -66,12 +68,8 @@ def update_chat(uid: str, assistant_id: int, **kwargs):
     assistant_chat_database.update_chat(uid, assistant_id, **kwargs)
 
 
-def chat(assistant_session_id: int,query: str, ip_addr: str, assistant_id: int, credential_dict, history):
+def chat(assistant_session_id: int,query: str, ip_addr: str, assistant_id: int, credential_dict, history, assistant):
     """Chat with assistant."""
-    assistant = assistant_database.get_assistant_lite(assistant_id)
-
-    if not assistant:
-        raise ValueError("assistant does not exist")
     relations = assistant_dataset_database.list_datasets_by_assistant_id(
         assistant_id)
     datasets = [{**vars(relation),
@@ -87,11 +85,8 @@ def chat(assistant_session_id: int,query: str, ip_addr: str, assistant_id: int, 
     return res
 
 
-def chat_stream(assistant_session_id: int, query: str, ip_addr: str, assistant_id: int, credential_dict, history):
+def chat_stream(assistant_session_id: int, query: str, ip_addr: str, assistant_id: int, credential_dict, history, assistant):
     """Chat with assistant."""
-    assistant = assistant_database.get_assistant_lite(assistant_id)
-    if not assistant:
-        raise ValueError("assistant does not exist")
     relations = assistant_dataset_database.list_datasets_by_assistant_id(
         assistant_id)
     datasets = [{**vars(relation),

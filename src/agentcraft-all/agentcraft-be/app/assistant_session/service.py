@@ -22,4 +22,4 @@ def get_assistant_histroy(assistant_id: int, assistant_session_id: int, status: 
   else:
     raise ValueError("assistant_session_id does not exist")
 
-  return assistant_chat_service.list_assistant_chats_history_by_session_id(assistant_id, session_id, limit)
+  return assistant_chat_service.list_assistant_chats_history_by_session_id(session_id, limit)

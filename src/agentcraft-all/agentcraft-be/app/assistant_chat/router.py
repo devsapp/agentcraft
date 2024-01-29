@@ -46,12 +46,13 @@ async def chat(req: ChatRequest, request: Request, token: AgentJWTData = Depends
     assistant_session_id = req.assistant_session_id
     assistant_id = token.agent_id
     query = req.messages[-1].content
+    assistant = service.get_assistant_lite(assistant_id)
 
     history = []
     if assistant_session_id is None:
         assistant_session_id = service.get_assistant_session_id(req.status, assistant_id)
     logger.info(f'assistant_session_id: {assistant_session_id}')
-    history = service.list_assistant_chats_history_by_session_id(assistant_id, assistant_session_id)
+    history = service.list_assistant_chats_history_by_session_id(assistant_session_id, assistant.llm_history_len)
     # history_dict = [{"user": d["question"], "assistant": d["reasoning_log"]} for d in history]
     history_dict = [{"user": d["question"], "assistant": d["answer"]} for d in history]
     logger.info(f"history: {history_dict}")
@@ -59,11 +60,11 @@ async def chat(req: ChatRequest, request: Request, token: AgentJWTData = Depends
     if req.stream:
         return EventSourceResponse(
             service.chat_stream(
-                assistant_session_id, query, request.client.host, assistant_id, credential_dict, history_dict),
+                assistant_session_id, query, request.client.host, assistant_id, credential_dict, history_dict, assistant),
             media_type="text/event-stream")
     else:
         resp: dict[str, Any] = service.chat(
-            assistant_session_id, query, request.client.host, assistant_id, credential_dict, history_dict)
+            assistant_session_id, query, request.client.host, assistant_id, credential_dict, history_dict, assistant)
         print(f"resp: {resp}")
         return ChatCompletionResponse(**resp)
 
