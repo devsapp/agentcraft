@@ -33,7 +33,7 @@ def get_assistant_session_id(status: int, assistant_session_id: int, assistant_i
             "title": "测试会话",
             "assistant_id": assistant_id,
             "status": status,
-            "fingerprint_id": "user_test"
+            "fingerprint_id": "user_test" 
         }
         add_args.update(kv)
         logger.info(f"add assistant session {add_args}")

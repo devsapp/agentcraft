@@ -26,6 +26,14 @@ AgentCraft是一个依托于阿里云Serverless基础设施的开源开放智能
   </a>
 </p>
 
+## 演示示例
+基础指令
+![AgentCraft 论文翻译](https://img.alicdn.com/imgextra/i2/O1CN01ske5Dk1i36BX2m4BE_!!6000000004356-1-tps-1777-893.gif)
+
+知识库问答
+![AgentCraft 知识库问答](https://img.alicdn.com/imgextra/i3/O1CN010RtRR01mbgYUUIp8w_!!6000000004973-1-tps-1777-893.gif)
+执行工具
+![AgentCraft 函数智能助手](https://img.alicdn.com/imgextra/i2/O1CN01AnUGbS1jfOvNDtIx4_!!6000000004575-1-tps-1777-893.gif)
 ## 功能
 
 ### 
