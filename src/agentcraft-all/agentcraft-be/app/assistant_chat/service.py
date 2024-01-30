@@ -22,19 +22,23 @@ def get_assistant_lite(assistant_id: int):
         raise ValueError("user does not have this assistant")
     return assistant
 
-def get_assistant_session_id(status: int, assistant_id: int, **kv):
+def get_assistant_session_id(status: int, assistant_session_id: int, assistant_id: int, **kv):
     if status == 0:
-       data = assistant_session_database.get_test_session(assistant_id)
+       data = assistant_session_database.get_session_by_assistant_id(assistant_id, status=0)
        if data:
            return data.id
-    add_args = {
-        "title": "测试会话",
-        "assistant_id": assistant_id,
-        "status": status,
-    }
-    add_args.update(kv)
-    return assistant_session_database.add_session(**add_args)
-    
+    if assistant_session_id is None:
+        add_args = {
+            "title": "测试会话",
+            "assistant_id": assistant_id,
+            "status": status,
+        }
+        add_args.update(kv)
+        return assistant_session_database.add_session(**add_args)
+    if not assistant_session_database.get_session(assistant_session_id):
+        raise ValueError(f"does not have this assistant session {assistant_session_id}")
+    return assistant_session_id
+
 
 def list_assistant_chats_id_by_session_id(session_id: int, **kv):
     """根据 session_id 获取 assistant_chats_id 的列表"""

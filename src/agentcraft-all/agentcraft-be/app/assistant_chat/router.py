@@ -49,8 +49,7 @@ async def chat(req: ChatRequest, request: Request, token: AgentJWTData = Depends
     assistant = service.get_assistant_lite(assistant_id)
 
     history = []
-    if assistant_session_id is None:
-        assistant_session_id = service.get_assistant_session_id(req.status, assistant_id)
+    assistant_session_id = service.get_assistant_session_id(req.status, assistant_session_id, assistant_id)
     logger.info(f'assistant_session_id: {assistant_session_id}')
     history = service.list_assistant_chats_history_by_session_id(assistant_session_id, assistant.llm_history_len)
     # history_dict = [{"user": d["question"], "assistant": d["reasoning_log"]} for d in history]

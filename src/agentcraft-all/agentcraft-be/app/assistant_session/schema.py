@@ -1,7 +1,7 @@
 """Assistant Session Schema"""
 # pylint: disable = too-few-public-methods, no-self-argument
 from typing import List
-from pydantic import BaseModel, Field  # pylint: disable = no-name-in-module
+from pydantic import BaseModel, Field, conint  # pylint: disable = no-name-in-module
 
 
 class BasicResponse(BaseModel):
@@ -36,3 +36,8 @@ class StringListResponse(BasicResponse):
 class ListHistoryResponse(BasicResponse):
     """Response with List of Dict Data"""
     data: List[dict]
+
+class RevertRequest(BaseModel):
+    """找回删除会话"""
+    assistant_session_id: int = Field(description="智能助手多轮会话ID")
+    status: conint(strict=True, ge=0, le=1) = Field(description="会话状态 1 默认值 0 测试会话")
