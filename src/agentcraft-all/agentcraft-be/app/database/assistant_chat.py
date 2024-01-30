@@ -84,7 +84,7 @@ def update_chat(uid: str, assistant_id: int, ip_addr: str, **kwargs):
                                    assistant_id, AssistantChat.ip == ip_addr).update(kwargs)
         session.commit()
 
-def get_assistant_lite(assistant_id: int) -> AssistantChat:
+def get_assistant_chat_lite(assistant_id: int) -> AssistantChat:
     """获取assistant_chat表信息"""
     with Session(postgresql.postgres) as session:
         data = session.query(AssistantChat).filter(AssistantChat.id == assistant_id).first()
