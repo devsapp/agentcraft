@@ -98,7 +98,7 @@ class Reasoning:
             action, action_input, output = self.parse_latest_plugin_call(
                 output)
             if action: 
-                logger.info(f"调用工具【{self.tool_name_dict[action]}】 \n'")
+                logger.info(f"调用工具【{self.tool_name_dict.get('action', None)}】 \n'")
                 observation = self.call_plugin(action, action_input)
                 output += f'\nObservation: {observation}\nThought:'
 

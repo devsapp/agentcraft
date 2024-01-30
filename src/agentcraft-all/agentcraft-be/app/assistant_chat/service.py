@@ -3,6 +3,7 @@
 from typing import Any
 import uuid
 # from app.database.redis import redis_db
+from app.common.logger import logger
 import app.database.assistant_chat as assistant_chat_database
 import app.database.assistant as assistant_database
 import app.database.assistant_dataset as assistant_dataset_database
@@ -34,6 +35,7 @@ def get_assistant_session_id(status: int, assistant_session_id: int, assistant_i
             "status": status,
         }
         add_args.update(kv)
+        logger.info(f"add assistant session {add_args}")
         return assistant_session_database.add_session(**add_args)
     if not assistant_session_database.get_session(assistant_session_id):
         raise ValueError(f"does not have this assistant session {assistant_session_id}")
