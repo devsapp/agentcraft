@@ -1,23 +1,18 @@
 import React, { useEffect, useState } from "react";
 import { useRouter } from 'next/router';
-import Link from 'next/link';
-import { Center, ActionIcon, Tooltip, Spoiler, Breadcrumbs, Anchor, Button, Checkbox, Box, Table, TextInput, Text, Highlight, Switch, Group, Badge, MultiSelect, Select, Drawer, LoadingOverlay, Modal, Textarea, Flex, NumberInput, Paper, Title, Divider } from '@mantine/core';
+import { Center, Button, Checkbox, Box, Table, TextInput, Text, Highlight, Switch, Group, Badge, MultiSelect, Select, Drawer, LoadingOverlay, Modal, Textarea, Flex, NumberInput, Paper, Title, Divider } from '@mantine/core';
 import { useForm } from '@mantine/form';
-import { modals } from '@mantine/modals';
-import { IconRefresh, IconArrowBackUp } from '@tabler/icons-react';
+import { IconRefresh } from '@tabler/icons-react';
 import { getModelList, useModelStore } from 'store/model';
 import { getDataSetList, useDataSetStore } from 'store/dataset';
-import { formatDateTime } from 'utils/index';
+
 import { Model } from 'types/model';
 import { DataSet, DataSetType } from 'types/dataset';
-import FeatureDescription from 'components/FeatureDescription';
-import { getToolList, useActionToolStore } from 'store/actionTools';
-import { AssistantResponseData } from 'types/assistant';
-import { DATA_RETRIVAL_PROMPT_TEMPLATE } from 'constants/instructions';
-import { getKnowledgeBaseList, useKnowledgeBaseStore, addKnowledgeBase, refreshToken, updateKnowledgeBase, getKnowledgeBase } from 'store/knowledgeBase';
-import { KnowledgeBaseResponseData, Dataset } from 'types/knowledgeBase';
+
+import { useKnowledgeBaseStore, addKnowledgeBase, refreshToken, updateKnowledgeBase, getKnowledgeBase } from 'store/knowledgeBase';
+import { Dataset } from 'types/knowledgeBase';
 import { PROMPT_TEMPLATE } from 'constants/index';
-import { INSTRUCTION_TEMPLATES, DEFAULT_KNOWLEDGE_BAE_INSTRUCTION } from 'constants/instructions'
+import { DEFAULT_KNOWLEDGE_BAE_INSTRUCTION } from 'constants/instructions'
 import KnowledgeBaseChat from 'features/knowledgeBase/chat';
 
 enum ContainerType {
@@ -130,12 +125,13 @@ export function KnowledgeBaseForm({ workspaceId, form }: { workspaceId: any, for
 export function BuilderForm({ workspaceId }: AssistantProps) {
     const router = useRouter();
     const { query } = router;
-    const knowledgeBaseId = query.knowledgeBaseId;
-    const initialAgentName = query.initialAgentName;
+    const [disabledSave, setDisabledSave] = useState(false);
+    const knowledgeBaseId: any = query.knowledgeBaseId;
+    const initAgentName = query.initAgentName;
     const { setLoading, currentKnowledgeBase, updateCurrentKnowledgeBase } = useKnowledgeBaseStore();
     const modelList: Model[] = useModelStore().modelList;
     const initFormValue = {
-        name: initialAgentName,
+        name: initAgentName,
         description: '',
         prompt_template: PROMPT_TEMPLATE,
         app_id: parseInt(workspaceId),
@@ -176,12 +172,15 @@ export function BuilderForm({ workspaceId }: AssistantProps) {
                 updateCurrentKnowledgeBase(knowledgeBase);
             })()
         } else {
-            form.setValues(initFormValue)
+            form.setValues(initFormValue);
+        }
+        return () => {
+            updateCurrentKnowledgeBase(undefined);
         }
     }, []);
 
     useEffect(() => {
-        if (currentKnowledgeBase && knowledgeBaseId) {
+        if (currentKnowledgeBase?.id) {
             const datasets = currentKnowledgeBase?.datasets;
             form.setValues({
                 id: currentKnowledgeBase?.id,
@@ -210,20 +209,17 @@ export function BuilderForm({ workspaceId }: AssistantProps) {
                 exact_search_limit: currentKnowledgeBase?.exact_search_limit,
                 fuzzy_search_limit: currentKnowledgeBase?.fuzzy_search_limit
             })
-        } else if (modelList.length > 0 && !knowledgeBaseId) {
+        }
+    }, [currentKnowledgeBase])
+
+    useEffect(() => {
+        if (modelList.length > 0 && !knowledgeBaseId) {
             form.setValues({
                 model_id: modelList[0].id
-            })
+            });
         }
-    }, [currentKnowledgeBase, modelList])
+    }, [modelList]);
 
-    // useEffect(() => {
-    //     if (modelList.length > 0) {
-    //         form.setValues({
-    //             model_id: modelList[0].id
-    //         })
-    //     }
-    // }, [modelList]);
     const modelSelectData: any = modelList.map((item: Model) => { return { label: item.name_alias, value: item.id } });
     return (<Flex h={'100%'} style={{ overflow: 'hidden' }}>
         <Box w="50%" h="100%" style={{ borderRight: '1px solid rgba(217,217,227,.15)' }}>
@@ -233,6 +229,7 @@ export function BuilderForm({ workspaceId }: AssistantProps) {
                         <Select
                             ml={8}
                             mr={8}
+                            w={240}
                             withAsterisk
                             data={modelSelectData}
                             placeholder=""
@@ -246,26 +243,29 @@ export function BuilderForm({ workspaceId }: AssistantProps) {
                 <Box style={{ position: 'absolute', top: 0, right: 0 }}>
                     <Flex justify={'flex-end'} align={'center'}>
                         <Button h={32} mr={12} onClick={async () => {
-                            form.validate();
-                            if (form.isValid()) {
-                                setLoading(true);
-                                const values: any = form.values;
-                                if (knowledgeBaseId) {
-                                    await updateKnowledgeBase(knowledgeBaseId, values);
-                                } else {
-                                    const result = await addKnowledgeBase(values);
-                                    const knowledgeBaseId = result.id;
-                                    if (knowledgeBaseId) {
-                                        const { token } = await refreshToken(knowledgeBaseId);
-                                        console.log(token, 'token');
-                                        window.history.pushState({}, '', `?knowledgeBaseId=${knowledgeBaseId}`);
-                                        updateCurrentKnowledgeBase(Object.assign({}, values, { id: knowledgeBaseId, token }));
+                            setDisabledSave(true);
+                            try {
+                                form.validate();
+                                if (form.isValid()) {
+                                    setLoading(true);
+                                    const values: any = form.values;
+                                    if (currentKnowledgeBase?.id) {
+                                        await updateKnowledgeBase(currentKnowledgeBase?.id, values);
+                                    } else {
+                                        const result = await addKnowledgeBase(values);
+                                        const knowledgeBaseId = result.id;
+                                        if (knowledgeBaseId) {
+                                            const { token } = await refreshToken(knowledgeBaseId);
+                                            console.log(token, 'token');
+                                            window.history.pushState({}, '', `?knowledgeBaseId=${knowledgeBaseId}`);
+                                            updateCurrentKnowledgeBase(Object.assign({}, values, { id: knowledgeBaseId, token }));
+                                        }
                                     }
+                                    setLoading(false);
                                 }
-
-                                setLoading(false);
-                            }
-                        }}>保存</Button>
+                            } catch (e) { }
+                            setDisabledSave(false);
+                        }} disabled={disabledSave}>保存</Button>
                     </Flex>
                 </Box>
             </Center>

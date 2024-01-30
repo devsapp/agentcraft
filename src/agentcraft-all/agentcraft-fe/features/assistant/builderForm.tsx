@@ -3,26 +3,18 @@ import { useRouter } from 'next/router';
 import Link from 'next/link';
 import { Center, ActionIcon, Tooltip, Spoiler, Breadcrumbs, Anchor, Button, Checkbox, Box, Table, TextInput, Text, Highlight, Switch, Group, Badge, MultiSelect, Select, Drawer, LoadingOverlay, Modal, Textarea, Flex, NumberInput, Paper, Title, Divider } from '@mantine/core';
 import { useForm } from '@mantine/form';
-import { modals } from '@mantine/modals';
 import { IconRefresh, IconArrowBackUp } from '@tabler/icons-react';
 import { getModelList, useModelStore } from 'store/model';
 import { getDataSetList, useDataSetStore } from 'store/dataset';
-import { formatDateTime } from 'utils/index';
 import { Model } from 'types/model';
 import { DataSet, DataSetType } from 'types/dataset';
-import FeatureDescription from 'components/FeatureDescription';
-import { getAssistantList, useAssistantStore, addAssistant, refreshToken, updateAssistant, getAssistant, deleteAssistant } from 'store/assistant';
+import { useAssistantStore, addAssistant, refreshToken, updateAssistant, getAssistant } from 'store/assistant';
 import { getToolList, useActionToolStore } from 'store/actionTools';
-import { AssistantResponseData, Dataset } from 'types/assistant';
+import { Dataset } from 'types/assistant';
 import { DATA_RETRIVAL_PROMPT_TEMPLATE } from 'constants/instructions';
-import { INSTRUCTION_TEMPLATES, DEFAULT_ASSISTANT_INSTRUCTION } from 'constants/instructions';
-import CopyToClipboard from 'components/CopyToClipboard';
 import AssistantChat from 'features/assistant/chat';
 
-enum ContainerType {
-    ADD_OR_UPDATE = 1, // 增加和修改
-    CHAT = 2, // 问答
-}
+
 interface AssistantProps {
     workspaceId: any;
 }
@@ -30,13 +22,11 @@ interface AssistantProps {
 
 
 export function AssistantForm({ workspaceId, form }: { workspaceId: any, form: any }) {
-
     const dataSetList: DataSet[] = useDataSetStore().dataSetList;
     const { toolList } = useActionToolStore();
     useEffect(() => {
         getDataSetList();
         getToolList();
-
     }, []);
 
     const documentSelectData: any = dataSetList.filter((item: DataSet) => item.dataset_type == DataSetType.DOCUMENT).map((item: DataSet) => { return { label: item.name, value: item.id } });
@@ -83,7 +73,7 @@ export function AssistantForm({ workspaceId, form }: { workspaceId: any, form: a
                 />
             </Box>
         </Paper>
-        <Paper shadow="xs" p="md" withBorder style={{ width: pannelWidth }}>
+        {/* <Paper shadow="xs" p="md" withBorder style={{ width: pannelWidth }}>
             <Flex justify={'space-between'} align={'center'}>
                 <Title order={5} size="h5" >内置能力（待开放）</Title>
             </Flex>
@@ -92,19 +82,17 @@ export function AssistantForm({ workspaceId, form }: { workspaceId: any, form: a
                 <Checkbox.Group
                     value={form.values.capabilities}
                     onChange={(values) => {
-                        console.log(values)
                         form.setValues({
                             capabilities: values
                         })
                     }}
                 >
                     <Group mt="xs">
-                        {/* <Checkbox value="web_browser" label="Web浏览" /> */}
                         <Checkbox value="code_interpreter" label="代码解释器" disabled />
                     </Group>
                 </Checkbox.Group>
             </Box>
-        </Paper>
+        </Paper> */}
         <Paper shadow="xs" p="md" withBorder style={{ width: pannelWidth }}>
             <Flex justify={'space-between'} align={'center'}>
                 <Title order={5} size="h5">执行工具</Title>
@@ -132,15 +120,15 @@ export function AssistantForm({ workspaceId, form }: { workspaceId: any, form: a
 export function BuilderForm({ workspaceId }: AssistantProps) {
     const router = useRouter();
     const { query } = router;
-    const initialAgentName = query.initialAgentName;
+    const initAgentName = query.initAgentName;
     const assistantId = query.assistantId;
+    const [disabledSave, setDisabledSave] = useState(false);
     const setLoading = useAssistantStore().setLoading;
-    const loading: boolean = useAssistantStore().loading;
     const updateCurrentAssistant = useAssistantStore().updateCurrentAssistant;
     const currentAssistant = useAssistantStore().currentAssistant;
     const modelList: Model[] = useModelStore().modelList;
     const initFormValue = {
-        name: initialAgentName,
+        name: initAgentName,
         description: '',
         retrieval_prompt_template: DATA_RETRIVAL_PROMPT_TEMPLATE,
         app_id: parseInt(workspaceId),
@@ -185,10 +173,13 @@ export function BuilderForm({ workspaceId }: AssistantProps) {
         } else {
             form.setValues(initFormValue)
         }
+        return () => {
+            updateCurrentAssistant(undefined);
+        }
     }, []);
 
     useEffect(() => {
-        if (currentAssistant && assistantId) {
+        if (currentAssistant?.id) {
             const datasets = currentAssistant?.datasets;
             form.setValues({
                 id: currentAssistant?.id,
@@ -219,20 +210,16 @@ export function BuilderForm({ workspaceId }: AssistantProps) {
                 exact_search_limit: currentAssistant?.exact_search_limit,
                 fuzzy_search_limit: currentAssistant?.fuzzy_search_limit
             })
-        } else if (modelList.length > 0 && !assistantId) {
+        }
+    }, [currentAssistant])
+
+    useEffect(() => {
+        if (modelList.length > 0 && !assistantId) {
             form.setValues({
                 model_id: modelList[0].id
-            })
+            });
         }
-    }, [currentAssistant, modelList])
-
-    // useEffect(() => {
-    //     if (modelList.length > 0) {
-    //         form.setValues({
-    //             model_id: modelList[0].id
-    //         })
-    //     }
-    // }, [modelList]);
+    }, [modelList]);
 
     const modelSelectData: any = modelList.map((item: Model) => { return { label: item.name_alias, value: item.id } });
     return (<Flex h={'100%'} style={{ overflow: 'hidden' }}>
@@ -243,6 +230,7 @@ export function BuilderForm({ workspaceId }: AssistantProps) {
                         <Select
                             ml={8}
                             mr={8}
+                            w={240}
                             withAsterisk
                             data={modelSelectData}
                             placeholder=""
@@ -256,27 +244,29 @@ export function BuilderForm({ workspaceId }: AssistantProps) {
                 <Box style={{ position: 'absolute', top: 0, right: 0 }}>
                     <Flex justify={'flex-end'} align={'center'}>
                         <Button h={32} mr={12} onClick={async () => {
-                            form.validate();
-                            if (form.isValid()) {
-                                setLoading(true);
-                                const values: any = form.values;
-                                console.log(currentAssistant, 'sss')
-                                if (assistantId || currentAssistant?.id) {
-                                    await updateAssistant(assistantId, values);
-                                } else {
-                                    const result = await addAssistant(values);
-                                    const assistantId = result.id;
-                                    if (assistantId) {
-                                        const { token } = await refreshToken(assistantId);
-                                        window.history.pushState({}, '', `?assistantId=${assistantId}`);
-                                        updateCurrentAssistant(Object.assign({}, values, { id: assistantId, token }));
+                            setDisabledSave(true);
+                            try {
+                                form.validate();
+                                if (form.isValid()) {
+                                    setLoading(true);
+                                    const values: any = form.values;
+                                    if (currentAssistant?.id) {
+                                        await updateAssistant(currentAssistant?.id, values);
+                                    } else {
+                                        const result = await addAssistant(values);
+                                        const assistantId = result.id;
+                                        if (assistantId) {
+                                            const { token } = await refreshToken(assistantId);
+                                            window.history.pushState({}, '', `?assistantId=${assistantId}`);
+                                            updateCurrentAssistant(Object.assign({}, values, { id: assistantId, token }));
+                                        }
                                     }
+
+                                    setLoading(false);
                                 }
-
-
-                                setLoading(false);
-                            }
-                        }}>保存</Button>
+                            } catch (e) { }
+                            setDisabledSave(false);
+                        }} disabled={disabledSave}>保存</Button>
                     </Flex>
                 </Box>
             </Center>

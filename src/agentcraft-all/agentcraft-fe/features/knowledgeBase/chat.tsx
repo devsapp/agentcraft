@@ -4,20 +4,19 @@ import MarkdownContent from 'components/MarkdownContent';
 import MDXContainer from 'components/MDXContainer';
 import { chatStream } from 'store/chat';
 import { MessageType, ChatMessage } from 'types/chat';
-import { KnowledgeBase } from 'types/knowledgeBase';
 import { useKnowledgeBaseStore } from 'store/knowledgeBase';
 import styles from 'styles/chat.module.scss';
 
 const defaultPrompt = ``;
 
 export default function Home() {
-    const currentKnowledgeBase: KnowledgeBase = useKnowledgeBaseStore().currentKnowledgeBase as KnowledgeBase;
+    const currentKnowledgeBase = useKnowledgeBaseStore().currentKnowledgeBase;
     const [userInput, setUserInput] = useState(defaultPrompt);
     const [loading, setLoading] = useState(false);
     const [messages, setMessages] = useState<ChatMessage[]>([
        
     ]);
-
+    const knowledgeBaseToken = currentKnowledgeBase?.token || '';
     const messageListRef = useRef(null);
     const textAreaRef = useRef(null);
 
@@ -97,7 +96,7 @@ export default function Home() {
                     newMessage.message += delta;
                     setMessages([..._preMessages, newMessage]);
                 }
-            }, currentKnowledgeBase.token);
+            }, knowledgeBaseToken);
 
         } catch (e) {
             handleError(e);
@@ -145,7 +144,7 @@ export default function Home() {
                     newMessage.message += delta;
                     setMessages([..._preMessages, newMessage]);
                 }
-            }, currentKnowledgeBase.token);
+            }, knowledgeBaseToken);
 
         } catch (e) {
             handleError(e);

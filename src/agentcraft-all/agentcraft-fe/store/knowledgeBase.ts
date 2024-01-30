@@ -14,14 +14,14 @@ interface KnowledgeBaseStore {
     loading: boolean,
     isEdit: boolean,
     accessUrl: AccessUrl,
-    currentKnowledgeBase?: KnowledgeBase,
+    currentKnowledgeBase?: KnowledgeBase | undefined,
     knowledgeBaseChatList: any[],
     setAccessUrl: (accessUrl: AccessUrl) => void;
     setChatDrawer: (chatDrawer: boolean) => void;
     setLoading: (loading: boolean) => void;
     setOpen: (open: boolean) => void;
     setEditStatus: (isEdit: boolean) => void;
-    updateCurrentKnowledgeBase: (_: KnowledgeBase) => void;
+    updateCurrentKnowledgeBase: (_: KnowledgeBase | undefined) => void;
     updateKnowledgeBaseList: (_: KnowledgeBaseResponseData[]) => void;
 }
 
@@ -39,7 +39,7 @@ export const useKnowledgeBaseStore = create<KnowledgeBaseStore>()(devtools((set)
     },
     currentKnowledgeBase: undefined,
     // 知识库列表
-    updateCurrentKnowledgeBase: (currentKnowledgeBase: KnowledgeBase) => set((_state) => {
+    updateCurrentKnowledgeBase: (currentKnowledgeBase: KnowledgeBase | undefined) => set((_state) => {
         return ({ currentKnowledgeBase })
     }),
     setChatDrawer: (chatDrawer: boolean) => set((_state) => {

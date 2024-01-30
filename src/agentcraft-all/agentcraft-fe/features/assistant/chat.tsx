@@ -11,13 +11,13 @@ import styles from 'styles/chat.module.scss';
 const defaultPrompt = ``;
 
 export default function Chat() {
-    const currentAssistant: Assistant = useAssistantStore().currentAssistant as Assistant;
+    const currentAssistant = useAssistantStore().currentAssistant;
     const [userInput, setUserInput] = useState(defaultPrompt);
     const [loading, setLoading] = useState(false);
     const [messages, setMessages] = useState<ChatMessage[]>([
 
     ]);
-
+    const assistantToken = currentAssistant?.token || '';
     const messageListRef = useRef(null);
     const textAreaRef = useRef(null);
 
@@ -80,6 +80,7 @@ export default function Chat() {
                 disLiked: false,
             };
             setUserInput("");
+            
             const requestMessage = currentMessage.map((item) => {
                 return {
                     role: item.type,
@@ -101,7 +102,7 @@ export default function Chat() {
                     newMessage.message += delta;
                     setMessages([..._preMessages, newMessage]);
                 }
-            }, currentAssistant.token);
+            }, assistantToken);
 
         } catch (e) {
             handleError(e);
@@ -150,7 +151,7 @@ export default function Chat() {
                     newMessage.message += delta;
                     setMessages([..._preMessages, newMessage]);
                 }
-            }, currentAssistant.token);
+            }, assistantToken);
 
         } catch (e) {
             handleError(e);

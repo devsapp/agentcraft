@@ -1,19 +1,15 @@
 import React, { useEffect, useState } from "react";
 import { useRouter } from 'next/router';
-import Link from 'next/link';
-import { Center, ActionIcon, Tooltip, Spoiler, Breadcrumbs, Anchor, Button, Checkbox, Box, Table, TextInput, Text, Highlight, Switch, Group, Badge, MultiSelect, Select, Drawer, LoadingOverlay, Modal, Textarea, Flex, NumberInput, Paper, Title, Divider } from '@mantine/core';
+import { Center, Button, Box, TextInput, Text, Group, Select, Textarea, Flex, Paper, Title } from '@mantine/core';
 import { useForm } from '@mantine/form';
-
 import { IconRefresh } from '@tabler/icons-react';
 import { getModelList, useModelStore } from 'store/model';
-import { getDataSetList, useDataSetStore } from 'store/dataset';
+import { getDataSetList } from 'store/dataset';
 
 import { Model } from 'types/model';
-import { DataSet, DataSetType } from 'types/dataset';
-
 import { useKnowledgeBaseStore, addKnowledgeBase, refreshToken, updateKnowledgeBase, getKnowledgeBase } from 'store/knowledgeBase';
 import { Dataset } from 'types/knowledgeBase';
-import { PROMPT_TEMPLATE } from 'constants/index';
+import { DataSetType } from 'types/dataset';
 import { INSTRUCTION_TEMPLATES, DEFAULT_CHAT_INSTRUCTION } from 'constants/instructions'
 import KnowledgeBaseChat from 'features/knowledgeBase/chat';
 
@@ -75,13 +71,14 @@ export function InstructionChatForm({ workspaceId, form }: { workspaceId: any, f
 
 export function BuilderForm({ workspaceId }: AssistantProps) {
     const router = useRouter();
+    const [disabledSave, setDisabledSave] = useState(false);
     const { query } = router;
-    const instructionChatId = query.instructionChatId;
-    const initialAgentName = query.initialAgentName;
+    const instructionChatId: any = query.instructionChatId;
+    const initAgentName = query.initAgentName;
     const { setLoading, currentKnowledgeBase, updateCurrentKnowledgeBase } = useKnowledgeBaseStore();
     const modelList: Model[] = useModelStore().modelList;
     const initFormValue = {
-        name: initialAgentName,
+        name: initAgentName,
         description: '',
         prompt_template: '',
         app_id: parseInt(workspaceId),
@@ -123,10 +120,19 @@ export function BuilderForm({ workspaceId }: AssistantProps) {
         } else {
             form.setValues(initFormValue)
         }
+        return () => {
+            updateCurrentKnowledgeBase(undefined);
+        }
     }, []);
-
     useEffect(() => {
-        if (currentKnowledgeBase && instructionChatId) {
+        if (modelList.length > 0 && !instructionChatId) {
+            form.setValues({
+                model_id: modelList[0].id
+            });
+        }
+    }, [modelList]);
+    useEffect(() => {
+        if (currentKnowledgeBase?.id) {
             const datasets = currentKnowledgeBase?.datasets;
             form.setValues({
                 id: currentKnowledgeBase?.id,
@@ -155,12 +161,8 @@ export function BuilderForm({ workspaceId }: AssistantProps) {
                 exact_search_limit: currentKnowledgeBase?.exact_search_limit,
                 fuzzy_search_limit: currentKnowledgeBase?.fuzzy_search_limit
             })
-        } else if (modelList.length > 0 && !instructionChatId) {
-            form.setValues({
-                model_id: modelList[0].id
-            })
         }
-    }, [currentKnowledgeBase, modelList])
+    }, [currentKnowledgeBase])
 
 
     const modelSelectData: any = modelList.map((item: Model) => { return { label: item.name_alias, value: item.id } });
@@ -172,6 +174,7 @@ export function BuilderForm({ workspaceId }: AssistantProps) {
                         <Select
                             ml={8}
                             mr={8}
+                            w={240}
                             withAsterisk
                             data={modelSelectData}
                             placeholder=""
@@ -185,25 +188,30 @@ export function BuilderForm({ workspaceId }: AssistantProps) {
                 <Box style={{ position: 'absolute', top: 0, right: 0 }}>
                     <Flex justify={'flex-end'} align={'center'}>
                         <Button h={32} mr={12} onClick={async () => {
-                            form.validate();
-                            if (form.isValid()) {
-                                setLoading(true);
-                                const values: any = form.values;
-                                if (instructionChatId) {
-                                    await updateKnowledgeBase(instructionChatId, values);
-                                } else {
-                                    const result = await addKnowledgeBase(values);
-                                    const instructionChatId = result.id;
-                                    if (instructionChatId) {
-                                        const { token } = await refreshToken(instructionChatId);
-                                        window.history.pushState({}, '', `?instructionChatId=${instructionChatId}`);
-                                        updateCurrentKnowledgeBase(Object.assign({}, values, { id: instructionChatId, token }));
-                                    }
-                                }
+                            setDisabledSave(true);
+                            try {
+                                form.validate();
+                                if (form.isValid()) {
+                                    setLoading(true);
+                                    const values: any = form.values;
+                                    if (currentKnowledgeBase?.id) {
+                                        await updateKnowledgeBase(currentKnowledgeBase?.id, values);
+                                    } else {
+                                        const result = await addKnowledgeBase(values);
+                                        const instructionChatId = result.id;
+                                        if (instructionChatId) {
+                                            const { token } = await refreshToken(instructionChatId);
+                                            window.history.pushState({}, '', `?instructionChatId=${instructionChatId}`);
+                                            updateCurrentKnowledgeBase(Object.assign({}, values, { id: instructionChatId, token }));
+                                        }
 
-                                setLoading(false);
+                                    }
+                                    setLoading(false);
+                                }
+                            } catch (e) {
                             }
-                        }}>保存</Button>
+                            setDisabledSave(false);
+                        }} disabled={disabledSave}>保存</Button>
                     </Flex>
                 </Box>
             </Center>

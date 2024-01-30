@@ -4,9 +4,7 @@ import { nanoid } from 'nanoid';
 
 import { Breadcrumbs, Anchor, Loader, Stepper, Card, Button, Box, Select, PasswordInput, Group, Tabs, Notification, Image, Badge, Title, TextInput, Text, ActionIcon, Highlight, LoadingOverlay, Modal, Textarea, Flex, Space, NumberInput, FileInput, rem } from '@mantine/core';
 import { useForm } from '@mantine/form';
-import { IconMessageCircle, IconBrandGithubFilled, IconExternalLink, IconArrowBackUp } from '@tabler/icons-react';
-
-import FeatureDescription from 'components/FeatureDescription';
+import { IconMessageCircle, IconExternalLink, IconArrowBackUp } from '@tabler/icons-react';
 import { useFoundationModelStore, addFoundationModel, getFoundationModel, APP_STATUS } from 'store/foundationModel';
 import { FORM_WIDTH } from 'constants/index';
 import { FOUNDATION_MODEL_TEMPLATES, AGENTCRAFT_FM_PREFIX } from 'constants/foundation-model';

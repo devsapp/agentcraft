@@ -236,11 +236,11 @@ function ChooseAgentDialog(props: any) {
                         <Button mr={8} className={styles['agent-footer-btn']} color="#FFF" onClick={() => {
                             updateCurrentAssistant({} as Assistant);
                             if (agentType === 'assistant') {
-                                router.push(`/agent/${workspaceId}/assistant?initialAgentName=${agentName}`);
+                                router.push(`/agent/${workspaceId}/assistant?initAgentName=${agentName}`);
                             } else if (agentType === 'knowledgeBase') {
-                                router.push(`/agent/${workspaceId}/knowledgeBase?initialAgentName=${agentName}`);
+                                router.push(`/agent/${workspaceId}/knowledgeBase?initAgentName=${agentName}`);
                             } else if (agentType === 'instructionChat') {
-                                router.push(`/agent/${workspaceId}/instructionChat?initialAgentName=${agentName}`);
+                                router.push(`/agent/${workspaceId}/instructionChat?initAgentName=${agentName}`);
                             }
                             setOpen(false);
                         }}>确定</Button>

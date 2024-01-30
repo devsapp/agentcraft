@@ -1,7 +1,7 @@
 import React, { useEffect } from "react";
 import Link from 'next/link';
 import { useRouter } from 'next/router'
-import { Breadcrumbs, Anchor, Button, Box, Table, Text, Highlight, LoadingOverlay, Flex } from '@mantine/core';
+import { Anchor, Button, Box, Table, Text, Highlight, LoadingOverlay, Flex } from '@mantine/core';
 
 import { modals } from '@mantine/modals';
 
