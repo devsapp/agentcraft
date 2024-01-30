@@ -35,7 +35,8 @@ export interface ServerlessAppTemplate {
     name: string; // 名称
     tag: string[]; // 标签
     type: string; // 类型 文生文
-    icon: string;
+    icon?: string;
+    iconText?: string;
     description: string;
     fcLink: string;
     githubLink: string;

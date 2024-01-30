@@ -259,7 +259,7 @@ function List({ dataSetId, dataSetType }: DatasourceProps) {
     }, [dataSetId, dataSetType]);
 
     return (
-        <>
+        <Box pos="relative" className={'content-container'} pb={124} >
             <div>共计{dataSourceList.length}条数据</div>
             <Table striped withBorder withColumnBorders mt={12}  >
                 <thead>
@@ -277,7 +277,7 @@ function List({ dataSetId, dataSetType }: DatasourceProps) {
                 </thead>
                 <tbody>{rows}</tbody>
             </Table>
-        </>
+        </Box>
     );
 }
 
@@ -334,13 +334,13 @@ export function Datasource() {
                     </Button> : null}
                 </Flex>
             </Box>
-            <Box style={{ overflowY: 'auto' }} h={'calc(100vh - 166px)'}>
-                <LoadingOverlay visible={loading} overlayOpacity={0.3} />
-                <AddOrUpdate />
-                <UploadDataSource />
-                <List dataSetId={dataSetId} dataSetType={dataSetType} />
 
-            </Box>
+            <LoadingOverlay visible={loading} overlayOpacity={0.3} />
+            <AddOrUpdate />
+            <UploadDataSource />
+            <List dataSetId={dataSetId} dataSetType={dataSetType} />
+
+
         </>
 
     );

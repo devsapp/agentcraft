@@ -3,24 +3,11 @@ import { useRouter } from 'next/router'
 import { Anchor, Box, Text, Title, Paper, Flex, ActionIcon } from '@mantine/core';
 import { IconArrowBackUp } from '@tabler/icons-react';
 import { useFoundationModelStore, getFoundationModel } from 'store/foundationModel';
+import { FM_APP_STATUS, FM_TEMPLATE_ACCESS_API_FUNCTION_MAP } from 'constants/foundation-model';
 import CopyToClipboard from 'components/CopyToClipboard';
 // import styles from './index.module.scss';
 
-const FM_TEMPLATE_ACCESS_API_FUNCTION_MAP: any = {
-    'agentcraft-fm-qwen-biz': 'apiServer',
-    'fc-llm-api': 'llm-server',
-}
 
-const FM_APP_STATUS: any = {
-    'published': {
-        color: 'green',
-        text: '已发布'
-    },
-    'deploying': {
-        color: 'yellow',
-        text: '部署中'
-    }
-}
 
 interface DOMAIN_DATA {
     domainName: string,
@@ -29,6 +16,7 @@ interface DOMAIN_DATA {
 function getLLMServiceUrl(currentFoundationModel: any) {
     try {
         const output = currentFoundationModel.output;
+        console.log(output)
         const deploy = output?.deploy || {};
 
         const allFunctions = Object.keys(deploy).filter((key: string) => FM_TEMPLATE_ACCESS_API_FUNCTION_MAP[currentFoundationModel.appConfig.template] === key);

@@ -74,7 +74,7 @@ function List() {
     }, []);
 
     return (
-        <Box pos="relative" >
+        <Box pos="relative" className={'content-container'} pb={124} >
             <LoadingOverlay visible={loading} overlayOpacity={0.3} />
             <Table striped withBorder withColumnBorders mt={12}  >
                 <thead>

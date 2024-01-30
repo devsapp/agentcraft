@@ -257,7 +257,7 @@ CREATE_AGENT_SESSION_TABLE = text(
     title VARCHAR(255) NOT NULL,
     agent_id BIGINT REFERENCES agent(id) ON DELETE CASCADE,
     share_id VARCHAR(255),
-    fingerprint_id VARCHAR(255) NOT NULL,
+    fingerprint_id VARCHAR(255),
     created TIMESTAMP NOT NULL DEFAULT NOW(),
     modified TIMESTAMP NOT NULL DEFAULT NOW()
     );"""
