@@ -1,4 +1,3 @@
-
 export const enum ROBOT_NAME_VALUE {
     DING_TALK = 'dingtalk',
     WECHAT = 'wechat'

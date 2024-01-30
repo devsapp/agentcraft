@@ -1,21 +1,20 @@
 import React, { useEffect } from "react";
 import Link from 'next/link'
-import { Breadcrumbs, Anchor, Button, Box, Table, Modal, TextInput, Text, Highlight, LoadingOverlay, Select, Textarea } from '@mantine/core';
+import { Anchor, Button, Box, Table, Modal, TextInput, Text, Highlight, LoadingOverlay, Select, Textarea } from '@mantine/core';
 import { useForm } from '@mantine/form';
 import { modals } from '@mantine/modals';
-import { getDataSetList, useGlobalStore, addDataSet, deleteDataSet } from '@/store/dataset';
-import { DataSet, DataSetType } from '@/types/dataset';
-import { DataSetRequestPayload } from "@/types/dataset";
-import FeatureDescription from '@/components/FeatureDescription';
+import { getDataSetList, useDataSetStore, addDataSet, deleteDataSet } from 'store/dataset';
+import { DataSet, DataSetType, DataSetRequestPayload } from 'types/dataset';
+import FeatureDescription from 'components/FeatureDescription';
 import { formatDateTime } from 'utils/index';
 import { FORM_WIDTH } from 'constants/index';
 // import styles from './index.module.scss';
 
 
 function Add() {
-    const open = useGlobalStore().open;
-    const setOpen = useGlobalStore().setOpen;
-    const setLoading = useGlobalStore().setLoading;
+    const open = useDataSetStore().open;
+    const setOpen = useDataSetStore().setOpen;
+    const setLoading = useDataSetStore().setLoading;
 
     const form = useForm({
         initialValues: {
@@ -64,11 +63,11 @@ function Add() {
 
 
 
-function List() {
+export function List() {
 
-    const dataSetList: DataSet[] = useGlobalStore().dataSetList;
-    const loading: boolean = useGlobalStore().loading;
-    const setLoading = useGlobalStore().setLoading;
+    const dataSetList: DataSet[] = useDataSetStore().dataSetList;
+    const loading: boolean = useDataSetStore().loading;
+    const setLoading = useDataSetStore().setLoading;
     const removeDataDataSet = (dataset: DataSet) => {
         const { id, name } = dataset;
         const deleteContent = `确定删除 ${name}?`;
@@ -115,7 +114,7 @@ function List() {
     }, []);
 
     return (
-        <Box pos="relative" >
+        <Box pos="relative" className={'content-container'} pb={124} >
             <LoadingOverlay visible={loading} overlayOpacity={0.3} />
             <Table striped withBorder withColumnBorders mt={12}  >
                 <thead>
@@ -138,7 +137,7 @@ function List() {
 
 
 export function DataSetPage() {
-    const setOpen = useGlobalStore().setOpen;
+    const setOpen = useDataSetStore().setOpen;
     const items = [
         { title: 'AgentCraft', href: '#' },
         { title: '数据集', href: '/dataset' },
@@ -150,8 +149,8 @@ export function DataSetPage() {
 
     return (
         <>
-            <Breadcrumbs>{items}</Breadcrumbs>
-            <FeatureDescription title="数据集" description="AgentCraft中的数据集是对业务数据的高层抽象，您可以构建多个业务场景的数据集，并将他们进行知识库的关联"/>
+            {/* <Breadcrumbs>{items}</Breadcrumbs> */}
+            <FeatureDescription title="数据集" description="AgentCraft中的数据集是对业务数据的高层抽象，您可以构建多个业务场景的数据集，并将他们进行知识库的关联" />
             <Box mt={12} >
                 <Button onClick={() => setOpen(true)}>
                     新建数据集

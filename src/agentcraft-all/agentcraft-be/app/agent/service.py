@@ -26,7 +26,7 @@ def list_agents(app_id: int, user_id: int, page: int, limit: int) -> tuple[list[
 
 def add_agent(**kwargs):
     """添加agent"""
-    database.add_agent(**kwargs)
+    return database.add_agent(**kwargs)
 
 
 def refresh_token(user_id: int, agent_id: int):

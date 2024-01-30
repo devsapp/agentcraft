@@ -2,6 +2,8 @@ edition: 3.0.0
 name: AgentCraft
 vars:
   region: '{{ region }}'
+  beFunctionName: '{{ beFunctionName }}'
+  feFunctionName: '{{ feFunctionName }}'
 template:
   AgentCraftAll:
     internetAccess: true
@@ -46,7 +48,8 @@ resources:
         EMBEDDING_URL: ''
         EMBEDDING_DIM: ''
         JWT_SECRET: {{ JWT_SECRET }}
-      functionName: 'agentcraft-backend'
+        REGION: ${vars.region}
+      functionName: ${vars.beFunctionName}
       code: ./agentcraft-all/agentcraft-be
       asyncInvokeConfig: {}
       triggers:
@@ -74,7 +77,7 @@ resources:
       routeConfig:
         routes:
           - path: /*
-            functionName: 'agentcraft-backend'
+            functionName: ${vars.beFunctionName}
   agentcraft-frontend:
     component: fc3@0.0.14
     # actions:
@@ -102,12 +105,12 @@ resources:
       environmentVariables:
         baseUrl: ${resources.agentcraft-backend.output.url.system_intranet_url}
         openApiUrl: ${resources.agentcraft-backend-domain.output.domainName}
-        beFunctionName: agentcraft-backend
+        beFunctionName: ${vars.beFunctionName}
         NODE_PATH: /opt/nodejs/node_modules
         Region: ${vars.region}
         PATH: >-
           /opt/nodejs18/bin::/usr/local/bin/apache-maven/bin:/usr/local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/local/ruby/bin:/opt/bin:/code:/code/bin:/opt/nodejs/node_modules/.bin
-      functionName: 'agentcraft-frontend'
+      functionName: ${vars.feFunctionName}
       code: ./agentcraft-all/agentcraft-fe
       triggers:
         - description: ''
@@ -133,4 +136,4 @@ resources:
       routeConfig:
         routes:
           - path: /*
-            functionName: 'agentcraft-frontend'
+            functionName: ${vars.feFunctionName}

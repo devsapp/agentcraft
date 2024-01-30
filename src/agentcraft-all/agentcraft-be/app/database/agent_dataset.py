@@ -64,7 +64,6 @@ def similarity_search(
     with Session(postgresql.postgres) as session:
         exact_datasets = session.query(AgentDataset.dataset_id).filter(
             AgentDataset.agent_id == agent_id, AgentDataset.dataset_type == 1).all()
-        print(f"{exact_datasets}")
         if exact_datasets:
             exact_similarity_search_sql = f'''
             SELECT doc_chunk, title, url, 1 - (embedding <=> '{embedding}') AS similarity 

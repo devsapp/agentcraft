@@ -1,7 +1,7 @@
 import React from "react";
 import { useDisclosure } from '@mantine/hooks';
-import { PasswordInput, Paper, Drawer,  Button, Box, Table, TextInput, Text } from '@mantine/core';
-import MarkdownContent from "components/MarkdownContent";
+import { PasswordInput, Paper, Drawer,  Button, TextInput, Text } from '@mantine/core';
+import MarkdownContent from "components/MDXContainer";
 import { ALIBABACLOUD_POSTGRESQL_TUTORIAL } from 'constants/system-config';
 import { useSystemConfigStore } from 'store/systemConfig';
 
@@ -19,11 +19,12 @@ export default function DataBaseConfig({ form }: any) {
         <Paper shadow="xs" p="xl">
             <Drawer opened={opened} onClose={close} title="获取阿里云Postgresql Serverless版教程" position="right" size="50%">
                 <div style={{ width: window.innerWidth / 2 - 40 }}>
-                    <MarkdownContent textContent={dynamicAddition(ALIBABACLOUD_POSTGRESQL_TUTORIAL, vpcInfo)}  />
+                    {/* <MarkdownContent textContent={dynamicAddition(ALIBABACLOUD_POSTGRESQL_TUTORIAL, vpcInfo)}  /> */}
+                    <MarkdownContent content={dynamicAddition(ALIBABACLOUD_POSTGRESQL_TUTORIAL, vpcInfo)}  />
                 </div>
             </Drawer>
             <div>
-                <Text weight={700}>还没有数据库？ <Button onClick={open} variant="subtle">查看如何免费获取</Button></Text>
+                <Text weight={700}>还没有数据库？ <Button onClick={open} variant="subtle">快速获取</Button></Text>
             </div>
             <TextInput withAsterisk label="数据库地址" description="请输入数据库访问地址" placeholder="示例: mxlpo.pg.rds.aliyuncs.com"  {...form.getInputProps('POSTGRES_HOST')} />
             <TextInput withAsterisk label="数据库名称" description="请输入数据库名称" placeholder="" {...form.getInputProps('POSTGRES_DATABASE')} />

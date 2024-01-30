@@ -1,9 +1,8 @@
 
 import { create } from "zustand";
 import { devtools } from "zustand/middleware";
-import { DataSource, DocumentRequestPayload, QuestionRequestPayload } from "@/types/datasource";
-
-import { request } from '@/utils/clientRequest';
+import { DataSource, DocumentRequestPayload, QuestionRequestPayload } from "types/datasource";
+import { request } from 'utils/clientRequest';
 
 
 interface DataSourceStore {

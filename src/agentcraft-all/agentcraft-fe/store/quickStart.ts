@@ -3,11 +3,10 @@ import { create } from "zustand";
 import { persist } from "zustand/middleware";
 import { AGENTCRAFT_FM_QWEN_BIZ } from 'constants/foundation-model';
 import { AGENTCRAFT_QUICK_START } from 'constants/index';
-import { request } from '@/utils/clientRequest';
+import { request } from 'utils/clientRequest';
 export const enum QuickStartStep {
     LLM_PROXY = 0,
-    DATA_ALL = 1,
-    KNOWLEDGE_BASE = 2
+    AGENT = 1
 }
 
 interface LLM_PROXY_CONFIG {
@@ -49,6 +48,7 @@ export const useQuickStartStore = create<any>(persist(
         activeStep: QuickStartStep.LLM_PROXY,
         dataSetId: [],
         modelId: '',
+        currentAgentType: 'instructionChat',
         configStepStatus: {
             llm_proxy_config_ready: false,
             llm_proxy_create_loading: false,
@@ -64,6 +64,9 @@ export const useQuickStartStore = create<any>(persist(
         } as QuickStartConfig,
         setDataSetId: (dataSetId: []) => set(() => {
             return ({ dataSetId })
+        }),
+        setCurrentAgentType: (currentAgentType: string) => set(() => {
+            return ({ currentAgentType })
         }),
         setModelId: (modelId: any) => set(() => {
             return ({ modelId })

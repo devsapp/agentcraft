@@ -2,6 +2,10 @@ export const FORM_WIDTH = 640;
 export const FORM_WIDTH_1280 = 1280;
 export const DEFAULT_MODEL_REQUEST_TIMEOUT = 600;
 export const REQUEST_TIMEOUT_MS = 60000;
+
+export const EXPAND_NAV_WIDTH = 220;
+export const CLOSE_NAV_WIDTH = 72;
+
 export const AGENTCRAFT_TOKEN = 'agent_craft_token';
 export const AGENTCRAFT_SYSTEMCONFIG_COMPLETED = 'agent_craft_systemconfig_completed';
 export const AGENTCRAFT_QUICK_START = 'agentcraft-quick-start';

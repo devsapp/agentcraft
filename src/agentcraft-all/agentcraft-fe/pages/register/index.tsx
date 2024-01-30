@@ -1,11 +1,14 @@
 import React, { useState } from 'react';
 import { useRouter } from 'next/router';
 import Link from 'next/link'
-import { Paper, Col, TextInput, PasswordInput, Button, LoadingOverlay, Flex, Loader } from '@mantine/core';
+import { Paper, TextInput, PasswordInput, Button, LoadingOverlay, Flex, Loader } from '@mantine/core';
 import { useForm } from '@mantine/form';
 import { notifications } from '@mantine/notifications';
-import { HTTP_STATUS } from 'types/httpStatus';
+import { DEFAULT_WORKSPACE_NAME, DEFAULT_WORKSPACE_DESCRIPTION } from 'constants/workspace';
+// import { HTTP_STATUS } from 'types/httpStatus';
 import { register } from 'store/authentication';
+import { addWorkspace } from 'store/workspace';
+
 
 const LoginPage = () => {
     const router = useRouter();
@@ -28,20 +31,25 @@ const LoginPage = () => {
                 setLoading(true)
                 const { username, password } = form.values;
                 const result = await register(username, password);
-                if (result.code === HTTP_STATUS.CREATED) {
+                if (result.success) {
+                    await addWorkspace({
+                        name: DEFAULT_WORKSPACE_NAME,
+                        description: DEFAULT_WORKSPACE_DESCRIPTION,
+                    });
                     notifications.show({
                         title: '注册成功',
-                        message: '您已成功注册账号，请前往登录',
+                        message: '您已成功注册账号，正在进行跳转登录',
                         color: 'green',
                     });
-                    router.push('/login');
-                } else {
+                    setTimeout(() => {
+                        router.push('/');
+                    }, 1000)
 
-                    let message = result.message || '';
+                } else {
                     notifications.show({
                         title: '注册失败',
                         message: '账号已存在',
-                        color: 'read',
+                        color: 'red',
                     });
                 }
             } catch (e) {
@@ -59,7 +67,7 @@ const LoginPage = () => {
                 overlayColor="#c5c5c5"
                 visible={loading}
             />
-            <Paper shadow="xs">
+            <Paper shadow="xs" p={24}>
                 <div style={{ textAlign: 'center', width: '100%' }}> <Link href="/login">已有账号？前往登录</Link></div>
 
                 <form >
@@ -77,7 +85,6 @@ const LoginPage = () => {
                         {...form.getInputProps('password')}
                     />
                     <Button
-                        color="blue"
                         fullWidth
                         style={{ marginTop: '1rem' }}
                         onClick={() => { handleSubmit() }}

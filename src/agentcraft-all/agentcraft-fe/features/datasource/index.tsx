@@ -1,10 +1,10 @@
 import React, { useEffect } from "react";
 import { useRouter } from 'next/router'
-import { Breadcrumbs, Anchor, Button, Box, Table, TextInput, Text, Highlight, LoadingOverlay, Modal, Textarea, Flex, Space, NumberInput, FileInput, rem } from '@mantine/core';
+import { Breadcrumbs, Anchor, Button, Box, Table, Title, TextInput, Text, ActionIcon, Highlight, LoadingOverlay, Modal, Textarea, Flex, Space, NumberInput, FileInput, rem } from '@mantine/core';
 import { useForm, UseFormReturnType } from '@mantine/form';
 import { modals } from '@mantine/modals';
 import CopyToClipboard from 'components/CopyToClipboard';
-import { IconFileUpload, IconUpload } from '@tabler/icons-react';
+import { IconFileUpload, IconUpload, IconArrowBackUp } from '@tabler/icons-react';
 import { getDataSourceList, useDataSourceStore, addDataSource, deleteDataSource, addDataSourceByUploadFile, updateDataSource } from 'store/datasource';
 import { DataSource } from 'types/datasource';
 import { DataSetType } from "types/dataset";
@@ -259,8 +259,7 @@ function List({ dataSetId, dataSetType }: DatasourceProps) {
     }, [dataSetId, dataSetType]);
 
     return (
-        <>
-
+        <Box pos="relative" className={'content-container'} pb={124} >
             <div>共计{dataSourceList.length}条数据</div>
             <Table striped withBorder withColumnBorders mt={12}  >
                 <thead>
@@ -278,7 +277,7 @@ function List({ dataSetId, dataSetType }: DatasourceProps) {
                 </thead>
                 <tbody>{rows}</tbody>
             </Table>
-        </>
+        </Box>
     );
 }
 
@@ -303,7 +302,17 @@ export function Datasource() {
     const setOpenUploadModel = useDataSourceStore().setOpenUploadModel;
     return (
         <>
-            <Breadcrumbs>{items}</Breadcrumbs>
+            {/* <Breadcrumbs>{items}</Breadcrumbs> */}
+            <Flex justify={'flex-start'} align={'center'} mt={12} >
+                <Flex align={'center'} h={'100%'} >
+                    <ActionIcon onClick={() => {
+                        router.push('/dataset')
+                    }}>
+                        <IconArrowBackUp />
+                    </ActionIcon>
+                    <Title order={4}>文档数据管理</Title>
+                </Flex>
+            </Flex>
             <Box mt={12} >
                 <Flex
                     mih={50}
@@ -325,12 +334,13 @@ export function Datasource() {
                     </Button> : null}
                 </Flex>
             </Box>
-            <Box >
-                <LoadingOverlay visible={loading} overlayOpacity={0.3} />
-                <AddOrUpdate />
-                <UploadDataSource />
-                <List dataSetId={dataSetId} dataSetType={dataSetType} />
-            </Box>
+
+            <LoadingOverlay visible={loading} overlayOpacity={0.3} />
+            <AddOrUpdate />
+            <UploadDataSource />
+            <List dataSetId={dataSetId} dataSetType={dataSetType} />
+
+
         </>
 
     );

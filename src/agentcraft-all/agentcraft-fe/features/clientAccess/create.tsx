@@ -19,9 +19,10 @@ export function CreateClientAccess() {
 
     return (
         <>
-            <Breadcrumbs>{items}</Breadcrumbs>
+            {/* <Breadcrumbs>{items}</Breadcrumbs> */}
             <FeatureDescription title="客户端接入服务" description="AgentCraft通过引导及直接创建的方式帮助构建您的专属客户端服务，如web网站，钉钉，企业微信等" />
             <Flex
+                mt={12}
                 mih={50}
                 gap="md"
                 justify="flex-start"
@@ -37,11 +38,8 @@ export function CreateClientAccess() {
                             alt="Norway"
                         />
                     </Card.Section>
-
                     <Group position="apart" mt="md" mb="xs">
-
                         <Text weight={500}>客户端接入</Text>
-
                     </Group>
                     <div style={{ height: 75 }}>
                         <Text size="sm" color="dimmed">
@@ -81,10 +79,8 @@ export function CreateClientAccess() {
                             alt="Norway"
                         />
                     </Card.Section>
-
                     <Group position="apart" mt="md" mb="xs">
                         <Text weight={500}>网站嵌入</Text>
-
                     </Group>
                     <div style={{ height: 75 }}>
                         <Text size="sm" color="dimmed">

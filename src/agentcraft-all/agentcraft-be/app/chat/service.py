@@ -178,6 +178,7 @@ def chat(query: str, ip_addr: str, agent_id: int):
         "exact_search_limit": agent.exact_search_limit,
         "fuzzy_search_limit": agent.fuzzy_search_limit
     }
+
     similarity_search_res, use_model = agent_dataset_database.similarity_search(
         **search_args)
     history = []  # get_history(ip_addr)
@@ -452,18 +453,20 @@ def model_chat(
         "Authorization": f"Bearer {model.token}",
         "Content-Type": "application/json"
     }
-    request_data = json.dumps({
+    llm_request_options = {
         "model": model.name,
         "messages": messages,
         "temperature": agent.temperature,
         "top_p": agent.top_p,
         "n": agent.n_sequences,
         "max_tokens": agent.max_tokens,
-        "stop": agent.stop,
         "presence_penalty": agent.presence_penalty,
         "frequency_penalty": agent.frequency_penalty,
         "logit_bias": json.loads(agent.logit_bias) if agent.logit_bias else {}
-    })
+    }
+    if(agent.stop != []):
+        llm_request_options['stop'] = agent.stop
+    request_data = json.dumps(llm_request_options)
     logger.info(request_data)
     resp = requests.post(model.url, headers=headers,
                          data=request_data, timeout=model.timeout)
@@ -503,26 +506,30 @@ def model_chat_stream(
     messages = build_messages(prompt, history, agent.system_message)
     logger.info(messages)
     model = model_database.get_model_by_id(agent.model_id)
+   
     if not model:
         raise ValueError("model does not exist")
     headers = {
         "Authorization": f"Bearer {model.token}",
         "Content-Type": "application/json"
     }
-    request_data = json.dumps({
+    llm_request_options = {
         "model": model.name,
         "messages": messages,
         "stream": True,
         "temperature": agent.temperature,
         "top_p": agent.top_p,
+        "top_k": 50,
         "n": agent.n_sequences,
         "max_tokens": agent.max_tokens,
-        "stop": agent.stop,
         "presence_penalty": agent.presence_penalty,
         "frequency_penalty": agent.frequency_penalty,
         "logit_bias": json.loads(agent.logit_bias) if agent.logit_bias else {}
-    })
-    logger.info(request_data)
+    }
+    if(agent.stop != []):
+        llm_request_options['stop'] = agent.stop
+    request_data = json.dumps(llm_request_options)
+    logger.info(f"req{request_data}")
     req = requests.post(model.url, headers=headers, data=request_data,
                         stream=True, timeout=model.timeout)
     answer = [""]*agent.n_sequences
@@ -531,13 +538,12 @@ def model_chat_stream(
             line = codecs.decode(line)
             if line.startswith("data:"):
                 line = line[5:].strip()
-                logger.info(line)
+                # logger.info(line)
                 try:
                     chunk = json.loads(line)
                     chunk["id"] = uid
                     chunk["created"] = created
                     chunk["model"] = model.name_alias
-                    print(f"hello{json.dumps(chunk)}")
                     yield json.dumps(chunk)
                     if "choices" in chunk and len(
                             chunk["choices"]) > 0 and "delta" in chunk["choices"][0] and "content" in chunk["choices"][0]["delta"]:
@@ -545,6 +551,24 @@ def model_chat_stream(
                                ] += chunk["choices"][0]["delta"]["content"]
                 except json.JSONDecodeError as err:
                     logger.info(err)
+    
+    # """添加检索来源信息"""
+    # if len(search_choices) > 0:
+    #     result_text = "\n\n相关链接\n"
+    #     for index, item in enumerate(search_choices):
+    #         if item['message']['url']:
+    #             markdown_text = f"\[{index+1}\] [{item['message']['title']}]({item['message']['url']})\n"
+    #             result_text += markdown_text
+    #     search_info = {"choices":[]}
+    #     search_info["id"] = uid
+    #     search_info["created"] = created
+    #     search_info["model"] = model.name_alias
+    #     search_info["choices"].append({"index": 0,
+    #                                 "delta": {"role": "assistant",
+    #                                             "content": result_text},
+    #                                 "finish_reason": "null"})
+    #     yield json.dumps(search_info)
+
     yield DONE
     logger.info(answer)
     add_args = {

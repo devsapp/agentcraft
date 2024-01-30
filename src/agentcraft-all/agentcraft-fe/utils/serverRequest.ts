@@ -3,7 +3,6 @@ import axios from 'axios';
 const request = axios.create({
     baseURL: process.env.baseUrl || '',
     headers: {
-        // 'Authorization': `Bearer ${process.env.token || ''}`,
         'Content-Type': 'application/json'
     }
 });
@@ -14,7 +13,7 @@ request.interceptors.response.use(
     },
     error => {
         if (error?.response?.status) {
-            console.log('from backend server:', error);
+            console.log('From Backend Server:', error);
             const { status, data } = error.response;
             return Promise.resolve({ status, data: { code: status, message: data.detail } });
         }

@@ -24,8 +24,8 @@ export interface DataBaseConfigPayload {
 }
 
 export const enum SystemConfigStep {
-    EMBEDDING_SERVICE = 0,
-    DATABASE = 1,
+    DATABASE = 0,
+    EMBEDDING_SERVICE = 1,
     COMPLETE = 2
 }
 
@@ -44,8 +44,7 @@ export function SystemConfig() {
     const embeddingServiceForm: UseFormReturnType<EmbeddingServicePayload> = useForm({
         initialValues: embeddingConfig,
         validate: {
-            EMBEDDING_DIM: (value) => (!value ? '向量维度必填' : null),
-            EMBEDDING_URL: (value) => (/^(http|https):\/\/[^ "]+$/.test(value) ? null : '请输入正确的URL地址')
+            EMBEDDING_DIM: (value) => (!value ? '向量维度必填' : null)
         },
     });
 
@@ -134,22 +133,22 @@ export function SystemConfig() {
         <Paper shadow="xs" p="xl" style={{ width: '60%', margin: '0 auto' }}>
             <LoadingOverlay visible={loading} />
             <Notification title="系统配置" mb={148} withCloseButton={false} radius="xs" >
-                在进行系统操作前，您需要准备好embedding服务，以及数据库服务，AgentCraft提供了引导式的配置服务，帮助您快速完成系统配置
+                在进行系统操作前，您需要准备好Postgresql数据库（必填），embedding服务(选填)，AgentCraft提供了引导式的配置服务，帮助您快速完成系统配置
             </Notification>
             <div>
                 <Stepper active={activeStep} onStepClick={setActiveStep}>
-                    <Stepper.Step label="配置Embedding服务" description="配置向量服务">
-                        <EmbeddingConfig form={embeddingServiceForm} />
-                    </Stepper.Step>
                     <Stepper.Step label="配置数据库" description="进行关系型数据库和向量数据库配置">
                         <DataBaseConfig form={databaseConfigForm} />
+                    </Stepper.Step>
+                    <Stepper.Step label="配置Embedding服务" description="配置向量服务">
+                        <EmbeddingConfig form={embeddingServiceForm} />
                     </Stepper.Step>
                     <Stepper.Completed >
                         <CompleteConfirm embeddingServiceForm={embeddingServiceForm} databaseForm={databaseConfigForm} />
                     </Stepper.Completed>
                 </Stepper>
                 <Group mt="xl" pl={24}>
-                    {activeStep > SystemConfigStep.EMBEDDING_SERVICE && <Button variant="default" onClick={prevStep}>上一步</Button>}
+                    {activeStep > SystemConfigStep.DATABASE && <Button variant="default" onClick={prevStep}>上一步</Button>}
                     {activeStep === SystemConfigStep.COMPLETE ? <Button onClick={handleSubmit} >完成</Button> : <Button onClick={nextStep}>下一步</Button>}
                 </Group>
             </div>

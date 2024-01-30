@@ -1,201 +1,64 @@
+import React from 'react';
 import { useRouter } from 'next/router';
-import { Navbar, NavLink, Center, ActionIcon, Divider } from '@mantine/core';
-import { IconBrandGithubFilled } from '@tabler/icons-react';
-import { IconHome2, IconArrowBackUp, IconApps, IconVocabulary, IconServer, IconDatabasePlus, IconTrowel, IconRowInsertTop, IconDevicesPc, IconAlien } from '@tabler/icons-react';
+import { Navbar, NavLink, Box, Divider } from '@mantine/core';
+import { WorkSpace } from 'features/workspace';
+import { PageProps } from 'types/page';
+import { NavItem } from 'types/nav';
+import { EXPAND_NAV_WIDTH, CLOSE_NAV_WIDTH } from 'constants/index';
 import styles from './index.module.scss';
-interface NavItem {
-    name?: string,
-    path: string,
-    type?: string,
-    icon?: JSX.Element,
-    subNav?: NavItem[],
-    parentPath?: string,
-    level?: number,
-    solo?: boolean
+
+interface NavProps extends PageProps {
+    renderNavList: NavItem[];
+    currentNav: any
 }
 
+function cloneIconComponent(icon: any) {
+    return React.createElement(icon, {
+        size: '1rem',
+        stroke: 1.5
+    });
+}
 
-
-
-
-const flattenNavItems = (result: { [key: string]: NavItem }, navItems: NavItem[], parentPath = '', level = 0) => {
-    level++;
-    return navItems.reduce((result, item) => {
-        const fullPath = item.path;
-        item.parentPath = parentPath;
-        item.level = level;
-        result[fullPath] = item;
-        if (item.subNav) {
-            result = flattenNavItems(result, item.subNav, `${fullPath}`, level);
-        } else {
-            result[fullPath] = item;
-        }
-        return result;
-    }, result);
-};
-
-export const Nav = () => {
+export const Nav = (props: NavProps) => {
     const router = useRouter();
+    const { renderNavList, currentNav } = props;
     const { pathname, query } = router;
-    const id: any = query.id;
+    let id: any = query.id;
     const knowledgeBaseId: any = query.knowledgeBaseId;
-
     const handleClick = (path: string) => {
         router.push(`${path.replace('[id]', id).replace('[knowledgeBaseId]', knowledgeBaseId)}`)
     };
-    const navItems: NavItem[] = [
-        {
-            name: "概览",
-            path: "/overview",
-            icon: <IconHome2 size="1rem" stroke={1.5} />,
-        },
-        {
-            name: "应用",
-            path: "/app",
-            icon: <IconApps size="1rem" stroke={1.5} />,
-            subNav: [{
-                name: "领域知识智能体",
-                path: "/app/[id]/knowledgeBase",
-                icon: <IconVocabulary size="1rem" stroke={1.5} />,
-                subNav: [{
-                    name: "智能体信息",
-                    path: "/app/[id]/knowledgeBase/[knowledgeBaseId]/detail",
-                    icon: <IconHome2 size="1rem" stroke={1.5} />,
-                }, {
-                    name: "智能体解答记录",
-                    path: "/app/[id]/knowledgeBase/[knowledgeBaseId]/chatlist",
-                    icon: <IconHome2 size="1rem" stroke={1.5} />,
-                }]
-            },
-                // {
-                //     name: "Agent",
-                //     path: "/app/[id]/agent",
-                //     icon: <IconAlien size="1rem" stroke={1.5} />,
-                // }
-            ]
-        },
-        {
-            name: "数据集",
-            path: "/dataset",
-            icon: <IconDatabasePlus size="1rem" stroke={1.5} />,
-            subNav: [{
-                name: "数据源",
-                path: "/dataset/[id]/datasource",
-                icon: <IconHome2 size="1rem" stroke={1.5} />,
-            }]
-        },
-        {
-            name: "LLM代理",
-            path: "/model",
-            icon: <IconServer size="1rem" stroke={1.5} />
-        },
-        {
-            path: '/divider1',
-            type: 'divider',
-        },
-        {
-            name: "基础模型",
-            path: "/foundationModel",
-            icon: <IconRowInsertTop size="1rem" stroke={1.5} />,
-            subNav: [{
-                name: "创建基础模型",
-                path: "/foundationModel/create",
-                solo: true,
-                icon: <IconHome2 size="1rem" stroke={1.5} />,
-            }, {
-                name: "基础模型详细",
-                solo: true,
-                path: "/foundationModel/[fmId]/detail",
-                icon: <IconHome2 size="1rem" stroke={1.5} />,
-            }]
-        },
-        {
-            path: '/divider2',
-            type: 'divider',
-        },
-        {
-            name: "客户端接入",
-            path: "/clientAccess",
-            icon: <IconDevicesPc size="1rem" stroke={1.5} />,
-            subNav: [{
-                name: "创建客户端接入服务",
-                path: "/clientAccess/create",
-                solo: true,
-                icon: <IconHome2 size="1rem" stroke={1.5} />,
-            }, {
-                name: "创建机器人服务",
-                path: "/clientAccess/robot",
-                solo: true,
-                icon: <IconHome2 size="1rem" stroke={1.5} />,
-            }, {
-                name: "创建web独立站服务",
-                path: "/clientAccess/web",
-                solo: true,
-                icon: <IconHome2 size="1rem" stroke={1.5} />,
-            }]
-        },
-        // {
-        //     path: '/divider3',
-        //     type: 'divider',
-        // },
-        // {
-        //     name: "LLM工具集",
-        //     path: "/toolformer",
-        //     icon: <IconTrowel size="1rem" stroke={1.5} />,
-        // },
-        // {
-        //     path: '/divider',
-        //     type: 'divider',
-        // },
-        // {
-        //     name: "试玩工厂",
-        //     path: "/playground",
-        //     icon: <IconActivity size="1rem" stroke={1.5} />,
-        // },
-    ]
-
-    const navItemsMap = flattenNavItems({}, navItems);
-
-    const currentNav: NavItem = navItemsMap[pathname] || {};
-    let renderNavList: NavItem[] = [];
-    if (currentNav.solo) {
-        renderNavList = [currentNav]; // 只有一个
-    } else {
-        renderNavList = Object.keys(navItemsMap).filter((key) => {
-            const navItem = navItemsMap[key];
-            return navItem.level === currentNav.level && navItem.parentPath === currentNav.parentPath;
-        }).map((key) => {
-            return navItemsMap[key];
-        })
-    }
-
-
+    const parentPath = currentNav.parentPath as string;
     return (
-        <Navbar className="navbar" width={{ base: 240 }} p="xs">
-            {currentNav.parentPath ?
-                <Center h={40} mx="auto">
-                    <ActionIcon onClick={() => {
-                        let parentPath = currentNav.parentPath?.replace('[id]', id).replace('[knowledgeBaseId]', knowledgeBaseId) || '';
-                        router.push(parentPath)
-                    }}>
-                        <IconArrowBackUp />
-                    </ActionIcon>
-                </Center> : null}
+        <Navbar className={styles.navbar} width={{ base: parentPath ? CLOSE_NAV_WIDTH : EXPAND_NAV_WIDTH }} p="xs">
+            <WorkSpace {...props} parentPath={parentPath} />
             {renderNavList.map((item: NavItem) => {
                 if (item.type === 'divider') {
+                    if (parentPath) {
+                        return null;
+                    }
                     return <Divider mt={8} mb={8} key={item.path} />
                 } else {
+                    if (parentPath) {
+                        return <NavLink key={item.path}
+                            label={null}
+                            icon={<Box pl={6}>{cloneIconComponent(item.icon)}</Box>}
+                            variant="filled"
+                            onClick={() => handleClick(item.path)}
+                            active={item.path.indexOf(parentPath) === 0 ? true : false}
+                        />
+                    }
                     return <NavLink key={item.path}
-                        label={item.name}
-                        icon={item.icon}
+                        label={<Box pl={12}>{item.name}</Box>}
+                        icon={cloneIconComponent(item.icon)}
                         variant="filled"
                         onClick={() => handleClick(item.path)}
-                        active={pathname === item.path ? true : false} />
+                        active={(pathname === item.path) ? true : false} />
                 }
             })}
-            <div className={styles['nav-bottom-config']} >
+            {/* <div className={styles['nav-bottom-config']} >
                 <IconBrandGithubFilled color='white' className={styles['git']} />
-            </div>
+            </div> */}
         </Navbar>
     )
 }

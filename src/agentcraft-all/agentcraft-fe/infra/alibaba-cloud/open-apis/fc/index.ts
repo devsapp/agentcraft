@@ -167,6 +167,19 @@ export class ServerlessBridgeFcV3 {
         const headers: { [key: string]: string } = {};
         return await this.client.getFunctionWithOptions(functionName, getFunctionRequest, headers, runtime);
     }
+
+
+    async listFunction(prefix = '', nextToken = '', limit = 10) {
+        const listFunctionsRequest = new $FC20230330.ListFunctionsRequest({
+            limit,
+            prefix,
+            nextToken
+        });
+        const runtime = new $Util.RuntimeOptions({});
+        const headers: { [key: string]: string } = {};
+        return await this.client.listFunctionsWithOptions(listFunctionsRequest, headers, runtime);
+    }
+
     async updateFunction(functionName: string, body: any) {
         const updateFunctionInput = new $FC20230330.UpdateFunctionInput(body);
         const updateFunctionRequest = new $FC20230330.UpdateFunctionRequest({

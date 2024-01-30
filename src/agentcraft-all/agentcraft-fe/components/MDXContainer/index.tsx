@@ -1,5 +1,5 @@
-
 import React, { useState, useEffect, useRef } from 'react';
+import { Paper, Button } from '@mantine/core';
 import RemarkMath from "remark-math";
 import RemarkBreaks from "remark-breaks";
 import { Loader } from '@mantine/core';
@@ -8,21 +8,19 @@ import { MDXProvider } from '@mdx-js/react'
 import { compile } from '@mdx-js/mdx';
 //@ts-ignore
 import MDX from '@mdx-js/runtime';
-import CodeHighlight from '@/components/CodeHighlight';
 
-
-import ModelView from '@/mdx/ModelView';
-import Scenes from '@/mdx/Scenes';
-import Features from '@/mdx/Features';
-
-
-
+import CodeHighlight from 'components/CodeHighlight';
+import ModelView from 'mdx/ModelView';
+import Scenes from 'mdx/Scenes';
+import Features from 'mdx/Features';
 import "katex/dist/katex.min.css";
 
 const components = {
     ModelView,
     Features,
     Scenes,
+    Button,
+    Paper,
     pre: (props: any) => <div {...props} />,
     code: (props: any) => {
         return <CodeHighlight textContent={props.children} language={props.className?.replace("language-", "")} />
@@ -37,26 +35,25 @@ const components = {
     video: ({ node, ...props }: any) => {
         let videoNode: any = { props: {} };
         try {
-          props.children.map((item: any) => {
-            if (item.props && item.type === 'source') {
-              videoNode = item;
-            }
-          })
+            props.children.map((item: any) => {
+                if (item.props && item.type === 'source') {
+                    videoNode = item;
+                }
+            })
         } catch (e) {
 
         }
 
         return <video controls {...props}>
-          <source src={videoNode.props.src || ''} type={videoNode.props.type || 'video/mp4'} />
-          你的浏览器不支持video标签
+            <source src={videoNode.props.src || ''} type={videoNode.props.type || 'video/mp4'} />
+            你的浏览器不支持video标签
         </video>
-      }
+    }
 }
 
 
 
 export function MdxLayout({ children }: { children: React.ReactNode }) {
-    // Create any shared layout or styles here
     return <div style={{ color: 'blue' }} className="markdown-body">{children}</div>
 }
 export function parseAndRender(mdxString: string) {
@@ -80,6 +77,10 @@ export default function MDXContainer({ content, scope = {} }: any) {
                 setComponent(MDXComponent);
             } catch (e) {
                 setLoading(true);
+                MDXComponent = <div>
+                    {content}
+                </div>;
+                setComponent(MDXComponent);
                 if (timerRef.current) {
                     clearTimeout(timerRef.current);
                 }

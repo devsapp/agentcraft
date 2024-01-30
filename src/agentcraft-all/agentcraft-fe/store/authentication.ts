@@ -1,8 +1,8 @@
 
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
-import { request } from '@/utils/clientRequest';
-import { AGENTCRAFT_TOKEN } from '@/constants/index';
+import { request } from 'utils/clientRequest';
+import { AGENTCRAFT_TOKEN } from 'constants/index';
 
 
 

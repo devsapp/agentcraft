@@ -30,7 +30,10 @@ class LoginResponse(BaseModel):
     access_token: str
     token_type: str
 
-
+class RegisterResponse(BaseModel):
+    """Login Response"""
+    access_token: str
+    token_type: str
 class JWTData(BaseModel):
     """JWT with User ID"""
     user_id: int = Field(alias="sub")

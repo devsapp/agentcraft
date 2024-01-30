@@ -19,6 +19,8 @@ export interface LLMConfig {
   stream?: boolean;
   presence_penalty?: number;
   frequency_penalty?: number;
+  status?: number; // status 如果为0，则表示测试的会话
+  assistant_session_id?: number;
 }
 
 export const enum MessageType {
@@ -64,7 +66,7 @@ export interface ChatCallBack {
 export interface ChatOptions {
   messages: RequestMessage[];
   config: LLMConfig;
-
+  version?: string;
   onUpdate?: (message: string, chunk: string) => void;
   onFinish: (message: string) => void;
   onError?: (err: Error) => void;

@@ -1,10 +1,9 @@
 import { Box, Header as MantineHeader, Text, Flex, Anchor } from '@mantine/core';
 import { modals } from '@mantine/modals';
-
 import { useUserStore, getUserInfo } from '@/store/user';
 import { useRouter } from 'next/router';
 import { useAuthenticationStore } from '@/store/authentication';
-import styles from '@/styles/header.module.scss';
+import styles from './index.module.scss';
 import { useEffect } from 'react';
 
 export function Header() {
@@ -32,24 +31,21 @@ export function Header() {
     useEffect(() => {
         if (!user.username) getUserInfo();
     }, []);
-    return <MantineHeader height={60} p="xs">
-        <div className={styles['agentcraft-header']}>
-            <Box ml={5}>
-                <a href="https://github.com/devsapp/agentcraft" target="_blank">
-                    <Flex align="center">
-                        <Anchor href="https://agentcraft.serverless-developer.com/" color="white" target={'_blank'} mr={24}>访问官网</Anchor>
-                       
 
-                    </Flex>
-                </a>
+    return <div className={styles['agentcraft-header']}>
+            <Box ml={5}
+            >
+                <Flex align="center">
+                    <Anchor href="https://agentcraft.serverless-developer.com/" color="white" target={'_blank'} mr={24}>访问官网</Anchor>
+                </Flex>
+
             </Box>
-
             {user.username ?
                 <div className={styles['user']}>
                     <div className={styles['user-content']}>您好：{user.username}</div>
                     <a className={styles['logout']} onClick={logout}>登出</a>
-                </div> : null}
-
+                </div> : 
+            null}
         </div>
-    </MantineHeader>
+
 }

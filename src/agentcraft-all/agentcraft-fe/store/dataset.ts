@@ -1,10 +1,8 @@
 
 import { create } from "zustand";
 import { devtools } from "zustand/middleware";
-
-import { DataSetRequestPayload, DataSet } from '@/types/dataset'
-
-import { request } from '@/utils/clientRequest';
+import { DataSetRequestPayload, DataSet } from 'types/dataset'
+import { request } from 'utils/clientRequest';
 interface DataSetStore {
     loading: boolean,
     dataSetList: DataSet[],
@@ -14,7 +12,7 @@ interface DataSetStore {
     setOpen: (open: boolean) => void;
 }
 
-export const useGlobalStore = create<DataSetStore>()(devtools((set) => ({
+export const useDataSetStore = create<DataSetStore>()(devtools((set) => ({
     dataSetList: [],
     open: false,
     loading: false,
@@ -34,7 +32,7 @@ export const useGlobalStore = create<DataSetStore>()(devtools((set) => ({
  * 获取数据集列表
  */
 export async function getDataSetList() {
-    const state = useGlobalStore.getState();
+    const state = useDataSetStore.getState();
     const updatedataSetList = state.updateDataSetList;
     const res = await request("/api/dataset/list");
     const data = res.data;

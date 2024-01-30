@@ -365,6 +365,12 @@ export class ServerlessBridgeService {
   * @param functionName
   * @returns 
   */
+
+  async listFunctionV3(prefix = '', nextToken = '', limit = 100): Promise<any> {
+
+    return await this.serverlessBridgeFcV3.listFunction(prefix, nextToken, limit);
+  }
+
   async getFunctionV3(functionName: string): Promise<any> {
 
     return await this.serverlessBridgeFcV3.getFunction(functionName);
@@ -404,7 +410,7 @@ export class ServerlessBridgeService {
     return await this.serverlessBridgeEb.getEventBus(busName);
   }
   async creatEventRule(eventruleData: any) {
-  
+
     return await this.serverlessBridgeEb.creatEventRule(eventruleData);
   }
 }

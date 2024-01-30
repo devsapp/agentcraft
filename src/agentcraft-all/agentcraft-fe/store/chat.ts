@@ -1,16 +1,14 @@
+
+import { create } from "zustand";
+import { devtools } from "zustand/middleware";
 import {
-    EventStreamContentType,
     fetchEventSource,
 } from "@fortaine/fetch-event-source";
-import Locale from "@/locales/index";
-import { create } from "zustand";
-import { ChatOptions } from '@/types/chat';
+import Locale from "locales/index";
+import { ChatOptions,ChatItem } from 'types/chat';
 import { REQUEST_TIMEOUT_MS } from 'constants/index';
-import { prettyObject } from '@/utils/chat';
-import { devtools } from "zustand/middleware";
-import { ChatItem } from '@/types/chat';
-
-import { request } from '@/utils/clientRequest';
+import { prettyObject } from 'utils/chat';
+import { request } from 'utils/clientRequest';
 
 interface ChatStore {
     chatList: ChatItem[],
@@ -90,8 +88,7 @@ export function chatStream(options: ChatOptions, token: string) {
         }
     };
     controller.signal.onabort = finish;
-    
-    fetchEventSource('/api/chat', {
+    fetchEventSource(`/api/chat?version=${options.version}`, {
         ...chatPayload,
         async onopen(res) {
             clearTimeout(requestTimeoutId);
@@ -104,7 +101,6 @@ export function chatStream(options: ChatOptions, token: string) {
                 responseText = await res.clone().text();
                 return finish();
             }
-
             if (
                 !res.ok ||
                 !res.headers
@@ -112,16 +108,15 @@ export function chatStream(options: ChatOptions, token: string) {
                     ?.startsWith('application/octet-stream') ||
                 res.status !== 200
             ) {
-
                 const responseTexts = [responseText];
                 let extraInfo = await res.clone().text();
 
                 try {
                     const resJson = await res.clone().json();
                     extraInfo = prettyObject(resJson);
-                } catch(e) {
+                } catch (e) {
                     console.log(e);
-                 }
+                }
 
                 if (res.status === 401) {
                     responseTexts.push(Locale.Error.Unauthorized);

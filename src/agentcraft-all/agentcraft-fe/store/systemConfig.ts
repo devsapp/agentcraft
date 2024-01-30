@@ -1,8 +1,8 @@
 
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
-import { AGENTCRAFT_SYSTEMCONFIG_COMPLETED } from '@/constants/index';
-import { request } from '@/utils/clientRequest';
+import { AGENTCRAFT_SYSTEMCONFIG_COMPLETED } from 'constants/index';
+import { request } from 'utils/clientRequest';
 export const enum SystemConfigStep {
     EMBEDDING_SERVICE = 0,
     DATABASE = 1,
@@ -52,12 +52,11 @@ export const useSystemConfigStore = create<any>(persist(
 
 export async function getSystemConfig() {
     const result: any = await request(`/api/systemConfig/init`);
-
     const state: any = useSystemConfigStore.getState();
     const setCompleteConfig = state.setCompleteConfig;
     const setHiddenConfigView = state.setHiddenConfigView;
     setCompleteConfig(result?.data || {});
-    result?.data?.EMBEDDING_URL ? setHiddenConfigView(true) : setHiddenConfigView(false);
+    result?.data?.systemReady ? setHiddenConfigView(true) : setHiddenConfigView(false);
 }
 
 

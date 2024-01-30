@@ -1,6 +1,6 @@
 
 
-import { request } from '@/utils/clientRequest';
+import { request } from 'utils/clientRequest';
 
 export function checkAppStatus(appName: string): Promise<any> {
 

@@ -20,12 +20,15 @@ async def list_agents(app_id: int, page: int, limit: int, token: JWTData = Depen
     }
 
 
-@router.post('/add', response_model=BasicResponse)
+@router.post('/add', response_model=DictResponse)
 async def add_agent(req: UpsertAgentRequest, token: JWTData = Depends(validate_token)):
     """添加agent"""
-    service.add_agent(user_id=token.user_id, **vars(req))
+    id = service.add_agent(user_id=token.user_id, **vars(req))
     return {
         "code": 201,
+        "data": {
+            "id": id
+        },
         "msg": "success",
     }
 
