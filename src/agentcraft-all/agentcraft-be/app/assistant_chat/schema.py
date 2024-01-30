@@ -90,7 +90,7 @@ class ChatRequest(BaseModel):
     stream: bool = stream_field
     assistant_session_id: int = assistant_session_id_field
     status: int = Field(
-        default=None, description="If 0, it means it is a test question"
+        default=1, description="If 0, it means it is a test question"
     )
 
 
