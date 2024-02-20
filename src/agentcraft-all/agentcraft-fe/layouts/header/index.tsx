@@ -1,14 +1,15 @@
 import { Box, Header as MantineHeader, Text, Flex, Anchor } from '@mantine/core';
 import { modals } from '@mantine/modals';
-import { useUserStore, getUserInfo } from '@/store/user';
+import { useUserStore, getUserInfo } from 'store/user';
 import { useRouter } from 'next/router';
-import { useAuthenticationStore } from '@/store/authentication';
+import { useAuthenticationStore, logout as logoutRequest } from 'store/authentication';
+
 import styles from './index.module.scss';
 import { useEffect } from 'react';
 
 export function Header() {
     const user = useUserStore().userInfo;
-    const setToken = useAuthenticationStore().setToken;
+    // const setToken = useAuthenticationStore().setToken;
     const router = useRouter();
     const logout = () => {
         modals.openConfirmModal({
@@ -21,8 +22,9 @@ export function Header() {
             ),
             labels: { confirm: '确定', cancel: '取消' },
             onCancel: () => console.log('Cancel'),
-            onConfirm: () => {
-                setToken('');
+            confirmProps: { color: 'red' },
+            onConfirm: async () => {
+                await logoutRequest();
                 router.push('/login');
             },
         });
@@ -33,19 +35,19 @@ export function Header() {
     }, []);
 
     return <div className={styles['agentcraft-header']}>
-            <Box ml={5}
-            >
-                <Flex align="center">
-                    <Anchor href="https://agentcraft.serverless-developer.com/" color="white" target={'_blank'} mr={24}>访问官网</Anchor>
-                </Flex>
+        <Box ml={5}
+        >
+            <Flex align="center">
+                <Anchor href="https://agentcraft.serverless-developer.com/" color="white" target={'_blank'} mr={24}>访问官网</Anchor>
+            </Flex>
 
-            </Box>
-            {user.username ?
-                <div className={styles['user']}>
-                    <div className={styles['user-content']}>您好：{user.username}</div>
-                    <a className={styles['logout']} onClick={logout}>登出</a>
-                </div> : 
+        </Box>
+        {user.username ?
+            <div className={styles['user']}>
+                <div className={styles['user-content']}>您好：{user.username}</div>
+                <a className={styles['logout']} onClick={logout}>登出</a>
+            </div> :
             null}
-        </div>
+    </div>
 
 }

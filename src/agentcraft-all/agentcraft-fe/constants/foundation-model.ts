@@ -47,7 +47,7 @@ export const FOUNDATION_MODEL_TEMPLATES = [
         type: 'llm',
         icon: '',
         iconText: '模型服务灵积',
-        description: 'Dashscope是阿里云的AI API基础设施平台，包含qwen-turbo，qwen-plus等商业版本的通义千问模型，支持8K上下文',
+        description: 'Dashscope是阿里云的AI API基础设施平台，包含qwen-turbo，qwen-plus等商业版本的通义千问模型',
         fcLink: 'https://fcnext.console.aliyun.com/applications/create?template=agentcraft-fm-dashscope-biz',
         githubLink: '',
         template: 'agentcraft-fm-dashscope-biz',

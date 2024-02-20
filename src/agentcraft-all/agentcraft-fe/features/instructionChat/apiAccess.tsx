@@ -17,7 +17,7 @@ export function APIAccess() {
 
     }, [])
     const curlExample = `curl -X 'POST' \
-    '${accessUrl.openApiUrl}/v2/chat/completions' \
+    '${accessUrl.openApiUrl}/v1/chat/completions' \
     -H 'accept: application/json' \
     -H 'Authorization: Bearer ${currentKnowledgeBase?.token}' \
     -H 'Content-Type: application/json' \

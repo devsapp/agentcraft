@@ -164,6 +164,7 @@ export function BuilderForm({ workspaceId }: AssistantProps) {
         },
     });
     useEffect(() => {
+        updateCurrentKnowledgeBase(undefined);
         getModelList();
         getDataSetList();
         if (knowledgeBaseId) {
@@ -173,9 +174,6 @@ export function BuilderForm({ workspaceId }: AssistantProps) {
             })()
         } else {
             form.setValues(initFormValue);
-        }
-        return () => {
-            updateCurrentKnowledgeBase(undefined);
         }
     }, []);
 
@@ -209,6 +207,8 @@ export function BuilderForm({ workspaceId }: AssistantProps) {
                 exact_search_limit: currentKnowledgeBase?.exact_search_limit,
                 fuzzy_search_limit: currentKnowledgeBase?.fuzzy_search_limit
             })
+        } else {
+            form.setValues(initFormValue)
         }
     }, [currentKnowledgeBase])
 

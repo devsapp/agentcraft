@@ -20,7 +20,7 @@ export function AssistantBuilder({ workspaceId }: AssistantProps) {
     const { query } = router;
     const assistantId = query.assistantId;
     const loading: boolean = useAssistantStore().loading;
-    const [innerTab,setInnerTab] = useState('chat')
+    const [innerTab, setInnerTab] = useState('chat');
 
 
     return (
@@ -39,8 +39,8 @@ export function AssistantBuilder({ workspaceId }: AssistantProps) {
                         </Flex>
                     </Flex>
                     {assistantId ? <Tabs
-                        value={innerTab} 
-                        onTabChange={(value:string) => {
+                        value={innerTab}
+                        onTabChange={(value: string) => {
                             setInnerTab(value)
                         }}
                         unstyled
@@ -92,8 +92,8 @@ export function AssistantBuilder({ workspaceId }: AssistantProps) {
                 </Flex>
             </Box>
             <Box w="100%" style={{ height: 'calc(100vh - 106px)' }} >
-                {innerTab === 'chat' ? <BuilderForm workspaceId={workspaceId} />: null }
-                {innerTab === 'access' ? <APIAccess />: null }
+                {innerTab === 'chat' ? <BuilderForm workspaceId={workspaceId} /> : null}
+                {innerTab === 'access' ? <APIAccess /> : null}
             </Box>
         </div>
     );

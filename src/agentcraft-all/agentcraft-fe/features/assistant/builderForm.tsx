@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useRouter } from 'next/router';
-import Link from 'next/link';
+
 import { Center, ActionIcon, Tooltip, Spoiler, Breadcrumbs, Anchor, Button, Checkbox, Box, Table, TextInput, Text, Highlight, Switch, Group, Badge, MultiSelect, Select, Drawer, LoadingOverlay, Modal, Textarea, Flex, NumberInput, Paper, Title, Divider } from '@mantine/core';
 import { useForm } from '@mantine/form';
 import { IconRefresh, IconArrowBackUp } from '@tabler/icons-react';
@@ -164,6 +164,7 @@ export function BuilderForm({ workspaceId }: AssistantProps) {
         },
     });
     useEffect(() => {
+        updateCurrentAssistant(undefined);
         getModelList();
         if (assistantId) {
             (async () => {
@@ -172,9 +173,6 @@ export function BuilderForm({ workspaceId }: AssistantProps) {
             })()
         } else {
             form.setValues(initFormValue)
-        }
-        return () => {
-            updateCurrentAssistant(undefined);
         }
     }, []);
 
@@ -210,6 +208,8 @@ export function BuilderForm({ workspaceId }: AssistantProps) {
                 exact_search_limit: currentAssistant?.exact_search_limit,
                 fuzzy_search_limit: currentAssistant?.fuzzy_search_limit
             })
+        } else {
+            form.setValues(initFormValue)
         }
     }, [currentAssistant])
 
@@ -250,18 +250,19 @@ export function BuilderForm({ workspaceId }: AssistantProps) {
                                 if (form.isValid()) {
                                     setLoading(true);
                                     const values: any = form.values;
+                                    console.log(values, 'values');
                                     if (currentAssistant?.id) {
                                         await updateAssistant(currentAssistant?.id, values);
                                     } else {
                                         const result = await addAssistant(values);
                                         const assistantId = result.id;
                                         if (assistantId) {
-                                            const { token } = await refreshToken(assistantId);
+                                            await refreshToken(assistantId);
                                             window.history.pushState({}, '', `?assistantId=${assistantId}`);
-                                            updateCurrentAssistant(Object.assign({}, values, { id: assistantId, token }));
+                                            const assistant = await getAssistant(assistantId);
+                                            updateCurrentAssistant(assistant);
                                         }
                                     }
-
                                     setLoading(false);
                                 }
                             } catch (e) { }

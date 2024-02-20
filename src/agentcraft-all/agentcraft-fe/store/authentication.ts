@@ -31,6 +31,18 @@ export async function login(username: string, password: string) {
     return res;
 }
 
+export async function logout() {
+    const res: any = await request("/api/authentication/logout", {
+        method: 'POST', 
+        headers: {
+            "Content-Type": "application/json",
+        }
+    });
+    return res;
+}
+
+
+
 
 export async function register(username: string, password: string) {
     const res: any = await request("/api/authentication/register", {

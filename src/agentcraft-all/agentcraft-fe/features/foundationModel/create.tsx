@@ -180,7 +180,7 @@ function FoundationModelTab() {
                     wrap="wrap"
                     pb={120}
                 >
-                    {FOUNDATION_MODEL_TEMPLATES.map((item: ServerlessAppTemplate, index: number) => {
+                    {FOUNDATION_MODEL_TEMPLATES.map((item: any, index: number) => {
                         return <Card shadow="sm" padding="lg" radius="md" withBorder style={{ width: 320 }} mr={12} key={`template-${index}`}>
                             <Card.Section >
                                 {item.icon ? <Image
@@ -201,7 +201,7 @@ function FoundationModelTab() {
                                 } */}
                             </Group>
                             <Box>
-                                {item.tag.map((tag) => {
+                                {item.tag.map((tag:string) => {
                                     return <Badge color="green" variant="light" key={`template-${index}-${tag}`} mr={4}>
                                         {tag}
                                     </Badge>

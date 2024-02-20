@@ -110,6 +110,7 @@ export function BuilderForm({ workspaceId }: AssistantProps) {
         },
     });
     useEffect(() => {
+        updateCurrentKnowledgeBase(undefined); // 清理当前知识库
         getModelList();
         getDataSetList();
         if (instructionChatId) {
@@ -119,9 +120,6 @@ export function BuilderForm({ workspaceId }: AssistantProps) {
             })()
         } else {
             form.setValues(initFormValue)
-        }
-        return () => {
-            updateCurrentKnowledgeBase(undefined);
         }
     }, []);
     useEffect(() => {
@@ -161,6 +159,8 @@ export function BuilderForm({ workspaceId }: AssistantProps) {
                 exact_search_limit: currentKnowledgeBase?.exact_search_limit,
                 fuzzy_search_limit: currentKnowledgeBase?.fuzzy_search_limit
             })
+        } else {
+            form.setValues(initFormValue)
         }
     }, [currentKnowledgeBase])
 
