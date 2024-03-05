@@ -5,7 +5,8 @@
 # AgentCraft
 
 <p align="center">
-  <a href="./README.md">简体中文</a> 
+  <a href="./README.md">简体中文</a>  | 
+  <a href="http://agentcraft-docs.serverless-developer.com/" target="_blank">使用文档</a> 
 </p>
 <video controls width="640" height="360">
   <source src="https://cloud.video.taobao.com/play/u/null/p/1/e/6/t/1/447331749716.mp4" type="video/mp4">
@@ -121,8 +122,8 @@ npm run dev
 
 如果您有任何问题、建议或合作意向，可以用以下方式联系我们：
 + GithubRepo 提交 Issue 或 PR
-+ 加入Serverless+ AIGC 钉群讨论 
-![dingtalk](https://img.alicdn.com/imgextra/i2/O1CN01zGJ4fS21GMJy6Okd8_!!6000000006957-0-tps-470-472.jpg)
++ 加入AgentCraft 项目交流钉群讨论 
+![dingtalk](https://img.alicdn.com/imgextra/i4/O1CN01MQDcxF1dqxEHfmE60_!!6000000003788-2-tps-472-462.png)
 
 
 
