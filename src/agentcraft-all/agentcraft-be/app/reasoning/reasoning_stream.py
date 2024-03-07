@@ -110,31 +110,46 @@ class ReasoningStream:
                 planning_prompt + text, **kwargs)
             action, action_input, output = self.parse_latest_plugin_call(
                 output)
-            logger.info(f"工具：{action}")
-            logger.info(f"工具输入：{action_input}")
+            logger.info(f"执行工具：{action}, 工具入参：{action_input}")
             if action:
                 tool_name = ''
                 try:
-                    tool_name = self.tool_name_dict[action]
-                    stream_response = {"choices": []}
-                    stream_response["choices"].append({"index": 0,
+                    tool_detail = self.tool_name_dict[action]
+                    tool_name = tool_detail['name']
+                    output = tool_detail['output']
+                    if output == 'ui': # 如果结果返回是ui，直接输出
+                        end_time = time()
+                        observation = self.call_plugin(action, action_input)
+                        execution_time = end_time - self.time
+                        logger.info(f"Execution 调用工具{action} {execution_time} seconds")
+                        logger.info(f"{action}工具调用结果：{observation}")
+                        stream_response = {"choices": []}
+                        stream_response["choices"].append({"index": 0,
                                                     "delta": {"role": "assistant",
-                                                                "content": f'调用工具【{tool_name}】 \n'},
+                                                                "content": f'{observation} \n'},
                                                     "finish_reason": "null"})
-                    yield json.dumps(stream_response)
-                    end_time = time()
-                    observation = self.call_plugin(action, action_input)
-                    logger.info(f"{action}工具调用结果：{observation}")
-                    execution_time = end_time - self.time
-                    logger.info(f"Execution 调用工具{action} {execution_time} seconds")
-                    output += f'\nObservation: {observation}\nThought:'
-                    text += output
-                    if(action == 'data_retrieval'):  # 知识库召回特殊处理
-                        plugin_args = json.loads(action_input)
-                        user_question = plugin_args["user_question"]
-                        kwargs['retrieval_prompt_template'] = self.assistant.retrieval_prompt_template
-                        yield from llm_retrieval_instruction_stream(user_question, observation, **kwargs)
+                        yield json.dumps(stream_response)
                         break
+                    else :
+                        stream_response = {"choices": []}
+                        stream_response["choices"].append({"index": 0,
+                                                        "delta": {"role": "assistant",
+                                                                    "content": f'调用工具【{tool_name}】 \n'},
+                                                        "finish_reason": "null"})
+                        yield json.dumps(stream_response)
+                        end_time = time()
+                        observation = self.call_plugin(action, action_input)
+                        execution_time = end_time - self.time
+                        logger.info(f"Execution 调用工具{action} {execution_time} seconds")
+                        logger.info(f"{action}工具调用结果：{observation}")
+                        output += f'\nObservation: {observation}\nThought:'
+                        text += output
+                        if(action == 'data_retrieval'):  # 知识库召回特殊处理
+                            plugin_args = json.loads(action_input)
+                            user_question = plugin_args["user_question"]
+                            kwargs['retrieval_prompt_template'] = self.assistant.retrieval_prompt_template
+                            yield from llm_retrieval_instruction_stream(user_question, observation, **kwargs)
+                            break
                 except KeyError:
                     names_for_model_list = [plugin['name_for_model'] for plugin in list_of_plugin_info]
                     names_for_model_str = ','.join(names_for_model_list)
@@ -308,7 +323,8 @@ class ReasoningStream:
             try:
                 tools_client = ToolsActionClient(self.credential_dict)
                 invoke_result = tools_client.invoke(plugin_name, plugin_args)
-                return invoke_result['body']
+                invoke_result = invoke_result['body'].decode('utf-8')
+                return invoke_result
             except Exception as e:
                 logger.error(e)
                 return ''
@@ -321,12 +337,14 @@ class ReasoningStream:
         try:
             action_tools = assistant_action_tools_database.list_action_tools_by_assistant_id(
                 assistant.id)
+            
             action_tools = [
                 {
                     'name_for_human': item.alias,
                     'name_for_model': item.name,
                     'description_for_model': item.description,
                     'parameters': item.input_schema,
+                    'output': item.output_schema
                 }
                 for item in action_tools
             ]
@@ -336,12 +354,13 @@ class ReasoningStream:
                     'name_for_model': 'data_retrieval',
                     'description_for_model': '搜索本地数据集.经常在联网的搜索工具使用之前使用',
                     'parameters': "[ { 'name': 'user_question', 'description': 'The extracted user questions should be prioritized in vector retrieval.', 'required': True, 'schema': {'type': 'string'}, } ]",
+                    'output': ''
                 })
         except Exception as e:
             logger.error(e)
 
         self.tool_name_dict = {
-            tool['name_for_model']: tool['name_for_human'] for tool in action_tools}
+            tool['name_for_model']: {'name': tool['name_for_human'], 'output':tool['output']} for tool in action_tools}
         end_time = time()
         execution_time = end_time - self.time
         logger.info(f"Execution  工具构建时间: {execution_time} seconds")
