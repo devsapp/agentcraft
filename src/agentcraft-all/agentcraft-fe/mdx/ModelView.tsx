@@ -18,8 +18,8 @@ function FoundationModelTab() {
     direction="column"
     wrap="wrap"
   >
-    {FOUNDATION_MODEL_TEMPLATES.map((item: ServerlessAppTemplate, index: number) => {
-      return <Card shadow="sm" padding="lg" radius="md" withBorder key={`template-${index}`} style={{width:'100%'}}>
+    {FOUNDATION_MODEL_TEMPLATES.map((item: any, index: number) => {
+      return <Card shadow="sm" padding="lg" radius="md" withBorder key={`template-${index}`} style={{ width: '100%' }}>
         <Card.Section >
           <img
             src={item.icon}
@@ -37,7 +37,7 @@ function FoundationModelTab() {
 
         </Group>
         <div>
-          {item.tag.map((tag) => {
+          {item.tag.map((tag: string) => {
             return <Badge color="green" variant="light" key={`template-${index}-${tag}`} mr={4}>
               {tag}
             </Badge>
@@ -46,14 +46,14 @@ function FoundationModelTab() {
         <Text size="sm" color="dimmed">
           {item.description}
         </Text>
-       
-          <a target="_blank" href={item.fcLink}>
-            <Button variant="light" color="yellow" fullWidth mt="md" radius="md" style={{width:'100%'}}>
-              <Flex align={'center'}>
-                查看模型信息<IconExternalLink />
-              </Flex>
-            </Button>
-          </a>
+
+        <a target="_blank" href={item.fcLink}>
+          <Button variant="light" color="yellow" fullWidth mt="md" radius="md" style={{ width: '100%' }}>
+            <Flex align={'center'}>
+              查看模型信息<IconExternalLink />
+            </Flex>
+          </Button>
+        </a>
       </Card>
     })}
   </Flex>

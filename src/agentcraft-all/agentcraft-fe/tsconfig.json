@@ -23,6 +23,7 @@
       "@/layouts/*": ["layouts/*"],
       "@/styles/*": ["styles/*"],
       "@/locales/*": ["locales/*"],
+      "@/server/*": ["server/*"],
       "@/pages/*": ["pages/*"],
       "@/store/*": ["store/*"],
       "@/types/*": ["types/*"],

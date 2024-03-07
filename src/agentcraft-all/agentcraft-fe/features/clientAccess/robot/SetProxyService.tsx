@@ -5,7 +5,8 @@ import { useClientAccessStore } from "store/clientAccess";
 import { getKnowledgeBaseList, useKnowledgeBaseStore } from 'store/knowledgeBase';
 import { getAssistantList, useAssistantStore } from 'store/assistant';
 import { KnowledgeBaseResponseData, Dataset } from 'types/knowledgeBase';
-import { ROBOT_TYPES ,AGENT_TYPE } from 'constants/client-access';
+import { AGENT_TYPE } from 'constants/agent';
+import { ROBOT_TYPES } from 'constants/client-access';
 
 
 interface ItemProps extends React.ComponentPropsWithoutRef<'div'> {

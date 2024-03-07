@@ -1,6 +1,6 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
-
-import { ServerlessBridgeService } from '@/infra/alibaba-cloud/services/serverless-app';
+import { getAlibabaCloudServerlessBridge } from 'utils/cloudInfra';
+// import { ServerlessBridgeService } from '@/infra/alibaba-cloud/services/serverless-app';
 
 interface ServerlessAppRequestBody {
     name: string,
@@ -11,15 +11,15 @@ interface ServerlessAppRequestBody {
     autoDeploy: boolean
 }
 
-interface ServerlessAppResoponseBody {
-    name: string,
-    description: string,
-    roleArn: string,
-    template: string,
-    parameters: any,
-    repoSource: object,
-    createdTime: number
-}
+// interface ServerlessAppResoponseBody {
+//     name: string,
+//     description: string,
+//     roleArn: string,
+//     template: string,
+//     parameters: any,
+//     repoSource: object,
+//     createdTime: number
+// }
 
 export default async function handler(
     req: NextApiRequest,
@@ -29,19 +29,19 @@ export default async function handler(
     const body: any = req.body;
     const headers = req.headers;
     const mainAccountId = process.env.FC_ACCOUNT_ID || headers['x-fc-account-id'];
-    const accessKeyId: any = process.env.ALIBABA_CLOUD_ACCESS_KEY_ID || headers['x-fc-access-key-id'];
-    const accessKeySecret: any = process.env.ALIBABA_CLOUD_ACCESS_KEY_SECRET || headers['x-fc-access-key-secret'];
-    const securityToken: any = process.env.ALIBABA_CLOUD_SECURITY_TOKEN || headers['x-fc-security-token'];
-    let credential = undefined;
-    if (accessKeyId) {
-        credential = {
-            accessKeyId,
-            accessKeySecret,
-            securityToken
-        }
-    }
-    const serverlessBridgeService = new ServerlessBridgeService(credential);
-
+    // const accessKeyId: any = process.env.ALIBABA_CLOUD_ACCESS_KEY_ID || headers['x-fc-access-key-id'];
+    // const accessKeySecret: any = process.env.ALIBABA_CLOUD_ACCESS_KEY_SECRET || headers['x-fc-access-key-secret'];
+    // const securityToken: any = process.env.ALIBABA_CLOUD_SECURITY_TOKEN || headers['x-fc-security-token'];
+    // let credential = undefined;
+    // if (accessKeyId) {
+    //     credential = {
+    //         accessKeyId,
+    //         accessKeySecret,
+    //         securityToken
+    //     }
+    // }
+    // const serverlessBridgeService = new ServerlessBridgeService(credential);
+    const serverlessBridgeService = getAlibabaCloudServerlessBridge(headers);
     const { description = '', name = '', ...parameters } = body;
     //    region: process.env.Region || 'cn-hangzhou',
     const appName = name;

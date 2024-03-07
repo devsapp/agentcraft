@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { Paper, Button } from '@mantine/core';
 import RemarkMath from "remark-math";
 import RemarkBreaks from "remark-breaks";
 import { Loader } from '@mantine/core';
@@ -18,6 +19,8 @@ const components = {
     ModelView,
     Features,
     Scenes,
+    Button,
+    Paper,
     pre: (props: any) => <div {...props} />,
     code: (props: any) => {
         return <CodeHighlight textContent={props.children} language={props.className?.replace("language-", "")} />

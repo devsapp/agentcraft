@@ -1,16 +1,15 @@
 import React, { useState } from 'react';
 import Link from 'next/link'
-import { Paper, Col, TextInput, PasswordInput, Button, LoadingOverlay, Flex, Loader } from '@mantine/core';
+import { Paper, TextInput, PasswordInput, Button, LoadingOverlay, Flex, Loader } from '@mantine/core';
+import { notifications } from '@mantine/notifications';
 import { useForm } from '@mantine/form';
 import { useRouter } from 'next/router';
-import { HTTP_STATUS } from 'types/httpStatus';
-import { login, useAuthenticationStore } from '@/store/authentication';
-import { notifications } from '@mantine/notifications';
+import { login } from 'store/authentication';
+
 
 const LoginPage = () => {
     const router = useRouter();
     const [loading, setLoading] = useState(false);
-    const setToken = useAuthenticationStore().setToken;
     const form = useForm({
         initialValues: {
             username: '',
@@ -25,29 +24,24 @@ const LoginPage = () => {
     const handleSubmit = async () => {
         form.validate();
         if(form.isValid()) {
-
-
              try {
                 setLoading(true)
                 const { username, password } = form.values;
                 const result:any = await login(username, password);
-                if (result.code && result.code === HTTP_STATUS.UNAUTHORIZED) {
+                if (!result.success) {
                     notifications.show({
                         title: '登录失败',
                         message: '请检查账号密码是否正确',
-                        color: 'read',
+                        color: 'red',
                     });
                    
                 } else {
-                    if (result.access_token) {
-                        setToken(result.access_token);
-                        notifications.show({
-                            title: '登录成功',
-                            message: '登录成功，即将前往主页',
-                            color: 'green',
-                        });
-                        router.push('/');
-                    }
+                    notifications.show({
+                        title: '登录成功',
+                        message: '登录成功，即将前往主页',
+                        color: 'green',
+                    });
+                    router.push('/');
                 }
             } catch (e) {
             }
@@ -64,7 +58,7 @@ const LoginPage = () => {
                 overlayColor="#c5c5c5"
                 visible={loading}
             />
-            <Paper shadow="xs">
+            <Paper shadow="xs" p={24}>
                 <div style={{ textAlign: 'center', width: '100%' }}> <Link href="/register">前往注册</Link></div>
 
                 <form >
@@ -81,7 +75,6 @@ const LoginPage = () => {
                         {...form.getInputProps('password')}
                     />
                     <Button
-                        color="blue"
                         fullWidth
                         style={{ marginTop: '1rem' }}
                         onClick={() => { handleSubmit() }}

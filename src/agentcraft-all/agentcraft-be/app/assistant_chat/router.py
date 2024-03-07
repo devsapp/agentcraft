@@ -1,6 +1,7 @@
 """Chat Router"""
 from typing import Any
 from fastapi import APIRouter, Request, Depends, HTTPException
+from app.common.logger import logger
 from sse_starlette.sse import EventSourceResponse
 from app.auth.schema import AgentJWTData, JWTData
 from app.assistant_chat import service
@@ -37,18 +38,32 @@ async def chat(req: ChatRequest, request: Request, token: AgentJWTData = Depends
         "access_key_id": access_key_id,
         "access_key_secret": access_key_secret,
         "security_token": security_token
-  
+
     }
     if req.messages[-1].role != "user":
-        raise HTTPException(status_code=400, detail="The last message must be from the user.")
+        raise HTTPException(
+            status_code=400, detail="The last message must be from the user.")
+    assistant_session_id = req.assistant_session_id
+    assistant_id = token.agent_id
+    query = req.messages[-1].content
+    assistant = service.get_assistant_lite(assistant_id)
+
+    history = []
+    assistant_session_id = service.get_assistant_session_id(req.status, assistant_session_id, assistant_id, title = query)
+    logger.info(f'assistant_session_id: {assistant_session_id}')
+    history = service.list_assistant_chats_history_by_session_id(assistant_session_id, assistant.llm_history_len)
+    # history_dict = [{"user": d["question"], "assistant": d["reasoning_log"]} for d in history]
+    history_dict = [{"user": d["question"], "assistant": d["answer"]} for d in history]
+    logger.info(f"history: {history_dict}")
+    # return {}
     if req.stream:
         return EventSourceResponse(
             service.chat_stream(
-                req.messages[-1].content, request.client.host, token.agent_id,credential_dict),
+                assistant_session_id, query, request.client.host, assistant_id, credential_dict, history_dict, assistant),
             media_type="text/event-stream")
     else:
         resp: dict[str, Any] = service.chat(
-            req.messages[-1].content, request.client.host, token.agent_id,credential_dict)
+            assistant_session_id, query, request.client.host, assistant_id, credential_dict, history_dict, assistant)
         print(f"resp: {resp}")
         return ChatCompletionResponse(**resp)
 

@@ -11,5 +11,7 @@ export default async function handler(
         password
     });
     const { status, data } = result;
-    res.status(status).json(data);
+    const { access_token } = data;
+    res.setHeader('Set-Cookie', `token=${access_token}; Path=/; HttpOnly;`);
+    res.status(status).json({ success: status === 201 ? true : false });
 }

@@ -1,7 +1,7 @@
 import React, { useEffect } from "react";
 import Link from 'next/link';
 import { useRouter } from 'next/router'
-import { Breadcrumbs, Anchor, Button, Box, Table, Text, Highlight, LoadingOverlay, Flex } from '@mantine/core';
+import { Anchor, Button, Box, Table, Text, Highlight, LoadingOverlay, Flex } from '@mantine/core';
 
 import { modals } from '@mantine/modals';
 
@@ -74,7 +74,7 @@ function List() {
     }, []);
 
     return (
-        <Box pos="relative" >
+        <Box pos="relative" className={'content-container'} pb={124} >
             <LoadingOverlay visible={loading} overlayOpacity={0.3} />
             <Table striped withBorder withColumnBorders mt={12}  >
                 <thead>
@@ -104,21 +104,12 @@ export function FoundationModel() {
 
     return (
         <>
-            <Breadcrumbs>{items}</Breadcrumbs>
+            {/* <Breadcrumbs>{items}</Breadcrumbs> */}
             <FeatureDescription title="基础模型" description="AgentCraft可以构建通义千问的商业化大语言模型服务也能够对魔搭社区，huggingface社区的开源模型进行托管。由此构建的基础模型服务可以作为您的AIGC应用的核心" />
-            <Box >
-                <Flex
-                    mih={50}
-                    gap="md"
-                    justify="flex-start"
-                    align="flex-start"
-                    direction="row"
-                    wrap="wrap"
-                >
-                    <Button onClick={() => router.push('/foundationModel/create')}>
-                        创建基础模型
-                    </Button>
-                </Flex>
+            <Box mt={12}>
+                <Button onClick={() => router.push('/foundationModel/create')}>
+                    创建基础模型
+                </Button>
             </Box>
             <List />
         </>

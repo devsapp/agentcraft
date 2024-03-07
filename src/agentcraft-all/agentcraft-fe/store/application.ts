@@ -1,8 +1,8 @@
 
 import { create } from "zustand";
 import { devtools } from "zustand/middleware";
-import { ResponseData } from '@/types/httpStatus';
-import { request } from '@/utils/clientRequest';
+import { ResponseData } from 'types/httpStatus';
+import { request } from 'utils/clientRequest';
 export interface ApplicationResponseData {
     created: string,
     description: string,

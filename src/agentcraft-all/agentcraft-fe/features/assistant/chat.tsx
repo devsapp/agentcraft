@@ -10,14 +10,14 @@ import styles from 'styles/chat.module.scss';
 
 const defaultPrompt = ``;
 
-export default function Home() {
-    const currentAssistant: Assistant = useAssistantStore().currentAssistant as Assistant;
+export default function Chat() {
+    const currentAssistant = useAssistantStore().currentAssistant;
     const [userInput, setUserInput] = useState(defaultPrompt);
     const [loading, setLoading] = useState(false);
     const [messages, setMessages] = useState<ChatMessage[]>([
 
     ]);
-
+    const assistantToken = currentAssistant?.token || '';
     const messageListRef = useRef(null);
     const textAreaRef = useRef(null);
 
@@ -80,6 +80,7 @@ export default function Home() {
                 disLiked: false,
             };
             setUserInput("");
+            
             const requestMessage = currentMessage.map((item) => {
                 return {
                     role: item.type,
@@ -91,7 +92,8 @@ export default function Home() {
                 version: 'v2',
                 config: {
                     stream: true,
-                    max_tokens: 1024
+                    max_tokens: 1024,
+                    status: 0,
                 },
                 onFinish: (msg) => {
                     setLoading(false);
@@ -100,7 +102,7 @@ export default function Home() {
                     newMessage.message += delta;
                     setMessages([..._preMessages, newMessage]);
                 }
-            }, currentAssistant.token);
+            }, assistantToken);
 
         } catch (e) {
             handleError(e);
@@ -139,7 +141,8 @@ export default function Home() {
                 }],
                 config: {
                     stream: true,
-                    max_tokens: 1024
+                    max_tokens: 1024,
+                    status: 0,
                 },
                 onFinish: (msg) => {
                     setLoading(false);
@@ -148,7 +151,7 @@ export default function Home() {
                     newMessage.message += delta;
                     setMessages([..._preMessages, newMessage]);
                 }
-            }, currentAssistant.token);
+            }, assistantToken);
 
         } catch (e) {
             handleError(e);

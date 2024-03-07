@@ -1,0 +1,23 @@
+.agentcraft-header {
+    display: flex;
+    height: 100%;
+    align-items: center;
+    justify-content: space-between;
+    .user {
+        display: flex;
+        align-items: center;
+        margin-right: 4px;
+        font-size: 12px;
+        .user-content {
+            margin-right: 12px;
+            
+        }
+        .logout {
+            display: block;
+            text-decoration: none;
+            &:hover {
+                text-decoration: underline;
+            }
+        }
+    }
+}

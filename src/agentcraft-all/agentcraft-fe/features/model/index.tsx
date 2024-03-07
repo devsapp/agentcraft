@@ -1,15 +1,17 @@
-import React, { useEffect } from "react";
-import { Breadcrumbs, Anchor, Button, Box, Table, Modal, TextInput, Text, Highlight, LoadingOverlay, Select, NumberInput, PasswordInput, Textarea, Flex } from '@mantine/core';
+import React, { useEffect, useState } from "react";
+import { Anchor, Button, Box, Table, Modal, TextInput, Text, Highlight, LoadingOverlay, Select, NumberInput, PasswordInput, Textarea, Flex } from '@mantine/core';
 import { useForm } from '@mantine/form';
 import { modals } from '@mantine/modals';
+import { MODEL_NAME_LIST } from 'constants/llm-proxy';
 import { getModelList, useModelStore, deleteModel, addModel, updateModel } from 'store/model';
 import { Model } from 'types/model';
 import { formatDateTime } from 'utils/index';
 import CopyToClipboard from 'components/CopyToClipboard';
 import { DEFAULT_MODEL_REQUEST_TIMEOUT } from 'constants/index';
 import FeatureDescription from 'components/FeatureDescription';
+import { FORM_WIDTH } from 'constants/index';
 
-function List() {
+export function List() {
     const modelList: Model[] = useModelStore().modelList;
     const loading: boolean = useModelStore().loading;
     const setLoading = useModelStore().setLoading;
@@ -68,7 +70,7 @@ function List() {
     }, []);
 
     return (
-        <Box pos="relative" >
+        <Box pos="relative" className={'content-container'} pb={124} >
             <LoadingOverlay visible={loading} overlayOpacity={0.3} />
             <Table striped withBorder withColumnBorders mt={12}  >
                 <thead>
@@ -97,6 +99,7 @@ function AddOrUpdate() {
     const setOpen = useModelStore().setOpen;
     const setLoading = useModelStore().setLoading;
     const currentModel: Model | undefined = useModelStore().currentModel;
+    const [data, setData] = useState(MODEL_NAME_LIST)
     const initialValues = {
         name: '',
         name_alias: '',
@@ -127,17 +130,31 @@ function AddOrUpdate() {
     }, [currentModel]);
 
     return (
-        <Modal opened={open} onClose={() => { setOpen(false) }} title={isEdit ? "修改LLM代理" : "创建LLM代理"} centered>
-            <Box maw={640} mx="auto">
+        <Modal opened={open} onClose={() => { setOpen(false) }} title={isEdit ? "修改LLM代理" : "创建LLM代理"} centered size={'lg'}>
+            <Box maw={FORM_WIDTH} mx="auto">
                 <TextInput withAsterisk label="LLM代理名" placeholder="" {...form.getInputProps('name_alias')} description="LLM代理的名称" />
-                <TextInput withAsterisk label="模型名" placeholder="" {...form.getInputProps('name')} description="基础模型服务需要的模型参数，通过LLM代理透传给基础模型服务，比如访问千问的模型明示qwen-plus或qwen-turbo" />
+                <Select withAsterisk
+                    label="模型名"
+                    placeholder=""
+                    {...form.getInputProps('name')}
+                    description="基础模型服务需要的模型参数，通过LLM代理透传给基础模型服务，比如访问千问的模型明示qwen-plus或qwen-turbo"
+                    data={data}
+                    searchable
+                    creatable
+                    getCreateLabel={(query) => `+ Create ${query}`}
+                    onCreate={(query) => {
+                        const item = { value: query, label: query, group: '其他' };
+                        setData((current) => [...current, item]);
+                        return item;
+                    }}
+                />
 
                 <TextInput withAsterisk label={<span>基础模型服务访问地址<a href="/foundationModel/create" target="_blank">还没有基础模型服务？去创建</a></span>} placeholder="" {...form.getInputProps('url')} description="基础模型服务原始地址，可以通过基础模型菜单访问创建,创建成功后粘贴基础模服务访问地址在此" />
                 <PasswordInput label="LLM服务访问token" placeholder="" {...form.getInputProps('token')} description="当你访问的服务需要透传token，比如openai 的chatgpt，在这里填写，默认情况下可以不填写" />
                 <NumberInput label="访问超时时间(s)" placeholder="" {...form.getInputProps('timeout')} description="AgentCraft访问基础模型服务的超时时间" />
                 <Textarea label="描述" placeholder="输入数据集描述" {...form.getInputProps('description')} />
             </Box>
-            <Box maw={640} mx="auto" pt={12} style={{ textAlign: 'right' }}>
+            <Box maw={FORM_WIDTH} mx="auto" pt={12} style={{ textAlign: 'right' }}>
                 <Button onClick={async () => {
                     form.validate();
                     if (form.isValid()) {
@@ -166,19 +183,19 @@ function AddOrUpdate() {
 
 export function ModelPage() {
 
-    const items = [
-        { title: 'AgentCraft', href: '#' },
-        { title: 'LLM代理', href: '/model' },
-    ].map((item, index) => (
-        <Anchor href={item.href} key={index}>
-            {item.title}
-        </Anchor>
-    ));
+    // const items = [
+    //     { title: 'AgentCraft', href: '#' },
+    //     { title: 'LLM代理', href: '/model' },
+    // ].map((item, index) => (
+    //     <Anchor href={item.href} key={index}>
+    //         {item.title}
+    //     </Anchor>
+    // ));
     const setOpen = useModelStore().setOpen;
     const setEditStatus = useModelStore().setEditStatus;
     return (
         <>
-            <Breadcrumbs>{items}</Breadcrumbs>
+            {/* <Breadcrumbs>{items}</Breadcrumbs> */}
             <FeatureDescription title="LLM代理" description="AgentCraft的LLM代理是基于基础大语言模型服务比如通义千问等构建出的一个代理层服务，主要是为了抹平不同模型服务之间的接口数据差异，方便在业务中快速切换更加适合的模型服务" />
             <Box mt={12} >
                 <Button onClick={() => { setEditStatus(false); setOpen(true) }}>

@@ -47,12 +47,15 @@ Question: {query}"""
 
 
 class Reasoning:
-    def __init__(self, query, assistant, datasets, credential_dict):
+    def __init__(self, query, assistant, datasets, credential_dict, history):
         self.assistant = assistant
         self.query = query
         self.credential_dict = credential_dict
         self.datasets = datasets
         self.tool_name_dict = {}
+        self.history = history
+        self.model = None
+        self.result = None
 
     def final_result(self, resp_data: str):
         match = re.search(r'Final Answer: (.+)', resp_data)
@@ -80,13 +83,14 @@ class Reasoning:
         created = kwargs['created']
         uid = kwargs['uid']
         model = kwargs['model']
-        history = []
-        chat_history = [(x['user'], x['bot'])
+        history = self.history
+        chat_history = [(x['user'], x['assistant'])
                         for x in history] + [(prompt, '')]
 
         planning_prompt = self.build_input_text(
             chat_history, list_of_plugin_info, kwargs['instruction'])
         logger.info(f"the planning_prompt is:\n {planning_prompt}")
+        kwargs['need_react'] = True if len(list_of_plugin_info) > 0 else False #补充
         text = ''
         while True:
             output = self.text_completion(
@@ -94,7 +98,7 @@ class Reasoning:
             action, action_input, output = self.parse_latest_plugin_call(
                 output)
             if action: 
-                logger.info(f"调用工具【{self.tool_name_dict[action]}】 \n'")
+                logger.info(f"调用工具【{self.tool_name_dict.get('action', None)}】 \n'")
                 observation = self.call_plugin(action, action_input)
                 output += f'\nObservation: {observation}\nThought:'
 
@@ -114,7 +118,7 @@ class Reasoning:
         new_history = []
         new_history.extend(history)
         new_history.append({'user': prompt, 'bot': text})
-        content = self.final_result(text)
+        content = self.final_result(text) if kwargs['need_react'] == True else text
         resp_data = {}
         resp_data["id"] = uid
         resp_data["created"] = created
@@ -125,6 +129,7 @@ class Reasoning:
         }]
         resp_data["object"] = "chat.completion"
         resp_data["model"] = model
+        self.result = (text, content, planning_prompt)
         return resp_data
     def get_dataset_names(self, datasets):
         names = [dataset['dataset_name'] for dataset in datasets]
@@ -152,6 +157,7 @@ class Reasoning:
 
         im_start = '<|im_start|>'
         im_end = '<|im_end|>'
+        retrieval_information = ''
         if(self.datasets):
             local_datasets = self.get_dataset_names(self.datasets)
             retrieval_information = '\n' + RETRIEVAL_ARGUMRNTED.format(local_datasets=local_datasets) +'\n'
@@ -272,8 +278,8 @@ class Reasoning:
 
         self.tool_name_dict = {tool['name_for_model']: tool['name_for_human'] for tool in action_tools}
 
-        history = []
         model = model_database.get_model_by_id(assistant.model_id)
+        self.model = model
         llm_plugin_args = {
             "created": int(time()),
             "uid": f"assistant-compl-{uuid.uuid4()}",

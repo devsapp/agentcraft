@@ -15,14 +15,14 @@ interface AssistantStore {
     loading: boolean,
     isEdit: boolean,
     accessUrl: AccessUrl,
-    currentAssistant?: Assistant,
+    currentAssistant: Assistant | undefined,
     assistantChatList: any[],
     setAccessUrl: (accessUrl: AccessUrl) => void;
     setChatDrawer: (chatDrawer: boolean) => void;
     setLoading: (loading: boolean) => void;
     setOpen: (open: boolean) => void;
     setEditStatus: (isEdit: boolean) => void;
-    updateCurrentAssistant: (_: Assistant) => void;
+    updateCurrentAssistant: (_: Assistant | undefined) => void;
     updateAssistantList: (_: AssistantResponseData[]) => void;
 }
 
@@ -40,7 +40,7 @@ export const useAssistantStore = create<AssistantStore>()(devtools((set) => ({
     },
     currentAssistant: undefined,
     // 知识库列表
-    updateCurrentAssistant: (currentAssistant: Assistant) => set((_state) => {
+    updateCurrentAssistant: (currentAssistant: Assistant | undefined) => set((_state) => {
         return ({ currentAssistant })
     }),
     setChatDrawer: (chatDrawer: boolean) => set((_state) => {
@@ -128,7 +128,7 @@ export async function refreshToken(assistantId: number) {
         },
     });
 
-    return  res.data;
+    return res.data;
 
 
 }

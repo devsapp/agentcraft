@@ -3,10 +3,8 @@
 
 import Router from "next/router";
 import { ResponseData, HTTP_STATUS } from 'types/httpStatus';
-import { useAuthenticationStore } from 'store/authentication';
 
 export async function request(url: string, data?: any): Promise<ResponseData> {
-    const { token } = useAuthenticationStore.getState();
     if (!data) {
         data = {
             method: 'GET',
@@ -14,9 +12,6 @@ export async function request(url: string, data?: any): Promise<ResponseData> {
                 'Content-Type': 'application/json'
             }
         }
-    }
-    if (token) {
-        data.headers['Authorization'] = `Bearer ${token || ''}`;
     }
     const res = await fetch(url, data);
     const result: ResponseData = await res.json();

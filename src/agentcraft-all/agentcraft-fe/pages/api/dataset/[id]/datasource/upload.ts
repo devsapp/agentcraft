@@ -5,7 +5,7 @@ import { extname } from 'path';
 import * as pdfjsLib from 'pdfjs-dist';
 import { CharacterTextSplitter, RecursiveCharacterTextSplitter } from "langchain/text_splitter";
 import request from 'utils/serverRequest';
-
+import { getTokenFromRequest } from 'utils/token';
 interface NextApiRequestWithFormData extends NextApiRequest {
     file: any;
 }
@@ -51,7 +51,8 @@ router.post(async (req: any, res: any) => {
     const bodyData: DocProperty = req.body;
     const extName = getFileExtension(file.originalname);
     const chunkSize = parseInt(bodyData.chunk_size)
-    request.defaults.headers.common['Authorization'] = req.headers.authorization;
+    const token = getTokenFromRequest(req);
+    request.defaults.headers.common['Authorization'] = token;
     let output: any = [];
     if (extName === '.txt') {
         const splitter = new CharacterTextSplitter({

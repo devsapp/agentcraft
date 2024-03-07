@@ -13,6 +13,7 @@ from app.agent.router import router as agent_router
 from app.model.router import router as model_router
 
 from app.assistant.router import router as assistant_router
+from app.assistant_session.router import router as assistant_session_router
 from app.action_tools.router import router as action_tools_router
 
 app = FastAPI()
@@ -39,4 +40,5 @@ app.include_router(dataset_router, prefix="/dataset", tags=["Dataset"])
 app.include_router(agent_router, prefix="/agent", tags=["Agent"])
 app.include_router(model_router, prefix="/model", tags=["Model"])
 app.include_router(assistant_router, prefix="/assistant", tags=["Assistant"])
+app.include_router(assistant_session_router, prefix="/assistant_session", tags=["AssistantSession"])
 app.include_router(action_tools_router, prefix="/action_tools", tags=["ActionTools"])

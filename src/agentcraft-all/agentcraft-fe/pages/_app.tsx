@@ -4,11 +4,13 @@ import Head from "next/head";
 import { MantineProvider } from "@mantine/core";
 import { ModalsProvider } from '@mantine/modals';
 import { Notifications } from '@mantine/notifications';
-import { Shell } from 'layouts/shell';
-import { useSystemConfigStore, getSystemConfig } from '@/store/systemConfig';
-import { SystemConfig } from '@/features/systemConfig';
+import { Main } from 'layouts/shell';
+import { SystemConfig } from 'features/systemConfig';
+import { useSystemConfigStore, getSystemConfig } from 'store/systemConfig';
+import THEME from 'constants/theme';
 import '../styles/global.scss';
 import '../styles/markdown.scss';
+
 
 
 export default function App(props: AppProps) {
@@ -18,7 +20,7 @@ export default function App(props: AppProps) {
   useEffect(() => {
     setRender(true);
     getSystemConfig();
-  },[]);
+  }, []);
   return (
     <>
       <Head>
@@ -28,22 +30,31 @@ export default function App(props: AppProps) {
           name="viewport"
           content="minimum-scale=1, initial-scale=1, width=device-width"
         />
-      </Head>
 
+      </Head>
       <MantineProvider
         withGlobalStyles
         withNormalizeCSS
-        theme={{
-          colorScheme: "dark",
-        }}
+        theme={THEME}
       >
+        <script dangerouslySetInnerHTML={{
+          __html: `
+            !(function(c,b,d,a){c[a]||(c[a]={});c[a]={
+              "pid": "h4vtx9vmmg@36f359f7139899d",
+              "endpoint": "https://h4vtx9vmmg-default-cn.rum.aliyuncs.com"
+            };
+            with(b)with(body)with(insertBefore(createElement("script"),firstChild))setAttribute("crossorigin","",src=d)
+            })(window, document, "https://sdk.rum.aliyuncs.com/v2/browser-sdk.js", "__rum");
+            `,
+        }}>
+        </script>
         <Notifications />
         {render ?
           <ModalsProvider>
-            {!hiddenConfigView ? < SystemConfig /> : <Shell >
-              <Component {...pageProps} />
-            </Shell>}
-          </ModalsProvider> : null}
+            {!hiddenConfigView ? < SystemConfig /> : <Main><Component {...pageProps} /></Main>}
+          </ModalsProvider> :
+          null
+        }
       </MantineProvider>
     </>
   );

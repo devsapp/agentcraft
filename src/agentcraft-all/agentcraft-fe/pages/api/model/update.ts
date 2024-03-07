@@ -1,7 +1,7 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
 import request from 'utils/serverRequest';
 import { ModelRequestPayload } from '@/types/model';
-
+import { getTokenFromRequest } from 'utils/token';
 
 
 export default async function handler(
@@ -12,7 +12,8 @@ export default async function handler(
 
 
     const payload: ModelRequestPayload = req.body;
-    request.defaults.headers.common['Authorization'] = req.headers.authorization;
+    const token = getTokenFromRequest(req);
+    request.defaults.headers.common['Authorization'] = token;
     const result = await request.put(`/model/${id}`, payload);
     const { status, data } = result;
     res.status(status).json(data);

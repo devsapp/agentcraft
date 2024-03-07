@@ -5,10 +5,15 @@
 # AgentCraft
 
 <p align="center">
-  <a href="./README.md">简体中文</a> 
+  <a href="./README.md">简体中文</a>  | 
+  <a href="http://agentcraft-docs.serverless-developer.com/" target="_blank">使用文档</a> 
 </p>
+<video controls width="640" height="360">
+  <source src="https://cloud.video.taobao.com/play/u/null/p/1/e/6/t/1/447331749716.mp4" type="video/mp4">
+  Your browser does not support the video tag.
+</video>
 
-AgentCraft是一个依托于阿里云Serverless基础设施的开源开放智能体平台，提供Agent能力的编排和业务连接能力，帮助企业或个人开发者快速启动AI能力的建设，如基础模型服务的托管，数据的向量化处理，知识库的构建等，此外可以便捷的将生成的AI能力连接到钉钉机器人，微信以及独立站点
+AgentCraft是一个依托于阿里云Serverless基础设施的开源开放智能体平台，提供Agent能力的编排和业务连接能力，帮助企业或个人开发者快速启动AI能力的建设，如基础模型服务的托管，数据的向量化处理，知识库的构建等，自定义工具能力的构建等。此外可以便捷的将生成的AI能力进行输出，如以API方式透出以及接入到钉钉机器人，微信等各类客户端
 
 </div>
 
@@ -22,6 +27,14 @@ AgentCraft是一个依托于阿里云Serverless基础设施的开源开放智能
   </a>
 </p>
 
+## 演示示例
+基础指令
+![AgentCraft 论文翻译](https://img.alicdn.com/imgextra/i2/O1CN01ske5Dk1i36BX2m4BE_!!6000000004356-1-tps-1777-893.gif)
+
+知识库问答
+![AgentCraft 知识库问答](https://img.alicdn.com/imgextra/i3/O1CN010RtRR01mbgYUUIp8w_!!6000000004973-1-tps-1777-893.gif)
+执行工具
+![AgentCraft 函数智能助手](https://img.alicdn.com/imgextra/i2/O1CN01AnUGbS1jfOvNDtIx4_!!6000000004575-1-tps-1777-893.gif)
 ## 功能
 
 ### 
@@ -48,9 +61,9 @@ AgentCraft是一个依托于阿里云Serverless基础设施的开源开放智能
    - [x] 支持问答记录查询，修正
    - [x] 支持提示词预置模版
    - [x] 支持指令、LLM、数据集自由组合
-   - [ ] 指令、LLM、数据集、工具，上下文自由组合
-   - [ ] 工具能力在线构建和发布
-   - [ ] 可视化编排Agent
+   - [x] 指令、LLM、数据集、工具，上下文自由组合
+   - [x] 工具能力在线构建和发布
+   - [x] 可视化编排Agent
    
 `4`  API透出
    - [x] 支持 Agent Api token访问
@@ -62,6 +75,7 @@ AgentCraft是一个依托于阿里云Serverless基础设施的开源开放智能
    - [x] 提供独立web站一键部署服务
    - [ ] 嵌入脚本，sdk等接入方式
    - [ ] 其他平台对接
+   
 `6` 生成式UI
    - [x] 支持内置自定义渲染组件
    - [x] 支持自定义组件LUI渲染
@@ -108,8 +122,8 @@ npm run dev
 
 如果您有任何问题、建议或合作意向，可以用以下方式联系我们：
 + GithubRepo 提交 Issue 或 PR
-+ 加入Serverless+ AIGC 钉群讨论 
-![dingtalk](https://img.alicdn.com/imgextra/i2/O1CN01zGJ4fS21GMJy6Okd8_!!6000000006957-0-tps-470-472.jpg)
++ 加入AgentCraft 项目交流钉群讨论 
+![dingtalk](https://img.alicdn.com/imgextra/i4/O1CN01MQDcxF1dqxEHfmE60_!!6000000003788-2-tps-472-462.png)
 
 
 

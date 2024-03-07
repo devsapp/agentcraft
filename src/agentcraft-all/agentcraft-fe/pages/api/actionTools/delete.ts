@@ -1,6 +1,6 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
 import request from 'utils/serverRequest';
-
+import { getTokenFromRequest } from 'utils/token';
 
 export default async function handler(
     req: NextApiRequest,
@@ -9,6 +9,7 @@ export default async function handler(
     const { id } = req.query;
   
     const result = await request.delete(`/action_tools/${id}`);
-    request.defaults.headers.common['Authorization'] = req.headers.authorization;
+    const token = getTokenFromRequest(req);
+    request.defaults.headers.common['Authorization'] = token;
     res.status(result.status).json(result.data)
 }

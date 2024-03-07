@@ -36,3 +36,23 @@ export function generateDingTalkToken() {
     }
     return token;
 }
+
+
+export function getTokenFromCookie(cookie:string) {
+    let token = ''
+    try {
+        token = cookie.split(';').find(row => row.indexOf('token=') !== -1)?.split('=')[1]?.trim() as string;
+        if(token) {
+            token = `Bearer ${token}`
+        }
+    } catch (e) {
+
+    }
+    return token;
+}
+
+
+export function getTokenFromRequest(req: any) {
+    const cookie = req.headers.cookie as string;
+    return getTokenFromCookie(cookie);
+}

@@ -1,7 +1,7 @@
 
 import { create } from "zustand";
 import { devtools } from "zustand/middleware";
-import { request } from '@/utils/clientRequest';
+import { request } from 'utils/clientRequest';
 
 export interface UserInfo {
     username: string,

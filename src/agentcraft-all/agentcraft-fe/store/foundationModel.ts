@@ -1,9 +1,7 @@
 
 import { create } from "zustand";
 import { devtools } from "zustand/middleware";
-
-import { request } from '@/utils/clientRequest';
-
+import { request } from 'utils/clientRequest';
 import { AGENTCRAFT_FM_PREFIX } from 'constants/foundation-model';
 
 

@@ -3,7 +3,6 @@ import { create } from "zustand";
 import { devtools } from "zustand/middleware";
 import { ResponseData } from 'types/httpStatus';
 import { request } from 'utils/clientRequest';
-
 import { IActionTool } from 'types/actionTools';
 export interface ActionToolsRequestPayload {
     name: string,
@@ -15,21 +14,27 @@ interface ActionToolsStore {
     isEdit: boolean,
     functionList: [],
     open: boolean,
+    openToChoose: boolean,
     loading: boolean,
+    loadingForChoose: boolean
     currentActionTool: IActionTool,
     setEditStatus: (loading: boolean) => void;
     setCurrentActionTool: (currentActionTool: IActionTool) => void;
     updateFunctionList: (_: []) => void;
     updateToolList: (_: IActionTool[]) => void;
     setLoading: (loading: boolean) => void;
+    setLoadingForChoose: (loading: boolean) => void;
     setOpen: (open: boolean) => void;
+    setOpenToChoose: (open: boolean) => void;
 }
 
 
 export const useActionToolStore = create<ActionToolsStore>()(devtools((set) => ({
     toolList: [],
     open: false,
+    openToChoose: false,
     loading: false,
+    loadingForChoose: false,
     isEdit: false,
     functionList: [],
     currentActionTool: {} as IActionTool,
@@ -37,6 +42,9 @@ export const useActionToolStore = create<ActionToolsStore>()(devtools((set) => (
     updateToolList: (toolList: IActionTool[]) => set((_state: any) => ({ toolList })),
     setLoading: (status: boolean) => set((_state) => {
         return ({ loading: status })
+    }),
+    setLoadingForChoose: (status: boolean) => set((_state) => {
+        return ({ loadingForChoose: status })
     }),
     setCurrentActionTool: (currentActionTool: IActionTool) => set((_state) => {
         return ({ currentActionTool })
@@ -46,6 +54,9 @@ export const useActionToolStore = create<ActionToolsStore>()(devtools((set) => (
     }),
     setOpen: (status: boolean) => set((_state) => {
         return ({ open: status })
+    }),
+    setOpenToChoose: (status: boolean) => set((_state) => {
+        return ({ openToChoose: status })
     }),
 
 })))
@@ -71,15 +82,17 @@ export async function deleteTool(id: any) {
 
 }
 
-export async function addTool(payload: ActionToolsRequestPayload) {
+export async function addTool(payload: any) {
 
-    return await request("/api/actionTools/create", {
+    const res = await request("/api/actionTools/create", {
         method: "POST",
         body: JSON.stringify(payload),
         headers: {
             "Content-Type": "actionTools/json",
         },
     });
+
+    return res.data;
 
 
 }
@@ -110,3 +123,4 @@ export async function getFunctionList(payload: any) {
     return data;
 
 }
+

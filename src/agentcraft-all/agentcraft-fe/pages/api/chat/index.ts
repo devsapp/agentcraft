@@ -1,11 +1,9 @@
 import { Readable } from "stream";
 import { NextApiRequest, NextApiResponse } from "next";
-
-import { ChatOptions } from '@/types/chat';
+import { ChatOptions } from 'types/chat';
 
 const baseUrl = process.env.baseUrl;
 export default async function handle(req: NextApiRequest, res: NextApiResponse) {
-
     const data: ChatOptions & { token: string } = req.body;
     const { version = 'v1' } = req.query;
     const { token, ...payload } = data;
@@ -20,8 +18,6 @@ export default async function handle(req: NextApiRequest, res: NextApiResponse) 
         },
         body: JSON.stringify(Object.assign({}, chatData, { messages })),
     });
-
-
     const reader = response.body.getReader();
     const readableStream = new Readable({
         read(_size) { },

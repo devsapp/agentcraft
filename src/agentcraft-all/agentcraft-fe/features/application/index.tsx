@@ -125,7 +125,6 @@ function Add() {
 }
 
 
-
 export function ApplicationPage() {
     const items = [
         { title: 'AgentCraft', href: '#' },
@@ -138,7 +137,7 @@ export function ApplicationPage() {
     const setOpen = useAppStore().setOpen;
     return (
         <>
-            <Breadcrumbs>{items}</Breadcrumbs>
+            {/* <Breadcrumbs>{items}</Breadcrumbs> */}
             <FeatureDescription title="应用" description="AgentCraft的应用是对应业务场景的抽象，您可以聚合同类业务到同一个应用里面，在一个应用下您可以构建多个知识库服务及agent服务"/>
             <Box mt={12} >
                 <Button onClick={() => setOpen(true)}>

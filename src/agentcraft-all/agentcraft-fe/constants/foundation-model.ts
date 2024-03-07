@@ -1,4 +1,7 @@
 export const AGENTCRAFT_FM_QWEN_BIZ = 'agentcraft-fm-qwen-biz';
+export const AGENTCRAFT_FM_DASHSCOPE_BIZ ='agentcraft-fm-dashscope-biz';
+export const AGENTCRAFT_FM_ZHIPUAI_BIZ ='agentcraft-fm-zhipuai-biz';
+export const AGENTCRAFT_FM_TOGETHERAI_BIZ ='agentcraft-fm-togetherai-biz';
 export const AGENTCRAFT_FM_CHATGLM2_OPENSOURCE = 'agentcraft-fm-chatglm2-opensource';
 export const AGENTCRAFT_FM_CHATGLM3_OPENSOURCE = 'agentcraft-fm-chatglm3-opensource';
 export const AGENTCRAFT_FM_LLAMA2_OPENSOURCE = 'agentcraft-fm-llama2-opensource';
@@ -7,77 +10,144 @@ export const AGENTCRAFT_FM_QWEN_OPENSOURCE = 'agentcraft-fm-qwen-opensource';
 
 export const AGENTCRAFT_FM_PREFIX = 'AgentCraft_FM';
 
-export const FM_NAME_MAP:any = {
+export const FM_NAME_MAP: any = {
     [AGENTCRAFT_FM_QWEN_BIZ]: '通义千问商业版',
+    [AGENTCRAFT_FM_DASHSCOPE_BIZ]: 'DashscopeAI',
+    [AGENTCRAFT_FM_ZHIPUAI_BIZ]:'智普AI',
+    [AGENTCRAFT_FM_TOGETHERAI_BIZ]:'TogetherAI',
     [AGENTCRAFT_FM_CHATGLM2_OPENSOURCE]: 'Chatglm2-6b开源',
     [AGENTCRAFT_FM_CHATGLM3_OPENSOURCE]: 'Chatglm3-6b开源',
     [AGENTCRAFT_FM_LLAMA2_OPENSOURCE]: 'Llama2-13B（int4量化）开源',
     [AGENTCRAFT_FM_QWEN_OPENSOURCE]: '通义千问-7b开源',
 }
 
+export const FM_TEMPLATE_ACCESS_API_FUNCTION_MAP: any = {
+    [AGENTCRAFT_FM_QWEN_BIZ]: 'apiServer',
+    [AGENTCRAFT_FM_DASHSCOPE_BIZ]: 'apiServer',
+    [AGENTCRAFT_FM_TOGETHERAI_BIZ]: 'apiServer',
+    [AGENTCRAFT_FM_ZHIPUAI_BIZ]:  'apiServer',
+    'fc-llm-api': 'llm-server',
+}
 
+export const FM_APP_STATUS: any = {
+    'published': {
+        color: 'green',
+        text: '已发布'
+    },
+    'deploying': {
+        color: 'yellow',
+        text: '部署中'
+    }
+}
 
 export const FOUNDATION_MODEL_TEMPLATES = [
     {
-        name: '通义千问（商业模型）',
-        tag: ['阿里云', '通义千问'],
+        name: 'DashscopeAI模型（代理Dashscope）',
+        tag: ['Dashcope', '通义千问'],
         type: 'llm',
-        icon: 'https://img.alicdn.com/imgextra/i4/O1CN01c26iB51UyR3MKMFvk_!!6000000002586-2-tps-124-122.png',
-        description: '商业版本的通义千问，支持8K上下文，性能强劲，推理能力强',
-        fcLink: 'https://fcnext.console.aliyun.com/applications/create?template=fc-qwen',
+        icon: '',
+        iconText: '模型服务灵积',
+        description: 'Dashscope是阿里云的AI API基础设施平台，包含qwen-turbo，qwen-plus等商业版本的通义千问模型',
+        fcLink: 'https://fcnext.console.aliyun.com/applications/create?template=agentcraft-fm-dashscope-biz',
         githubLink: '',
-        template: 'agentcraft-fm-qwen-biz',
+        template: 'agentcraft-fm-dashscope-biz',
         templateParams: {
             type: 'object',
             additionalProperties: false,
-            required: ['region', 'apiKey', 'model'],
+            required: ['region', 'apiKey'],
             properties: {
                 region: {
                     type: 'string',
                     title: '地域',
                     default: 'cn-hangzhou',
                     description: '该服务所在的地域',
-                    enum: ['cn-beijing', 'cn-hangzhou', 'cn-shanghai', 'cn-shenzhen'],
+                    enum: ['cn-beijing', 'cn-hangzhou'],
                     uiType: 'select',
-                    dataSource: [{ label: '杭州', value: 'cn-hangzhou' }, { label: '上海', value: 'cn-shanghai' }, { label: '北京', value: 'cn-beijing' }, { label: '深圳', value: 'cn-shenzhen' }]
+                    dataSource: [{ label: '杭州', value: 'cn-hangzhou' }, { label: '北京', value: 'cn-beijing' }]
                 },
                 apiKey: {
                     type: 'string',
-                    title: '通义千问API-Key',
-                    description: '通义千问的API-KEY，<a href="https://dashscope.console.aliyun.com/apiKey" target="_blank">免费申领地址</a>',
+                    title: 'Dashcope API-Key',
+                    description: 'Dashcope 的API-KEY，<a href="https://dashscope.console.aliyun.com/apiKey" target="_blank">免费申领地址</a>',
                     default: '',
                     uiType: 'password'
-                },
-                model: {
+                }
+            }
+        }
+    },
+    {
+        name: '智普AI模型（代理智普AI）',
+        tag: ['智普AI', 'GLM'],
+        type: 'llm',
+        icon: '',
+        iconText: '智普.AI',
+        description: '智普AI 包含glm-4, glm-3.5-turbo两款 128K上下文大语言模型',
+        fcLink: 'https://fcnext.console.aliyun.com/applications/create?template=agentcraft-fm-zhipuai-biz',
+        githubLink: '',
+        template: 'agentcraft-fm-zhipuai-biz',
+        templateParams: {
+            type: 'object',
+            additionalProperties: false,
+            required: ['region', 'apiKey'],
+            properties: {
+                region: {
                     type: 'string',
-                    title: '通义千问可访问模型',
-                    description: '通义千问支持的两种模型，<a href="https://help.aliyun.com/zh/dashscope/developer-reference/api-details?disableWebsiteRedirect=true" target="_blank">点击查看详情</a>',
-                    default: 'qwen-turbo',
-                    enum: ['qwen-turbo', 'qwen-plus'],
+                    title: '地域',
+                    default: 'cn-hangzhou',
+                    description: '该服务所在的地域',
+                    enum: ['cn-beijing', 'cn-hangzhou'],
                     uiType: 'select',
-                    dataSource: [{ label: 'qwen-turbo', value: 'qwen-turbo' }, { label: 'qwen-plus', value: 'qwen-plus' }]
+                    dataSource: [{ label: '杭州', value: 'cn-hangzhou' }, { label: '北京', value: 'cn-beijing' }]
                 },
-                serviceName: {
+                apiKey: {
                     type: 'string',
-                    title: '服务名',
-                    description: '',
-                    hiddenUI: true,
-                    default: 'AgentCraft',
-                },
-                clientPassword: {
-                    type: 'string',
-                    title: '客户端访问密码',
-                    description: '',
-                    hiddenUI: true,
+                    title: '智普AI开放平台 ApiKey',
+                    description: '访问GML所需的KEY<a href="https://open.bigmodel.cn/usercenter/apikeys" target="_blank">申请地址</a>',
                     default: '',
+                    uiType: 'password'
                 }
 
             }
         }
     },
     {
-        name: '通义千问开源版(7b模型)',
-        tag: ['阿里云', '通义千问', '开源'],
+        name: 'TogetherAI模型（代理TogetherAI）',
+        tag: ['TogetherAI', 'LLama2'],
+        type: 'llm',
+        icon: '',
+        iconText: 'Together.AI',
+        description: 'Together AI 包含LLama2, Mistral,零一，Vicuna等40多款大语言模型',
+        fcLink: 'https://fcnext.console.aliyun.com/applications/create?template=agentcraft-fm-togetherai-biz',
+        githubLink: 'https://github.com/devsapp/agentcraft-fm-togetherai-biz',
+        template: 'agentcraft-fm-togetherai-biz',
+        templateParams: {
+            type: 'object',
+            additionalProperties: false,
+            required: ['region', 'apiKey'],
+            properties: {
+                region: {
+                    type: 'string',
+                    title: '地域',
+                    default: 'cn-hangzhou',
+                    description: '该服务所在的地域',
+                    enum: ['cn-beijing', 'cn-hangzhou'],
+                    uiType: 'select',
+                    dataSource: [{ label: '杭州', value: 'cn-hangzhou' }, { label: '北京', value: 'cn-beijing' }]
+                },
+                apiKey: {
+                    type: 'string',
+                    title: 'TogetherAI平台 ApiKey',
+                    description: '访问TogetherApi所需的KEY<a href="https://api.together.xyz/settings/api-keys" target="_blank">申请地址</a>',
+                    default: '',
+                    uiType: 'password'
+                }
+
+            }
+        }
+    }, ,
+    {
+        name: '通义千问开源版7b模型（私有化部署）',
+        tag: ['通义千问', '开源'],
         type: 'llm',
         icon: 'https://img.alicdn.com/imgextra/i4/O1CN01c26iB51UyR3MKMFvk_!!6000000002586-2-tps-124-122.png',
         description: '开源版本通义千问，支持灵活定制， 性能强劲，推理能力强',
@@ -131,10 +201,11 @@ export const FOUNDATION_MODEL_TEMPLATES = [
             }
         }
     }, {
-        name: 'chatglm2开源版(6b,in4量化)',
-        tag: ['阿里云', 'chatglm2', '开源'],
+        name: 'chatglm2开源版6b（私有化部署）',
+        tag: ['chatglm2', '开源'],
         type: 'llm',
-        icon: 'https://img.alicdn.com/imgextra/i1/O1CN019AaX8Q26UcjmzSLTF_!!6000000007665-2-tps-200-200.png',
+        icon: '',
+        iconText: 'Chatglm2-6b',
         description: '开源chatglm2，支持灵活定制， 性能强劲，推理能力强',
         fcLink: 'https://fcnext.console.aliyun.com/applications/create?template=fc-llm-api',
         githubLink: 'https://github.com/devsapp/fc-llm-api',
@@ -186,14 +257,15 @@ export const FOUNDATION_MODEL_TEMPLATES = [
             }
         }
     }, {
-        name: 'llama2开源版(13b,in4量化)',
-        tag: ['阿里云', 'llama2', '开源'],
+        name: 'chatglm3开源版6b（私有化部署）',
+        tag: ['chatglm3', '开源'],
         type: 'llm',
-        icon: 'https://img.alicdn.com/imgextra/i1/O1CN019AaX8Q26UcjmzSLTF_!!6000000007665-2-tps-200-200.png',
-        description: '开源llama2，支持灵活定制， 性能强劲，推理能力强',
-        fcLink: 'https://fcnext.console.aliyun.com/applications/create?template=fc-llm-api',
-        githubLink: 'https://github.com/devsapp/fc-llm-api',
-        template: 'fc-llm-api',
+        icon: '',
+        iconText: 'Chatglm3-6b',
+        description: '开源chatglm3 6b模型',
+        fcLink: 'https://fcnext.console.aliyun.com/applications/create?template=agentcraft-fm-chatglm3-6b-opensource',
+        githubLink: 'https://github.com/devsapp/agentcraft-fm-chatglm3-6b-opensource',
+        template: 'agentcraft-fm-chatglm3-6b-opensource',
         templateParams: {
             type: 'object',
             additionalProperties: false,
@@ -212,7 +284,63 @@ export const FOUNDATION_MODEL_TEMPLATES = [
                     type: 'string',
                     title: '模型名称',
                     description: '模型名称',
-                    default: 'llama2-13b-q4',
+                    default: 'chatglm2-6b-int4',
+                    uiType: 'input'
+                },
+                adminEnabled: {
+                    type: 'string',
+                    title: '',
+                    description: '',
+                    default: false,
+                    hiddenUI: true,
+
+                },
+                serviceName: {
+                    type: 'string',
+                    title: '服务名',
+                    description: '',
+                    default: 'AgentCraft',
+                    hiddenUI: true,
+                },
+                clientPassword: {
+                    type: 'string',
+                    title: '客户端访问密码',
+                    description: '',
+                    default: '',
+                    hiddenUI: true,
+                }
+
+            }
+        }
+    }, {
+        name: 'llama2开源版13b,in4量化(私有化部署)',
+        tag: ['llama2', '开源'],
+        type: 'llm',
+        icon: '',
+        iconText: 'LLAMA2',
+        description: '开源llama2，支持灵活定制， 性能强劲，推理能力强',
+        fcLink: 'https://fcnext.console.aliyun.com/applications/create?template=fc-llm-api',
+        githubLink: 'https://github.com/devsapp/fc-llm-api',
+        template: 'fc-llm-api',
+        templateParams: {
+            type: 'object',
+            additionalProperties: false,
+            required: ['region', 'llmModel'],
+            properties: {
+                region: {
+                    type: 'string',
+                    title: '地域',
+                    default: 'cn-hangzhou',
+                    description: '该服务所在的地域',
+                    enum: ['cn-hangzhou', 'cn-shanghai'],
+                    uiType: 'select',
+                    dataSource: [{ label: '杭州', value: 'cn-hangzhou' }, { label: '北京', value: 'cn-beijing' }]
+                },
+                llmModel: {
+                    type: 'string',
+                    title: '模型名称',
+                    description: '模型名称',
+                    default: 'chatglm3-6b',
                     uiType: 'input'
                 },
                 adminEnabled: {

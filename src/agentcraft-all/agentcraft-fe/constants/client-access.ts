@@ -1,12 +1,8 @@
-
 export const enum ROBOT_NAME_VALUE {
     DING_TALK = 'dingtalk',
     WECHAT = 'wechat'
 }
-export const enum AGENT_TYPE {
-    KNOWLEDGEBASE = 'knowledgeBase',
-    ASSISTANT = 'assistant'
-}
+
 
 export const enum WEB_NAME_VALUE {
     CHATGPT_NEXTJS_WEB = 'chatgpt-next-web'

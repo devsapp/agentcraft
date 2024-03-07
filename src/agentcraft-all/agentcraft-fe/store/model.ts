@@ -1,8 +1,8 @@
 
 import { create } from "zustand";
 import { devtools } from "zustand/middleware";
-import { ModelRequestPayload, Model } from "@/types/model";
-import { request } from '@/utils/clientRequest';
+import { ModelRequestPayload, Model } from "types/model";
+import { request } from 'utils/clientRequest';
 
 interface ModelStore {
     modelList: Model[],

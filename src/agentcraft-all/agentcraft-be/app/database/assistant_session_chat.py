@@ -20,15 +20,18 @@ class AssistantSessionChat(postgresql.BaseModel):
     chat = relationship("Chat")
 
 
-
-def list_chats_by_session_id(
-        assistant_session_id: int, page: int = 0, limit: int = 3000) -> list[Any]:
+def list_assistant_session_chat_id_by_session_id(
+        assistant_session_id: int, page: int = 0, limit: int = 20) -> list[Any]:
     """根据assistant id获取数据集"""
     with Session(postgresql.postgres) as session:
-        return session.query(
-            AssistantSessionChat, Chat.prompt).filter(
+        data = session.query(AssistantSessionChat).filter(
             AssistantSessionChat.assistant_session_id == assistant_session_id).join(
-            AssistantSessionChat.chat).offset(page*limit).limit(limit).all()
+            AssistantSessionChat.chat).order_by(AssistantSessionChat.id.desc()).offset(page*limit).limit(limit).all()
+        total = session.query(AssistantSessionChat).filter(
+            AssistantSessionChat.assistant_session_id == assistant_session_id).join(
+            AssistantSessionChat.chat).count()
+        sorted_data = sorted([vars(chat) for chat in data], key=lambda x: x['id'], reverse=True)
+        return sorted_data, total
 
 
 def bulk_insert(assistant_session_id: int, exact_chats: list[int], fuzzy_chats: list[int]):
