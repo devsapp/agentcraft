@@ -264,7 +264,7 @@ export function AgentPage(props: any) {
                     新建
                 </Button>
             </Box>
-            <Box className={'content-container'} >
+            <Box className={'content-container'} pb={124} >
                 <List {...props} />
             </Box>
             <ChooseAgentDialog {...props} />

@@ -11,7 +11,7 @@ template:
     vpcConfig: auto
 resources:
   agentcraft-backend:
-    component: fc3@0.0.14
+    component: fc3
     props:
       region: ${vars.region}
       handler: index.handler
@@ -69,7 +69,7 @@ resources:
     extend:
       name: AgentCraftAll
   agentcraft-backend-domain:
-    component: fc3-domain@0.0.7
+    component: fc3-domain
     props:
       region: ${vars.region}
       domainName: auto
@@ -79,7 +79,7 @@ resources:
           - path: /*
             functionName: ${vars.beFunctionName}
   agentcraft-frontend:
-    component: fc3@0.0.14
+    component: fc3
     # actions:
     #   pre-deploy:
     #     - run: npm i --production -f
@@ -128,7 +128,7 @@ resources:
     extend:
       name: AgentCraftAll
   agentcraft-frontend-domain:
-    component: fc3-domain@0.0.7
+    component: fc3-domain
     props:
       region: ${vars.region}
       domainName: auto
