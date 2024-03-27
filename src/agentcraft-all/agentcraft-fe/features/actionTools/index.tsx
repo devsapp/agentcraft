@@ -170,9 +170,9 @@ export function ChooseModal() {
     return (
         <Modal opened={openToChoose} onClose={() => { setOpenToChoose(false) }} title={'执行工具'} centered size="50%" closeOnClickOutside={false} >
             <LoadingOverlay visible={loadingForChoose} overlayOpacity={0.6} loader={<Flex align={'center'} direction="column"><Flex align={'center'} >部署执行工具大约需要1分钟，请耐心等待<Loader variant="bars" color={'pink'} ml={12} /></Flex></Flex>} />
-            <Flex wrap={'wrap'} justify={'flex-start'} pb={24} pl={12}>
+            <Flex wrap={'wrap'} justify={'space-around'} pb={24} pl={12}>
                 {ACTION_TOOL_TEMPLATES.map((item: any, index: number) => {
-                    return <Box key={`template-${index}-${item.tag.join('-')}`} mr={12} mb={12} onClick={() => createActionTools(item)} className={styles['action-tool-card']}>
+                    return <Box key={`template-${index}-${item.tag.join('-')}`} mb={12} onClick={() => createActionTools(item)} className={styles['action-tool-card']}>
                         <ActionToolCard data={item} />
                     </Box>
                 })}

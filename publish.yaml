@@ -5,12 +5,16 @@ Effective: Public
 Name: AgentCraft
 Provider:
   - 阿里云
-Version: 0.0.13 #dev0.0.57
-Description: Serverless架构的Agent平台，可以构建知识库智能体，工具集智能体等
+Version: 0.0.17 #dev0.0.57
+Description: 基于Serverless架构的开源智能体平台，可以快速构建构内容提取、知识库、图文生成助手等智能应用
 HomePage: https://github.com/devsapp/agentcraft
 Tags: #标签详情
   - 部署函数
 Category: Web框架
+Service: 
+  函数计算: # 取值内容参考：https://api.devsapp.cn/v3/common/args.html
+    Authorities: #权限描述
+      - 创建函数 # 所需要的权限
 Parameters:
   type: object
   additionalProperties: false # 不允许增加其他属性

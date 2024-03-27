@@ -60,12 +60,12 @@ export async function getWorkspaceListAndSetCurrent() {
     const { currentWorkspace, setCurrentWorkspace } = _localState;
     const data = await getWorkspaceList();
     if (data) {
-        updateAppList(data);
         if (!currentWorkspace) {
             setCurrentWorkspace(data[0].id);
         } else {
             setCurrentWorkspace(currentWorkspace);
         }
+        updateAppList(data);
     }
 
 }

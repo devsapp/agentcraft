@@ -16,7 +16,6 @@ interface DOMAIN_DATA {
 function getLLMServiceUrl(currentFoundationModel: any) {
     try {
         const output = currentFoundationModel.output;
-        console.log(output)
         const deploy = output?.deploy || {};
 
         const allFunctions = Object.keys(deploy).filter((key: string) => FM_TEMPLATE_ACCESS_API_FUNCTION_MAP[currentFoundationModel.appConfig.template] === key);

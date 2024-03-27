@@ -19,6 +19,38 @@ export const MODEL_NAME_LIST = [{
     value: 'qwen-max-longcontext',
     group: '通义系列'
 }, {
+    label: 'moonshot-v1-128k',
+    value: 'moonshot-v1-128k',
+    group: '月之暗面AI系列'
+}, {
+    label: 'moonshot-v1-32k',
+    value: 'moonshot-v1-32k',
+    group: '月之暗面AI系列'
+}, {
+    label: 'moonshot-v1-8k',
+    value: 'moonshot-v1-8k',
+    group: '月之暗面AI系列'
+}, {
+    label: 'Baichuan2-53B',
+    value: 'Baichuan2-53B',
+    group: '百川AI系列'
+}, {
+    label: 'Baichuan2-Turbo-192k',
+    value: 'Baichuan2-Turbo-192k',
+    group: '百川AI系列'
+}, {
+    label: 'Baichuan2-Turbo',
+    value: 'Baichuan2-Turbo',
+    group: '百川AI系列'
+}, {
+    label: 'yi-34b-chat-200k',
+    value: 'yi-34b-chat-200k',
+    group: '零一万物AI系列'
+}, {
+    label: 'yi-34b-chat-0205',
+    value: 'yi-34b-chat-0205',
+    group: '零一万物AI系列'
+}, {
     label: 'ZHIPUAI-glm-4-128k',
     value: 'glm-4',
     group: '智普AI系列'

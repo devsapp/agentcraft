@@ -26,7 +26,9 @@ export const useSystemConfigStore = create<any>(persist(
         hiddenConfigView: false,
         embeddingConfig: {
             EMBEDDING_DIM: '1024',
-            EMBEDDING_URL: ''
+            EMBEDDING_URL: '',
+            EMBEDDING_INTRANET_URL: '', // 内网
+            EMBEDDING_INTERNET_URL: '' // 外网
         },
         databaseConfig: {
             POSTGRES_HOST: '',

@@ -44,7 +44,7 @@ function Add() {
 
     return (
         <Modal opened={open} onClose={() => { setOpen(false) }} title="创建数据集" centered size={'lg'}>
-            <div style={{ position: 'relative'}}>
+            <div style={{ position: 'relative' }}>
                 <LoadingOverlay
                     loader={<Flex align={'center'} direction="column"><Flex align={'center'} bg="white" p={12}>创建数据集&数据源预计花费1-2分钟，请耐心等待<Loader variant="bars" color={'pink'} ml={12} /></Flex></Flex>}
                     overlayOpacity={0.3}
@@ -146,7 +146,7 @@ export function QuickStart({ workspaceId }: any) {
             name: '',
             prompt_template: PROMPT_TEMPLATE,
             description: '',
-            app_id: parseInt(workspaceId),
+            app_id: '',
             exact_datasets: [],
             fuzzy_datasets: [],
             exact_search_similarity: 0.9,
@@ -177,7 +177,7 @@ export function QuickStart({ workspaceId }: any) {
             name: '',
             description: '',
             retrieval_prompt_template: DATA_RETRIVAL_PROMPT_TEMPLATE,
-            app_id: parseInt(workspaceId),
+            app_id: '',
             exact_datasets: [],
             fuzzy_datasets: [],
             action_tools: [],
@@ -212,7 +212,7 @@ export function QuickStart({ workspaceId }: any) {
             name: '',
             description: '',
             prompt_template: '',
-            app_id: parseInt(workspaceId),
+            app_id: '',
             exact_datasets: [],
             fuzzy_datasets: [],
             exact_search_similarity: 0.9,
@@ -331,6 +331,23 @@ export function QuickStart({ workspaceId }: any) {
         getModelList();
     }, []);
     useEffect(() => {
+        if (workspaceId) {
+            let app_id;
+            try {
+                app_id = parseInt(workspaceId);
+            } catch (e) {}
+            instructionChatForm.setValues({
+                app_id
+            });
+            knowledgeBaseForm.setValues({
+                app_id
+            });
+            assistantForm.setValues({
+                app_id
+            });
+        }
+    }, [workspaceId])
+    useEffect(() => {
         if (modelList.length > 0) {
             const model_id = modelList[0].id;
             instructionChatForm.setValues({
@@ -341,7 +358,7 @@ export function QuickStart({ workspaceId }: any) {
             });
             assistantForm.setValues({
                 model_id
-            })
+            });
         }
     }, [modelList]);
     const modelSelectData: any = modelList.map((item: Model) => { return { label: item.name_alias, value: item.id } });
@@ -362,7 +379,7 @@ export function QuickStart({ workspaceId }: any) {
                         </div>
                     </div>
                 </Stepper.Step>
-        
+
                 <Stepper.Step label="智能体创建" description="创建智能体" loading={knowledge_base_create_loading}>
                     <div style={{ position: 'relative' }}>
                         <LoadingOverlay

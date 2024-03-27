@@ -246,7 +246,7 @@ class ReasoningStream:
             "max_tokens": kwargs['max_tokens'],
             "stop": stop_words,
             "presence_penalty": kwargs['presence_penalty'],
-            # "frequency_penalty": kwargs['frequency_penalty'],
+            "frequency_penalty": kwargs['frequency_penalty'],
             "logit_bias":  {}
         })
         resp = requests.post(kwargs['url'], headers=headers, stream=True,
@@ -375,7 +375,7 @@ class ReasoningStream:
             "max_tokens": assistant.max_tokens,
             "stop_words": assistant.stop if assistant.stop else 'Observation:, Observation:\n',
             "presence_penalty": assistant.presence_penalty,
-            # "frequency_penalty": assistant.frequency_penalty,
+            "frequency_penalty": assistant.frequency_penalty,
             "logit_bias": assistant.logit_bias,
             "model_id": model.id if model else None,
             "token": model.token if model else None,

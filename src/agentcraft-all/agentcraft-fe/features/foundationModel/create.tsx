@@ -27,6 +27,7 @@ function LoadingStepper() {
 }
 
 function FoundationModelForm() {
+    const router = useRouter();
     const setOpen = useFoundationModelStore().setOpen;
     const setCreateLoading = useFoundationModelStore().setCreateLoading;
     const setAppStatus = useFoundationModelStore().setAppStatus;
@@ -111,7 +112,6 @@ function FoundationModelForm() {
 
     return (
         <>
-
             <Box maw={FORM_WIDTH} mx="auto">
                 {fmTemplate.properties && Object.keys(fmTemplate?.properties).map((key: string) => {
                     return <div key={key}>{renderFormUi(key, fmTemplate?.properties[key])}</div>
@@ -120,8 +120,6 @@ function FoundationModelForm() {
             <Box maw={FORM_WIDTH} mx="auto" pt={12} style={{ textAlign: 'right' }}>
                 <Button onClick={async () => {
                     form.validate();
-                    console.log(form.values);
-                    console.log(form.errors)
                     if (form.isValid()) {
                         try {
                             const appName = `${AGENTCRAFT_FM_PREFIX}_${nanoid()}`;
@@ -130,7 +128,7 @@ function FoundationModelForm() {
                             const data = await addFoundationModel(fmTemplate.template, Object.assign({}, form.values, { name: appName }));
                             const name = data.name;
                             await checkAppStatus(name);
-
+                            router.push('/foundationModel');
                         } catch (e) {
                             console.log(e);
                         }
@@ -286,7 +284,7 @@ export function CreateFoundationModel() {
             <Flex justify={'flex-start'} align={'center'} mt={12} >
                 <Flex align={'center'} h={'100%'} >
                     <ActionIcon onClick={() => {
-                        router.push('/foundationModel')
+                        router.push('/foundationModel');
                     }}>
                         <IconArrowBackUp />
                     </ActionIcon>

@@ -1,6 +1,8 @@
 import React, { useEffect } from "react";
 import { useRouter } from 'next/router'
-import { Breadcrumbs, Anchor, Button, Text, Flex, Card, Image, Group, Badge } from '@mantine/core';
+import { Breadcrumbs, Anchor, Button, Text, Flex, Card, Image, Group, Badge, ActionIcon, Title } from '@mantine/core';
+
+import { IconArrowBackUp } from '@tabler/icons-react';
 import FeatureDescription from 'components/FeatureDescription';
 
 
@@ -20,7 +22,20 @@ export function CreateClientAccess() {
     return (
         <>
             {/* <Breadcrumbs>{items}</Breadcrumbs> */}
-            <FeatureDescription title="客户端接入服务" description="AgentCraft通过引导及直接创建的方式帮助构建您的专属客户端服务，如web网站，钉钉，企业微信等" />
+            <Flex justify={'flex-start'} align={'center'} mt={12} >
+                <Flex align={'center'} h={'100%'} >
+                    <ActionIcon onClick={() => {
+                        router.push('/clientAccess')
+                    }}>
+                        <IconArrowBackUp />
+                    </ActionIcon>
+                    <Title order={4}>客户端接入</Title>
+                </Flex>
+            </Flex>
+            <Title order={5} mb={8}>
+                通过引导及直接创建的方式帮助构建您的专属客户端服务，如web网站，钉钉，企业微信等
+            </Title>
+            {/* <FeatureDescription title="客户端接入服务" description="AgentCraft通过引导及直接创建的方式帮助构建您的专属客户端服务，如web网站，钉钉，企业微信等" /> */}
             <Flex
                 mt={12}
                 mih={50}

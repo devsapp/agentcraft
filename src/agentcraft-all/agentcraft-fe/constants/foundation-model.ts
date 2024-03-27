@@ -1,7 +1,10 @@
 export const AGENTCRAFT_FM_QWEN_BIZ = 'agentcraft-fm-qwen-biz';
-export const AGENTCRAFT_FM_DASHSCOPE_BIZ ='agentcraft-fm-dashscope-biz';
-export const AGENTCRAFT_FM_ZHIPUAI_BIZ ='agentcraft-fm-zhipuai-biz';
-export const AGENTCRAFT_FM_TOGETHERAI_BIZ ='agentcraft-fm-togetherai-biz';
+export const AGENTCRAFT_FM_DASHSCOPE_BIZ ='agentcraft-fm-dashscope-biz'; 
+export const AGENTCRAFT_FM_ZHIPUAI_BIZ ='agentcraft-fm-zhipuai-biz'; //智谱AI
+export const AGENTCRAFT_FM_BAICHUANAI_BIZ ='agentcraft-fm-baichuanai-biz'; // 百川AI
+export const AGENTCRAFT_FM_LINGYIAI_BIZ ='agentcraft-fm-lingyiai-biz'; // 零一万物
+export const AGENTCRAFT_FM_MOONSHOTAI_BIZ ='agentcraft-fm-moonshotai-biz'; // 月之暗面  
+export const AGENTCRAFT_FM_TOGETHERAI_BIZ ='agentcraft-fm-togetherai-biz'; // together ai
 export const AGENTCRAFT_FM_CHATGLM2_OPENSOURCE = 'agentcraft-fm-chatglm2-opensource';
 export const AGENTCRAFT_FM_CHATGLM3_OPENSOURCE = 'agentcraft-fm-chatglm3-opensource';
 export const AGENTCRAFT_FM_LLAMA2_OPENSOURCE = 'agentcraft-fm-llama2-opensource';
@@ -14,6 +17,9 @@ export const FM_NAME_MAP: any = {
     [AGENTCRAFT_FM_QWEN_BIZ]: '通义千问商业版',
     [AGENTCRAFT_FM_DASHSCOPE_BIZ]: 'DashscopeAI',
     [AGENTCRAFT_FM_ZHIPUAI_BIZ]:'智普AI',
+    [AGENTCRAFT_FM_BAICHUANAI_BIZ]:'百川AI',
+    [AGENTCRAFT_FM_LINGYIAI_BIZ]:'零一万物AI',
+    [AGENTCRAFT_FM_MOONSHOTAI_BIZ]:'月之暗面AI',
     [AGENTCRAFT_FM_TOGETHERAI_BIZ]:'TogetherAI',
     [AGENTCRAFT_FM_CHATGLM2_OPENSOURCE]: 'Chatglm2-6b开源',
     [AGENTCRAFT_FM_CHATGLM3_OPENSOURCE]: 'Chatglm3-6b开源',
@@ -26,6 +32,9 @@ export const FM_TEMPLATE_ACCESS_API_FUNCTION_MAP: any = {
     [AGENTCRAFT_FM_DASHSCOPE_BIZ]: 'apiServer',
     [AGENTCRAFT_FM_TOGETHERAI_BIZ]: 'apiServer',
     [AGENTCRAFT_FM_ZHIPUAI_BIZ]:  'apiServer',
+    [AGENTCRAFT_FM_BAICHUANAI_BIZ]:  'apiServer',
+    [AGENTCRAFT_FM_LINGYIAI_BIZ]:  'apiServer',
+    [AGENTCRAFT_FM_MOONSHOTAI_BIZ]:  'apiServer',
     'fc-llm-api': 'llm-server',
 }
 
@@ -72,6 +81,112 @@ export const FOUNDATION_MODEL_TEMPLATES = [
                     default: '',
                     uiType: 'password'
                 }
+            }
+        }
+    },
+
+    {
+        name: '月之暗面AI模型（代理MoonshotAI）',
+        tag: ['月之暗面AI', 'Kimi'],
+        type: 'llm',
+        icon: '',
+        iconText: '月之暗面.AI',
+        description: '月之暗面AI 包含moonshot-v1-8k，moonshot-v1-32k，moonshot-v1-128k大语言模型',
+        fcLink: 'https://fcnext.console.aliyun.com/applications/create?template=agentcraft-fm-moonshotai-biz',
+        githubLink: '',
+        template: 'agentcraft-fm-moonshotai-biz',
+        templateParams: {
+            type: 'object',
+            additionalProperties: false,
+            required: ['region', 'apiKey'],
+            properties: {
+                region: {
+                    type: 'string',
+                    title: '地域',
+                    default: 'cn-hangzhou',
+                    description: '该服务所在的地域',
+                    enum: ['cn-beijing', 'cn-hangzhou'],
+                    uiType: 'select',
+                    dataSource: [{ label: '杭州', value: 'cn-hangzhou' }, { label: '北京', value: 'cn-beijing' }]
+                },
+                apiKey: {
+                    type: 'string',
+                    title: 'Moonshot AI开放平台 ApiKey',
+                    description: '访问Moonshot AI开放平台 所需的KEY<a href="https://platform.moonshot.cn/console/api-keys" target="_blank">申请地址</a>',
+                    default: '',
+                    uiType: 'password'
+                }
+
+            }
+        }
+    },
+    {
+        name: '百川AI模型（代理百川AI）',
+        tag: ['百川AI'],
+        type: 'llm',
+        icon: '',
+        iconText: '百川.AI',
+        description: '百川AI 包含Baichuan2-Turbo,Baichuan2-Turbo-192k,Baichuan2-53B大语言模型',
+        fcLink: 'https://fcnext.console.aliyun.com/applications/create?template=agentcraft-fm-baichuanai-biz',
+        githubLink: '',
+        template: 'agentcraft-fm-baichuanai-biz',
+        templateParams: {
+            type: 'object',
+            additionalProperties: false,
+            required: ['region', 'apiKey'],
+            properties: {
+                region: {
+                    type: 'string',
+                    title: '地域',
+                    default: 'cn-hangzhou',
+                    description: '该服务所在的地域',
+                    enum: ['cn-beijing', 'cn-hangzhou'],
+                    uiType: 'select',
+                    dataSource: [{ label: '杭州', value: 'cn-hangzhou' }, { label: '北京', value: 'cn-beijing' }]
+                },
+                apiKey: {
+                    type: 'string',
+                    title: '百川AI开放平台 ApiKey',
+                    description: '访问百川 AI开放平台 所需的KEY<a href="https://platform.baichuan-ai.com/console/apikey" target="_blank">申请地址</a>',
+                    default: '',
+                    uiType: 'password'
+                }
+
+            }
+        }
+    },
+    {
+        name: '零一万物AI模型（代理零一万物AI）',
+        tag: ['零一万物AI'],
+        type: 'llm',
+        icon: '',
+        iconText: '零一万物.AI',
+        description: '零一万物AI 包含yi-34b-chat-0205,yi-34b-chat-200k大语言模型',
+        fcLink: 'https://fcnext.console.aliyun.com/applications/create?template=agentcraft-fm-lingyiai-biz',
+        githubLink: '',
+        template: 'agentcraft-fm-lingyiai-biz',
+        templateParams: {
+            type: 'object',
+            additionalProperties: false,
+            required: ['region', 'apiKey'],
+            properties: {
+                region: {
+                    type: 'string',
+                    title: '地域',
+                    default: 'cn-hangzhou',
+                    description: '该服务所在的地域',
+                    enum: ['cn-beijing', 'cn-hangzhou'],
+                    uiType: 'select',
+                    dataSource: [{ label: '杭州', value: 'cn-hangzhou' }, { label: '北京', value: 'cn-beijing' }]
+                },
+                apiKey: {
+                    type: 'string',
+                    title: '零一万物AI开放平台 ApiKey',
+                    description: '访问零一万物 AI开放平台 所需的KEY<a href="https://platform.lingyiwanwu.com/apikeys" target="_blank">申请地址</a>',
+                    default: '',
+                    uiType: 'password'
+                }
+
             }
         }
     },

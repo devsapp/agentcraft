@@ -4,7 +4,7 @@ import { nanoid } from 'nanoid';
 import { modals } from '@mantine/modals';
 import { Paper, Stepper, Anchor, Button, TextInput, Text, LoadingOverlay, Flex } from '@mantine/core';
 import { useFoundationModelStore, addFoundationModel, getFoundationModel, APP_STATUS } from 'store/foundationModel';
-import { SYSTEM_AGENTCRAFT_PREFIX , AGENTCRAFT_SERVICE, AGENTCRAFT_FUNCTION, EMBEDDING_TEMPLATE_NAME } from 'constants/system-config';
+import { SYSTEM_AGENTCRAFT_PREFIX, AGENTCRAFT_SERVICE, AGENTCRAFT_FUNCTION, NEW_EMBEDDING_TEMPLATE_NAME } from 'constants/system-config';
 import { useSystemConfigStore } from '@/store/systemConfig';
 // import styles from './index.module.scss';
 
@@ -32,6 +32,8 @@ export default function EmbeddingConfig({ form }: any) {
     const createLoading = useFoundationModelStore().createLoading;
     const setAppStatus = useFoundationModelStore().setAppStatus;
     const completeConfig = useSystemConfigStore().completeConfig;
+    const embeddingConfig = useSystemConfigStore().embeddingConfig;
+    const setEmbeddingConfing = useSystemConfigStore().setEmbeddingConfig;
     const setAppName = useFoundationModelStore().setAppName;
     function checkAppStatus(appName: string): Promise<any> {
 
@@ -75,11 +77,11 @@ export default function EmbeddingConfig({ form }: any) {
             labels: { confirm: '确定', cancel: '取消' },
             onCancel: () => console.log('Cancel'),
             onConfirm: async () => {
-                const templateName = EMBEDDING_TEMPLATE_NAME;
+                const templateName = NEW_EMBEDDING_TEMPLATE_NAME;
                 const parameters: any = {
                     region: completeConfig.regionId || 'cn-hangzhou',
-                    serviceName: AGENTCRAFT_SERVICE,
-                    functionName: `${AGENTCRAFT_FUNCTION}_${nanoid()}`,
+                    // serviceName: AGENTCRAFT_SERVICE,
+                    // functionName: `${AGENTCRAFT_FUNCTION}_${nanoid()}`,
                     description: 'Embedding算法服务【作为AgentCraft服务的核心依赖，请谨慎删除】'
                 }
                 try {
@@ -91,28 +93,40 @@ export default function EmbeddingConfig({ form }: any) {
                     setAppName(name);
                     const result = await checkAppStatus(name);
                     const embeddingService: any = result?.output?.deploy['embedding-service'];
-                    const embeddingUrl = embeddingService?.customDomains[0]?.domainName;
-                    const fullEmbeddingUrl = `http://${embeddingUrl}/embedding`;
+                    const embeddingIntranetUrl = embeddingService?.url?.system_intranet_url;
+                    const fullEmbeddingIntranetUrl = `${embeddingIntranetUrl}/embedding`;
+                    const embeddingServiceDomain: any = result?.output?.deploy['embedding-service-domain'];
+                    const embeddingInternetUrl = embeddingServiceDomain?.domainName;
+                    const fullEmbeddingInternetUrl = `http://${embeddingInternetUrl}`;
                     form.setValues({
-                        EMBEDDING_URL: fullEmbeddingUrl
-                    })
-
+                        EMBEDDING_URL: fullEmbeddingIntranetUrl
+                    });
+                    setEmbeddingConfing({
+                        EMBEDDING_DIM: form.values['EMBEDDING_DIM'],
+                        EMBEDDING_URL: fullEmbeddingIntranetUrl,
+                        EMBEDDING_INTRANET_URL: fullEmbeddingIntranetUrl, // 内网
+                        EMBEDDING_INTERNET_URL: fullEmbeddingInternetUrl
+                    });
                 } catch (e) {
                     console.log(e);
                 }
                 setCreateLoading(false);
             },
         });
-
-
     }
+
+    const embedding_internet_url = embeddingConfig.EMBEDDING_INTERNET_URL;
     return (
         <Paper shadow="xs" p="xl">
             <LoadingOverlay loader={<LoadingStepper />} visible={createLoading} overlayOpacity={0.8} overlayBlur={2} />
             <TextInput withAsterisk label="向量维度" description="向量的维度设置，跟使用embedding算法相关，并且在数据库持久化的时候不能修改" defaultValue={'1024'} placeholder="" {...form.getInputProps('EMBEDDING_DIM')} />
             <Flex align={'center'}>
-                <TextInput label="embedding服务访问地址" description="AgentCraft需要访问embedding服务地址，进行上下文的向量化处理, 在知识库场景下是必须要依赖的选项" style={{ width: '85%' }} {...form.getInputProps('EMBEDDING_URL')} defaultValue={completeConfig.EMBEDDING_URL || ''} /> <Button variant="subtle" mt={42} ml={4} onClick={createEmbeddingService}>快速获取embedding服务</Button>
+                <TextInput label="embedding服务访问地址" description="通过系统创建的embedding服务地址为安全的内部网络地址，不可以直接访问" style={{ width: '85%' }} {...form.getInputProps('EMBEDDING_URL')} defaultValue={completeConfig.EMBEDDING_URL || ''} /> 
+                <Button variant="subtle" mt={42} ml={4} onClick={createEmbeddingService}>快速获取embedding服务</Button>
             </Flex>
+            {embedding_internet_url ? <Flex align={'flex-start'}>
+                <Anchor href={embedding_internet_url} target="_blank">测试embedding服务</Anchor>
+            </Flex> : null}
         </Paper>
     );
 }

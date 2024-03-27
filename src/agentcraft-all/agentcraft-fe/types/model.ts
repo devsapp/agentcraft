@@ -19,3 +19,9 @@ export interface Model {
     modified: string,
     timeout: number
 }
+
+
+export interface FM_INFO {
+    system_intranet_url: string,
+    app_template: string
+}

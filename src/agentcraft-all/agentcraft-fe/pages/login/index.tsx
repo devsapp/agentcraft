@@ -3,6 +3,7 @@ import Link from 'next/link'
 import { Paper, TextInput, PasswordInput, Button, LoadingOverlay, Flex, Loader } from '@mantine/core';
 import { notifications } from '@mantine/notifications';
 import { useForm } from '@mantine/form';
+import NewBieGuid from 'layouts/newbie-guid';
 import { useRouter } from 'next/router';
 import { login } from 'store/authentication';
 
@@ -23,18 +24,18 @@ const LoginPage = () => {
 
     const handleSubmit = async () => {
         form.validate();
-        if(form.isValid()) {
-             try {
+        if (form.isValid()) {
+            try {
                 setLoading(true)
                 const { username, password } = form.values;
-                const result:any = await login(username, password);
+                const result: any = await login(username, password);
                 if (!result.success) {
                     notifications.show({
                         title: '登录失败',
                         message: '请检查账号密码是否正确',
                         color: 'red',
                     });
-                   
+
                 } else {
                     notifications.show({
                         title: '登录成功',
@@ -52,7 +53,8 @@ const LoginPage = () => {
 
     return (
         <div style={{ maxWidth: 400, margin: '200px auto', paddingTop: '2rem' }}>
-             <LoadingOverlay
+            <NewBieGuid />
+            <LoadingOverlay
                 loader={<Flex align={'center'} direction="column"><Flex align={'center'} ><Loader variant="bars" color={'pink'} ml={12} /></Flex></Flex>}
                 overlayOpacity={0.3}
                 overlayColor="#c5c5c5"

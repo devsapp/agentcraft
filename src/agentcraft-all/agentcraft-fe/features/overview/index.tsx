@@ -28,7 +28,7 @@ export function OverView() {
             const data = result.data || { openApiUrl: '', innerApiUrl: '' }
             setAccessUrl(data);
         })()
-    }, [])
+    }, []);
     return (
         <>
             {autoQuickStart && <Paper shadow="xs" p="xl" mt={24} >
@@ -111,7 +111,7 @@ export function OverView() {
                                     </Flex>
                                     <div>
                                         <Title order={4} mt={8}>交流群</Title>
-                                        <img style={{ width: 160, height: 160 }} src="https://img.alicdn.com/imgextra/i2/O1CN01zGJ4fS21GMJy6Okd8_!!6000000006957-0-tps-470-472.jpg" alt="交流群" />
+                                        <img style={{ width: 160, height: 160 }} src="https://img.alicdn.com/imgextra/i3/O1CN01cweOtQ1EEbgBlp4ch_!!6000000000320-2-tps-474-478.png" alt="交流群" />
                                     </div>
                                 </Paper>
                                 <Paper shadow="xs" p="xl" mb={24} withBorder >

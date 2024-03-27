@@ -4,8 +4,9 @@ import Link from 'next/link'
 import { Paper, TextInput, PasswordInput, Button, LoadingOverlay, Flex, Loader } from '@mantine/core';
 import { useForm } from '@mantine/form';
 import { notifications } from '@mantine/notifications';
+import NewBieGuid from 'layouts/newbie-guid';
 import { DEFAULT_WORKSPACE_NAME, DEFAULT_WORKSPACE_DESCRIPTION } from 'constants/workspace';
-// import { HTTP_STATUS } from 'types/httpStatus';
+
 import { register } from 'store/authentication';
 import { addWorkspace } from 'store/workspace';
 
@@ -61,6 +62,7 @@ const LoginPage = () => {
 
     return (
         <div style={{ maxWidth: 400, margin: '200px auto', paddingTop: '2rem' }}>
+            <NewBieGuid />
             <LoadingOverlay
                 loader={<Flex align={'center'} direction="column"><Flex align={'center'} ><Loader variant="bars" color={'pink'} ml={12} /></Flex></Flex>}
                 overlayOpacity={0.3}

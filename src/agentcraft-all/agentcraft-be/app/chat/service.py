@@ -461,7 +461,7 @@ def model_chat(
         "n": agent.n_sequences,
         "max_tokens": agent.max_tokens,
         "presence_penalty": agent.presence_penalty,
-        "frequency_penalty": agent.frequency_penalty,
+        # "frequency_penalty": agent.frequency_penalty,
         "logit_bias": json.loads(agent.logit_bias) if agent.logit_bias else {}
     }
     if(agent.stop != []):
@@ -504,11 +504,11 @@ def model_chat_stream(
         search_choices: list, ip_addr: str, agent, chat_type: int, uid: str, created: int):
     """获取大模型的回答"""
     messages = build_messages(prompt, history, agent.system_message)
-    logger.info(messages)
     model = model_database.get_model_by_id(agent.model_id)
    
     if not model:
         raise ValueError("model does not exist")
+    logger.info(f"{model.token}")
     headers = {
         "Authorization": f"Bearer {model.token}",
         "Content-Type": "application/json"
@@ -519,17 +519,18 @@ def model_chat_stream(
         "stream": True,
         "temperature": agent.temperature,
         "top_p": agent.top_p,
-        "top_k": 50,
+        # "top_k": 50,    # OpenAI 不支持该参数
         "n": agent.n_sequences,
         "max_tokens": agent.max_tokens,
         "presence_penalty": agent.presence_penalty,
-        "frequency_penalty": agent.frequency_penalty,
+        # "frequency_penalty": agent.frequency_penalty, # 百川不支持该参数
         "logit_bias": json.loads(agent.logit_bias) if agent.logit_bias else {}
     }
     if(agent.stop != []):
         llm_request_options['stop'] = agent.stop
     request_data = json.dumps(llm_request_options)
-    logger.info(f"req{request_data}")
+    logger.info(f"request_data: {request_data}")
+    logger.info(f"{model.url}")
     req = requests.post(model.url, headers=headers, data=request_data,
                         stream=True, timeout=model.timeout)
     answer = [""]*agent.n_sequences

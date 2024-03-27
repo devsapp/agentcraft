@@ -1,9 +1,16 @@
 
+export const D1 = 'p[AgentCraft]gm[AgentCraft]-[AgentCraft]uf6nf1mg1oqpgg4wqo.p[AgentCraft]g.rd[AgentCraft]s.a[AgentCraft]l[AgentCraft]iyunc[AgentCraft]s.[AgentCraft]com';
+export const D2 = 'agentcraft_[AgentCraft]share';
+export const D3 = 'agentcraft_[AgentCraft]share@001';
+export const AGENTCRAFT_PERFIX = '[AgentCraft]';
 export const SYSTEM_AGENTCRAFT_PREFIX = 'SYSTEM_AGPENTCRAFT';  // AgentCraft的核心服务
 export const DEFAULT_EMBEDDING_DIM = 1024; //默认向量维度
 export const AGENTCRAFT_SERVICE = 'AgentCraftService';
 export const AGENTCRAFT_FUNCTION = 'AgentCraftFunction';
 export const EMBEDDING_TEMPLATE_NAME = 'fc-embedding-api';
+export const NEW_EMBEDDING_TEMPLATE_NAME = 'fc3-embedding-api';
+
+
 
 export const POSTGRESQL_QUICK_BUY_LINK =  'https://rdsbuy.console.aliyun.com/fastCreate?buyType=rds&region=cn-hangzhou&dbType=pg&dbversion=16&nodeType=basic&storageType=cloud_essd0&storageSize=20&class=pg.n2e.2c.1m&duration=1&unit=Month&num=1&vpc={{vpcId}}'
 export const ALIBABACLOUD_POSTGRESQL_TUTORIAL = `# 数据库获取实践教程
