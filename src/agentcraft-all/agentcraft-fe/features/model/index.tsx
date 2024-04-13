@@ -13,6 +13,8 @@ import { FM_NAME_MAP } from 'constants/foundation-model';
 import FeatureDescription from 'components/FeatureDescription';
 import { FORM_WIDTH } from 'constants/index';
 
+const CHAT_API_SUFIX = '/v1/chat/completions';
+
 export function List() {
     const modelList: Model[] = useModelStore().modelList;
     const loading: boolean = useModelStore().loading;
@@ -101,10 +103,10 @@ function AddOrUpdate() {
     const setOpen = useModelStore().setOpen;
     const setLoading = useModelStore().setLoading;
     const fmList = useModelStore().fmList;
-    const fmSelectData = fmList.map((item: FM_INFO) => ({ label: `${item.system_intranet_url} [${FM_NAME_MAP[item.app_template]}]`, value: item.system_intranet_url }));
+
     const currentModel: Model | undefined = useModelStore().currentModel;
     const [data, setData] = useState(MODEL_NAME_LIST);
-    const [fmData, setFmData] = useState(fmSelectData);
+    const [fmData, setFmData] = useState<any>([]);
     const initialValues = {
         name: '',
         name_alias: '',
@@ -121,6 +123,39 @@ function AddOrUpdate() {
             url: (value) => (/(http|https):\/\/(\w+:{0,1}\w*@)?(\S+)(:[0-9]+)?(\/|\/([\w#!:.?+=&%@!\-\/]))?/.test(value) ? null : '请输入合法的访问地址'),
         },
     });
+    function supplementCustomModelNameAndUrl(modelName: string, url: string) {
+        let modelNameExist = false;
+        let modelUrlExist = false;
+        data.forEach((item) => {
+            if (item.value === modelName) {
+                modelNameExist = true;
+            }
+        });
+        fmData.forEach((item: any) => {
+            if (item.value === url) {
+                modelUrlExist = true;
+            };
+        });
+        if (!modelNameExist) {
+            data.push({
+                label: modelName,
+                value: modelName,
+                group: '用户自定义'
+            });
+            setData(data);
+        };
+        if (!modelUrlExist) {
+            fmData.push({
+                label: url,
+                value: url
+            });
+            setFmData(fmData);
+        };
+    }
+    useEffect(() => {
+        const fmSelectData = fmList.map((item: FM_INFO) => ({ label: `[${FM_NAME_MAP[item.app_template]}] ${item.system_intranet_url}${CHAT_API_SUFIX} `, value: `${item.system_intranet_url}${CHAT_API_SUFIX}` }));
+        setFmData(fmSelectData);
+    }, [fmList]);
     useEffect(() => {
         if (isEdit) {
             form.setValues({
@@ -130,7 +165,9 @@ function AddOrUpdate() {
                 token: currentModel?.token || '',
                 timeout: currentModel?.timeout || DEFAULT_MODEL_REQUEST_TIMEOUT,
                 description: currentModel?.description || ''
-            })
+            });
+            supplementCustomModelNameAndUrl(currentModel?.name || '', currentModel?.url || '');
+
         }
 
     }, [currentModel]);
@@ -169,8 +206,8 @@ function AddOrUpdate() {
                         creatable
                         getCreateLabel={(query) => `+ Create ${query}`}
                         onCreate={(query) => {
-                            const item = { value: query, label: query, group: '其他' };
-                            setFmData((current) => [...current, item]);
+                            const item = { value: query, label: query };
+                            setFmData((current: any) => [...current, item]);
                             return item;
                         }}
                     /></Box>

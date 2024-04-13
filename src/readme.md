@@ -92,7 +92,7 @@
 <usedetail id="flushContent">
 
 ### 创建及部署AgentCraft应用
-1.访问Serverless开发中心, 选择 AgentCraft 应用模板进行部署
+1.访问Serverless开发平台, 选择 AgentCraft 应用模板进行部署
 
 2.在应用创建详情，根据指引进行授权操作
 ![AgentCraft应用授权](https://img.alicdn.com/imgextra/i2/O1CN01pLPCyi1EcQGJODr2h_!!6000000000372-0-tps-3576-1836.jpg)
