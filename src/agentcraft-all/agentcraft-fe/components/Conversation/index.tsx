@@ -67,6 +67,8 @@ export default function Conversation(props: ConversationProps) {
     const messageListRef = useRef(null);
     const chatInputRef = useRef<HTMLTextAreaElement>(null);
     const handleError = (e: any) => {
+        setLoading(false);
+        setTextAreaRef(chatInputRef, '');
     };
     const handleSubmit = (e: any) => {
         e.preventDefault();
