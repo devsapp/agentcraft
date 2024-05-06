@@ -11,7 +11,7 @@ import { useKnowledgeBaseStore, addKnowledgeBase, refreshToken, updateKnowledgeB
 import { Dataset } from 'types/knowledgeBase';
 import { DataSetType } from 'types/dataset';
 import { INSTRUCTION_TEMPLATES, DEFAULT_CHAT_INSTRUCTION } from 'constants/instructions'
-import KnowledgeBaseChat from 'features/knowledgeBase/chat';
+import InstructionChat from 'features/instructionChat/chat';
 
 
 interface AssistantProps {
@@ -223,7 +223,7 @@ export function BuilderForm({ workspaceId }: AssistantProps) {
             <Center maw={'100%'} h={38} mx="auto">
                 <Text fw={700}>预览</Text>
             </Center>
-            {currentKnowledgeBase?.id ? <KnowledgeBaseChat /> : null}
+            {currentKnowledgeBase?.id ? <InstructionChat /> : null}
         </Box>
     </Flex>);
 }
