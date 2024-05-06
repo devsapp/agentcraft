@@ -123,14 +123,11 @@ export default function Conversation(props: ConversationProps) {
             handleError(e);
         }
     };
-    const handleEnter = (e: any) => {
+    const handleEnter = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
         const inputValue = getTextRreaRefValue(chatInputRef);
-        if (e.keyCode === 13 && inputValue) {
-            if (!e.shiftKey && inputValue) {
-                handleSubmit(e);
-            }
-        } else if (e.key === "Enter") {
+        if(e.key === 'Enter' && inputValue) {
             e.preventDefault();
+            handleSubmit(e);
         }
     };
 
