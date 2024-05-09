@@ -107,12 +107,12 @@ CREATE_AGENT_DATASET_TABLE = text(
 CREATE_CHAT_TABLE = text(
     """CREATE TABLE IF NOT EXISTS chat (
     id BIGSERIAL PRIMARY KEY,
-    ip VARCHAR(255) NOT NULL,
+    ip VARCHAR(255),
     question TEXT NOT NULL,
-    prompt TEXT NOT NULL,
-    source TEXT NOT NULL,
+    prompt TEXT,
+    source TEXT,
     answer TEXT NOT NULL,
-    type INTEGER NOT NULL DEFAULT 0,
+    type INTEGER NOT NULL DEFAULT 1,
     created TIMESTAMP NOT NULL DEFAULT NOW(),
     modified TIMESTAMP NOT NULL DEFAULT NOW(),
     agent_id BIGINT REFERENCES agent(id) ON DELETE SET NULL,
@@ -255,6 +255,7 @@ CREATE_AGENT_SESSION_TABLE = text(
     """CREATE TABLE IF NOT EXISTS agent_session (
     id BIGSERIAL PRIMARY KEY,
     title VARCHAR(255) NOT NULL,
+    status INTEGER DEFAULT 1,
     agent_id BIGINT REFERENCES agent(id) ON DELETE CASCADE,
     share_id VARCHAR(255),
     fingerprint_id VARCHAR(255),
@@ -262,7 +263,6 @@ CREATE_AGENT_SESSION_TABLE = text(
     modified TIMESTAMP NOT NULL DEFAULT NOW()
     );"""
 )
-
 # """"agent/assistant 会话表"""
 
 CREATE_AGENT_SESSION_CHAT_TABLE = text(

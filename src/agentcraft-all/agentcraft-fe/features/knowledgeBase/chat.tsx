@@ -87,7 +87,8 @@ export default function Home() {
                 messages: requestMessage,
                 config: {
                     stream: true,
-                    max_tokens: 1024
+                    max_tokens: 1024,
+                    status: 0,
                 },
                 onFinish: (msg) => {
                     setLoading(false);
@@ -135,7 +136,8 @@ export default function Home() {
                 }],
                 config: {
                     stream: true,
-                    max_tokens: 1024
+                    max_tokens: 1024,
+                    status: 0,
                 },
                 onFinish: (msg) => {
                     setLoading(false);
@@ -219,7 +221,7 @@ export default function Home() {
                                 rows={1}
                                 id="userInput"
                                 name="userInput"
-                                placeholder={loading ? "等待回复中" : "请输入你的问题，如AgentCraft的使用场景有哪些？ "}
+                                placeholder={loading ? "等待回复中" : "请输入你的问题，如AgentCraft的使用场景有哪些？"}
                                 value={userInput}
                                 onChange={(e) => setUserInput(e.target.value)}
                                 className={styles.textarea}

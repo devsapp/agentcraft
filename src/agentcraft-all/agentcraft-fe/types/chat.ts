@@ -20,6 +20,7 @@ export interface LLMConfig {
   presence_penalty?: number;
   frequency_penalty?: number;
   status?: number; // status 如果为0，则表示测试的会话
+  agent_session_id?: number;
   assistant_session_id?: number;
 }
 

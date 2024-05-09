@@ -76,3 +76,9 @@ def update_chat(uid: str, agent_id: int, ip_addr: str, **kwargs):
         session.query(Chat).filter(Chat.uid == uid, Chat.agent_id ==
                                    agent_id, Chat.ip == ip_addr).update(kwargs)
         session.commit()
+
+def get_chat_lite(agent_id: int) -> Chat:
+    """获取chat表信息"""
+    with Session(postgresql.postgres) as session:
+        data = session.query(Chat).filter(Chat.id == agent_id).first()
+        return vars(data)
