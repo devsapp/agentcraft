@@ -3,13 +3,15 @@ import { getAlibabaCloudServerlessBridge } from 'utils/cloudInfra';
 function getServerlessDevsAppSystemUrl(data: any) {
     let system_intranet_url;
     let app_template;
+    let system_internet_url;
     try {
         app_template = data?.template;
         system_intranet_url = data?.lastRelease?.output?.deploy?.apiServer?.url?.system_intranet_url;
+        system_internet_url = data?.lastRelease?.output?.deploy?.apiServer?.url?.system_url;
     } catch (e) {
 
     }
-    return { system_intranet_url, app_template };
+    return { system_intranet_url, system_internet_url, app_template };
 
 }
 export default async function handler(

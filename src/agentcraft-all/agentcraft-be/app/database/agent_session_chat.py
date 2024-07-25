@@ -20,15 +20,18 @@ class AgentSessionChat(postgresql.BaseModel):
     chat = relationship("Chat")
 
 
-
-def list_chats_by_session_id(
+def list_chats_session_chat_id_by_session_id(
         agent_session_id: int, page: int = 0, limit: int = 3000) -> list[Any]:
     """根据agent id获取数据集"""
     with Session(postgresql.postgres) as session:
-        return session.query(
-            AgentSessionChat, Chat.prompt).filter(
+        data = session.query(AgentSessionChat).filter(
             AgentSessionChat.agent_session_id == agent_session_id).join(
-            AgentSessionChat.chat).offset(page*limit).limit(limit).all()
+            AgentSessionChat.chat).order_by(AgentSessionChat.id.desc()).offset(page*limit).limit(limit).all()
+        total = session.query(AgentSessionChat).filter(
+            AgentSessionChat.agent_session_id == agent_session_id).join(
+            AgentSessionChat.chat).count()
+        sorted_data = sorted([vars(chat) for chat in data], key=lambda x: x['id'], reverse=True)
+        return sorted_data, total
 
 
 def bulk_insert(agent_session_id: int, exact_chats: list[int], fuzzy_chats: list[int]):

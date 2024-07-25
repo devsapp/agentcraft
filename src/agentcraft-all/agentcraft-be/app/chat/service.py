@@ -1,6 +1,7 @@
 """Chat Service"""
 # pylint: disable = no-member
 from typing import Any
+from fastapi import HTTPException
 from time import time
 import uuid
 import json
@@ -10,7 +11,9 @@ from app.common import utils
 # from app.database.redis import redis_db
 import app.database.chat as database
 import app.database.agent as agent_database
+import app.database.agent_session as agent_session_database
 import app.database.agent_dataset as agent_dataset_database
+import app.database.agent_session_chat as agent_session_chat_dataset_database
 import app.database.model as model_database
 # import app.database.redis as redis
 from app.common.logger import logger
@@ -18,6 +21,55 @@ from app.chat.green_client import is_legal
 from app.config import common as config
 
 DONE = "[DONE]"
+
+
+def get_chat_session_id(status: int, agent_id: int, **kv):
+    if status == 0:
+        data = agent_session_database.get_test_session(agent_id)
+        if data:
+            return data.id
+    add_args = {
+        "title": "测试会话",
+        "agent_id": agent_id,
+        "status": status,
+    }
+    add_args.update(kv)
+    logger.info(f"add agent session {add_args}")
+    return create_agent_session(**add_args)
+
+
+def create_agent_session(**add_args):
+    if not agent_database.get_agent_lite(add_args.get('agent_id')):
+        raise ValueError("agent does not exist")
+    return agent_session_database.add_session(**add_args)
+
+
+def list_chats_id_by_session_id(agent_id: int, session_id: int, **kv):
+    """根据 session_id 获取 agent_chats_id 的列表"""
+    agent = agent_database.get_agent_lite(agent_id)
+    if not agent:
+        raise ValueError("agent does not exist")
+    if not agent_database.check_user_has_agent(agent.user_id, agent_id):
+        raise ValueError("user does not have this agent")
+    limit = kv.get("limit") or agent.llm_history_len or 20
+    data, total = agent_session_chat_dataset_database.list_chats_session_chat_id_by_session_id(
+        session_id, 0, limit)
+    return data, total
+
+
+def list_chats_history_by_session_id(agent_id: int, session_id: int, limit=None):
+    """根据 session_id 列出问答历史记录"""
+    data, total = list_chats_id_by_session_id(
+        agent_id, session_id, limit=limit)
+    history = []
+    for item in data:
+        # pdb.set_trace()
+        agent_chat_data = database.get_chat_lite(item.get("chat_id"))
+        if not agent_chat_data:
+            logger.info(f'No information found for chat id({item.get("chat_id")})')
+            continue
+        history.append(agent_chat_data)
+    return history[::-1]
 
 
 def list_chats(agent_id: int, user_id: int, page: int, limit: int):
@@ -68,12 +120,22 @@ def format_document(title: str, url: str, cnt: int, similarity: float, chunk: st
     return f"""相关 {cnt+1}: [{title}](<{url}>) {f"{chunk} " if chunk else ''}(相似度: {similarity})\n\n"""
 
 
-def rank_search_res(search_res: list) -> list[tuple[str, str, str, float]]:
+def rank_search_res(search_res: list, query: str) -> list[tuple[str, str, str, float]]:
     """对搜索结果进行排序"""
     if not search_res:
         return []
     results_filter = {}
     results = []
+    # try:
+    #     real_column_data = [item[2] for item in search_res]  # 针对内容做一下处理
+    #     rerank_results = utils.rerank(real_column_data, query)
+    #     sorted_indices = sorted(
+    #         range(len(rerank_results)), key=lambda i: -rerank_results[i])
+    #     results = [(search_res[i].title, search_res[i].url, rerank_results[i],
+    #                 search_res[i].doc_chunk) for i in sorted_indices if rerank_results[i] >= 0.5]
+    #     return results
+    # except Exception as e:
+    #     logger.error(e)
     for chunk in search_res:  # concat by url
         title, url, doc_chunk, chunk_idx, similarity = chunk.title, chunk.url, chunk.doc_chunk, chunk.chunk_idx, chunk.similarity
         if url in results_filter:
@@ -149,7 +211,7 @@ def convert_fuzzy_search_res(search_res: list):
     return choices
 
 
-def chat(query: str, ip_addr: str, agent_id: int):
+def chat(agent_session_id: int, query: str, ip_addr: str, agent_id: int, history=[]):
     """Chat with agent."""
     agent = agent_database.get_agent_lite(agent_id)
     created = int(time())
@@ -160,7 +222,7 @@ def chat(query: str, ip_addr: str, agent_id: int):
         chat_args = {
             "query": query,
             "prompt": query,
-            "history": [],
+            "history": history,
             "search_choices": [],
             "ip_addr": ip_addr,
             "agent": agent,
@@ -168,7 +230,7 @@ def chat(query: str, ip_addr: str, agent_id: int):
             "uid": uid,
             "created": created
         }
-        return model_chat(**chat_args)
+        return model_chat(agent_session_id, **chat_args)
     embedding = utils.embed(query)[0]
     search_args = {
         "agent_id": agent.id,
@@ -181,7 +243,6 @@ def chat(query: str, ip_addr: str, agent_id: int):
 
     similarity_search_res, use_model = agent_dataset_database.similarity_search(
         **search_args)
-    history = []  # get_history(ip_addr)
     if not use_model:
         choices, answer = convert_exact_search_res(similarity_search_res)
         resp = {
@@ -194,47 +255,19 @@ def chat(query: str, ip_addr: str, agent_id: int):
             "query": query,
             "prompt": "",
             "answer": answer,
-            "history": history,
             "source": choices,
             "chat_type": 0,
             "ip_addr": ip_addr,
             "agent": agent,
             "uid": uid
         }
-        add_chat(**add_args)
+        chat_id = add_chat(**add_args)
+        add_session_chat(agent_session_id, chat_id)
         return resp
-    search_res = rank_search_res(similarity_search_res)
+    search_res = rank_search_res(
+        similarity_search_res, query)
     search_choices = convert_fuzzy_search_res(search_res)
     prompt = generate_prompt(search_res, query, agent.prompt_template)
-    # ip_key = f"ip:{ip_addr}"
-    # if redis_db.exists(ip_key):
-    #     redis_db.incr(ip_key)
-    # else:
-    #     redis_db.set(ip_key, 1, ex=agent.redis_ip_ex)
-    # if int(redis_db.get(ip_key)) > agent.model_ip_limit:
-    #     answer = "您的提问过于频繁，可以先看看相关资料，稍后再试。"
-    #     resp_obj = "chat.limit.exceeded"
-    #     add_args = {
-    #         "query": query,
-    #         "prompt": prompt,
-    #         "answer": [answer],
-    #         "history": history,
-    #         "source": search_choices,
-    #         "chat_type": 0,
-    #         "ip_addr": ip_addr,
-    #         "agent": agent,
-    #         "uid": uid
-    #     }
-    #     add_chat(**add_args)
-    #     return {
-    #         "id": uid,
-    #         "object": resp_obj,
-    #         "message": [{
-    #             "content": answer,
-    #             "role": "assistant"
-    #         }]+choices,
-    #         "created": created
-    #     }
     if config.USE_GREEN_CLIENT and not is_legal(query):
         answer = "抱歉，根据已知信息无法回答该问题。"
         resp_obj = "chat.illegal"
@@ -242,14 +275,14 @@ def chat(query: str, ip_addr: str, agent_id: int):
             "query": query,
             "prompt": prompt,
             "answer": [answer],
-            "history": history,
             "source": search_choices,
             "chat_type": 0,
             "ip_addr": ip_addr,
             "agent": agent,
             "uid": uid,
         }
-        add_chat(**add_args)
+        chat_id = add_chat(**add_args)
+        add_session_chat(agent_session_id, chat_id)
         return {
             "id": uid,
             "object": resp_obj,
@@ -271,11 +304,10 @@ def chat(query: str, ip_addr: str, agent_id: int):
         "created": created
     }
 
-    print(f"chat_args: {chat_args}")
-    return model_chat(**chat_args)
+    return model_chat(agent_session_id, **chat_args)
 
 
-def chat_stream(query: str, ip_addr: str, agent_id: int):
+def chat_stream(agent_session_id: int, query: str, ip_addr: str, agent_id: int, history=[]):
     """Chat with agent."""
     agent = agent_database.get_agent_lite(agent_id)
     if not agent:
@@ -286,7 +318,7 @@ def chat_stream(query: str, ip_addr: str, agent_id: int):
         chat_args = {
             "query": query,
             "prompt": query,
-            "history": [],
+            "history": history,
             "search_choices": [],
             "ip_addr": ip_addr,
             "agent": agent,
@@ -294,9 +326,9 @@ def chat_stream(query: str, ip_addr: str, agent_id: int):
             "uid": uid,
             "created": created
         }
-        yield from model_chat_stream(**chat_args)
+        yield from model_chat_stream(agent_session_id, **chat_args)
         return
-    
+
     embedding = utils.embed(query)[0]
     search_args = {
         "agent_id": agent.id,
@@ -309,7 +341,6 @@ def chat_stream(query: str, ip_addr: str, agent_id: int):
 
     similarity_search_res, use_model = agent_dataset_database.similarity_search(
         **search_args)
-    history = []  # get_history(ip_addr)
     if not use_model:
         choices, answer = convert_exact_search_res_stream(
             similarity_search_res)
@@ -324,17 +355,18 @@ def chat_stream(query: str, ip_addr: str, agent_id: int):
             "query": query,
             "prompt": "",
             "answer": answer,
-            "history": history,
             "source": choices,
             "chat_type": 0,
             "ip_addr": ip_addr,
             "agent": agent,
             "uid": uid
         }
-        add_chat(**add_args)
+        chat_id = add_chat(**add_args)
+        add_session_chat(agent_session_id, chat_id)
         yield DONE
         return
-    search_res = rank_search_res(similarity_search_res)
+    search_res = rank_search_res(
+        similarity_search_res, query)
     search_choices = convert_fuzzy_search_res(search_res)
     search_resp = {
         "id": uid,
@@ -344,37 +376,6 @@ def chat_stream(query: str, ip_addr: str, agent_id: int):
     }
     yield json.dumps(search_resp)
     prompt = generate_prompt(search_res, query, agent.prompt_template)
-    # ip_key = f"ip:{ip_addr}"
-    # if redis_db.exists(ip_key):
-    #     redis_db.incr(ip_key)
-    # else:
-    #     redis_db.set(ip_key, 1, ex=agent.redis_ip_ex)
-    # if int(redis_db.get(ip_key)) > agent.model_ip_limit:
-    #     answer = "您的提问过于频繁，可以先看看相关资料，稍后再试。"
-    #     resp_obj = "chat.limit.exceeded"
-    #     yield json.dumps({
-    #         "id": uid,
-    #         "object": resp_obj,
-    #         "message": [{
-    #             "content": answer,
-    #             "role": "assistant"
-    #         }],
-    #         "created": created
-    #     })
-    #     add_args = {
-    #         "query": query,
-    #         "prompt": prompt,
-    #         "answer": [answer],
-    #         "history": history,
-    #         "source": search_choices,
-    #         "chat_type": 0,
-    #         "ip_addr": ip_addr,
-    #         "agent": agent,
-    #         "uid": uid
-    #     }
-    #     add_chat(**add_args)
-    #     yield DONE
-    #     return
     if config.USE_GREEN_CLIENT and not is_legal(query):
         answer = "抱歉，根据已知信息无法回答该问题。"
         resp_obj = "chat.illegal"
@@ -391,14 +392,14 @@ def chat_stream(query: str, ip_addr: str, agent_id: int):
             "query": query,
             "prompt": prompt,
             "answer": [answer],
-            "history": history,
             "source": search_choices,
             "chat_type": 0,
             "ip_addr": ip_addr,
             "agent": agent,
             "uid": uid,
         }
-        add_chat(**add_args)
+        chat_id = add_chat(**add_args)
+        add_session_chat(agent_session_id, chat_id)
         yield DONE
         return
     chat_args = {
@@ -412,10 +413,10 @@ def chat_stream(query: str, ip_addr: str, agent_id: int):
         "uid": uid,
         "created": created
     }
-    yield from model_chat_stream(**chat_args)
+    yield from model_chat_stream(agent_session_id, **chat_args)
 
 
-def build_messages(prompt: str, history: list[list], system_message: str) -> list:
+def build_messages(prompt: str, history: list, system_message: str) -> list:
     """构建消息"""
     messages = [
         {
@@ -423,16 +424,15 @@ def build_messages(prompt: str, history: list[list], system_message: str) -> lis
             "content": system_message
         }
     ] if system_message else []
-    if history and len(history) % 2 == 0:
-        for i in range(0, len(history), 2):
-            messages.append({
-                "role": "user",
-                "content": history[i]
-            })
-            messages.append({
-                "role": "assistant",
-                "content": str(history[i+1])
-            })
+    for item in history:
+        messages.append({
+            "role": "user",
+            "content": item['user']
+        })
+        messages.append({
+            "role": "assistant",
+            "content": item['assistant']
+        })
     messages.append({
         "role": "user",
         "content": prompt
@@ -440,12 +440,11 @@ def build_messages(prompt: str, history: list[list], system_message: str) -> lis
     return messages
 
 
-def model_chat(
-        query: str, prompt: str, history: list[str],
-        search_choices: list, ip_addr: str, agent, chat_type: int, uid: str, created: int):
+def model_chat(agent_session_id,
+               query: str, prompt: str, history: list[str],
+               search_choices: list, ip_addr: str, agent, chat_type: int, uid: str, created: int):
     """获取大模型的回答"""
     messages = build_messages(prompt, history, agent.system_message)
-    logger.info(messages)
     model = model_database.get_model_by_id(agent.model_id)
     if not model:
         raise ValueError("model does not exist")
@@ -467,7 +466,6 @@ def model_chat(
     if(agent.stop != []):
         llm_request_options['stop'] = agent.stop
     request_data = json.dumps(llm_request_options)
-    logger.info(request_data)
     resp = requests.post(model.url, headers=headers,
                          data=request_data, timeout=model.timeout)
     if resp.status_code != 200:
@@ -476,7 +474,6 @@ def model_chat(
     resp_data = resp.json()
     if isinstance(resp_data, str):
         resp_data = json.loads(resp_data)
-    logger.info(resp_data)
     answer = [ans["message"]["content"]
               for ans in resp_data["choices"] if ans["message"]["role"] == "assistant"]
     resp_data["id"] = uid
@@ -488,27 +485,26 @@ def model_chat(
         "prompt": prompt,
         "answer": answer,
         "source": search_choices,
-        "history": history,
         "chat_type": chat_type,
         "ip_addr": ip_addr,
         "agent": agent,
         "model": model,
         "uid": uid,
     }
-    add_chat(**add_args)
+    chat_id = add_chat(**add_args)
+    add_session_chat(agent_session_id, chat_id)
     return resp_data
 
 
-def model_chat_stream(
-        query: str, prompt: str, history: list[str],
-        search_choices: list, ip_addr: str, agent, chat_type: int, uid: str, created: int):
+def model_chat_stream(agent_session_id,
+                      query: str, prompt: str, history: list,
+                      search_choices: list, ip_addr: str, agent, chat_type: int, uid: str, created: int):
     """获取大模型的回答"""
     messages = build_messages(prompt, history, agent.system_message)
     model = model_database.get_model_by_id(agent.model_id)
-   
+
     if not model:
         raise ValueError("model does not exist")
-    logger.info(f"{model.token}")
     headers = {
         "Authorization": f"Bearer {model.token}",
         "Content-Type": "application/json"
@@ -519,27 +515,33 @@ def model_chat_stream(
         "stream": True,
         "temperature": agent.temperature,
         "top_p": agent.top_p,
-        # "top_k": 50,    # OpenAI 不支持该参数
+        # "top_k": 50, # OpenAI 不支持该参数
         "n": agent.n_sequences,
         "max_tokens": agent.max_tokens,
         "presence_penalty": agent.presence_penalty,
-        # "frequency_penalty": agent.frequency_penalty, # 百川不支持该参数
+        # "frequency_penalty": agent.frequency_penalty, # OpenAI 不支持该参数
         "logit_bias": json.loads(agent.logit_bias) if agent.logit_bias else {}
     }
     if(agent.stop != []):
         llm_request_options['stop'] = agent.stop
     request_data = json.dumps(llm_request_options)
-    logger.info(f"request_data: {request_data}")
-    logger.info(f"{model.url}")
-    req = requests.post(model.url, headers=headers, data=request_data,
-                        stream=True, timeout=model.timeout)
+    resp = requests.post(model.url, headers=headers, data=request_data,
+                         stream=True, timeout=model.timeout)
+    if resp.status_code != 200:
+        error_chunk = {}
+        error_chunk["id"] = uid
+        error_chunk["created"] = created
+        error_chunk["model"] = model.name_alias
+        error_chunk["choices"] = [
+            {"delta": {"content": f'## Something Wrong From AgentCraft Backend:\n ## status_code: {resp.status_code} \n ## detail info: {resp.text}'}}]
+        yield json.dumps(error_chunk)
+        resp.close()
     answer = [""]*agent.n_sequences
-    for line in req.iter_lines():
+    for line in resp.iter_lines():
         if line:
             line = codecs.decode(line)
             if line.startswith("data:"):
                 line = line[5:].strip()
-                # logger.info(line)
                 try:
                     chunk = json.loads(line)
                     chunk["id"] = uid
@@ -551,59 +553,55 @@ def model_chat_stream(
                         answer[chunk["choices"][0]["index"]
                                ] += chunk["choices"][0]["delta"]["content"]
                 except json.JSONDecodeError as err:
-                    logger.info(err)
-    
+                    logger.info(f"system error: {err}")
+
     # """添加检索来源信息"""
+    # search_info = {"choices": []}
+    # search_info["id"] = uid
+    # search_info["created"] = created
+    # search_info["model"] = model.name_alias
+    # result_text = "\n\n参考内容\n"
     # if len(search_choices) > 0:
-    #     result_text = "\n\n相关链接\n"
+    #     print(search_choices,'sss')
     #     for index, item in enumerate(search_choices):
     #         if item['message']['url']:
     #             markdown_text = f"\[{index+1}\] [{item['message']['title']}]({item['message']['url']})\n"
     #             result_text += markdown_text
-    #     search_info = {"choices":[]}
-    #     search_info["id"] = uid
-    #     search_info["created"] = created
-    #     search_info["model"] = model.name_alias
-    #     search_info["choices"].append({"index": 0,
+    #         else:
+    #             result_text += item['message']['title']
+    # else:
+    #     result_text += "没有相关文档，大模型是基于自己的知识做的回答，答案请谨慎参考"
+    # search_info["choices"].append({"index": 0,
     #                                 "delta": {"role": "assistant",
     #                                             "content": result_text},
     #                                 "finish_reason": "null"})
-    #     yield json.dumps(search_info)
+    # yield json.dumps(search_info)
 
+    """结束并且添加历史记录"""
     yield DONE
-    logger.info(answer)
     add_args = {
         "query": query,
         "prompt": prompt,
         "answer": answer,
         "source": search_choices,
-        "history": history,
         "chat_type": chat_type,
         "ip_addr": ip_addr,
         "agent": agent,
         "model": model,
         "uid": uid,
     }
-    add_chat(**add_args)
+    chat_id = add_chat(**add_args)
+    add_session_chat(agent_session_id, chat_id)
 
 
 def add_chat(
-        query: str, prompt: str, answer: list, source: list, history: list[str],
+        query: str, prompt: str, answer: list, source: list,
         chat_type: int, ip_addr: str, agent, uid: str, model=None):
     """添加到数据库"""
-    history_key = f"history:{ip_addr}"
-    if not history:
-        history = [query, answer]
-    else:
-        if len(history) >= agent.llm_history_len*2:
-            history = history[:-(agent.llm_history_len-1)*2]
-        history.append(query)
-        history.append(answer)
-    # redis_db.set(history_key, json.dumps(history), ex=agent.redis_history_ex)
     add_args = {
         "question": query,
         "prompt": prompt,
-        "answer": json.dumps(answer),
+        "answer": answer[0],
         "source": json.dumps(source),
         "type": chat_type,
         "ip": ip_addr,
@@ -616,18 +614,7 @@ def add_chat(
     return chat_id
 
 
-def zero_out_sensitive(fields: int, description: dict[str, Any]) -> int:
-    """bitwise, enforce sensitive bits to be 0"""
-    length = description['length']-len(description['sensitive'])
-    for i in description['sensitive']:
-        fields = ((fields & ((1 << length)-(1 << (length-i))))
-                  << 1) | (fields & ((1 << (length-i))-1))
-        length += 1
-    return fields
-
-
-# def get_redis_ip() -> tuple[list[str], list[int]]:
-#     """获取redis中的ip和访问次数"""
-#     _, ip_addrs = redis.redis_db.scan(0, "ip:*")
-#     counts = redis.redis_db.mget(ip_addrs)
-#     return ip_addrs, counts
+def add_session_chat(session_id: int, chat_id: int):
+    """添加到session_chat数据库"""
+    agent_session_chat_dataset_database.insert_agent_session_chats(session_id, [
+                                                                   chat_id])

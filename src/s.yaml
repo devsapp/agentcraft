@@ -104,7 +104,7 @@ resources:
       cpu: 2
       environmentVariables:
         baseUrl: ${resources.agentcraft-backend.output.url.system_intranet_url}
-        openApiUrl: ${resources.agentcraft-backend-domain.output.domainName}
+        openApiUrl: ${resources.agentcraft-backend.output.url.system_url}
         beFunctionName: ${vars.beFunctionName}
         NODE_PATH: /opt/nodejs/node_modules
         Region: ${vars.region}

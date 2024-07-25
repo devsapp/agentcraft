@@ -23,5 +23,6 @@ export interface Model {
 
 export interface FM_INFO {
     system_intranet_url: string,
+    system_internet_url: string,
     app_template: string
 }

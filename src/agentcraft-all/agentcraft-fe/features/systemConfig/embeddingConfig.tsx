@@ -3,13 +3,24 @@ import React from "react";
 import { nanoid } from 'nanoid';
 import { modals } from '@mantine/modals';
 import { Paper, Stepper, Anchor, Button, TextInput, Text, LoadingOverlay, Flex } from '@mantine/core';
+import CopyToClipboard from 'components/CopyToClipboard';
 import { useFoundationModelStore, addFoundationModel, getFoundationModel, APP_STATUS } from 'store/foundationModel';
-import { SYSTEM_AGENTCRAFT_PREFIX, AGENTCRAFT_SERVICE, AGENTCRAFT_FUNCTION, NEW_EMBEDDING_TEMPLATE_NAME } from 'constants/system-config';
+import { SYSTEM_AGENTCRAFT_PREFIX, NEW_EMBEDDING_TEMPLATE_NAME } from 'constants/system-config';
+
 import { useSystemConfigStore } from '@/store/systemConfig';
 // import styles from './index.module.scss';
 
 
-
+function getEmbeddingCurlCode(embeddingUrl: string) {
+    return `curl -X 'POST' \
+    '${embeddingUrl}' \
+    -H 'accept: application/json' \
+    -H 'Content-Type: application/json' \
+    -d '{
+    "input": "你好"
+  }'
+  `
+}
 
 function LoadingStepper() {
     const appStatus = useFoundationModelStore().appStatus;
@@ -95,9 +106,9 @@ export default function EmbeddingConfig({ form }: any) {
                     const embeddingService: any = result?.output?.deploy['embedding-service'];
                     const embeddingIntranetUrl = embeddingService?.url?.system_intranet_url;
                     const fullEmbeddingIntranetUrl = `${embeddingIntranetUrl}/embedding`;
-                    const embeddingServiceDomain: any = result?.output?.deploy['embedding-service-domain'];
-                    const embeddingInternetUrl = embeddingServiceDomain?.domainName;
-                    const fullEmbeddingInternetUrl = `http://${embeddingInternetUrl}`;
+                    // const embeddingServiceDomain: any = result?.output?.deploy['embedding-service-domain'];
+                    const embeddingInternetUrl = embeddingService?.url?.system_url;
+                    const fullEmbeddingInternetUrl = `${embeddingInternetUrl}/embedding`;
                     form.setValues({
                         EMBEDDING_URL: fullEmbeddingIntranetUrl
                     });
@@ -105,7 +116,7 @@ export default function EmbeddingConfig({ form }: any) {
                         EMBEDDING_DIM: form.values['EMBEDDING_DIM'],
                         EMBEDDING_URL: fullEmbeddingIntranetUrl,
                         EMBEDDING_INTRANET_URL: fullEmbeddingIntranetUrl, // 内网
-                        EMBEDDING_INTERNET_URL: fullEmbeddingInternetUrl
+                        EMBEDDING_INTERNET_URL: fullEmbeddingInternetUrl // 公网
                     });
                 } catch (e) {
                     console.log(e);
@@ -121,11 +132,11 @@ export default function EmbeddingConfig({ form }: any) {
             <LoadingOverlay loader={<LoadingStepper />} visible={createLoading} overlayOpacity={0.8} overlayBlur={2} />
             <TextInput withAsterisk label="向量维度" description="向量的维度设置，跟使用embedding算法相关，并且在数据库持久化的时候不能修改" defaultValue={'1024'} placeholder="" {...form.getInputProps('EMBEDDING_DIM')} />
             <Flex align={'center'}>
-                <TextInput label="embedding服务访问地址" description="通过系统创建的embedding服务地址为安全的内部网络地址，不可以直接访问" style={{ width: '85%' }} {...form.getInputProps('EMBEDDING_URL')} defaultValue={completeConfig.EMBEDDING_URL || ''} /> 
+                <TextInput label="embedding服务访问地址" description="通过系统创建的embedding服务地址为安全的内部网络地址，不可以直接访问" style={{ width: '85%' }} {...form.getInputProps('EMBEDDING_URL')} defaultValue={completeConfig.EMBEDDING_URL || ''} />
                 <Button variant="subtle" mt={42} ml={4} onClick={createEmbeddingService}>快速获取embedding服务</Button>
             </Flex>
             {embedding_internet_url ? <Flex align={'flex-start'}>
-                <Anchor href={embedding_internet_url} target="_blank">测试embedding服务</Anchor>
+                <CopyToClipboard value={getEmbeddingCurlCode(embedding_internet_url)} content="测试embedding服务" />
             </Flex> : null}
         </Paper>
     );

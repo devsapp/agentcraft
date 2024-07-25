@@ -27,7 +27,7 @@ class Model(postgresql.BaseModel):
 def list_models(user_id: int, page: int = 0, limit: int = 3000) -> tuple[list[Model], int]:
     """获取模型列表"""
     with Session(postgresql.postgres) as session:
-        data = session.query(Model).order_by(
+        data = session.query(Model).filter(Model.user_id == user_id).order_by(
             Model.modified.desc()).offset(
             page * limit).limit(limit).all()
         total = session.query(Model).filter(Model.user_id == user_id).count()

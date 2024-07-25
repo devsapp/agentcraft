@@ -81,13 +81,14 @@ export function Robot() {
             });
             if (chatBotAppName) {
                 const appInfo = await checkAppStatus(chatBotAppName);
-                const domainData: any = appInfo?.output?.deploy['domain'];
+                // const domainData: any = appInfo?.output?.deploy['domain'];
                 const agentFunctionName: any = appInfo?.output?.deploy[CHATBOT_APPSERVER_MAP[chatBotType]]?.functionName;
                 if (chatBotType === ROBOT_NAME_VALUE.DING_TALK) {
-                    const appUrl = domainData.domainName;
+                    // const appUrl = domainData.domainName;
+                    const systemUrl = appInfo?.output?.deploy['agentcraft-dingtalk-chat-server']?.url.system_url;
                     const dingtalkToken = generateDingTalkToken();
                     robotConfig.robotProxyServiceConfig = {
-                        serviceUrl: `http://${appUrl}/chat`,
+                        serviceUrl: `${systemUrl}/chat`,
                         token: dingtalkToken,
                         agentFunctionName
                     };

@@ -21,11 +21,12 @@ function getLLMServiceUrl(currentFoundationModel: any) {
         const allFunctions = Object.keys(deploy).filter((key: string) => FM_TEMPLATE_ACCESS_API_FUNCTION_MAP[currentFoundationModel.appConfig.template] === key);
         const apiServiceConfig = deploy[allFunctions[0]];
         if (apiServiceConfig) {
-            if (apiServiceConfig.customDomains && apiServiceConfig.customDomains[0]) {
-                return apiServiceConfig.customDomains[0].domainName;
-            }
-            const domainData: DOMAIN_DATA = deploy['domain'];
-            return domainData.domainName;
+            // if (apiServiceConfig.customDomains && apiServiceConfig.customDomains[0]) {
+            //     return apiServiceConfig.customDomains[0].domainName;
+            // }
+            // const domainData: DOMAIN_DATA = deploy['domain'];
+            // return domainData.domainName;
+            return apiServiceConfig.url.system_url;
 
         }
     } catch (e) {
@@ -66,10 +67,7 @@ function FoundationModelView({ fmId }: any) {
                 {servcieURL ?
                     <Box pl={4} pr={4} >
                         <div>
-                            <Flex align={'center'}>API访问地址：<CopyToClipboard content={`http://${servcieURL}/v1/chat/completions`} value={`http://${servcieURL}/v1/chat/completions`} /></Flex>
-                        </div>
-                        <div>
-                            <span>API访问文档：<Anchor href={`http://${servcieURL}/docs`} target="_blank">访问文档</Anchor></span>
+                            <Flex align={'center'}>API访问地址：<CopyToClipboard content={`${servcieURL}/v1/chat/completions`} value={`${servcieURL}/v1/chat/completions`} /></Flex>
                         </div>
                     </Box> : null}
             </Paper>

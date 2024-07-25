@@ -1,6 +1,6 @@
 import React, { useEffect } from "react";
 import { useRouter } from 'next/router'
-import { Breadcrumbs, Anchor, Button, Box, Table, Title, TextInput, Text, ActionIcon, Highlight, LoadingOverlay, Modal, Textarea, Flex, Space, NumberInput, FileInput, rem } from '@mantine/core';
+import { Badge, Anchor, Button, Box, Table, Title, TextInput, Text, ActionIcon, Highlight, LoadingOverlay, Modal, Textarea, Flex, Space, NumberInput, FileInput, rem } from '@mantine/core';
 import { useForm, UseFormReturnType } from '@mantine/form';
 import { modals } from '@mantine/modals';
 import CopyToClipboard from 'components/CopyToClipboard';
@@ -21,18 +21,18 @@ interface DatasourceProps {
 
 
 function DocumentForm({ form }: { form: UseFormReturnType<DocumentRequestPayload> }) {
-    return <Box maw={FORM_WIDTH} mx="auto">
+    return <Box mx="auto">
         <TextInput withAsterisk label="标题" placeholder="" {...form.getInputProps('title')} />
-        <Textarea withAsterisk label="内容" placeholder="" {...form.getInputProps('content')} />
+        <Textarea withAsterisk label="内容" placeholder="" {...form.getInputProps('content')} minRows={8} />
         <TextInput label="来源url" placeholder="" {...form.getInputProps('url')} />
         <NumberInput label="文档切片大小" placeholder="" {...form.getInputProps('chunk_size')} />
     </Box>
 }
 
 function QuestionForm({ form }: { form: UseFormReturnType<QuestionRequestPayload> }) {
-    return <Box maw={FORM_WIDTH} mx="auto">
+    return <Box mx="auto">
         <TextInput withAsterisk label="标题" placeholder="" {...form.getInputProps('title')} />
-        <Textarea withAsterisk label="问题" placeholder="" {...form.getInputProps('question')} />
+        <Textarea withAsterisk label="问题" placeholder="" {...form.getInputProps('question')} minRows={8} />
         <Textarea withAsterisk label="答案" placeholder="" {...form.getInputProps('answer')} />
         <TextInput label="来源url" placeholder="" {...form.getInputProps('url')} />
     </Box>
@@ -104,9 +104,9 @@ function AddOrUpdate() {
         }
     }, [isEdit, currentDataSource]);
     return (
-        <Modal opened={open} onClose={() => { setOpen(false); setIsEdit(false); }} title={isEdit ? '编辑数据源' : '新增数据源'} centered>
+        <Modal size="70%" opened={open} onClose={() => { setOpen(false); setIsEdit(false); }} title={isEdit ? '编辑数据源' : '新增数据源'} centered>
             {dataSetType == DataSetType.DOCUMENT ? <DocumentForm form={documentForm} /> : <QuestionForm form={questionForm} />}
-            <Box maw={FORM_WIDTH} mx="auto" pt={12} style={{ textAlign: 'right' }}>
+            <Box mx="auto" pt={12} style={{ textAlign: 'right' }}>
                 <Button onClick={async () => {
                     currentForm.validate();
                     if (currentForm.isValid()) {
@@ -161,12 +161,12 @@ function UploadDataSource() {
 
 
     return (
-        <Modal opened={open} onClose={() => { setOpen(false); setIsEdit(false) }} title="上传数据集文档" centered>
+        <Modal size="70%" opened={open} onClose={() => { setOpen(false); setIsEdit(false) }} title="上传数据集文档" centered>
             <FileInput withAsterisk accept=".md,.txt,.html,.pdf" name="file" label="选择文档" description="选择本地文件上传，支持 .txt,.md,.html文件" placeholder="点击上传文档" icon={<IconUpload size={rem(14)} />} {...form.getInputProps('file')} />
             <TextInput withAsterisk label="标题" description="标题内容作为检索的数据来源，用来展示检索结果" placeholder="" {...form.getInputProps('title')} />
             <NumberInput withAsterisk label="文档切片大小" description="" placeholder="" {...form.getInputProps('chunk_size')} />
             <TextInput label="来源url" placeholder="" {...form.getInputProps('url')} />
-            <Box maw={FORM_WIDTH} mx="auto" pt={12} style={{ textAlign: 'right' }}>
+            <Box mx="auto" pt={12} style={{ textAlign: 'right' }}>
 
                 <Button onClick={async () => {
                     form.validate();
@@ -229,9 +229,17 @@ function List({ dataSetId, dataSetType }: DatasourceProps) {
         <tr key={element.id}>
             <td style={{ width: 80 }}>{element.id}</td>
             <td style={{ width: 240 }}>{element.title}</td>
-            <td style={{ width: 140 }}>{element.url ? <CopyToClipboard value={element.url} content={element.url} truncate width={120} /> : null}</td>
-            {dataSetType == DataSetType.QUESTION ? <td style={{ width: 120 }}><CopyToClipboard value={element.question} content={element.question} truncate /></td> : null}
-            <td width={550} ><CopyToClipboard value={element.doc_chunk} content={element.doc_chunk} width={550} /></td>
+            <td style={{ width: 140 }}>{
+                element.url ? <CopyToClipboard value={element.url} content={element.url} truncate width={120} /> : null}
+            </td>
+            {dataSetType == DataSetType.QUESTION ? 
+                <td style={{ width: 120 }}>
+                    <CopyToClipboard value={element.question} content={element.question} truncate />
+                </td> : null}
+            <td width={550} >
+                <CopyToClipboard value={element.doc_chunk} content={element.doc_chunk} width={550} />
+                <Badge >总字数：{element.doc_chunk.length}</Badge>
+            </td>
             {/* <td>{element.token_size}</td> */}
             <td style={{ width: 120 }}>{formatDateTime(element.created)}</td>
             <td style={{ width: 120 }}>{formatDateTime(element.modified)}</td>

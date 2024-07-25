@@ -2,6 +2,7 @@
 from typing import Any
 from fastapi import APIRouter, Request, Depends, HTTPException
 from sse_starlette.sse import EventSourceResponse
+from app.common.logger import logger
 from app.auth.schema import AgentJWTData, JWTData
 from app.chat import service
 from app.chat.schema import ChatRequest, UpdateChatRequest, ChatCompletionResponse
@@ -30,15 +31,25 @@ async def chat(req: ChatRequest, request: Request, token: AgentJWTData = Depends
     """
     if req.messages[-1].role != "user":
         raise HTTPException(status_code=400, detail="The last message must be from the user.")
+    agent_session_id = req.agent_session_id
+    agent_id = token.agent_id
+    query = req.messages[-1].content
+
+    history = []
+    if agent_session_id is None:
+        agent_session_id = service.get_chat_session_id(req.status, agent_id)
+    logger.info(f'agent_session_id: {agent_session_id}')
+    history = service.list_chats_history_by_session_id(agent_id, agent_session_id)
+    history_dict = [{"user": d["question"], "assistant": d["answer"]} for d in history]
+    logger.info(f"history: {history_dict}")
     if req.stream:
         return EventSourceResponse(
             service.chat_stream(
-                req.messages[-1].content, request.client.host, token.agent_id),
+                agent_session_id, query, request.client.host, agent_id, history_dict),
             media_type="text/event-stream")
     else:
         resp: dict[str, Any] = service.chat(
-            req.messages[-1].content, request.client.host, token.agent_id)
-        print(f"resp: {resp}")
+            agent_session_id, query, request.client.host, agent_id, history_dict)
         return ChatCompletionResponse(**resp)
 
 

@@ -70,9 +70,7 @@ def similarity_search(
             FROM question WHERE ({" OR ".join([f"tag={dataset.dataset_id}" for dataset in exact_datasets])}) AND 1 - (embedding <=> '{embedding}') >= {exact_search_similarity}
             ORDER BY similarity DESC LIMIT {exact_search_limit};
             '''
-            print(f"exact_similarity_search_sql: {exact_similarity_search_sql}")
             exact_similarity_search_res = session.execute(text(exact_similarity_search_sql)).all()
-            print(f"exact_similarity_search_res: {exact_similarity_search_res}")
             if exact_similarity_search_res:
                 return exact_similarity_search_res, False
         fuzzy_datasets = session.query(AgentDataset.dataset_id).filter(
