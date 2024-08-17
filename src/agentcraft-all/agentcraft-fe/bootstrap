@@ -1,0 +1,12 @@
+#!/usr/bin/env bash
+
+if [ ! -d "/code/node_modules" ]; then
+  mkdir /code/node_modules
+fi
+
+for file in "/opt/nodejs/node_modules"/*; do
+  ln -s "$file" "/code/node_modules/"
+done
+
+export PORT=3000
+npm start

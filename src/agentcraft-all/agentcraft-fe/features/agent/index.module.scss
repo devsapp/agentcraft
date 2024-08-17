@@ -1,0 +1,159 @@
+.agent-card-link {
+    text-decoration: none !important;
+}
+
+.agent-card {
+    width: 277px;
+    height: 191px;
+    border-radius: 8px;
+    opacity: 1;
+    background: #FFFFFF;
+    box-sizing: border-box;
+    border: 0.74px solid #EDEDED;
+    margin-right: 16px;
+    margin-bottom: 16px;
+    padding: 12px;
+    cursor: pointer;
+    &:hover {
+        box-shadow: 2px 4px 7px 3px rgba(127, 105, 196, 0.1);
+    }
+
+    .agent-delete-btn {
+        position: absolute;
+        width: 32px;
+        height: 32px;
+        top: 0;
+        right: 0;
+        text-align: center;
+        line-height: 32px;
+        .agent-delete-icon {
+            width: 18px;
+            height: 18px;
+            &:hover {
+                color: red;
+            }
+        }
+        
+    }
+
+    .agent-title {
+        font-size: 14px;
+        font-weight: 500;
+        line-height: 17px;
+        height: 17px;
+        letter-spacing: 0px;
+        color: #1A1A1A;
+        margin-bottom: 4px;
+    }
+
+    .agent-tag {
+        font-size: 12px;
+        font-weight: normal;
+        line-height: 10px;
+        height: 10px;
+        letter-spacing: 0px;
+        color: #6D6D6D;
+    }
+
+    .prompt-title {
+        font-size: 12px;
+        font-weight: 500;
+        line-height: 14px;
+        letter-spacing: 0px;
+        color: #1A1A1A;
+    }
+
+    .prompt-content {
+        font-size: 12px;
+        font-weight: normal;
+        line-height: 14px;
+        letter-spacing: 0px;
+    }
+}
+
+.agent-container-title {
+    height: 12px;
+    opacity: 1;
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 12px;
+    letter-spacing: 0px;
+    color: #1A1A1A;
+}
+
+.agent-model {
+    width: 760px;
+
+
+    .agent-name-input {
+        width: 664px;
+    }
+
+    .agent-footer-btn {
+        width: 108px;
+        height: 32px;
+        line-height: 32px;
+        font-size: 14px;
+        font-weight: 500;
+        line-height: 24px;
+        letter-spacing: 0.13px;
+    }
+
+    .agent-type {
+        height: 64px;
+        margin-top: 20px;
+        margin-bottom: 14px;
+
+    }
+
+    .agent-title {
+        font-size: 12px;
+        font-weight: 500;
+        line-height: 18px;
+        letter-spacing: 0px;
+        color: #1A1A1A;
+        margin-right: 32px;
+    }
+
+    .agent-container {
+        display: flex;
+
+        .agent-tag {
+            cursor: pointer;
+            width: 215px;
+            height: 64px;
+            margin-right: 8px;
+            border-radius: 4px;
+            opacity: 1;
+            box-sizing: border-box;
+            border: 1px solid #F0F0F0;
+            padding: 12px;
+
+            &:last-child {
+                margin-right: 0;
+            }
+
+            &.active {
+                background: rgba(241, 236, 253, 0.5);
+            }
+
+            .agent-type-name {
+                font-size: 12px;
+                font-weight: normal;
+                line-height: 24px;
+                letter-spacing: 0.13px;
+                color: #1A1A1A;
+
+            }
+
+            .agent-type-desc {
+                font-size: 12px;
+                font-weight: normal;
+                line-height: 24px;
+                letter-spacing: 0.13px;
+                color: #808080;
+            }
+        }
+    }
+
+}
