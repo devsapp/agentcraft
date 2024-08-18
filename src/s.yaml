@@ -1,65 +1,62 @@
-edition: 1.0.0
-name: agentcraft
-services:
-  aigc-admin-py:
-    component: fc
+edition: 3.0.0
+name: AgentCraft
+vars:
+  region: '{{ region }}'
+  beFunctionName: '{{ beFunctionName }}'
+  feFunctionName: '{{ feFunctionName }}'
+template:
+  AgentCraftAll:
+    internetAccess: true
+    # logConfig: auto
+    vpcConfig: auto
+resources:
+  agentcraft-backend:
+    component: fc3
     props:
-      region: '{{region}}'
-      service:
-        logConfig: auto
-        nasConfig: auto
-        description: chat service middleware
-        internetAccess: true
-        name: '{{serviceName}}'
-      function:
-        handler: index.handler
-        description: admin service middleware
-        timeout: 7200
-        caPort: 8000
-        layers:
-          - acs:fc:cn-hangzhou:1431999136518149:layers/NLP-Python310/versions/1
-          - acs:fc:cn-hangzhou:1431999136518149:layers/FastAPI-Python310/versions/6
-        customRuntimeConfig:
-          command:
-            - python3
-            - '-u'
-            - app/main.py
-        instanceType: c1
-        runtime: custom.debian10
-        instanceConcurrency: 10
-        cpu: 8
-        memorySize: 16384
-        diskSize: 10240
-        environmentVariables:
-          PATH: >-
-            /var/fc/lang/python3.10/bin::/usr/local/bin/apache-maven/bin:/usr/local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/local/ruby/bin:/opt/bin:/code:/code/bin
-          PYTHONPATH: /opt/python:/code
-          # AK: ${env.AK}
-          # SK: ${env.SK}
-          
-          # REDIS_HOST: '{{REDIS_HOST}}'
-          EMBEDDING_TIMEOUT: '600'
-          WORKERS: '1'
-          POSTGRES_HOST: '{{POSTGRES_HOST}}'
-          POSTGRES_DATABASE: '{{POSTGRES_DATABASE}}'
-          POSTGRES_USER: '{{POSTGRES_USER}}'
-          POSTGRES_PASSWORD: '{{POSTGRES_PASSWORD}}'
-          EMBEDDING_TOKEN: ''
-          CREATE_TABLES: '1' # 是否建表
-          EMBEDDING_URL: '{{EMBEDDING_URL}}' # embedding 服务地址
-          EMBEDDING_DIM: '{{EMBEDDING_DIM}}' # 向量维度
-          JWT_SECRET: {{JWT_SECRET}}
-          # REDIS_PASSWORD: {{REDIS_PASSWORD}}
-          # REDIS_USER: {{REDIS_USER}}
-          # USE_GREEN_CLIENT: 1
-        name: agentcraft
-        asyncConfiguration: {}
-        codeUri: '.'
+      region: ${vars.region}
+      handler: index.handler
+      description: AgentCraft后端API服务
+      timeout: 7200
+      layers:
+        - acs:fc:${vars.region}:1431999136518149:layers/NLP-Python310/versions/1
+        - >-
+          acs:fc:${vars.region}:1431999136518149:layers/FastAPI-Python310/versions/6
+      customRuntimeConfig:
+        command:
+          - python3
+          - '-u'
+          - app/main.py
+        port: 8000
+      runtime: custom.debian10
+      instanceConcurrency: 10
+      role: AliyunFCDefaultRole
+      cpu: 8
+      memorySize: 16384
+      diskSize: 10240
+      environmentVariables:
+        PATH: >-
+          /var/fc/lang/python3.10/bin::/usr/local/bin/apache-maven/bin:/usr/local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/local/ruby/bin:/opt/bin:/code:/code/bin
+        PYTHONPATH: /opt/python:/code
+        EMBEDDING_TIMEOUT: '600'
+        WORKERS: '1'
+        POSTGRES_HOST: ''
+        POSTGRES_DATABASE: ''
+        POSTGRES_USER: ''
+        POSTGRES_PASSWORD: ''
+        EMBEDDING_TOKEN: ''
+        CREATE_TABLES: '1'
+        EMBEDDING_URL: ''
+        EMBEDDING_DIM: ''
+        JWT_SECRET: {{ JWT_SECRET }}
+        REGION: ${vars.region}
+      functionName: ${vars.beFunctionName}
+      code: ./agentcraft-all/agentcraft-be
+      asyncInvokeConfig: {}
       triggers:
-        - name: httpTrigger
-          description: ''
-          type: http
-          config:
+        - description: ''
+          triggerName: httpTrigger
+          triggerType: http
+          triggerConfig:
             methods:
               - GET
               - POST
@@ -69,8 +66,74 @@ services:
               - OPTIONS
             authType: anonymous
             disableURLInternet: false
-      customDomains:
-        - domainName: auto
-          protocol: HTTP
-          routeConfigs:
-            - path: /*
+    extend:
+      name: AgentCraftAll
+  agentcraft-backend-domain:
+    component: fc3-domain
+    props:
+      region: ${vars.region}
+      domainName: auto
+      protocol: HTTP
+      routeConfig:
+        routes:
+          - path: /*
+            functionName: ${vars.beFunctionName}
+  agentcraft-frontend:
+    component: fc3
+    # actions:
+    #   pre-deploy:
+    #     - run: npm i --production -f
+    #       path: ./agentcraft-all/agentcraft-fe
+    props:
+      region: ${vars.region}
+      description: AgentCraft前端服务
+      timeout: 600
+      diskSize: 512
+      customRuntimeConfig:
+        port: 3000
+        command:
+          - bootstrap
+      layers:
+        - acs:fc:${vars.region}:official:layers/Nodejs18/versions/1
+        - >-
+          acs:fc:${vars.region}:1154600634854327:layers/agentcraft-frontend/versions/5
+      runtime: custom.debian10
+      instanceConcurrency: 5
+      memorySize: 3072
+      role: AliyunFCDefaultRole
+      cpu: 2
+      environmentVariables:
+        baseUrl: ${resources.agentcraft-backend.output.url.system_intranet_url}
+        openApiUrl: ${resources.agentcraft-backend.output.url.system_url}
+        beFunctionName: ${vars.beFunctionName}
+        NODE_PATH: /opt/nodejs/node_modules
+        Region: ${vars.region}
+        PATH: >-
+          /opt/nodejs18/bin::/usr/local/bin/apache-maven/bin:/usr/local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/local/ruby/bin:/opt/bin:/code:/code/bin:/opt/nodejs/node_modules/.bin
+      functionName: ${vars.feFunctionName}
+      code: ./agentcraft-all/agentcraft-fe
+      triggers:
+        - description: ''
+          qualifier: LATEST
+          triggerName: defaultTrigger
+          triggerType: http
+          triggerConfig:
+            methods:
+              - GET
+              - POST
+              - PUT
+              - DELETE
+            authType: anonymous
+            disableURLInternet: false
+    extend:
+      name: AgentCraftAll
+  agentcraft-frontend-domain:
+    component: fc3-domain
+    props:
+      region: ${vars.region}
+      domainName: auto
+      protocol: HTTP
+      routeConfig:
+        routes:
+          - path: /*
+            functionName: ${vars.feFunctionName}

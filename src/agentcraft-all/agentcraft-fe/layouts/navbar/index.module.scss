@@ -1,0 +1,16 @@
+.nav-bottom-config {
+    position:  absolute;
+    bottom: 40px;
+    width: 240px;
+    text-align: center;
+    .git {
+        cursor: pointer;
+        &:hover {
+            color: #0070cc;
+        }
+    }
+}
+
+.navbar {
+    background-color: #F6F7F9;
+}
