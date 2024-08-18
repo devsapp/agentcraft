@@ -10,7 +10,10 @@
 
 # next.js
 /.next
+<<<<<<< HEAD:src/agentcraft-ui/.gitignore
+=======
 package-lock.json
+>>>>>>> master:src/agentcraft-all/agentcraft-fe/.gitignore
 /out/
 
 # production
@@ -35,3 +38,4 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+package-lock.json
