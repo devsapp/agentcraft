@@ -1,0 +1,72 @@
+version: '3.3'
+services:
+  embedding:
+    image: registry.cn-hangzhou.aliyuncs.com/serverlessdevshanxie/bert:v4
+    container_name: embedding
+    restart: always
+    ports: # 生产环境建议不要暴露
+      - 8001:8000
+    networks:
+      - agentcraft
+  pg:
+    image: registry.cn-hangzhou.aliyuncs.com/ingine/pg:v1
+    container_name: pg
+    restart: always
+    ports: # 生产环境建议不要暴露
+      - 5432:5432
+    networks:
+      - agentcraft
+    environment:
+      # 这里的配置只有首次运行生效。修改后，重启镜像是不会生效的。需要把持久化数据删除再重启，才有效果
+      - POSTGRES_USER=agentcraft
+      - POSTGRES_PASSWORD=agentcraft@001
+      - POSTGRES_DB=agentcraft
+    volumes:
+      - ./postgresql/data:/var/lib/postgresql/data
+  api:
+    container_name: api
+    image: agentcraft-api:v0.0.1 # 阿里云
+    ports:
+      - 8000:8000
+    networks:
+      - agentcraft
+    depends_on:
+      - pg
+      - embedding
+    restart: always
+    environment:
+      - CREATE_TABLES=1
+      - EMBEDDING_DIM=1024
+      - EMBEDDING_TIMEOUT=1024
+      - EMBEDDING_TOKEN=
+      - EMBEDDING_URL=http://embedding:8000/embedding
+      - JWT_SECRET=agentcraft
+      - POSTGRES_DATABASE=agentcraft
+      - POSTGRES_HOST=pg
+      - POSTGRES_USER=agentcraft
+      - POSTGRES_PASSWORD=agentcraft@001
+      - REGION=cn-hangzhou
+      - MAIN_ACCOUNT_ID=
+      - ALIBABA_CLOUD_ACCESS_KEY_ID=
+      - ALIBABA_CLOUD_ACCESS_KEY_SECRET=
+  ui:
+    container_name: ui
+    image: agentcraft-ui:v0.0.1
+    ports:
+      - 3000:3000
+    depends_on:
+      - api
+    networks:
+      - agentcraft
+    restart: always
+    environment:
+      - baseUrl=http://api:8000
+      - openApiUrl=api:8000
+      - DEPLOY_TYPE=private # 部署方式为私有化
+      - Region=cn-hangzhou
+      - MAIN_ACCOUNT_ID=
+      - ALIBABA_CLOUD_ACCESS_KEY_ID=
+      - ALIBABA_CLOUD_ACCESS_KEY_SECRET=
+networks:
+  agentcraft:
+    # driver: bridge
