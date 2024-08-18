@@ -19,6 +19,7 @@ type ConversationItem = {
 type ConversationProps = {
     token: string,
     version: 'v1' | 'v2' // v1 对应基础llm调用和rag检索， v2代表agent服务 二者在agentcraft的后端是分开的
+    status: number  // 会话状态 0 代表测试会话
 }
 
 function setTextAreaRef(ref: any, value: any) {
@@ -61,7 +62,7 @@ const ConversationComponent = React.memo((data: ConversationItem) => {
 });
 
 export default function Conversation(props: ConversationProps) {
-    const { token, version } = props;
+    const { token, version, status } = props;
     const [loading, setLoading] = useState(false);
     const [conversations, setConversations] = useState<ConversationItem[]>([]);
     const messageListRef = useRef(null);
@@ -103,13 +104,16 @@ export default function Conversation(props: ConversationProps) {
                     content: item.content
                 }
             })
+            const chatOptions: any = {
+                stream: true,
+                max_tokens: 1024,
+                status
+            }
+
             chatStream({
                 version,
                 messages: requestMessage,
-                config: {
-                    stream: true,
-                    max_tokens: 1024
-                },
+                config: chatOptions,
                 onFinish: (msg) => {
                     setLoading(false);
                 },
@@ -125,7 +129,7 @@ export default function Conversation(props: ConversationProps) {
     };
     const handleEnter = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
         const inputValue = getTextRreaRefValue(chatInputRef);
-        if(e.key === 'Enter' && inputValue) {
+        if (e.key === 'Enter' && inputValue) {
             e.preventDefault();
             handleSubmit(e);
         }

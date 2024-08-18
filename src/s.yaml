@@ -51,7 +51,6 @@ resources:
         REGION: ${vars.region}
       functionName: ${vars.beFunctionName}
       code: ./agentcraft-all/agentcraft-be
-      asyncInvokeConfig: {}
       triggers:
         - description: ''
           triggerName: httpTrigger

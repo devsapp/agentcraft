@@ -5,7 +5,7 @@ Effective: Public
 Name: AgentCraft
 Provider:
   - 阿里云
-Version: 0.0.19 #dev0.0.57
+Version: 0.0.21 #dev0.0.59
 Description: 基于Serverless架构的开源智能体平台，可以快速构建构内容提取、知识库、图文生成助手等智能应用
 HomePage: https://github.com/devsapp/agentcraft
 Tags: #标签详情
