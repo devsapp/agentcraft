@@ -21,8 +21,11 @@ AgentCraft是一个开放的智能体构建平台，致力于推进AI原生应�
 
 <p align="center">
  
-  <a href="https://fcnext.console.aliyun.com/applications/create?template=AgentCraft" target="_blank">
-    <img height="21" src="https://img.shields.io/badge/快速部署体验-7d09f1?style=flat-square" alt="document">
+  <a href="https://agentcraft-docs.serverless-developer.com/quick-start/cloud-deploy" target="_blank">
+    <img height="21" src="https://img.shields.io/badge/云端部署-7d09f1?style=flat-square" alt="document">
+  </a>
+  <a href="#docker-compose-deploy">
+    <img height="21" src="https://img.shields.io/badge/私有化部署-7d09f1?style=flat-square" alt="document">
   </a>
   <a href="#local-developement">
     <img height="21" src="https://img.shields.io/badge/本地开发-%23d4eaf7?style=flat-square&logo=xcode&logoColor=7d09f1" alt="development">
@@ -83,41 +86,61 @@ AgentCraft是一个开放的智能体构建平台，致力于推进AI原生应�
    - [x] 支持自定义组件LUI渲染
    - [x] 生成式UI能力集成 
 
+## 部署
++ 云端
+AgentCraft 基于Serverless架构构建，在[阿里云函数计算](https://www.aliyun.com/product/fc)上提供一键部署应用的模版，帮助您快速部署专属的服务，您可以随时进行公共服务转化，[详情参考](https://agentcraft-docs.serverless-developer.com/quick-start/cloud-deploy)
++ <div id="docker-compose-deploy">私有化</div>
 
-## 本地开发
-<div id="local-developement">克隆本项目到本地,打开 src/agentcraftall 目录，核心代码在该路径下</div>
+  使用[docker-compose.yml](./docker-compose.yml) 一键部署AgentCraft 服务，请确保已经安装了[Docker](https://docs.docker.com/get-docker/) 和 [Docker Compose](https://docs.docker.com/compose/install/)
+  如果您需要访问插件扩展能力以及接入钉钉微信登能力，需要补充docker-compose.yml 中阿里云环境变量相关的信息 如 
+  MAIN_ACCOUNT_ID、
+  ALIBABA_CLOUD_ACCESS_KEY_ID、
+  ALIBABA_CLOUD_ACCESS_KEY_SECRET
+  不需要请直接执行
+```
+   docker compose up -d
+```
+## <div id="local-developement">开发</div>
+克隆本项目到本地
+```
+git clone https://github.com/devsapp/agentcraft.git
+```
+### 启动后端服务 agentcraft-be
+部署后端服务需要先准备好embedding 和 pg
+#### embedding
 
-src/agentcraft-all 包含前后端两个工程 agentcraft-fe和agentcraft-be
-需要启动后端服务和前端服务
-### 后端工程 agentcraft-be
++ 云端创建，访问函数计算[embedding应用模版](https://fcnext.console.aliyun.com/applications/create?template=fc-embedding-api)一键创建,并获取域名
++ 本地创建, 执行```docker-compose up embedding -d```, 该服务地址为 http://localhost:8001/embedding
 
-+ 配置准备：修改.env.example -> .env
-填写好相关的配置，主要依赖  EMBEDDING_URL 和 数据库的配置，其中EMBEDDING_URL 可以访问
-https://fcnext.console.aliyun.com/applications/create?template=fc-embedding-api，
-创建后获取，
-数据库可以创建一个RDS PostgreSQL实例 https://rdsbuy.console.aliyun.com/create/rds/mysql?spm=5176.19907444.0.0.64b11450FHIgeU
-+ 依赖安装：
-**pip install -r  requirements.txt**
-+ 服务启动：
+#### pg
++ 云端创建， 通过RDS PostgreSQL实例 https://rdsbuy.console.aliyun.com/create/rds/mysql?spm=5176.19907444.0.0.64b11450FHIgeU 获取，[相关教程参考](https://agentcraft-docs.serverless-developer.com/quick-start/cloud-deploy)
++ 本地创建，执行```docker-compose up pg -d```
+
 ```shell
+cd agentcraft/src/agentcraft-all/agentcraft-be
+cp .env.example .env
+python3 -m venv venv
+source venv/bin/activate
+pip install -r  requirements.txt
 export PYTHONPATH="${PYTHONPATH}:$(pwd)"
 python3 -u app/main.py
+
 ```
-### 前端工程 agentcraft-fe
-+ 配置准备：修改.env.example -> .env，将后端服务的域名填写为baseUrl的值，获得阿里云的AK,SK并填写为.env中的值ALIBABA_CLOUD_ACCESS_KEY_ID，ALIBABA_CLOUD_ACCESS_KEY_SECRET（该配置在操作云资源的时候需要，如管理基础模型服务）
-+ 依赖安装：
-**npm install -f**
-+ 服务启动
+
+### 启动前端服务 agentcraft-fe
+
 ```
+cd agentcraft/src/agentcraft-all/agentcraft-fe
+cp .env.example .env
+npm install -f
 npm run dev
 ```
-### 一些问题
-为什么需要 AK,SK? 本项目依赖阿里云基础设施，因此内置了一部分云资源的管理能力，比如基础模型的部署、连接钉钉机器人，微信，独立站的服务，因此需要提供AK,SK 管理云资源，如果您不需要这些能力，可以忽略此项。另外请注意保管自己的AK,SK
+
+### 特性相关
+与同类智能体平台相比，AgentCraft最大的特性在于构建跟云上资源的链接，提供云上资源管理能力，可以构建和部署任意需要被依赖的组件，比如基础模型、数据持续集成、自定义执行工具、客户端接入、工作流等,皆在帮助企业级开发者自由构建可以落地到业务里的AI应用
+
 ## 如何贡献
-欢迎为AgentCraft贡献，一起推进AI应用的落地。  欢迎各种方式的贡献，提交代码、问题、新想法、或者分享你的AI应用
-
-
-
+欢迎为AgentCraft[贡献](https://agentcraft-docs.serverless-developer.com/community/become-contributor)，一起推进AI应用的落地。  欢迎各种方式的贡献，提交代码、问题、新想法.
 
 
 ## 联系我们

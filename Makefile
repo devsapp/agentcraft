@@ -1,11 +1,11 @@
 docker-ui:
 	cd src/agentcraft-all/agentcraft-fe ; \
 	npm run build ; \
-	docker buildx build -t agentcraft-ui:v0.0.1 .
+	docker buildx build -t registry.cn-hangzhou.aliyuncs.com/agentcraft/agentcraft-fe:v1 .
 
 docker-api:
 	cd src/agentcraft-all/agentcraft-be ; \
-	docker buildx build -t agentcraft-api:v0.0.1 .
+	docker buildx build -t registry.cn-hangzhou.aliyuncs.com/agentcraft/agentcraft-be:v1 .
 
 
 
