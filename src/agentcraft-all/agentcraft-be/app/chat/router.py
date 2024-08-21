@@ -31,17 +31,23 @@ async def chat(req: ChatRequest, request: Request, token: AgentJWTData = Depends
     """
     if req.messages[-1].role != "user":
         raise HTTPException(status_code=400, detail="The last message must be from the user.")
-    agent_session_id = req.agent_session_id
     agent_id = token.agent_id
+
+    keyword = req.keyword
+    agent_session_id = req.session_id
+    logger.info(f'agent_session_id: {agent_session_id}; keyword: {keyword};')
+
     query = req.messages[-1].content
+    agent_session_id = service.get_chat_session_id(agent_session_id, keyword, agent_id, title = query)
+    logger.info(f'agent_session_id: {agent_session_id}')
 
     history = []
-    if agent_session_id is None:
-        agent_session_id = service.get_chat_session_id(req.status, agent_id)
-    logger.info(f'agent_session_id: {agent_session_id}')
-    history = service.list_chats_history_by_session_id(agent_id, agent_session_id)
+    if agent_session_id is not None:
+        history, _total = service.list_chats_history_by_session_id(agent_id, agent_session_id)
+
     history_dict = [{"user": d["question"], "assistant": d["answer"]} for d in history]
     logger.info(f"history: {history_dict}")
+
     if req.stream:
         return EventSourceResponse(
             service.chat_stream(
@@ -50,6 +56,7 @@ async def chat(req: ChatRequest, request: Request, token: AgentJWTData = Depends
     else:
         resp: dict[str, Any] = service.chat(
             agent_session_id, query, request.client.host, agent_id, history_dict)
+        print(f"resp: {resp}")
         return ChatCompletionResponse(**resp)
 
 

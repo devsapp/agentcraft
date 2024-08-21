@@ -46,6 +46,9 @@ class AssistantChat(postgresql.BaseModel):
     uid = mapped_column(String, nullable=False)
     created = mapped_column(TIMESTAMP, default=func.now(), nullable=False)
     modified = mapped_column(TIMESTAMP, default=func.now(), onupdate=func.now, nullable=False)
+    prompt_tokens = mapped_column(Integer, nullable=True) # 入参使用的token
+    completion_tokens = mapped_column(Integer, nullable=True) # 出参使用的token
+    total_tokens = mapped_column(Integer, nullable=True) # token总量 
 
 
 def list_chats(assistant_id: int, day: int = 0,  page: int = 0, limit: int = 3000) -> tuple[list[AssistantChat], int]:

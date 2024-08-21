@@ -12,9 +12,10 @@ class AgentSession(postgresql.BaseModel):
 
     id = mapped_column(Integer, primary_key=True)
     title = mapped_column(String, nullable=False)
+    keyword= mapped_column(String, nullable=False)
     agent_id = mapped_column(ForeignKey("agent.id", ondelete="cascade"))
     share_id= mapped_column(String, nullable=True)
-    status= mapped_column(Integer, default=0, nullable=False)  # 1: normal, 2: testing, 3: deleted  default 1
+    status= mapped_column(Integer, default=1, nullable=False)  # 1: normal, 2: deleted  default 1
     fingerprint_id = mapped_column(String, nullable=False)
     created = mapped_column(TIMESTAMP, default=func.now(), nullable=False)
     modified = mapped_column(TIMESTAMP, default=func.now(), onupdate=func.now(), nullable=False)
@@ -24,18 +25,23 @@ def list_sessions(agent_id: int, page: int = 0, limit: int = 3000) -> tuple[list
     """获取sessions列表"""
     with Session(postgresql.postgres) as session:
         data = session.query(AgentSession).filter(
-            AgentSession.agent_id == agent_id).order_by(
+            AgentSession.agent_id == agent_id,
+            AgentSession.status == 1).order_by(
             AgentSession.modified.desc()).offset(
             page * limit).limit(limit).all()
         total = session.query(AgentSession).filter(AgentSession.agent_id == agent_id).count()
         return [vars(session) for session in data], total
 
-def get_test_session(agent_id: int) -> Session:
+def get_session_by_agent_id(agent_id: int, keyword: str = None, status = 1) -> Session:
     """获取assistant 的测试 session"""
     with Session(postgresql.postgres) as session:
-        return session.query(AgentSession).filter(
+        data = session.query(AgentSession).filter(
             AgentSession.agent_id == agent_id,
-            AgentSession.status == 0).first()
+            AgentSession.keyword == keyword,
+            AgentSession.status == status).first()
+        if data is not None:
+            return vars(data)
+        return data
 
 def delete_session(sessions_id: int, user_id: int):
     """删除sessions"""
@@ -53,11 +59,15 @@ def add_session(**kwargs):
         return sessions.id
 
 
-def get_session(sessions_id: int) -> Session:
+def get_session(sessions_id: int, status = 1) -> Session:
     """获取sessions信息"""
     with Session(postgresql.postgres) as session:
-        return session.query(AgentSession).filter(
-            AgentSession.id == sessions_id).order_by(AgentSession.modified.desc()).first()
+        data = session.query(AgentSession).filter(
+            AgentSession.id == sessions_id,
+            AgentSession.status == status).order_by(AgentSession.modified.desc()).first()
+        if data is not None:
+            return vars(data)
+        return data
 
 
 def update_session(sessions_id: int, **kwargs):

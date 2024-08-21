@@ -6,6 +6,7 @@ from sqlalchemy.sql import func
 from sqlalchemy.orm import Session, mapped_column, relationship
 from app.database import postgresql
 from app.database.dataset import Dataset
+from app.common.logger import logger
 
 
 class AgentDataset(postgresql.BaseModel):
@@ -15,7 +16,7 @@ class AgentDataset(postgresql.BaseModel):
     id = mapped_column(Integer, primary_key=True, index=True)
     agent_id = mapped_column(ForeignKey("agent.id", ondelete='cascade'))
     dataset_id = mapped_column(ForeignKey("dataset.id", ondelete='cascade'))
-    dataset_type = mapped_column(Integer, nullable=False)
+    dataset_type = mapped_column(Integer, nullable=False) # 1 文档数据集    2 问答数据集
     created = mapped_column(TIMESTAMP, default=func.now(), nullable=False)
     modified = mapped_column(TIMESTAMP, default=func.now(), onupdate=func.now(), nullable=False)
     datasets = relationship("Dataset")
@@ -56,11 +57,12 @@ def insert_agent_datasets(agent_id: int, datasets: list[int]):
         session.commit()
 
 
-def similarity_search(
-        agent_id: int, embedding: list[float],
-        exact_search_similarity: float, fuzzy_search_similarity: float, exact_search_limit: int,
-        fuzzy_search_limit: int) -> tuple[list, bool]:
-    """相似度搜索"""
+def exact_seach(
+        agent_id: int,
+        embedding: list[float],
+        exact_search_similarity: float,
+        exact_search_limit: int) -> tuple[list, bool]:
+    """向量知识库相似度搜索"""
     with Session(postgresql.postgres) as session:
         exact_datasets = session.query(AgentDataset.dataset_id).filter(
             AgentDataset.agent_id == agent_id, AgentDataset.dataset_type == 1).all()
@@ -71,8 +73,17 @@ def similarity_search(
             ORDER BY similarity DESC LIMIT {exact_search_limit};
             '''
             exact_similarity_search_res = session.execute(text(exact_similarity_search_sql)).all()
-            if exact_similarity_search_res:
-                return exact_similarity_search_res, False
+            return exact_similarity_search_res or [], True
+        return [], False
+
+
+def similarity_search(
+        agent_id: int,
+        embedding: list[float],
+        fuzzy_search_similarity: float,
+        fuzzy_search_limit: int) -> tuple[list, bool]:
+    """向量知识库相似度搜索"""
+    with Session(postgresql.postgres) as session:
         fuzzy_datasets = session.query(AgentDataset.dataset_id).filter(
             AgentDataset.agent_id == agent_id, AgentDataset.dataset_type == 2).all()
         if fuzzy_datasets:
@@ -84,4 +95,4 @@ def similarity_search(
             fuzzy_similarity_search_res = session.execute(text(fuzzy_similarity_search_sql)).all()
             if fuzzy_similarity_search_res:
                 return fuzzy_similarity_search_res, True
-        return [], True
+        return [], False

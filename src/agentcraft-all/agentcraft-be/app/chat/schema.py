@@ -1,7 +1,7 @@
 """Chat Schema"""
 # pylint: disable = too-few-public-methods
 from typing import List, Optional, Dict, Literal, Any
-from pydantic import BaseModel, Field  # pylint: disable = no-name-in-module
+from pydantic import BaseModel, Field, validator  # pylint: disable = no-name-in-module
 
 
 class UpdateChatRequest(BaseModel):
@@ -88,24 +88,15 @@ class ChatRequest(BaseModel):
         default=[], description="A list of messages to generate completions for."
     )
     stream: bool = stream_field
-    agent_session_id: int = agent_session_id_field
-    status: int = Field(
-        default=None, description="If 0, it means it is a test question"
-    )
+    session_id: int = agent_session_id_field
+    keyword: str = Field(default=None, description="Keyword for the chat")
 
-
-# class CreateChatCompletionRequest(BaseModel):
-#     """Create Chat Completion Request"""
-#     messages: List[ChatCompletionRequestMessage] = Field(
-#         default=[], description="A list of messages to generate completions for."
-#     )
-#     max_tokens: int = max_tokens_field
-#     temperature: float = temperature_field
-#     top_p: float = top_p_field
-#     stop: Optional[List[str]] = stop_field
-#     presence_penalty: Optional[float] = presence_penalty_field
-#     frequency_penalty: Optional[float] = frequency_penalty_field
-#     logit_bias: Optional[Dict[str, float]] = Field(None)
+    @validator('keyword', pre=True)
+    def mutually_exclusive(cls, value, values):
+        session_id = values.get('session_id')
+        if (value is not None and session_id is not None):
+            raise ValueError('session_id and keyword are mutually exclusive')
+        return value
 
 
 class ChatCompletionResponse(BaseModel):

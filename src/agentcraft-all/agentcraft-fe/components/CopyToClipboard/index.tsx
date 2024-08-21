@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { CSSProperties, useState } from 'react';
 import { ActionIcon, Tooltip, Text, Flex } from '@mantine/core';
 import { IconCopy, IconCheck } from '@tabler/icons-react';
 import styles from './index.module.scss';
@@ -8,7 +8,8 @@ type CopyToClipboardProps = {
     content?: any,
     width?: any,
     truncate?: any,
-    position?: any
+    position?: any,
+    style?: CSSProperties
 }
 
 export function useClipboard({ timeout = 2000 } = {}) {
@@ -62,19 +63,20 @@ export function useClipboard({ timeout = 2000 } = {}) {
 
     return { copy, reset, error, copied };
 }
-export default function CopyToClipboard({ value, content, truncate, width = 'auto', position = "right" }: CopyToClipboardProps) {
+export default function CopyToClipboard({ style = {}, value, content, truncate, width = 'auto', position = "right" }: CopyToClipboardProps) {
     const clipboard = useClipboard({ timeout: 500 });
 
     return <Tooltip label={clipboard.copied ? '已复制' : '复制'} withArrow position={position} >
         <Flex
             onClick={() => clipboard.copy(value)}
             mih={50}
-            style={{ width }}
+            style={{ width, ...style }}
             gap="xs"
             justify="flex-start"
             align="center"
             direction="row"
-            wrap="nowrap">
+            wrap="nowrap"
+        >
             {content ? <Text truncate={truncate} className={styles['copy-to-clipboard-content']}>{content}</Text> : null}
             <ActionIcon color={clipboard.copied ? 'teal' : 'gray'} >
                 {clipboard.copied ? <IconCheck size="1rem" /> : <IconCopy size="1rem" />}

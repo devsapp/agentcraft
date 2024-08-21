@@ -65,6 +65,8 @@ function List({ assistantId }: { assistantId: any }) {
             </td>
             <td style={{ width: 80 }}>{element.model_name}</td>
             <td style={{ width: 80 }}>{formatDateTime(element.created)}</td>
+            <td style={{ width: 80 }}>{element.prompt_tokens || '-'}</td>
+            <td style={{ width: 80 }}>{element.completion_tokens || '-'}</td>
         </tr>
     ));
     useEffect(() => {
@@ -92,6 +94,8 @@ function List({ assistantId }: { assistantId: any }) {
                         <th>智能体结果</th>
                         <th>使用模型</th>
                         <th>问答创建时间</th>
+                        <th>token(入)</th>
+                        <th>token(出)</th>
                     </tr>
                 </thead>
                 <tbody>{rows}</tbody>

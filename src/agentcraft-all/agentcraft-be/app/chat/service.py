@@ -1,7 +1,6 @@
 """Chat Service"""
 # pylint: disable = no-member
 from typing import Any
-from fastapi import HTTPException
 from time import time
 import uuid
 import json
@@ -16,31 +15,80 @@ import app.database.agent_dataset as agent_dataset_database
 import app.database.agent_session_chat as agent_session_chat_dataset_database
 import app.database.model as model_database
 # import app.database.redis as redis
+# from app.chat.green_client import is_legal
 from app.common.logger import logger
-from app.chat.green_client import is_legal
 from app.config import common as config
 
 DONE = "[DONE]"
 
+class get_related():
+    def __init__(self, agent_id, query, agent = None):
+        # self.agent_session_id = chat_service.get_chat_session_id(None, keyword, agent_id, title = query)
+        if not agent:
+            agent = agent_database.get_agent_lite(agent_id)
+            if not agent:
+                raise ValueError("agent does not exist")
+            self.agent = agent
 
-def get_chat_session_id(status: int, agent_id: int, **kv):
-    if status == 0:
-        data = agent_session_database.get_test_session(agent_id)
-        if data:
-            return data.id
-    add_args = {
-        "title": "测试会话",
-        "agent_id": agent_id,
-        "status": status,
-    }
-    add_args.update(kv)
-    logger.info(f"add agent session {add_args}")
-    return create_agent_session(**add_args)
+        self.agent_id = agent_id
+        self.query = query
+        self.embedding = utils.embed(query)[0]
+
+    def check_user_has_agent(self, user_id: int):
+        if not self.agent.user_id == user_id:
+            raise ValueError("user does not have this agent")
+    
+    def qa(self, search_limit = 3):
+        question = []
+        search_similarity = self.agent.exact_search_similarity
+        search_similarity_1 = search_similarity - 0.1 if search_similarity - 0.3 <= 0 else search_similarity - 0.3
+        logger.info(f'exact_search_similarity soucre: {search_similarity}, to {search_similarity_1}')
+        if search_similarity_1 <= 0:
+            return question
+        search_res, _use_exact = agent_dataset_database.exact_seach(self.agent_id, self.embedding, search_similarity_1, search_limit)
+        for _i, (_chunk, title, _url, _similarity) in enumerate(search_res):
+            question.append(title)
+        return question
+
+    # TODO: 新增文档提示的语句
+    # def docs(agent_id: int, embedding: list[float], search_similarity: float, search_limit = 3):
+    #     question = []
+    #     search_similarity_1 = search_similarity - 0.1 if search_similarity - 0.3 <= 0 else search_similarity - 0.3
+    #     logger.info(f'docs_search_similarity soucre: {search_similarity}, to {search_similarity_1}')
+    #     if search_similarity_1 <= 0:
+    #         return question
+    #     search_res, _use_exact = agent_dataset_database.similarity_search(agent_id, embedding, search_similarity_1, search_limit)
+    #     search_res = rank_search_res(search_res)
+    #     # 想办法提炼出问题几个最相近的问题
+    #     #   怎么走提炼？消耗的token算谁的，如果算是客户的是否需要保存记录。
+    #     return question
+
+
+def get_chat_session_id(session_id: int, keyword: str, agent_id: int, **kv):
+    if keyword is not None:
+        data = agent_session_database.get_session_by_agent_id(agent_id, keyword=keyword)
+        if data is not None:
+            return data.get("id")
+        add_args = {
+            "title": keyword,
+            "agent_id": agent_id,
+            "keyword": keyword,
+        }
+        add_args.update(kv)
+        logger.info(f"add agent session {add_args}")
+        return create_agent_session(**add_args)
+    elif session_id is not None:
+        data = agent_session_database.get_session(session_id)
+        if not data:
+            raise ValueError(f"does not have this agent session {session_id}")
+        return session_id
 
 
 def create_agent_session(**add_args):
     if not agent_database.get_agent_lite(add_args.get('agent_id')):
         raise ValueError("agent does not exist")
+    if len(add_args.get('title', '')) > 20:
+        add_args["title"] = add_args.get('title')[:20:] + '...'
     return agent_session_database.add_session(**add_args)
 
 
@@ -52,15 +100,14 @@ def list_chats_id_by_session_id(agent_id: int, session_id: int, **kv):
     if not agent_database.check_user_has_agent(agent.user_id, agent_id):
         raise ValueError("user does not have this agent")
     limit = kv.get("limit") or agent.llm_history_len or 20
-    data, total = agent_session_chat_dataset_database.list_chats_session_chat_id_by_session_id(
-        session_id, 0, limit)
+    page = kv.get("page") or 0
+    data, total = agent_session_chat_dataset_database.list_chats_session_chat_id_by_session_id(session_id, page, limit)
     return data, total
 
 
-def list_chats_history_by_session_id(agent_id: int, session_id: int, limit=None):
+def list_chats_history_by_session_id(agent_id: int, session_id: int, limit = None, page = None):
     """根据 session_id 列出问答历史记录"""
-    data, total = list_chats_id_by_session_id(
-        agent_id, session_id, limit=limit)
+    data, total = list_chats_id_by_session_id(agent_id, session_id, limit = limit, page = page)
     history = []
     for item in data:
         # pdb.set_trace()
@@ -69,7 +116,7 @@ def list_chats_history_by_session_id(agent_id: int, session_id: int, limit=None)
             logger.info(f'No information found for chat id({item.get("chat_id")})')
             continue
         history.append(agent_chat_data)
-    return history[::-1]
+    return history[::-1], total
 
 
 def list_chats(agent_id: int, user_id: int, page: int, limit: int):
@@ -81,22 +128,10 @@ def list_chats(agent_id: int, user_id: int, page: int, limit: int):
     return data_dict, total
 
 
-def update_chat(uid: str, agent_id: int, **kwargs):
-    """更新问答历史记录"""
-    database.update_chat(uid, agent_id, **kwargs)
-
 
 def sanitize_text(text: str) -> str:
     """防止问题注入"""
     return text.replace("```", "")
-
-
-# def get_history(ip_addr: str):
-#     """获取历史回答"""
-#     history_key = f"history:{ip_addr}"
-#     if redis_db.exists(history_key):
-#         return json.loads(redis_db.get(history_key))
-#     return None
 
 
 def generate_prompt(search_res: list, query: str, prompt_template: str) -> str:
@@ -120,22 +155,12 @@ def format_document(title: str, url: str, cnt: int, similarity: float, chunk: st
     return f"""相关 {cnt+1}: [{title}](<{url}>) {f"{chunk} " if chunk else ''}(相似度: {similarity})\n\n"""
 
 
-def rank_search_res(search_res: list, query: str) -> list[tuple[str, str, str, float]]:
+def rank_search_res(search_res: list) -> list[tuple[str, str, str, float]]:
     """对搜索结果进行排序"""
     if not search_res:
         return []
     results_filter = {}
     results = []
-    # try:
-    #     real_column_data = [item[2] for item in search_res]  # 针对内容做一下处理
-    #     rerank_results = utils.rerank(real_column_data, query)
-    #     sorted_indices = sorted(
-    #         range(len(rerank_results)), key=lambda i: -rerank_results[i])
-    #     results = [(search_res[i].title, search_res[i].url, rerank_results[i],
-    #                 search_res[i].doc_chunk) for i in sorted_indices if rerank_results[i] >= 0.5]
-    #     return results
-    # except Exception as e:
-    #     logger.error(e)
     for chunk in search_res:  # concat by url
         title, url, doc_chunk, chunk_idx, similarity = chunk.title, chunk.url, chunk.doc_chunk, chunk.chunk_idx, chunk.similarity
         if url in results_filter:
@@ -211,7 +236,7 @@ def convert_fuzzy_search_res(search_res: list):
     return choices
 
 
-def chat(agent_session_id: int, query: str, ip_addr: str, agent_id: int, history=[]):
+def chat(agent_session_id: int, query: str, ip_addr: str, agent_id: int, history = []):
     """Chat with agent."""
     agent = agent_database.get_agent_lite(agent_id)
     created = int(time())
@@ -232,25 +257,14 @@ def chat(agent_session_id: int, query: str, ip_addr: str, agent_id: int, history
         }
         return model_chat(agent_session_id, **chat_args)
     embedding = utils.embed(query)[0]
-    search_args = {
-        "agent_id": agent.id,
-        "embedding": embedding,
-        "exact_search_similarity": agent.exact_search_similarity,
-        "fuzzy_search_similarity": agent.fuzzy_search_similarity,
-        "exact_search_limit": agent.exact_search_limit,
-        "fuzzy_search_limit": agent.fuzzy_search_limit
-    }
 
-    similarity_search_res, use_model = agent_dataset_database.similarity_search(
-        **search_args)
-    if not use_model:
-        choices, answer = convert_exact_search_res(similarity_search_res)
-        resp = {
-            "id": uid,
-            "object": "chat.search.exact",
-            "choices": choices,
-            "created": created
-        }
+    # 精准问答
+    similarity_search_res, use_exact = agent_dataset_database.exact_seach(agent.id, embedding, agent.exact_search_similarity, agent.exact_search_limit)
+    # 匹配到精准问答
+    if not similarity_search_res == []:
+        logger.info('only use_exact: true')
+        choices, answer = convert_exact_search_res_stream(
+            similarity_search_res)
         add_args = {
             "query": query,
             "prompt": "",
@@ -259,39 +273,54 @@ def chat(agent_session_id: int, query: str, ip_addr: str, agent_id: int, history
             "chat_type": 0,
             "ip_addr": ip_addr,
             "agent": agent,
+            "usage": {},
             "uid": uid
-        }
-        chat_id = add_chat(**add_args)
-        add_session_chat(agent_session_id, chat_id)
-        return resp
-    search_res = rank_search_res(
-        similarity_search_res, query)
-    search_choices = convert_fuzzy_search_res(search_res)
-    prompt = generate_prompt(search_res, query, agent.prompt_template)
-    if config.USE_GREEN_CLIENT and not is_legal(query):
-        answer = "抱歉，根据已知信息无法回答该问题。"
-        resp_obj = "chat.illegal"
-        add_args = {
-            "query": query,
-            "prompt": prompt,
-            "answer": [answer],
-            "source": search_choices,
-            "chat_type": 0,
-            "ip_addr": ip_addr,
-            "agent": agent,
-            "uid": uid,
         }
         chat_id = add_chat(**add_args)
         add_session_chat(agent_session_id, chat_id)
         return {
             "id": uid,
-            "object": resp_obj,
+            "object": "chat.search.exact",
+            "choices": choices,
+            "created": created
+        }
+
+    # 如果精准问答没有匹配到，尝试使用了文档集
+    if similarity_search_res == []:
+        similarity_search_res, use_similarity = agent_dataset_database.similarity_search(agent.id, embedding, agent.fuzzy_search_similarity, agent.fuzzy_search_limit)
+    logger.info(f'has similarity_search_res: {similarity_search_res != []}')
+
+    # 没有匹配到问答
+    if similarity_search_res == []:
+        answer = agent.default_answer or "抱歉，没有匹配到相关问题。"
+        add_args = {
+            "query": query,
+            "prompt": "",
+            "answer": [answer],
+            "source": [],
+            "chat_type": 0,
+            "ip_addr": ip_addr,
+            "agent": agent,
+            "usage": {},
+            "uid": uid,
+        } 
+        chat_id = add_chat(**add_args)
+        add_session_chat(agent_session_id, chat_id)
+
+        return {
+            "id": uid,
+            "object": "chat.illegal",
             "message": [{
                 "content": answer,
                 "role": "assistant"
-            }]+choices,
+            }],
             "created": created
         }
+
+    search_res = rank_search_res(similarity_search_res)
+    search_choices = convert_fuzzy_search_res(search_res)
+    prompt = generate_prompt(search_res, query, agent.prompt_template)
+    
     chat_args = {
         "query": query,
         "prompt": prompt,
@@ -304,17 +333,19 @@ def chat(agent_session_id: int, query: str, ip_addr: str, agent_id: int, history
         "created": created
     }
 
+    logger.debug(f"chat_args: {chat_args}")
     return model_chat(agent_session_id, **chat_args)
 
 
-def chat_stream(agent_session_id: int, query: str, ip_addr: str, agent_id: int, history=[]):
+def chat_stream(agent_session_id: int, query: str, ip_addr: str, agent_id: int, history = []):
     """Chat with agent."""
     agent = agent_database.get_agent_lite(agent_id)
     if not agent:
         raise ValueError("agent does not exist")
     created = int(time())
     uid = f"chatcompl-{uuid.uuid4()}"
-    if not agent.prompt_template:  # 无提示词模版直接进行模型问答
+    # 普通问答
+    if not agent.prompt_template: 
         chat_args = {
             "query": query,
             "prompt": query,
@@ -328,29 +359,22 @@ def chat_stream(agent_session_id: int, query: str, ip_addr: str, agent_id: int, 
         }
         yield from model_chat_stream(agent_session_id, **chat_args)
         return
-
+    # 知识库
     embedding = utils.embed(query)[0]
-    search_args = {
-        "agent_id": agent.id,
-        "embedding": embedding,
-        "exact_search_similarity": agent.exact_search_similarity,
-        "fuzzy_search_similarity": agent.fuzzy_search_similarity,
-        "exact_search_limit": agent.exact_search_limit,
-        "fuzzy_search_limit": agent.fuzzy_search_limit
-    }
 
-    similarity_search_res, use_model = agent_dataset_database.similarity_search(
-        **search_args)
-    if not use_model:
+    # 精准问答
+    similarity_search_res, use_exact = agent_dataset_database.exact_seach(agent.id, embedding, agent.exact_search_similarity, agent.exact_search_limit)
+    # 匹配到精准问答
+    if not similarity_search_res == []:
+        logger.info('only use_exact: true')
         choices, answer = convert_exact_search_res_stream(
             similarity_search_res)
-        resp = {
+        yield json.dumps({
             "id": uid,
             "object": "chat.search.exact",
             "choices": choices,
             "created": created
-        }
-        yield json.dumps(resp)
+        })
         add_args = {
             "query": query,
             "prompt": "",
@@ -359,29 +383,26 @@ def chat_stream(agent_session_id: int, query: str, ip_addr: str, agent_id: int, 
             "chat_type": 0,
             "ip_addr": ip_addr,
             "agent": agent,
+            "usage": {},
             "uid": uid
         }
         chat_id = add_chat(**add_args)
         add_session_chat(agent_session_id, chat_id)
         yield DONE
         return
-    search_res = rank_search_res(
-        similarity_search_res, query)
-    search_choices = convert_fuzzy_search_res(search_res)
-    search_resp = {
-        "id": uid,
-        "object": "chat.search.fuzzy",
-        "choices": search_choices,
-        "created": created
-    }
-    yield json.dumps(search_resp)
-    prompt = generate_prompt(search_res, query, agent.prompt_template)
-    if config.USE_GREEN_CLIENT and not is_legal(query):
-        answer = "抱歉，根据已知信息无法回答该问题。"
-        resp_obj = "chat.illegal"
+
+    # 如果精准问答没有匹配到，尝试使用了文档集
+    if similarity_search_res == []:
+        similarity_search_res, use_similarity = agent_dataset_database.similarity_search(agent.id, embedding, agent.fuzzy_search_similarity, agent.fuzzy_search_limit)
+
+    logger.info(f'has similarity_search_res: {similarity_search_res != []}')
+    # 没有匹配到问答
+    if similarity_search_res == []:
+        answer = agent.default_answer or "抱歉，没有匹配到相关问题。"
+
         yield json.dumps({
             "id": uid,
-            "object": resp_obj,
+            "object": "chat.illegal",
             "message": [{
                 "content": answer,
                 "role": "assistant"
@@ -390,18 +411,31 @@ def chat_stream(agent_session_id: int, query: str, ip_addr: str, agent_id: int, 
         })
         add_args = {
             "query": query,
-            "prompt": prompt,
+            "prompt": "",
             "answer": [answer],
-            "source": search_choices,
+            "source": [],
             "chat_type": 0,
             "ip_addr": ip_addr,
             "agent": agent,
+            "usage": {},
             "uid": uid,
-        }
+        } 
         chat_id = add_chat(**add_args)
         add_session_chat(agent_session_id, chat_id)
         yield DONE
         return
+    
+    # 使用文档集问答
+    search_res = rank_search_res(similarity_search_res)
+    prompt = generate_prompt(search_res, query, agent.prompt_template)
+    search_choices = convert_fuzzy_search_res(search_res)
+    search_resp = {
+        "id": uid,
+        "object": "chat.search.fuzzy",
+        "choices": search_choices,
+        "created": created
+    }
+    yield json.dumps(search_resp)
     chat_args = {
         "query": query,
         "prompt": prompt,
@@ -441,10 +475,11 @@ def build_messages(prompt: str, history: list, system_message: str) -> list:
 
 
 def model_chat(agent_session_id,
-               query: str, prompt: str, history: list[str],
-               search_choices: list, ip_addr: str, agent, chat_type: int, uid: str, created: int):
+        query: str, prompt: str, history: list[str],
+        search_choices: list, ip_addr: str, agent, chat_type: int, uid: str, created: int):
     """获取大模型的回答"""
     messages = build_messages(prompt, history, agent.system_message)
+    logger.info(messages)
     model = model_database.get_model_by_id(agent.model_id)
     if not model:
         raise ValueError("model does not exist")
@@ -466,6 +501,7 @@ def model_chat(agent_session_id,
     if(agent.stop != []):
         llm_request_options['stop'] = agent.stop
     request_data = json.dumps(llm_request_options)
+    logger.info(request_data)
     resp = requests.post(model.url, headers=headers,
                          data=request_data, timeout=model.timeout)
     if resp.status_code != 200:
@@ -474,6 +510,7 @@ def model_chat(agent_session_id,
     resp_data = resp.json()
     if isinstance(resp_data, str):
         resp_data = json.loads(resp_data)
+    logger.info(resp_data)
     answer = [ans["message"]["content"]
               for ans in resp_data["choices"] if ans["message"]["role"] == "assistant"]
     resp_data["id"] = uid
@@ -490,21 +527,24 @@ def model_chat(agent_session_id,
         "agent": agent,
         "model": model,
         "uid": uid,
+        "usage": resp_data.get('usage', {})
     }
     chat_id = add_chat(**add_args)
     add_session_chat(agent_session_id, chat_id)
     return resp_data
 
 
-def model_chat_stream(agent_session_id,
-                      query: str, prompt: str, history: list,
-                      search_choices: list, ip_addr: str, agent, chat_type: int, uid: str, created: int):
+def model_chat_stream(agent_session_id, 
+        query: str, prompt: str, history: list,
+        search_choices: list, ip_addr: str, agent, chat_type: int, uid: str, created: int):
     """获取大模型的回答"""
     messages = build_messages(prompt, history, agent.system_message)
+    logger.info(f'messages: {messages}')
     model = model_database.get_model_by_id(agent.model_id)
-
+   
     if not model:
         raise ValueError("model does not exist")
+    logger.info(f"{model.token}")
     headers = {
         "Authorization": f"Bearer {model.token}",
         "Content-Type": "application/json"
@@ -525,60 +565,52 @@ def model_chat_stream(agent_session_id,
     if(agent.stop != []):
         llm_request_options['stop'] = agent.stop
     request_data = json.dumps(llm_request_options)
-    resp = requests.post(model.url, headers=headers, data=request_data,
-                         stream=True, timeout=model.timeout)
-    if resp.status_code != 200:
-        error_chunk = {}
-        error_chunk["id"] = uid
-        error_chunk["created"] = created
-        error_chunk["model"] = model.name_alias
-        error_chunk["choices"] = [
-            {"delta": {"content": f'## Something Wrong From AgentCraft Backend:\n ## status_code: {resp.status_code} \n ## detail info: {resp.text}'}}]
-        yield json.dumps(error_chunk)
-        resp.close()
+    logger.debug(f"request_data: {request_data}")
+    logger.info(f"{model.url}")
+    req = requests.post(model.url, headers=headers, data=request_data,
+                        stream=True, timeout=model.timeout)
     answer = [""]*agent.n_sequences
-    for line in resp.iter_lines():
+    usage = {}
+    for line in req.iter_lines():
         if line:
             line = codecs.decode(line)
             if line.startswith("data:"):
                 line = line[5:].strip()
                 try:
                     chunk = json.loads(line)
+                    # print(f"chunk: {chunk}")
                     chunk["id"] = uid
                     chunk["created"] = created
                     chunk["model"] = model.name_alias
+                    usage = chunk.get('usage', {})
                     yield json.dumps(chunk)
                     if "choices" in chunk and len(
                             chunk["choices"]) > 0 and "delta" in chunk["choices"][0] and "content" in chunk["choices"][0]["delta"]:
                         answer[chunk["choices"][0]["index"]
                                ] += chunk["choices"][0]["delta"]["content"]
                 except json.JSONDecodeError as err:
-                    logger.info(f"system error: {err}")
-
+                    logger.error(err)
+    logger.info(f"usage: {usage}")
     # """添加检索来源信息"""
-    # search_info = {"choices": []}
-    # search_info["id"] = uid
-    # search_info["created"] = created
-    # search_info["model"] = model.name_alias
-    # result_text = "\n\n参考内容\n"
     # if len(search_choices) > 0:
-    #     print(search_choices,'sss')
+    #     result_text = "\n\n相关链接\n"
     #     for index, item in enumerate(search_choices):
     #         if item['message']['url']:
     #             markdown_text = f"\[{index+1}\] [{item['message']['title']}]({item['message']['url']})\n"
     #             result_text += markdown_text
-    #         else:
-    #             result_text += item['message']['title']
-    # else:
-    #     result_text += "没有相关文档，大模型是基于自己的知识做的回答，答案请谨慎参考"
-    # search_info["choices"].append({"index": 0,
+    #     search_info = {"choices":[]}
+    #     search_info["id"] = uid
+    #     search_info["created"] = created
+    #     search_info["model"] = model.name_alias
+    #     search_info["choices"].append({"index": 0,
     #                                 "delta": {"role": "assistant",
     #                                             "content": result_text},
     #                                 "finish_reason": "null"})
-    # yield json.dumps(search_info)
+    #     yield json.dumps(search_info)
 
-    """结束并且添加历史记录"""
     yield DONE
+    logger.info(f'answer: {answer}')
+    logger.info(f'usage: {usage}')
     add_args = {
         "query": query,
         "prompt": prompt,
@@ -589,6 +621,7 @@ def model_chat_stream(agent_session_id,
         "agent": agent,
         "model": model,
         "uid": uid,
+        "usage": usage,
     }
     chat_id = add_chat(**add_args)
     add_session_chat(agent_session_id, chat_id)
@@ -596,7 +629,8 @@ def model_chat_stream(agent_session_id,
 
 def add_chat(
         query: str, prompt: str, answer: list, source: list,
-        chat_type: int, ip_addr: str, agent, uid: str, model=None):
+        chat_type: int, ip_addr: str, agent, uid: str,
+        usage: dict, model=None):
     """添加到数据库"""
     add_args = {
         "question": query,
@@ -609,6 +643,9 @@ def add_chat(
         "model_id": model.id if model else None,
         "model_name": model.name_alias if model else None,
         "uid": uid,
+        "prompt_tokens": usage.get('prompt_tokens', 0),
+        "completion_tokens": usage.get('completion_tokens', 0),
+        "total_tokens": usage.get('total_tokens', 0),
     }
     chat_id = database.add_chat(**add_args)
     return chat_id
@@ -616,5 +653,4 @@ def add_chat(
 
 def add_session_chat(session_id: int, chat_id: int):
     """添加到session_chat数据库"""
-    agent_session_chat_dataset_database.insert_agent_session_chats(session_id, [
-                                                                   chat_id])
+    agent_session_chat_dataset_database.insert_agent_session_chats(session_id, [chat_id])

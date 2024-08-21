@@ -1,6 +1,7 @@
 """Agent Table"""
 # pylint: disable=not-callable
 from sqlalchemy import Integer, FLOAT, String, TIMESTAMP, ForeignKey, ARRAY
+from sqlalchemy import or_ , and_
 from sqlalchemy.sql import func
 from sqlalchemy.orm import Session, mapped_column, relationship
 from app.database import postgresql
@@ -41,19 +42,37 @@ class Agent(postgresql.BaseModel):
     model_ip_limit = mapped_column(Integer, default=50, nullable=False)
     exact_search_limit = mapped_column(Integer, default=1, nullable=False)
     fuzzy_search_limit = mapped_column(Integer, default=3, nullable=False)
+    is_public=mapped_column(Integer, default=0, nullable=True)
+    default_answer = mapped_column(String, default="抱歉，没有匹配到相关问题。", nullable=False)
     model = relationship("Model")
 
 
 def list_agents(app_id: int, user_id: int, page: int = 0, limit: int = 3000) -> tuple[list[Agent], int]:
     """获取agent列表"""
-    print(f"appid:{app_id},user_id:{user_id}")
     with Session(postgresql.postgres) as session:
         data = session.query(Agent).filter(
-            Agent.app_id == app_id, Agent.user_id == user_id).order_by(
+            or_(
+                and_(Agent.app_id == app_id, Agent.user_id == user_id),
+                # Agent.is_public == 1
+            )).order_by(
+                Agent.modified.desc()).offset(
+                page * limit).limit(limit).all()
+        total = session.query(Agent).filter(or_(
+            and_(Agent.app_id == app_id, 
+            Agent.user_id == user_id),
+            Agent.is_public == 1
+        )).count() 
+        return data, total
+
+def list_public_agents(page: int = 0, limit: int = 3000) -> tuple[list[Agent], int]:
+    """获取公共agent列表"""
+    with Session(postgresql.postgres) as session:
+        data = session.query(Agent).filter(
+            Agent.is_public == 1).order_by(
             Agent.modified.desc()).offset(
             page * limit).limit(limit).all()
         total = session.query(Agent).filter(
-            Agent.app_id == app_id, Agent.user_id == user_id).count()
+            Agent.is_public == 1).count()
         return data, total
 
 
@@ -110,7 +129,7 @@ def get_agent(agent_id: int, user_id: int):
     """联表获取agent"""
     with Session(postgresql.postgres) as session:
         return session.query(Agent, Model.name.label("model_name")).filter(
-            Agent.id == agent_id, Agent.user_id == user_id).join(Agent.model).first()
+            or_(and_(Agent.id == agent_id, Agent.user_id == user_id),and_(Agent.is_public == 1,Agent.id == agent_id))).join(Agent.model).first()
 
 
 def update_agent(

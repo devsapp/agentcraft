@@ -25,6 +25,8 @@ interface KnowledgeBaseStore {
     updateKnowledgeBaseList: (_: KnowledgeBaseResponseData[]) => void;
 }
 
+interface IPayload { keyword?: string, sessionId?: number }
+
 
 export const useKnowledgeBaseStore = create<KnowledgeBaseStore>()(devtools((set) => ({
     knowledgeBaseList: [],
@@ -127,19 +129,6 @@ export async function refreshToken(agentId: number) {
 }
 
 
-export async function chat(payload: any) {
-    const res = await request(`/api/chat`, {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json",
-
-        },
-        body: JSON.stringify(payload),
-    });
-    return res;
-}
-
-
 export async function getAccessUrl() {
     const res = await request(`/api/knowledgeBase/getAccessUrl`, {
         method: "GET",
@@ -150,3 +139,49 @@ export async function getAccessUrl() {
     });
     return res;
 }
+
+export async function getSessionHistory(
+    agentId: number,
+    payload: IPayload,
+) {
+    let count = 0;
+    if (payload.keyword) {
+        count += 1;
+    }
+    if (payload.sessionId) {
+        count += 1;
+    }
+    if (count !== 1) {
+        throw new Error('keyword or sessionId must be set');
+    }
+
+    let qr = `agent_id=${agentId}&page=0&limit=20`;
+    if (payload.keyword) {
+        qr = `${qr}&keyword=${payload.keyword}`
+    }
+    if (payload.sessionId) {
+        qr = `${qr}&session_id=${payload.sessionId}`
+    }
+
+    const res = await request(`/api/agentSession/history?${qr}`);
+    return res;
+}
+
+
+export async function getSessionByKeyword(
+    agentId: number,
+    keyword: string,
+): Promise<any> {
+    return await request(`/api/agentSession/detailByKeyword?agent_id=${agentId}&keyword=${keyword}`);
+}
+
+
+export async function removeSessionHistory(sessionId: number): Promise<any> {
+    return await request(`/api/agentSession/remove?session_id=${sessionId}`, {
+        method: "DELETE",
+        headers: {
+            "Content-Type": "application/json",
+        },
+    });
+}
+

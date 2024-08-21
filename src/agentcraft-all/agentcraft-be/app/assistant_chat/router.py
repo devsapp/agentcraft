@@ -11,10 +11,10 @@ from app.auth.security import validate_token, validate_agent_token
 router = APIRouter()
 
 
-@router.get("/list/{agent_id}", response_model=DictListResponse)
-async def list_chat(agent_id: int, page: int, limit: int, token: JWTData = Depends(validate_token)):
+@router.get("/list/{assistant_id}", response_model=DictListResponse)
+async def list_chat(assistant_id: int, page: int, limit: int, token: JWTData = Depends(validate_token)):
     """获取回答历史"""
-    data, total = service.list_chats(agent_id, token.user_id, page, limit)
+    data, total = service.list_chats(assistant_id, token.user_id, page, limit)
     return {
         "code": 200,
         "msg": "success",
@@ -38,20 +38,24 @@ async def chat(req: ChatRequest, request: Request, token: AgentJWTData = Depends
         "access_key_id": access_key_id,
         "access_key_secret": access_key_secret,
         "security_token": security_token
-
     }
     if req.messages[-1].role != "user":
         raise HTTPException(
             status_code=400, detail="The last message must be from the user.")
-    assistant_session_id = req.assistant_session_id
+
     assistant_id = token.agent_id
-    query = req.messages[-1].content
     assistant = service.get_assistant_lite(assistant_id)
 
+    assistant_session_id = req.session_id
+    keyword = req.keyword
+    logger.info(f'assistant_session_id: {assistant_session_id}; keyword: {keyword};')
+
+    query = req.messages[-1].content
+    assistant_session_id = service.get_assistant_session_id(assistant_session_id, keyword, assistant_id, title = query)
+    logger.info(f'get assistant_session_id: {assistant_session_id}')
+
     history = []
-    assistant_session_id = service.get_assistant_session_id(req.status, assistant_session_id, assistant_id, title = query)
-    logger.info(f'assistant_session_id: {assistant_session_id}')
-    history = service.list_assistant_chats_history_by_session_id(assistant_session_id, assistant.llm_history_len)
+    history, total = service.list_assistant_chats_history_by_session_id(assistant_session_id, 0, assistant.llm_history_len)
     # history_dict = [{"user": d["question"], "assistant": d["reasoning_log"]} for d in history]
     history_dict = [{"user": d["question"], "assistant": d["answer"]} for d in history]
     logger.info(f"history: {history_dict}")

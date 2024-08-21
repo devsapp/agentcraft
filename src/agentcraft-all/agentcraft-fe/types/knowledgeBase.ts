@@ -1,28 +1,34 @@
+export type IIsPublic = 0 | 1;
+
+export type IIsPublicString = IIsPublic | '0' | '1';
+
+
 export interface KnowledgeBaseRequestPayload {
-    name: string,
-    description?: string,
-    prompt_template: string,
-    app_id: number,
-    exact_datasets: any[],
-    fuzzy_datasets: any[],
-    exact_search_similarity: number,
-    fuzzy_search_similarity: number,
-    temperature: number,
-    top_p: number,
-    n_sequences: number,
-    max_tokens: number,
-    stop: string[],
-    presence_penalty: number,
-    frequency_penalty: number,
-    logit_bias?: string,
-    model_id: any,
-    redis_ip_ex: number,
-    redis_history_ex: number,
-    model_ip_limit: number,
-    llm_history_len: number,
-    system_message?: string,
-    exact_search_limit: number,
-    fuzzy_search_limit: number
+    name: string;
+    description?: string;
+    prompt_template: string;
+    app_id: number;
+    exact_datasets: any[];
+    fuzzy_datasets: any[];
+    exact_search_similarity: number;
+    fuzzy_search_similarity: number;
+    temperature: number;
+    top_p: number;
+    n_sequences: number;
+    max_tokens: number;
+    stop: string[];
+    presence_penalty: number;
+    frequency_penalty: number;
+    logit_bias?: string;
+    model_id: any;
+    redis_ip_ex: number;
+    redis_history_ex: number;
+    model_ip_limit: number;
+    llm_history_len: number;
+    system_message?: string;
+    exact_search_limit: number;
+    fuzzy_search_limit: number;
+    is_public: IIsPublic;
 }
 
 export interface Dataset {
@@ -36,6 +42,7 @@ export interface Dataset {
 }
 
 export interface KnowledgeBase {
+    default_answer: string;
     exp: number;
     datasets: Dataset[];
     model_name: string;
@@ -66,6 +73,7 @@ export interface KnowledgeBase {
     app_id: number;
     stop: string[];
     redis_history_ex: number;
+    is_public: IIsPublicString;
 }
 
 
@@ -98,4 +106,5 @@ export interface KnowledgeBaseResponseData {
     user_id: number;
     max_tokens: number;
     redis_ip_ex: number;
+    is_public: IIsPublicString;
 }

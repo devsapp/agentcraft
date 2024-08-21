@@ -47,7 +47,7 @@ Question: {query}"""
 
 
 class Reasoning:
-    def __init__(self, query, assistant, datasets, credential_dict, history):
+    def __init__(self, query, assistant, datasets, credential_dict, history, **business):
         self.assistant = assistant
         self.query = query
         self.credential_dict = credential_dict
@@ -56,6 +56,7 @@ class Reasoning:
         self.history = history
         self.model = None
         self.result = None
+        self.business = business
 
     def final_result(self, resp_data: str):
         match = re.search(r'Final Answer: (.+)', resp_data)
@@ -122,6 +123,7 @@ class Reasoning:
         resp_data = {}
         resp_data["id"] = uid
         resp_data["created"] = created
+        resp_data["session_id"] = self.business.get('session_id', None)
         resp_data["choices"] = [{
             "index": 0,
             "message": {"role": "assistant", "content": content},

@@ -205,6 +205,7 @@ function ChooseAgentDialog(props: any) {
         value: 'assistant',
         description: '调用多种工具，完成进阶任务'
     }]
+
     return (
         <Modal opened={open} onClose={() => { setOpen(false) }} title={<div className={styles['agent-container-title']}>新建智能体</div>} centered size="auto">
             <Box className={styles['agent-model']}>

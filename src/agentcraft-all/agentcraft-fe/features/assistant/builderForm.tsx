@@ -250,7 +250,7 @@ export function BuilderForm({ workspaceId }: AssistantProps) {
                                 if (form.isValid()) {
                                     setLoading(true);
                                     const values: any = form.values;
-                                    console.log(values, 'values');
+                                    // console.log(values, 'values');
                                     if (currentAssistant?.id) {
                                         await updateAssistant(currentAssistant?.id, values);
                                     } else {

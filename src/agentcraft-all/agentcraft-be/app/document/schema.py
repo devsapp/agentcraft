@@ -14,13 +14,13 @@ class UpsertDocumentRequest(BaseModel):
     @validator('ext')
     def ext_validator(cls, v: str):  # pylint: disable=no-self-argument, invalid-name
         """检查支持的文件格式"""
-        if v not in ('txt', 'md', 'html','pdf'):
+        if v not in ('txt', 'md', 'html', 'pdf'):
             raise ValueError('extension not valid')
         return v
 
     @validator('content')
     def content_validator(cls, v: str):  # pylint: disable=no-self-argument, invalid-name
-        """内容不能饿为空"""
+        """内容不能为空"""
         v = v.strip()
         if len(v) == 0:
             raise ValueError('content must not be empty')
