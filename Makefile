@@ -19,10 +19,10 @@ stop-docker:
 
 run-api:
 	source ./venv/bin/activate
-	cd aiwuxian-all/aiwuxian-api ; \
+	cd src/agentcraft-all/agentcraft-be ; \
 	export PYTHONPATH="${PYTHONPATH}:$(pwd)" ; \
 	python app/main.py
 
 run-ui:
-	cd aiwuxian-all/aiwuxian-manager ; \
+	cd src/agentcraft-all/agentcraft-fe ; \
 	npm run dev

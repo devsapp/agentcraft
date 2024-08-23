@@ -14,7 +14,7 @@ export default async function handler(
     const accessKeyId: any = headers['x-fc-access-key-id'] || '';
     const accessKeySecret: any = headers['x-fc-access-key-secret'] || '';
     const securityToken: any = headers['x-fc-security-token'];
-    const mainAccountId: any = headers['x-fc-account-id'] || process.env.FC_ACCOUNT_ID;
+    const mainAccountId: any = headers['x-fc-account-id'] || process.env.MAIN_ACCOUNT_ID;
     let credential = undefined;
     if (accessKeyId) {
         credential = {

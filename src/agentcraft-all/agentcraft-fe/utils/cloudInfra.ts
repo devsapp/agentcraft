@@ -2,7 +2,7 @@
 import { ServerlessBridgeService } from 'infra/alibaba-cloud/services/serverless-app';
 
 export function getAlibabaCloudCredential(credentialMap: any) {
-    const mainAccountId: any = process.env.FC_ACCOUNT_ID || credentialMap['x-fc-account-id'];
+    const mainAccountId: any = process.env.MAIN_ACCOUNT_ID || credentialMap['x-fc-account-id'];
     const accessKeyId: any = process.env.ALIBABA_CLOUD_ACCESS_KEY_ID || credentialMap['x-fc-access-key-id'];
     const accessKeySecret: any = process.env.ALIBABA_CLOUD_ACCESS_KEY_SECRET || credentialMap['x-fc-access-key-secret'];
     const securityToken: any = process.env.ALIBABA_CLOUD_SECURITY_TOKEN || credentialMap['x-fc-security-token'];
