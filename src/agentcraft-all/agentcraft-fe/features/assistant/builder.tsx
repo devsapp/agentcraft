@@ -1,15 +1,14 @@
 import React, { useEffect, useState } from "react";
 import { useRouter } from 'next/router';
-import { Center, ActionIcon, Tooltip, Spoiler, Breadcrumbs, Anchor, Button, Checkbox, Box, Table, TextInput, Text, Highlight, Switch, Group, Badge, MultiSelect, Select, Drawer, LoadingOverlay, Modal, Textarea, Flex, NumberInput, Paper, Title, Divider } from '@mantine/core';
+import { ActionIcon, Box, LoadingOverlay, Flex, Title } from '@mantine/core';
 import { IconArrowBackUp } from '@tabler/icons-react';
-import { getAssistantList, useAssistantStore, addAssistant, refreshToken, updateAssistant, getAssistant, deleteAssistant } from 'store/assistant';
+import { useAssistantStore } from 'store/assistant';
 import { BuilderForm } from 'features/assistant/builderForm';
 import { APIAccess } from 'features/assistant/apiAccess';
+import { History } from 'features/assistant/history';
 import { Tabs } from '@mantine/core';
-enum ContainerType {
-    ADD_OR_UPDATE = 1, // 增加和修改
-    CHAT = 2, // 问答
-}
+
+
 interface AssistantProps {
     workspaceId: any;
 }
@@ -84,9 +83,8 @@ export function AssistantBuilder({ workspaceId }: AssistantProps) {
                     >
                         <Tabs.List >
                             <Tabs.Tab value="chat">对话测试</Tabs.Tab>
-                            <Tabs.Tab value="access" >
-                                访问接入
-                            </Tabs.Tab>
+                            <Tabs.Tab value="access">访问接入</Tabs.Tab>
+                            <Tabs.Tab value="history">对话历史</Tabs.Tab>
                         </Tabs.List>
                     </Tabs> : null}
                 </Flex>
@@ -94,6 +92,7 @@ export function AssistantBuilder({ workspaceId }: AssistantProps) {
             <Box w="100%" style={{ height: 'calc(100vh - 106px)' }} >
                 {innerTab === 'chat' ? <BuilderForm workspaceId={workspaceId} /> : null}
                 {innerTab === 'access' ? <APIAccess /> : null}
+                {innerTab === 'history' ? <History /> : null}
             </Box>
         </div>
     );

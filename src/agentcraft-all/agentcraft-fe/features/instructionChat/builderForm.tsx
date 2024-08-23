@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useRouter } from 'next/router';
-import { Center, Button, Box, TextInput, Text, Group, Select, Textarea, Flex, Paper, Title } from '@mantine/core';
+import { Center, Button, Box, TextInput, Text, Group, Select, Textarea, Flex, Paper, Title, Radio } from '@mantine/core';
 import { useForm } from '@mantine/form';
 import { IconRefresh } from '@tabler/icons-react';
 import { getModelList, useModelStore } from 'store/model';
@@ -11,7 +11,7 @@ import { useKnowledgeBaseStore, addKnowledgeBase, refreshToken, updateKnowledgeB
 import { Dataset } from 'types/knowledgeBase';
 import { DataSetType } from 'types/dataset';
 import { INSTRUCTION_TEMPLATES, DEFAULT_CHAT_INSTRUCTION } from 'constants/instructions'
-import InstructionChat from 'features/instructionChat/chat';
+import KnowledgeBaseChat from 'features/knowledgeBase/chat';
 
 
 interface AssistantProps {
@@ -71,12 +71,12 @@ export function InstructionChatForm({ workspaceId, form }: { workspaceId: any, f
 
 export function BuilderForm({ workspaceId }: AssistantProps) {
     const router = useRouter();
-    const [disabledSave, setDisabledSave] = useState(false);
     const { query } = router;
     const instructionChatId: any = query.instructionChatId;
     const initAgentName = query.initAgentName;
     const { setLoading, currentKnowledgeBase, updateCurrentKnowledgeBase } = useKnowledgeBaseStore();
     const modelList: Model[] = useModelStore().modelList;
+    const [disabledSave, setDisabledSave] = useState(modelList?.length === 0);
     const initFormValue = {
         name: initAgentName,
         description: '',
@@ -101,7 +101,8 @@ export function BuilderForm({ workspaceId }: AssistantProps) {
         llm_history_len: 0,
         system_message: DEFAULT_CHAT_INSTRUCTION,
         exact_search_limit: 1,
-        fuzzy_search_limit: 3
+        fuzzy_search_limit: 3,
+        is_public: '0',
     }
     const form: any = useForm({
         initialValues: initFormValue,
@@ -123,6 +124,7 @@ export function BuilderForm({ workspaceId }: AssistantProps) {
         }
     }, []);
     useEffect(() => {
+        setDisabledSave(modelList.length === 0)
         if (modelList.length > 0 && !instructionChatId) {
             form.setValues({
                 model_id: modelList[0].id
@@ -157,12 +159,40 @@ export function BuilderForm({ workspaceId }: AssistantProps) {
                 llm_history_len: currentKnowledgeBase?.llm_history_len,
                 system_message: currentKnowledgeBase?.system_message,
                 exact_search_limit: currentKnowledgeBase?.exact_search_limit,
-                fuzzy_search_limit: currentKnowledgeBase?.fuzzy_search_limit
+                fuzzy_search_limit: currentKnowledgeBase?.fuzzy_search_limit,
+                is_public: `${currentKnowledgeBase?.is_public || 0}`,
             })
         } else {
             form.setValues(initFormValue)
         }
     }, [currentKnowledgeBase])
+
+    const onSubmit = async () => {
+        setDisabledSave(true);
+        try {
+            form.validate();
+            if (form.isValid()) {
+                setLoading(true);
+                const values: any = { ...form.values };
+                values.is_public = values.is_public === '1' ? 1 : 0;
+                if (currentKnowledgeBase?.id) {
+                    await updateKnowledgeBase(currentKnowledgeBase?.id, values);
+                } else {
+                    const result = await addKnowledgeBase(values);
+                    const instructionChatId = result.id;
+                    if (instructionChatId) {
+                        const { token } = await refreshToken(instructionChatId);
+                        window.history.pushState({}, '', `?instructionChatId=${instructionChatId}`);
+                        updateCurrentKnowledgeBase(Object.assign({}, values, { id: instructionChatId, token }));
+                    }
+
+                }
+                setLoading(false);
+            }
+        } catch (e) {
+        }
+        setDisabledSave(false);
+    }
 
 
     const modelSelectData: any = modelList.map((item: Model) => { return { label: item.name_alias, value: item.id } });
@@ -187,31 +217,7 @@ export function BuilderForm({ workspaceId }: AssistantProps) {
                 <Text fw={700}>配置</Text>
                 <Box style={{ position: 'absolute', top: 0, right: 0 }}>
                     <Flex justify={'flex-end'} align={'center'}>
-                        <Button h={32} mr={12} onClick={async () => {
-                            setDisabledSave(true);
-                            try {
-                                form.validate();
-                                if (form.isValid()) {
-                                    setLoading(true);
-                                    const values: any = form.values;
-                                    if (currentKnowledgeBase?.id) {
-                                        await updateKnowledgeBase(currentKnowledgeBase?.id, values);
-                                    } else {
-                                        const result = await addKnowledgeBase(values);
-                                        const instructionChatId = result.id;
-                                        if (instructionChatId) {
-                                            const { token } = await refreshToken(instructionChatId);
-                                            window.history.pushState({}, '', `?instructionChatId=${instructionChatId}`);
-                                            updateCurrentKnowledgeBase(Object.assign({}, values, { id: instructionChatId, token }));
-                                        }
-
-                                    }
-                                    setLoading(false);
-                                }
-                            } catch (e) {
-                            }
-                            setDisabledSave(false);
-                        }} disabled={disabledSave}>保存</Button>
+                        <Button h={32} mr={12} onClick={onSubmit} disabled={disabledSave}>保存</Button>
                     </Flex>
                 </Box>
             </Center>
@@ -223,7 +229,7 @@ export function BuilderForm({ workspaceId }: AssistantProps) {
             <Center maw={'100%'} h={38} mx="auto">
                 <Text fw={700}>预览</Text>
             </Center>
-            {currentKnowledgeBase?.id ? <InstructionChat /> : null}
+            {currentKnowledgeBase?.id ? <KnowledgeBaseChat /> : null}
         </Box>
     </Flex>);
 }

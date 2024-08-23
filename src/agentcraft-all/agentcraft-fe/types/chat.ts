@@ -19,9 +19,8 @@ export interface LLMConfig {
   stream?: boolean;
   presence_penalty?: number;
   frequency_penalty?: number;
-  status?: number; // status 如果为0，则表示测试的会话
-  agent_session_id?: number;
-  assistant_session_id?: number;
+  keyword?: string; // 创建会话的关键字
+  session_id?: number;
 }
 
 export const enum MessageType {
@@ -48,7 +47,10 @@ export interface ChatItem {
   answer: string,
   modified: string,
   model_id: number,
-  uid: string
+  uid: string,
+  prompt_tokens: number,
+  completion_tokens: number,
+  total_tokens: number,
 }
 
 export interface ChatMessage {
@@ -69,12 +71,14 @@ export interface ChatOptions {
   config: LLMConfig;
   version?: string;
   onUpdate?: (message: string, chunk: string) => void;
-  onFinish: (message: string) => void;
+  onFinish: (message: string, usage: IUsage) => void;
   onError?: (err: Error) => void;
   onController?: (controller: AbortController) => void;
 }
 
 
-
-
-
+export interface IUsage {
+  prompt_tokens: number;
+  completion_tokens: number;
+  total_tokens: number;
+}

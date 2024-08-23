@@ -14,7 +14,6 @@ export function APIAccess() {
             const data = result.data || { openApiUrl: '', innerApiUrl: '' }
             setAccessUrl(data);
         })()
-
     }, [])
     const curlExample = `curl -X 'POST' \
     '${accessUrl.openApiUrl}/v2/chat/completions' \

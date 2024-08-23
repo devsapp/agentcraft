@@ -1,11 +1,10 @@
 
 import { create } from "zustand";
 import { devtools } from "zustand/middleware";
-import {
-    fetchEventSource,
-} from "@fortaine/fetch-event-source";
+import { fetchEventSource } from "@fortaine/fetch-event-source";
+import { notifications } from '@mantine/notifications';
 import Locale from "locales/index";
-import { ChatOptions,ChatItem } from 'types/chat';
+import { ChatOptions, ChatItem, IUsage } from 'types/chat';
 import { REQUEST_TIMEOUT_MS } from 'constants/index';
 import { prettyObject } from 'utils/chat';
 import { request } from 'utils/clientRequest';
@@ -59,7 +58,6 @@ export async function getChatList(knowledgeBaseId: any) {
     if (data) {
         updateChatList(data);
     }
-
 }
 
 
@@ -80,10 +78,11 @@ export function chatStream(options: ChatOptions, token: string) {
     );
     let responseText = "";
     let finished = false;
+    let usage: IUsage;
 
     const finish = () => {
         if (!finished) {
-            options.onFinish(responseText);
+            options.onFinish(responseText, usage);
             finished = true;
         }
     };
@@ -93,10 +92,6 @@ export function chatStream(options: ChatOptions, token: string) {
         async onopen(res) {
             clearTimeout(requestTimeoutId);
             const contentType = res.headers.get("content-type");
-            console.log(
-                "AgentCraft request response content type: ",
-                contentType,
-            );
             if (contentType?.startsWith("text/plain")) {
                 responseText = await res.clone().text();
                 return finish();
@@ -135,15 +130,40 @@ export function chatStream(options: ChatOptions, token: string) {
                 return finish();
             }
             const text = msg.data;
+            let json;
             try {
-                const json = JSON.parse(text);
-                const delta = json.choices[0].delta.content;
-                if (delta) {
-                    responseText += delta;
-                    options.onUpdate?.(responseText, delta);
-                }
+                json = text ? JSON.parse(text) : {};
             } catch (e) {
                 console.error("[Request] parse error", text, msg);
+                notifications.show({
+                    color: 'red',
+                    title: '[Request] parse error',
+                    message: `message: ${JSON.stringify(msg)}`,
+                });
+                return finish();
+            }
+            if (json.usage?.total_tokens) {
+                usage = json.usage;
+            }
+            // if (json.choices[0].message) {
+            //     console.error("[Request] invoke error： 调用异常", msg);
+            //     notifications.show({
+            //         color: 'red',
+            //         title: '[Request] invoke error',
+            //         message: '调用异常',
+            //     });
+            //     return finish();
+            // }
+            const delta = json.choices?.[0]?.delta?.content;
+            if (delta) {
+                responseText += delta;
+                options.onUpdate?.(responseText, delta);
+            } else {
+                const message = json.message?.[0]?.content;
+                if (message) {
+                    responseText += message;
+                    options.onUpdate?.(responseText, message);
+                }
             }
         },
         onclose() {

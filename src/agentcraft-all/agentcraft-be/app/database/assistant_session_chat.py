@@ -25,11 +25,11 @@ def list_assistant_session_chat_id_by_session_id(
     """根据assistant id获取数据集"""
     with Session(postgresql.postgres) as session:
         data = session.query(AssistantSessionChat).filter(
-            AssistantSessionChat.assistant_session_id == assistant_session_id).join(
-            AssistantSessionChat.chat).order_by(AssistantSessionChat.id.desc()).offset(page*limit).limit(limit).all()
+            AssistantSessionChat.assistant_session_id == assistant_session_id).order_by(
+                AssistantSessionChat.id.desc()
+            ).offset(page*limit).limit(limit).all()
         total = session.query(AssistantSessionChat).filter(
-            AssistantSessionChat.assistant_session_id == assistant_session_id).join(
-            AssistantSessionChat.chat).count()
+            AssistantSessionChat.assistant_session_id == assistant_session_id).count()
         sorted_data = sorted([vars(chat) for chat in data], key=lambda x: x['id'], reverse=True)
         return sorted_data, total
 

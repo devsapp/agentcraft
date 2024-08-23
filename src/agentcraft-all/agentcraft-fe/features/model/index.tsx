@@ -16,12 +16,15 @@ import { FORM_WIDTH } from 'constants/index';
 const CHAT_API_SUFIX = '/v1/chat/completions';
 
 export function List() {
-    const modelList: Model[] = useModelStore().modelList;
-    const loading: boolean = useModelStore().loading;
-    const setLoading = useModelStore().setLoading;
-    const setOpen = useModelStore().setOpen;
-    const setEditStatus = useModelStore().setEditStatus;
-    const setCurrentModel = useModelStore().setCurrentModel;
+    const {
+        modelList,
+        loading,
+        setLoading,
+        setOpen,
+        setEditStatus,
+        setCurrentModel,
+    } = useModelStore();
+
     const removeModel = (model: Model) => {
         const { id, name } = model;
         const deleteContent = `确定删除 ${name}?`;
@@ -97,14 +100,16 @@ export function List() {
 }
 
 function AddOrUpdate() {
-    const open = useModelStore().open;
-    const isEdit = useModelStore().isEdit;
-    const setEditStatus = useModelStore().setEditStatus;
-    const setOpen = useModelStore().setOpen;
-    const setLoading = useModelStore().setLoading;
-    const fmList = useModelStore().fmList;
+    const {
+        open,
+        isEdit,
+        setEditStatus,
+        setOpen,
+        setLoading,
+        fmList,
+        currentModel,
+    } = useModelStore();
 
-    const currentModel: Model | undefined = useModelStore().currentModel;
     const [data, setData] = useState(MODEL_NAME_LIST);
     const [fmData, setFmData] = useState<any>([]);
     const initialValues = {
@@ -153,11 +158,11 @@ function AddOrUpdate() {
         };
     }
     useEffect(() => {
-        const fmSelectData = fmList.map((item: FM_INFO) => ({ label: `[${FM_NAME_MAP[item.app_template]}] ${item.system_internet_url}${CHAT_API_SUFIX} `, value: `${item.system_internet_url}${CHAT_API_SUFIX}` }));
+        const fmSelectData = fmList.map((item: FM_INFO) => ({ label: `[${FM_NAME_MAP[item.app_template]}] ${item.system_intranet_url}${CHAT_API_SUFIX} `, value: `${item.system_intranet_url}${CHAT_API_SUFIX}` }));
         setFmData(fmSelectData);
     }, [fmList]);
     useEffect(() => {
-        if (isEdit) {
+        if (isEdit && open) {
             form.setValues({
                 name: currentModel?.name || '',
                 name_alias: currentModel?.name_alias || '',
@@ -167,16 +172,20 @@ function AddOrUpdate() {
                 description: currentModel?.description || ''
             });
             supplementCustomModelNameAndUrl(currentModel?.name || '', currentModel?.url || '');
-
         }
 
-    }, [currentModel]);
+    }, [currentModel?.id, open]);
     useEffect(() => {
         getFmAppList();
     }, []);
 
+    const onCloseModal = () => {
+        setOpen(false);
+        form.reset();
+    };
+
     return (
-        <Modal opened={open} onClose={() => { setOpen(false) }} title={isEdit ? "修改LLM代理" : "创建LLM代理"} centered size={'lg'}>
+        <Modal opened={open} onClose={onCloseModal} title={isEdit ? "修改LLM代理" : "创建LLM代理"} centered size={'lg'}>
             <Box maw={FORM_WIDTH} mx="auto">
                 <TextInput withAsterisk label="LLM代理名" placeholder="" {...form.getInputProps('name_alias')} description="LLM代理的名称" />
                 <Select withAsterisk
@@ -213,7 +222,13 @@ function AddOrUpdate() {
                     /></Box>
 
                 {/* <TextInput withAsterisk label={<span>基础模型服务访问地址<a href="/foundationModel/create" target="_blank">还没有基础模型服务？去创建</a></span>} placeholder="" {...form.getInputProps('url')} description="基础模型服务原始地址，可以通过基础模型菜单访问创建,创建成功后粘贴基础模服务访问地址在此" /> */}
-                <PasswordInput label="LLM服务访问token" placeholder="" {...form.getInputProps('token')} description="当你访问的服务需要透传token，比如openai 的chatgpt，在这里填写，默认情况下可以不填写" />
+                <PasswordInput
+                    label="LLM服务访问token"
+                    placeholder=""
+                    type="newPassword"
+                    {...form.getInputProps('token')}
+                    description="当你访问的服务需要透传token，比如openai 的chatgpt，在这里填写，默认情况下可以不填写"
+                />
                 <NumberInput label="访问超时时间(s)" placeholder="" {...form.getInputProps('timeout')} description="AgentCraft访问基础模型服务的超时时间" />
                 <Textarea label="描述" placeholder="输入数据集描述" {...form.getInputProps('description')} />
             </Box>
@@ -245,9 +260,7 @@ function AddOrUpdate() {
 
 
 export function ModelPage() {
-
-    const setOpen = useModelStore().setOpen;
-    const setEditStatus = useModelStore().setEditStatus;
+    const { setOpen, setEditStatus } = useModelStore();
     return (
         <>
             <FeatureDescription title="LLM代理" description="AgentCraft的LLM代理是基于基础大语言模型服务比如通义千问等构建出的一个代理层服务，主要是为了抹平不同模型服务之间的接口数据差异，方便在业务中快速切换更加适合的模型服务" />

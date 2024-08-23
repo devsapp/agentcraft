@@ -1,6 +1,6 @@
 """Chat Session Schema"""
 # pylint: disable = too-few-public-methods, no-self-argument
-from typing import List
+from typing import List, Optional
 from pydantic import BaseModel, Field  # pylint: disable = no-name-in-module
 
 
@@ -36,3 +36,15 @@ class StringListResponse(BasicResponse):
 class ListHistoryResponse(BasicResponse):
     """Response with List of Dict Data"""
     data: List[dict]
+
+
+class HistoryListResponse(BasicResponse):
+    """Response with List of Dict Data"""
+    data: List[dict]
+    total: int
+    session_id: Optional[int] = Field(None, title='Response Data')
+
+
+class SessionResponse(BasicResponse):
+    """查询session配置"""
+    data: Optional[dict] = Field(None, title='Response Data')

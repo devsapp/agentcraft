@@ -1,16 +1,13 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { useRouter } from 'next/router';
-import { Center, ActionIcon, Tooltip, Spoiler, Breadcrumbs, Anchor, Button, Checkbox, Box, Table, TextInput, Text, Highlight, Switch, Group, Badge, MultiSelect, Select, Drawer, LoadingOverlay, Modal, Textarea, Flex, NumberInput, Paper, Title, Divider } from '@mantine/core';
+import { ActionIcon, Box, LoadingOverlay, Flex, Title, Tabs } from '@mantine/core';
 import { IconArrowBackUp } from '@tabler/icons-react';
 import { useKnowledgeBaseStore } from 'store/knowledgeBase';
 import { BuilderForm } from 'features/instructionChat/builderForm';
-import { APIAccess } from 'features/instructionChat/apiAccess';
 import { ChatHistory } from 'features/instructionChat/history';
-import { Tabs } from '@mantine/core';
-enum ContainerType {
-    ADD_OR_UPDATE = 1, // 增加和修改
-    CHAT = 2, // 问答
-}
+import { APIAccess } from 'features/knowledgeBase/apiAccess';
+
+
 interface AssistantProps {
     workspaceId: any;
 }

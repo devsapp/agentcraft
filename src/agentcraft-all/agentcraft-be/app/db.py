@@ -78,7 +78,8 @@ CREATE_AGENT_TABLE = text(
     redis_history_ex INTEGER NOT NULL DEFAULT 86400,
     model_ip_limit INTEGER NOT NULL DEFAULT 50,
     exact_search_limit INTEGER NOT NULL DEFAULT 1,
-    fuzzy_search_limit INTEGER NOT NULL DEFAULT 3
+    fuzzy_search_limit INTEGER NOT NULL DEFAULT 3,
+    is_public INTEGER NOT NULL DEFAULT 0
     );"""
 )
 CREATE_AGENT_DATASET_TABLE = text(
@@ -118,7 +119,10 @@ CREATE_CHAT_TABLE = text(
     agent_id BIGINT REFERENCES agent(id) ON DELETE SET NULL,
     model_id BIGINT REFERENCES model(id) ON DELETE SET NULL,
     model_name VARCHAR(255),
-    uid VARCHAR(255) NOT NULL UNIQUE
+    uid VARCHAR(255) NOT NULL UNIQUE,
+    prompt_tokens INTEGER,
+    completion_tokens INTEGER,
+    total_tokens INTEGER
     );"""
 )
 CREATE_DOCUMENT_TABLE = text(
@@ -190,7 +194,8 @@ CREATE_ASSISTANT_TABLE = text(
     redis_history_ex INTEGER NOT NULL DEFAULT 86400,
     model_ip_limit INTEGER NOT NULL DEFAULT 50,
     exact_search_limit INTEGER NOT NULL DEFAULT 1,
-    fuzzy_search_limit INTEGER NOT NULL DEFAULT 3
+    fuzzy_search_limit INTEGER NOT NULL DEFAULT 3,
+    is_public INTEGER NOT NULL DEFAULT 0
     );"""
 )
 
@@ -256,13 +261,16 @@ CREATE_AGENT_SESSION_TABLE = text(
     id BIGSERIAL PRIMARY KEY,
     title VARCHAR(255) NOT NULL,
     status INTEGER DEFAULT 1,
+    keyword VARCHAR(255) NOT NULL,
     agent_id BIGINT REFERENCES agent(id) ON DELETE CASCADE,
     share_id VARCHAR(255),
     fingerprint_id VARCHAR(255),
     created TIMESTAMP NOT NULL DEFAULT NOW(),
-    modified TIMESTAMP NOT NULL DEFAULT NOW()
+    modified TIMESTAMP NOT NULL DEFAULT NOW(),
+    UNIQUE (agent_id, keyword)
     );"""
 )
+
 # """"agent/assistant 会话表"""
 
 CREATE_AGENT_SESSION_CHAT_TABLE = text(
@@ -282,9 +290,11 @@ CREATE_ASSISTANT_SESSION_TABLE = text(
     assistant_id BIGINT REFERENCES assistant(id) ON DELETE CASCADE,
     share_id VARCHAR(255),
     status INTEGER DEFAULT 1,
+    keyword VARCHAR(255) NOT NULL,
     fingerprint_id VARCHAR(255),
     created TIMESTAMP NOT NULL DEFAULT NOW(),
-    modified TIMESTAMP NOT NULL DEFAULT NOW()
+    modified TIMESTAMP NOT NULL DEFAULT NOW(),
+    UNIQUE (assistant_id, keyword)
     );"""
 )
 
@@ -306,7 +316,10 @@ CREATE_ASSISTANT_CHAT_TABLE = text(
     run_id BIGINT,
     model_id BIGINT REFERENCES model(id) ON DELETE SET NULL,
     model_name VARCHAR(255),
-    uid VARCHAR(255) NOT NULL
+    uid VARCHAR(255) NOT NULL,
+    prompt_tokens INTEGER,
+    completion_tokens INTEGER,
+    total_tokens INTEGER
     );"""
 )
 
@@ -343,7 +356,7 @@ def create_tables():
 
         session.execute(CREATE_AGENT_SESSION_TABLE)
         session.execute(CREATE_AGENT_SESSION_CHAT_TABLE)
-        session.execute(CREATE_ASSISTANT_SESSION_TABLE)
         session.execute(CREATE_ASSISTANT_CHAT_TABLE)
+        session.execute(CREATE_ASSISTANT_SESSION_TABLE)
         session.execute(CREATE_ASSISTANT_SESSION_CHAT_TABLE)
         session.commit()

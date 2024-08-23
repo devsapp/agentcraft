@@ -16,7 +16,6 @@ interface AssistantStore {
     isEdit: boolean,
     accessUrl: AccessUrl,
     currentAssistant: Assistant | undefined,
-    assistantChatList: any[],
     setAccessUrl: (accessUrl: AccessUrl) => void;
     setChatDrawer: (chatDrawer: boolean) => void;
     setLoading: (loading: boolean) => void;
@@ -29,7 +28,6 @@ interface AssistantStore {
 
 export const useAssistantStore = create<AssistantStore>()(devtools((set) => ({
     assistantList: [],
-    assistantChatList: [],
     open: false,
     chatDrawer: false,
     loading: false,
@@ -64,11 +62,9 @@ export const useAssistantStore = create<AssistantStore>()(devtools((set) => ({
 
 export async function getAssistantList(appId: number) {
     const state = useAssistantStore.getState();
-    const updateAssistantList = state.updateAssistantList;
     const res = await request(`/api/assistant/list?appId=${appId}`);
     const assistantList = res.data;
-    if (assistantList) updateAssistantList(assistantList);
-
+    if (assistantList) state.updateAssistantList(assistantList);
 }
 
 export async function getAssistant(id: any): Promise<Assistant> {
@@ -107,7 +103,6 @@ export async function deleteAssistant(assistantId: any) {
 }
 
 export async function updateAssistant(id: any, payload: AssistantRequestPayload) {
-
     return await request(`/api/assistant/update?id=${id}`, {
         method: "POST",
         body: JSON.stringify(payload),
@@ -115,37 +110,17 @@ export async function updateAssistant(id: any, payload: AssistantRequestPayload)
             "Content-Type": "application/json",
         },
     });
-
-
 }
 
 export async function refreshToken(assistantId: number) {
-
     const res = await request(`/api/assistant/token?assistantId=${assistantId}`, {
         method: "GET",
         headers: {
             "Content-Type": "application/json",
         },
     });
-
     return res.data;
-
-
 }
-
-
-export async function chat(payload: any) {
-    const res = await request(`/api/chat`, {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json",
-
-        },
-        body: JSON.stringify(payload),
-    });
-    return res;
-}
-
 
 export async function getAccessUrl() {
     const res = await request(`/api/assistant/getAccessUrl`, {

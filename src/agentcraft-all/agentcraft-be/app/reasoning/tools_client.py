@@ -21,7 +21,7 @@ class ToolsActionClient:
         @return: Client
         @throws Exception
         """
-        account_id = self.credential_dict["account_id"] if self.credential_dict["account_id"] else os.environ['ACCOUNT_ID']
+        account_id = self.credential_dict["account_id"] if self.credential_dict["account_id"] else os.environ['MAIN_ACCOUNT_ID']
         if self.credential_dict["account_id"]:
             config = open_api_models.Config(
                 access_key_id=self.credential_dict["access_key_id"],
