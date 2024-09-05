@@ -158,7 +158,7 @@ function AddOrUpdate() {
         };
     }
     useEffect(() => {
-        const fmSelectData = fmList.map((item: FM_INFO) => ({ label: `[${FM_NAME_MAP[item.app_template]}] ${item.system_intranet_url}${CHAT_API_SUFIX} `, value: `${item.system_intranet_url}${CHAT_API_SUFIX}` }));
+        const fmSelectData = fmList.map((item: FM_INFO) => ({ label: `[${FM_NAME_MAP[item.app_template]}] ${item.system_internet_url}${CHAT_API_SUFIX} `, value: `${item.system_internet_url}${CHAT_API_SUFIX}` }));
         setFmData(fmSelectData);
     }, [fmList]);
     useEffect(() => {

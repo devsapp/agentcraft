@@ -102,7 +102,7 @@ resources:
       role: AliyunFCDefaultRole
       cpu: 2
       environmentVariables:
-        baseUrl: ${resources.agentcraft-backend.output.url.system_intranet_url}
+        baseUrl: ${resources.agentcraft-backend.output.url.system_intranet_url} # 仅在fc环境使用内网地址
         openApiUrl: ${resources.agentcraft-backend.output.url.system_url}
         beFunctionName: ${vars.beFunctionName}
         NODE_PATH: /opt/nodejs/node_modules

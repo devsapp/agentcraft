@@ -116,7 +116,9 @@ git clone https://github.com/devsapp/agentcraft.git
 + 云端创建， 通过RDS PostgreSQL实例 https://rdsbuy.console.aliyun.com/create/rds/mysql?spm=5176.19907444.0.0.64b11450FHIgeU 获取，[相关教程参考](https://agentcraft-docs.serverless-developer.com/quick-start/cloud-deploy)
 + 本地创建，执行```docker-compose up pg -d```
 
+
 ```shell
+# 注python 版本 >= 3.11
 cd agentcraft/src/agentcraft-all/agentcraft-be
 cp .env.example .env
 python3 -m venv venv
