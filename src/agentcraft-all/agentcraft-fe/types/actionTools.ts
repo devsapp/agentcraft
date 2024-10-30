@@ -23,6 +23,7 @@ export interface IActionTool {
     user_id?: number,
     created?: string,
     modified?: string,
+    need_llm_call: number
  
 }
 
