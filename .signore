@@ -3,3 +3,6 @@ node_modules
 .DS_Store
 agentcraft-all/agentcraft-fe/.next/cache
 cache
+Makefile
+docker-compose.yml
+postgresql
