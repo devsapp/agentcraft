@@ -590,7 +590,6 @@ def model_chat_stream(agent_session_id,
                                ] += chunk["choices"][0]["delta"]["content"]
                 except json.JSONDecodeError as err:
                     logger.error(err)
-    logger.info(f"usage: {usage}")
     # """添加检索来源信息"""
     # if len(search_choices) > 0:
     #     result_text = "\n\n相关链接\n"

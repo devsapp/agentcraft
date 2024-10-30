@@ -1,4 +1,4 @@
-export const AGENTCRAFT_FM_QWEN_BIZ = 'agentcraft-fm-qwen-biz';
+export const AGENTCRAFT_FM_QWEN_BIZ = 'agentcraft-fm-dashscope-biz'; // 弃用 agentcraft-fm-qwen-biz
 export const AGENTCRAFT_FM_DASHSCOPE_BIZ ='agentcraft-fm-dashscope-biz'; 
 export const AGENTCRAFT_FM_ZHIPUAI_BIZ ='agentcraft-fm-zhipuai-biz'; //智谱AI
 export const AGENTCRAFT_FM_BAICHUANAI_BIZ ='agentcraft-fm-baichuanai-biz'; // 百川AI
