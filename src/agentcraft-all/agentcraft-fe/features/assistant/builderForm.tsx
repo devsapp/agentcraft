@@ -95,7 +95,7 @@ export function AssistantForm({ workspaceId, form }: { workspaceId: any, form: a
         </Paper> */}
         <Paper shadow="xs" p="md" withBorder style={{ width: pannelWidth }}>
             <Flex justify={'space-between'} align={'center'}>
-                <Title order={5} size="h5">执行工具</Title>
+                <Title order={5} size="h5">AI工具</Title>
                 <IconRefresh cursor={'pointer'} onClick={getToolList} />
             </Flex>
 
@@ -107,8 +107,8 @@ export function AssistantForm({ workspaceId, form }: { workspaceId: any, form: a
                             value: item.id
                         }
                     })}
-                    description="执行工具是LLM可以调用的工具"
-                    label="执行工具"
+                    description="AI工具是LLM可以调用的工具"
+                    label="AI工具"
                     placeholder=""
                     {...form.getInputProps('action_tools')}
                 />

@@ -102,7 +102,7 @@ export function AssistantForm({ form, modelSelectData, openDatasetModel }: any) 
         <Paper shadow="xs" p="md" withBorder mt={12}>
             <Flex justify={'space-between'} align={'center'}>
                 <Flex align={'center'}>
-                    <Title order={5} size="h5">执行工具</Title>
+                    <Title order={5} size="h5">AI工具</Title>
                     <Button size={'xs'} h={20} ml={12} variant={'outline'} onClick={() => { setOpenToChoose(true) }}>快速添加</Button>
                 </Flex>
                 <IconRefresh cursor={'pointer'} onClick={getToolList} />
@@ -116,8 +116,8 @@ export function AssistantForm({ form, modelSelectData, openDatasetModel }: any) 
                             value: item.id
                         }
                     })}
-                    description="执行工具是LLM可以调用的工具"
-                    label="执行工具"
+                    description="AI工具是LLM可以调用的工具"
+                    label="AI工具"
                     placeholder=""
                     {...form.getInputProps('action_tools')}
                 />

@@ -13,7 +13,7 @@
   Your browser does not support the video tag.
 </video>
 
-AgentCraft是一个开放的智能体构建平台，致力于推进AI原生应用在业务场景的落地。目前提供了基础模型、数据集、执行工具、智能体构建、客户端接入等能力。可以帮助开发者快速构建，知识问答，智能助手等应用，能够极大的节省AI原生应用的开发成本
+AgentCraft是一个开放的智能体构建平台，致力于推进AI原生应用在业务场景的落地。目前提供了基础模型、数据集、AI工具、智能体构建、客户端接入等能力。可以帮助开发者快速构建，知识问答，智能助手等应用，能够极大的节省AI原生应用的开发成本
 
 
 
@@ -38,7 +38,7 @@ AgentCraft是一个开放的智能体构建平台，致力于推进AI原生应�
 
 知识库问答
 ![AgentCraft 知识库问答](https://img.alicdn.com/imgextra/i3/O1CN010RtRR01mbgYUUIp8w_!!6000000004973-1-tps-1777-893.gif)
-执行工具
+AI工具
 ![AgentCraft 函数智能助手](https://img.alicdn.com/imgextra/i2/O1CN01AnUGbS1jfOvNDtIx4_!!6000000004575-1-tps-1777-893.gif)
 ## 功能
 
@@ -139,7 +139,7 @@ npm run dev
 ```
 
 ### 特性相关
-与同类智能体平台相比，AgentCraft最大的特性在于构建跟云上资源的链接，提供云上资源管理能力，可以构建和部署任意需要被依赖的组件，比如基础模型、数据持续集成、自定义执行工具、客户端接入、工作流等,皆在帮助企业级开发者自由构建可以落地到业务里的AI应用
+与同类智能体平台相比，AgentCraft最大的特性在于构建跟云上资源的链接，提供云上资源管理能力，可以构建和部署任意需要被依赖的组件，比如基础模型、数据持续集成、自定义AI工具、客户端接入、工作流等,皆在帮助企业级开发者自由构建可以落地到业务里的AI应用
 
 ## 如何贡献
 欢迎为AgentCraft[贡献](https://agentcraft-docs.serverless-developer.com/community/become-contributor)，一起推进AI应用的落地。  欢迎各种方式的贡献，提交代码、问题、新想法.

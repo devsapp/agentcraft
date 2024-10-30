@@ -117,7 +117,7 @@ export function getNavAndCurrentPath(router: any) {
             type: 'divider',
         },
         {
-            name: "执行工具",
+            name: "AI工具",
             path: "/actionTools",
             icon: IconTrowel,
         },

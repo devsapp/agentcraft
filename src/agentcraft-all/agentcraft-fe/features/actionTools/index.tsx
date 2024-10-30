@@ -37,6 +37,7 @@ function AddOrUpdate() {
             type: 1,
             proxy_url: '',
             author: '',
+            need_llm_call: 1,
             status: ActionToolStatus.READY
         },
         validate: {
@@ -61,12 +62,13 @@ function AddOrUpdate() {
                 type: currentActionTool.type,
                 proxy_url: currentActionTool.proxy_url,
                 author: currentActionTool.author,
-                status: currentActionTool.status
+                status: currentActionTool.status,
+                need_llm_call: currentActionTool.need_llm_call
             })
         }
     }, [currentActionTool])
     return (
-        <Modal opened={open} onClose={() => { setOpen(false) }} title={isEdit ? '编辑执行工具' : '创建执行工具'} centered size="50%">
+        <Modal opened={open} onClose={() => { setOpen(false) }} title={isEdit ? '编辑AI工具' : '创建AI工具'} centered size="50%">
             <Box mx="auto">
                 <Select
                     withAsterisk
@@ -80,6 +82,7 @@ function AddOrUpdate() {
                 <Textarea withAsterisk label="描述" placeholder="输入工具描述" {...form.getInputProps('description')} description={<div><span >参考示例：</span><CopyToClipboard value={"文生图是一个AI绘画（图像生成）服务，输入文本描述，返回根据文本作画得到的图片的URL"} content={"文生图是一个AI绘画（图像生成）服务，输入文本描述，返回根据文本作画得到的图片的URL"} position={"none"} /> </div>} />
                 <Textarea withAsterisk label="输入参数" placeholder="输入参数" {...form.getInputProps('input_schema')} description={<div><span >参考示例：</span><CopyToClipboard value={"[ { 'name': 'prompt', 'description': '英文关键词，描述了希望图像具有什么内容', 'required': True, 'schema': {'type': 'string'}, } ]"} content={"[ { 'name': 'prompt', 'description': '英文关键词，描述了希望图像具有什么内容', 'required': True, 'schema': {'type': 'string'}, } ]"} position={"none"} /> </div>} />
                 <Textarea label="输出参数" placeholder="输入参数" {...form.getInputProps('output_schema')} />
+                
                 <TextInput label="作者" placeholder="请输入作者" {...form.getInputProps('author')} />
             </Box>
             <Box mx="auto" pt={12} style={{ textAlign: 'right' }}>
@@ -168,8 +171,8 @@ export function ChooseModal() {
 
     }
     return (
-        <Modal opened={openToChoose} onClose={() => { setOpenToChoose(false) }} title={'执行工具'} centered size="50%" closeOnClickOutside={false} >
-            <LoadingOverlay visible={loadingForChoose} overlayOpacity={0.6} loader={<Flex align={'center'} direction="column"><Flex align={'center'} >部署执行工具大约需要1分钟，请耐心等待<Loader variant="bars" color={'pink'} ml={12} /></Flex></Flex>} />
+        <Modal opened={openToChoose} onClose={() => { setOpenToChoose(false) }} title={'AI工具'} centered size="50%" closeOnClickOutside={false} >
+            <LoadingOverlay visible={loadingForChoose} overlayOpacity={0.6} loader={<Flex align={'center'} direction="column"><Flex align={'center'} >部署AI工具大约需要1分钟，请耐心等待<Loader variant="bars" color={'pink'} ml={12} /></Flex></Flex>} />
             <Flex wrap={'wrap'} justify={'space-around'} pb={24} pl={12}>
                 {ACTION_TOOL_TEMPLATES.map((item: any, index: number) => {
                     return <Box key={`template-${index}-${item.tag.join('-')}`} mb={12} onClick={() => createActionTools(item)} className={styles['action-tool-card']}>
@@ -201,9 +204,9 @@ function List() {
 
     const removeDataActionTool = (actionTool: IActionTool) => {
         const { id, name } = actionTool;
-        const deleteContent = `确定删除 ${name}?, 删除执行工具可能会影响您的智能助手使用，请检查相关的依赖，本次删除不会删除您的云上函数资源`;
+        const deleteContent = `确定删除 ${name}?, 删除AI工具可能会影响您的智能助手使用，请检查相关的依赖，本次删除不会删除您的云上函数资源`;
         modals.openConfirmModal({
-            title: '删除执行工具',
+            title: '删除AI工具',
             centered: true,
             children: (
                 <Text size="sm">
@@ -293,7 +296,7 @@ export function ActionToolsPage() {
     const { setOpenToChoose, setEditStatus } = useActionToolStore();
     // const items = [
     //     { title: 'AgentCraft', href: '#' },
-    //     { title: '执行工具', href: '/actionTools' },
+    //     { title: 'AI工具', href: '/actionTools' },
     // ].map((item, index) => (
     //     <Anchor href={item.href} key={index}>
     //         {item.title}
@@ -303,13 +306,13 @@ export function ActionToolsPage() {
     return (
         <>
             {/* <Breadcrumbs>{items}</Breadcrumbs> */}
-            <FeatureDescription title="执行工具" description="执行工具是Agent能力非常核心的部分，当你需要进行高级功能的Agent开发，执行工具是必不可少的" />
+            <FeatureDescription title="AI工具" description="AI工具是Agent能力非常核心的部分，当你需要进行高级功能的Agent开发，AI工具是必不可少的" />
             <Box mt={12} >
                 <Button onClick={() => {
                     setEditStatus(false);
                     setOpenToChoose(true);
                 }}>
-                    新建执行工具
+                    新建AI工具
                 </Button>
             </Box>
             <AddOrUpdate />

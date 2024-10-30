@@ -235,6 +235,7 @@ CREATE_ACTION_TOOLS_TABLE = text(
     description VARCHAR(255) NOT NULL,
     input_schema TEXT NOT NULL,
     output_schema TEXT NOT NULL,
+    need_llm_call INTEGER NOT NULL DEFAULT 1,
     type INTEGER NOT NULL,
     proxy_url TEXT,
     author TEXT NOT NULL,

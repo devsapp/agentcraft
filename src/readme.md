@@ -81,7 +81,7 @@
 
 基于本案例，您可以将  [AgentCraft](https://agentcraft-docs.serverless-developer.com/) 快速部署到函数计算FC，拥有一个专属的类似GPTS、COZE 的智能体平台，可以自由构建内容提取改写、RAG知识库、绘本制作、图文文案生成等智能应用。
 
-[AgentCraft](https://agentcraft-docs.serverless-developer.com/) 是一个开源的智能体构建平台，致力于推进AI原生应用在业务场景的落地。提供了基础模型、数据集、执行工具、智能体构建、客户端接入等能力。可以帮助开发者快速构建，知识问答，智能助手等应用，能够极大的节省AI原生应用的开发成本。
+[AgentCraft](https://agentcraft-docs.serverless-developer.com/) 是一个开源的智能体构建平台，致力于推进AI原生应用在业务场景的落地。提供了基础模型、数据集、AI工具、智能体构建、客户端接入等能力。可以帮助开发者快速构建，知识问答，智能助手等应用，能够极大的节省AI原生应用的开发成本。
 
 构建AI Agent平台 是一个非常复杂的工程，需要完成RAG, AgentRuntime的核心研发，以及权限管控、API管理、前端交互等， 借助Serverless开发平台，简单、方便地将 AgentCraft 这个Agent平台部署成独立服务，拥有AI时代强大的生产力工具。
 

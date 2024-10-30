@@ -1,6 +1,6 @@
 """ActionTools Table"""
 # pylint: disable=not-callable
-from sqlalchemy import Integer, String, TIMESTAMP, ForeignKey
+from sqlalchemy import Integer, String, TIMESTAMP, ForeignKey, Boolean
 from sqlalchemy.sql import func
 from sqlalchemy.orm import Session, mapped_column
 from app.database import postgresql
@@ -16,9 +16,10 @@ class ActionTools(postgresql.BaseModel):
     description = mapped_column(String, nullable=False)
     input_schema = mapped_column(String, nullable=False)
     output_schema = mapped_column(String, nullable=True)
-    type =  mapped_column(Integer, nullable=False)
-    proxy_url = mapped_column(String, nullable=True)
-    author = mapped_column(String, nullable=True)
+    type =  mapped_column(Integer, nullable=False) # 1 函数类(使用sdk 调用) 2 http 类型 http代理
+    proxy_url = mapped_column(String, nullable=True) # 代理地址
+    need_llm_call = mapped_column(Integer, nullable=False, default=1) # 描述这个工具是否需要被LLM调用继续进入推理循环的字段 1 是 2 不是
+    author = mapped_column(String, nullable=True) 
     status = mapped_column(Integer, nullable=False)
     user_id = mapped_column(ForeignKey("users.id", ondelete="cascade"))
     created = mapped_column(TIMESTAMP, default=func.now(), nullable=False)
@@ -47,7 +48,6 @@ def delete_action_tools(action_tools_id: int, user_id: int):
 def add_action_tools(**kwargs):
     """添加action_tools"""
     with Session(postgresql.postgres) as session:
-        print(f"kwargs{kwargs}")
         action_tools = ActionTools(**kwargs)
         session.add(action_tools)
         session.commit()

@@ -54,6 +54,7 @@ class ReasoningStream:
         self.result = None
         self.business = business
         self.usage = (0, 0, 0)
+
     def extract_final_answer(self, text):
         if not isinstance(text, str):
             raise ValueError("Input must be a string")
@@ -62,20 +63,16 @@ class ReasoningStream:
         if keyword_index != -1:
             return text[keyword_index + len(keyword):].strip()
         return ''
+
     def check_action_tool(self, resp_data: str):
         keyword = "Action:"
         keyword_index = resp_data.find(keyword)
         if keyword_index != -1:
             return True
         return False
+
     def final_result(self, resp_data: str):
         return self.extract_final_answer(resp_data)
-        # match = re.search(r'Final Answer: (.+)', resp_data, re.S)
-        # if match:
-        #     final_answer = match.group(1)
-        #     return final_answer
-        # else:
-        #     return ''
 
     def extract_json_content(self, text):
         start_index = text.find('{')
@@ -109,53 +106,47 @@ class ReasoningStream:
         kwargs['need_react'] = True if len(
             list_of_plugin_info) > 0 else False  # 补充
         logger.info(f'Planing Prompt: {planning_prompt}')
-        text = ''
-
-        end_time = time()
-        execution_time = end_time - self.time
-        logger.info(f"Execution 提示词构建时间: {execution_time} seconds")
-
+        agent_final_text = ''
         while True:
-            output = yield from self.text_completion(
-                planning_prompt + text, **kwargs)
+            llm_output = yield from self.text_completion(
+                planning_prompt + agent_final_text, **kwargs)
+
             action, action_input, output = self.parse_latest_plugin_call(
-                output)
-            logger.info(f"执行工具：{action}, 工具入参：{action_input}")
+                llm_output)
+
+            logger.info(f"AI工具：{action}, 工具入参：{action_input}")
             if action:
                 tool_name = ''
                 try:
                     tool_detail = self.tool_name_dict[action]
                     tool_name = tool_detail['name']
-                    output = tool_detail['output']
-                    if output == 'ui': # 如果结果返回是ui，直接输出
-                        end_time = time()
+                    need_llm_call = tool_detail['need_llm_call']
+                    # TODO: 判断条件应该用其他的变量
+                    if need_llm_call == 2: 
+                        logger.info(f"工具执行结果：{llm_output}")
+                        agent_process_answer = self.final_result(llm_output)
                         observation = self.call_plugin(action, action_input)
-                        execution_time = end_time - self.time
-                        logger.info(f"Execution 调用工具{action} {execution_time} seconds")
-                        logger.info(f"{action}工具调用结果：{observation}")
+                        logger.info(f"Execution {action} 结果：{observation}")
                         stream_response = {"choices": []}
                         stream_response["choices"].append({"index": 0,
-                                                    "delta": {"role": "assistant",
-                                                                "content": f'{observation} \n'},
-                                                    "finish_reason": "null"})
+                                                           "delta": {"role": "assistant",
+                                                                     "content": f'{agent_process_answer}\n {observation} \n'},
+                                                           "finish_reason": "null"})
                         stream_response["session_id"] = session_id
                         yield json.dumps(stream_response)
                         break
-                    else :
+                    else:
                         stream_response = {"choices": []}
                         stream_response["session_id"] = session_id
                         stream_response["choices"].append({"index": 0,
-                                                        "delta": {"role": "assistant",
-                                                                    "content": f'调用工具【{tool_name}】 \n'},
-                                                        "finish_reason": "null"})
+                                                           "delta": {"role": "assistant",
+                                                                     "content": f'调用工具【{tool_name}】 \n'},
+                                                           "finish_reason": "null"})
                         yield json.dumps(stream_response)
-                        end_time = time()
                         observation = self.call_plugin(action, action_input)
-                        execution_time = end_time - self.time
-                        logger.info(f"Execution 调用工具{action} {execution_time} seconds")
                         logger.info(f"{action}工具调用结果：{observation}")
                         output += f'\nObservation: {observation}\nThought:'
-                        text += output
+                        agent_final_text += output
                         if(action == 'data_retrieval'):  # 知识库召回特殊处理
                             plugin_args = json.loads(action_input)
                             user_question = plugin_args["user_question"]
@@ -163,19 +154,20 @@ class ReasoningStream:
                             yield from llm_retrieval_instruction_stream(user_question, observation, **kwargs)
                             break
                 except KeyError:
-                    names_for_model_list = [plugin['name_for_model'] for plugin in list_of_plugin_info]
+                    names_for_model_list = [plugin['name_for_model']
+                                            for plugin in list_of_plugin_info]
                     names_for_model_str = ','.join(names_for_model_list)
-                    text += f"The action '{action}' is not found in the tool name dictionary. please find them in 【{names_for_model_str}】"
-                    # logger.error(
-                    #     f"Error: The action '{action}' is not found in the tool name dictionary. please find them in {names_for_model_str}")
+                    agent_final_text += f"The action '{action}' is not found in the tool name dictionary. please find them in 【{names_for_model_str}】"
+                    logger.error(
+                        f"Error: The action '{action}' is not found in the tool name dictionary. please find them in {names_for_model_str}")
             else:
-                text += output
+                agent_final_text += output
                 break
         yield DONE
-        answer = self.final_result(text)
-        if not answer:  # 检查 final_answer 是否为空值，包括 None、空字符串或其他可Falsy对象
-            answer = text
-        self.result = (text, answer, planning_prompt)
+        agent_final_answer = self.final_result(agent_final_text)
+        if not agent_final_answer:  # 检查 final_answer 是否为空值，包括 None、空字符串或其他可Falsy对象
+            agent_final_answer = agent_final_text
+        self.result = (agent_final_text, agent_final_answer, planning_prompt)
         return
 
     def get_dataset_names(self, datasets):
@@ -265,7 +257,7 @@ class ReasoningStream:
                              data=request_data, timeout=kwargs['timeout'])
         end_time = time()
         execution_time = end_time - self.time
-        logger.info(f"Execution 完成大语言模型响应时间: {execution_time} seconds")
+        logger.info(f"Execution 完成大语言模型首次推理时间: {execution_time} seconds")
 
         know_anwser = False
         answer = [""]
@@ -282,7 +274,8 @@ class ReasoningStream:
                         chunk["id"] = uid
                         chunk["created"] = created
                         chunk["model"] = model
-                        chunk["session_id"] = self.business.get('session_id', None)
+                        chunk["session_id"] = self.business.get(
+                            'session_id', None)
                         reveal_all = chunk
                         if "choices" in chunk and len(
                                 chunk["choices"]) > 0 and "delta" in chunk["choices"][0] and "content" in chunk["choices"][0]["delta"]:
@@ -295,8 +288,9 @@ class ReasoningStream:
                                     yield json.dumps(chunk)
                                 final_content = self.final_result(  # 从每次结果中查找最终答案
                                     answer[chunk["choices"][0]["index"]])
-                                use_action  = self.check_action_tool(answer[0])
-                                if(know_anwser == False and final_content != '' and use_action != True): # 如果找到带有 “Final Answer”标识，并且没有Action存在的情况下，代表结束
+                                use_action = self.check_action_tool(answer[0])
+                                # 如果找到带有 “Final Answer”标识，并且没有Action存在的情况下，代表结束
+                                if(know_anwser == False and final_content != '' and use_action != True):
                                     chunk["choices"][0]["delta"]["content"] = final_content
                                     yield json.dumps(chunk)
                                     know_anwser = True
@@ -312,10 +306,9 @@ class ReasoningStream:
             self.usage[2] + usage.get("total_tokens", 0),
         )
         output = answer[0]
-        logger.info(f"final llm result: {output}")
         action, action_input, output_inner = self.parse_latest_plugin_call(
-                output)
-        if(action == '' and know_anwser == False and reveal_all != ''): #无法触发 Final Answer 但又确实推理出结果的时候
+            output)
+        if(action == '' and know_anwser == False and reveal_all != ''):  # 无法触发 Final Answer 但又确实推理出结果的时候
             reveal_all["choices"][0]["delta"]["content"] = output_inner
             yield json.dumps(reveal_all)
             (f"Output: {output_inner}")
@@ -359,14 +352,15 @@ class ReasoningStream:
         try:
             action_tools = assistant_action_tools_database.list_action_tools_by_assistant_id(
                 assistant.id)
-            
+
             action_tools = [
                 {
                     'name_for_human': item.alias,
                     'name_for_model': item.name,
                     'description_for_model': item.description,
                     'parameters': item.input_schema,
-                    'output': item.output_schema
+                    'output': item.output_schema,
+                    'need_llm_call': item.need_llm_call
                 }
                 for item in action_tools
             ]
@@ -376,16 +370,14 @@ class ReasoningStream:
                     'name_for_model': 'data_retrieval',
                     'description_for_model': '搜索本地数据集.经常在联网的搜索工具使用之前使用',
                     'parameters': "[ { 'name': 'user_question', 'description': 'The extracted user questions should be prioritized in vector retrieval.', 'required': True, 'schema': {'type': 'string'}, } ]",
-                    'output': ''
+                    'output': '',
+                    'need_llm_call': True
                 })
         except Exception as e:
             logger.error(e)
-
+        print(action_tools,'action_tools')
         self.tool_name_dict = {
-            tool['name_for_model']: {'name': tool['name_for_human'], 'output':tool['output']} for tool in action_tools}
-        end_time = time()
-        execution_time = end_time - self.time
-        logger.info(f"Execution  工具构建时间: {execution_time} seconds")
+            tool['name_for_model']: {'name': tool['name_for_human'], 'output': tool['output'], 'need_llm_call': tool['need_llm_call']} for tool in action_tools}
         model = model_database.get_model_by_id(assistant.model_id)
         self.model = model
         llm_plugin_args = {
@@ -407,11 +399,6 @@ class ReasoningStream:
             "model_name": model.name_alias if model else None,
             "url": model.url if model else None,
         }
-
-        end_time = time()
-        execution_time = end_time - self.time
-        logger.info(f"Execution 参数构建时间: {execution_time} seconds")
-
         yield from self.llm_with_plugin(
             prompt=text_input, list_of_plugin_info=action_tools, **llm_plugin_args)
 
