@@ -85,6 +85,18 @@ export async function deleteWorkspace(id: number) {
     });
 
 }
+export async function updateWorkspace(id: number, payload: WorkspaceRequestPayload) {
+
+    return await request(`/api/workspace/update?id=${id}`, {
+        method: "POST",
+        body: JSON.stringify(payload),
+        headers: {
+            "Content-Type": "application/json",
+        },
+    });
+
+
+}
 
 export async function addWorkspace(payload: WorkspaceRequestPayload) {
 

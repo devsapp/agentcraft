@@ -79,7 +79,8 @@ CREATE_AGENT_TABLE = text(
     model_ip_limit INTEGER NOT NULL DEFAULT 50,
     exact_search_limit INTEGER NOT NULL DEFAULT 1,
     fuzzy_search_limit INTEGER NOT NULL DEFAULT 3,
-    is_public INTEGER NOT NULL DEFAULT 0
+    is_public INTEGER DEFAULT 0,
+    default_answer VARCHAR(255)
     );"""
 )
 CREATE_AGENT_DATASET_TABLE = text(
@@ -195,7 +196,7 @@ CREATE_ASSISTANT_TABLE = text(
     model_ip_limit INTEGER NOT NULL DEFAULT 50,
     exact_search_limit INTEGER NOT NULL DEFAULT 1,
     fuzzy_search_limit INTEGER NOT NULL DEFAULT 3,
-    is_public INTEGER NOT NULL DEFAULT 0
+    is_public INTEGER DEFAULT 0
     );"""
 )
 
@@ -235,7 +236,7 @@ CREATE_ACTION_TOOLS_TABLE = text(
     description VARCHAR(255) NOT NULL,
     input_schema TEXT NOT NULL,
     output_schema TEXT NOT NULL,
-    need_llm_call INTEGER NOT NULL DEFAULT 1,
+    need_llm_call INTEGER DEFAULT 1,
     type INTEGER NOT NULL,
     proxy_url TEXT,
     author TEXT NOT NULL,

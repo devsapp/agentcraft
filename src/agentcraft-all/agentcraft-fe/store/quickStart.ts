@@ -120,7 +120,6 @@ export async function createFoundationModelOnly(payload: any) {
         description: payload.description,
         region: payload.region,
         apiKey: payload.apiKey,
-        model: payload.model,
         name: payload.name,
     }
 
