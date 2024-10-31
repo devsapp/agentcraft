@@ -18,7 +18,7 @@ export function WorkSpace({
     return (
         <>
             <Text className={styles.title}>
-                {parentPath ? 'Ai' : '爱无限引擎'}
+                {parentPath ? 'AC' : 'AgentCraft'}
             </Text>
             {parentPath ? (
                 <Box mt={12} className={styles['workspace-short']}>

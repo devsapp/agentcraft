@@ -115,7 +115,7 @@ function checkAppStatus(appName: string): Promise<any> {
 }
 
 export async function createFoundationModelOnly(payload: any) {
-    
+
     const createAppPayload = {
         description: payload.description,
         region: payload.region,
@@ -137,12 +137,18 @@ export async function createFoundationModelOnly(payload: any) {
 export async function checkFoundationModelStatusAndLLMProxy(appName: string, payload: any) {
 
     const appInfo = await checkAppStatus(appName);
-    const domainData: any = appInfo?.output?.deploy['domain'];
-    const appUrl = domainData.domainName;
+    // const domainData: any = appInfo?.output?.deploy['domain'];
+    // const appUrl = domainData.domainName;
+    let system_url = '';
+    try {
+        system_url = appInfo?.output?.deploy?.apiServer?.url?.system_url;
+    } catch (e) {
+        console.log(e);
+    }
     const llmProxyPayload = {
         name: payload.model,
         name_alias: payload.name_alias,
-        url: `http://${appUrl}/v1/chat/completions`,
+        url: `${system_url}/v1/chat/completions`,
         token: '',
         description: '',
         timeout: 600
