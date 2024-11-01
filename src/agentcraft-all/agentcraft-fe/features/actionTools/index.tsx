@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import { Card, Flex, Button, Box, Table, Modal, TextInput, Text, Highlight, LoadingOverlay, Select, Textarea, Code, Loader, Badge } from '@mantine/core';
+import { Group, Card, Flex, Button, Box, Table, Modal, TextInput, Text, Highlight, LoadingOverlay, Select, Textarea, Code, Loader, Badge, Radio } from '@mantine/core';
 import { useForm } from '@mantine/form';
 import { modals } from '@mantine/modals';
 import { notifications } from '@mantine/notifications';
@@ -78,12 +78,28 @@ function AddOrUpdate() {
                     data={functionList}
                     {...form.getInputProps('name')}
                 />
-                <TextInput label="名称" placeholder="工具名" {...form.getInputProps('alias')} />
-                <Textarea withAsterisk label="描述" placeholder="输入工具描述" {...form.getInputProps('description')} description={<div><span >参考示例：</span><CopyToClipboard value={"文生图是一个AI绘画（图像生成）服务，输入文本描述，返回根据文本作画得到的图片的URL"} content={"文生图是一个AI绘画（图像生成）服务，输入文本描述，返回根据文本作画得到的图片的URL"} position={"none"} /> </div>} />
-                <Textarea withAsterisk label="输入参数" placeholder="输入参数" {...form.getInputProps('input_schema')} description={<div><span >参考示例：</span><CopyToClipboard value={"[ { 'name': 'prompt', 'description': '英文关键词，描述了希望图像具有什么内容', 'required': True, 'schema': {'type': 'string'}, } ]"} content={"[ { 'name': 'prompt', 'description': '英文关键词，描述了希望图像具有什么内容', 'required': True, 'schema': {'type': 'string'}, } ]"} position={"none"} /> </div>} />
-                <Textarea label="输出参数" placeholder="输入参数" {...form.getInputProps('output_schema')} />
-                
-                <TextInput label="作者" placeholder="请输入作者" {...form.getInputProps('author')} />
+                <TextInput mt={4}  label="名称" placeholder="工具名" {...form.getInputProps('alias')} />
+                <Textarea mt={4}  withAsterisk label="描述" placeholder="输入工具描述" {...form.getInputProps('description')} description={<div><span >参考示例：</span><CopyToClipboard value={"文生图是一个AI绘画（图像生成）服务，输入文本描述，返回根据文本作画得到的图片的URL"} content={"文生图是一个AI绘画（图像生成）服务，输入文本描述，返回根据文本作画得到的图片的URL"} position={"none"} /> </div>} />
+                <Textarea mt={4}  withAsterisk label="输入参数" placeholder="输入参数" {...form.getInputProps('input_schema')} description={<div><span >参考示例：</span><CopyToClipboard value={"[ { 'name': 'prompt', 'description': '英文关键词，描述了希望图像具有什么内容', 'required': True, 'schema': {'type': 'string'}, } ]"} content={"[ { 'name': 'prompt', 'description': '英文关键词，描述了希望图像具有什么内容', 'required': True, 'schema': {'type': 'string'}, } ]"} position={"none"} /> </div>} />
+                <Textarea mt={4}  label="输出参数" placeholder="输入参数" {...form.getInputProps('output_schema')} />
+                <Radio.Group
+                    mt={4}
+                    withAsterisk
+                    name="need_llm_call"
+                    value={form.getInputProps('need_llm_call') ?.value as any}
+                    label="工具执行结果反馈与否"
+                    description="如果选择否，智能体调用完工具会直接返回"
+                    onChange={(value:any) => {
+                        const _value = parseInt(value, 10);
+                        form.setFieldValue('need_llm_call', _value);
+                    }}
+                >
+                    <Group mt={4}>
+                        <Radio value={1} label="是" />
+                        <Radio value={2} label="否" />
+                    </Group>
+                </Radio.Group>
+                <TextInput mt={8} label="作者" placeholder="请输入作者" {...form.getInputProps('author')} />
             </Box>
             <Box mx="auto" pt={12} style={{ textAlign: 'right' }}>
                 <Button onClick={async () => {
@@ -153,6 +169,7 @@ export function ChooseModal() {
             output_schema: '',
             author: '',
             proxy_url: '',
+            need_llm_call: 1,
         });
         if (data) {
             await getToolList();
