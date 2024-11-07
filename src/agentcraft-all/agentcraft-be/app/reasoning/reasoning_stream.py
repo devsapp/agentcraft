@@ -74,6 +74,9 @@ class ReasoningStream:
     def final_result(self, resp_data: str):
         return self.extract_final_answer(resp_data)
 
+    def wrapperUiRenderdPreview(self, title, content):
+        return f"""<ChatUIPreview title='{title}' component='{content}' />"""
+
     def extract_json_content(self, text):
         start_index = text.find('{')
         end_index = text.rfind('}')
@@ -122,15 +125,17 @@ class ReasoningStream:
                     tool_name = tool_detail['name']
                     need_llm_call = tool_detail['need_llm_call']
                     # TODO: 判断条件应该用其他的变量
-                    if need_llm_call == 2: 
+                    if need_llm_call == 2:
                         logger.info(f"工具执行结果：{llm_output}")
                         agent_process_answer = self.final_result(llm_output)
                         observation = self.call_plugin(action, action_input)
+                        logger.info(f"Action_input：{action_input}")
                         logger.info(f"Execution {action} 结果：{observation}")
                         stream_response = {"choices": []}
+                        final_result_preview = self.wrapperUiRenderdPreview(tool_name, observation)
                         stream_response["choices"].append({"index": 0,
                                                            "delta": {"role": "assistant",
-                                                                     "content": f'{agent_process_answer}\n {observation} \n'},
+                                                                     "content": f'{agent_process_answer}\n {final_result_preview} \n'},
                                                            "finish_reason": "null"})
                         stream_response["session_id"] = session_id
                         yield json.dumps(stream_response)
@@ -375,7 +380,7 @@ class ReasoningStream:
                 })
         except Exception as e:
             logger.error(e)
-        print(action_tools,'action_tools')
+        print(action_tools, 'action_tools')
         self.tool_name_dict = {
             tool['name_for_model']: {'name': tool['name_for_human'], 'output': tool['output'], 'need_llm_call': tool['need_llm_call']} for tool in action_tools}
         model = model_database.get_model_by_id(assistant.model_id)

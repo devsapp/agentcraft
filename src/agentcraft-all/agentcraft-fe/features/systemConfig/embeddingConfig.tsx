@@ -5,10 +5,12 @@ import { modals } from '@mantine/modals';
 import { Paper, Stepper, Anchor, Button, TextInput, Text, LoadingOverlay, Flex } from '@mantine/core';
 import CopyToClipboard from 'components/CopyToClipboard';
 import { useFoundationModelStore, addFoundationModel, getFoundationModel, APP_STATUS } from 'store/foundationModel';
-import { SYSTEM_AGENTCRAFT_PREFIX, NEW_EMBEDDING_TEMPLATE_NAME } from 'constants/system-config';
+import { SYSTEM_AGENTCRAFT_PREFIX, NEW_EMBEDDING_TEMPLATE_NAME, SUPPORT_EMBEDDING_REGIONS } from 'constants/system-config';
 
-import { useSystemConfigStore } from '@/store/systemConfig';
+import { useSystemConfigStore } from 'store/systemConfig';
+import { getCorrectRegionAddress } from 'utils/cloudInfra';
 // import styles from './index.module.scss';
+
 
 
 function getEmbeddingCurlCode(embeddingUrl: string) {
@@ -35,7 +37,6 @@ function LoadingStepper() {
     </div>
 
 }
-
 
 
 export default function EmbeddingConfig({ form }: any) {
@@ -89,8 +90,9 @@ export default function EmbeddingConfig({ form }: any) {
             onCancel: () => console.log('Cancel'),
             onConfirm: async () => {
                 const templateName = NEW_EMBEDDING_TEMPLATE_NAME;
+                const region = getCorrectRegionAddress(SUPPORT_EMBEDDING_REGIONS, completeConfig.regionId); // embedding模型支持有限的region，如果主服务的部署region超出该范围，则默认使用cn-hangzhou
                 const parameters: any = {
-                    region: completeConfig.regionId || 'cn-hangzhou',
+                    region,
                     // serviceName: AGENTCRAFT_SERVICE,
                     // functionName: `${AGENTCRAFT_FUNCTION}_${nanoid()}`,
                     description: 'Embedding算法服务【作为AgentCraft服务的核心依赖，请谨慎删除】'

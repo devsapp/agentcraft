@@ -3,7 +3,7 @@
 if [ ! -d "/code/node_modules" ]; then
   mkdir /code/node_modules
 fi
-
+# 为了解决commonjs 和 es6 模块的兼容问题 构建一个源码路径的软链接
 for file in "/opt/nodejs/node_modules"/*; do
   ln -s "$file" "/code/node_modules/"
 done

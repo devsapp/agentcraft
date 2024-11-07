@@ -95,7 +95,7 @@ resources:
       layers:
         - acs:fc:${vars.region}:official:layers/Nodejs18/versions/1
         - >-
-          acs:fc:${vars.region}:1154600634854327:layers/agentcraft-frontend/versions/5
+          acs:fc:${vars.region}:1154600634854327:layers/agentcraft-frontend/versions/12
       runtime: custom.debian10
       instanceConcurrency: 5
       memorySize: 3072

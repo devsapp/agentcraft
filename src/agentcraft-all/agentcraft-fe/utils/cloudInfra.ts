@@ -38,3 +38,10 @@ export function getAlibabaCloudServerlessBridge(credentialMap: any) {
     const serverlessBridgeService = new ServerlessBridgeService(credential, mainAccountId);
     return serverlessBridgeService;
 }
+
+export function getCorrectRegionAddress(supportRegions: string[],currentRegion: string) {
+    if(!supportRegions.includes(currentRegion)) {
+        return supportRegions[0];
+    }
+    return currentRegion;
+}

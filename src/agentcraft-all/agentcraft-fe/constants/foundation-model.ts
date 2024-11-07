@@ -13,6 +13,8 @@ export const AGENTCRAFT_FM_QWEN_OPENSOURCE = 'agentcraft-fm-qwen-opensource';
 
 export const AGENTCRAFT_FM_PREFIX = 'AgentCraft_FM';
 
+export const SUPPORT_LLM_MODEL_REGIONS = ['cn-beijing','cn-hangzhou'];
+
 export const FM_NAME_MAP: any = {
     [AGENTCRAFT_FM_QWEN_BIZ]: '通义千问商业版',
     [AGENTCRAFT_FM_DASHSCOPE_BIZ]: 'DashscopeAI',

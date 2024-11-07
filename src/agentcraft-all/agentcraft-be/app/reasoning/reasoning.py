@@ -79,7 +79,8 @@ class Reasoning:
         result = self.text_completion(
             input_text, **kwargs)
         return result
-
+    def wrapperUiRenderdPreview(title,content):
+        return f"""<ChatUIPreview title={title} content={content}/>"""
     def llm_with_plugin(self, prompt: str, list_of_plugin_info=(), **kwargs):
         created = kwargs['created']
         uid = kwargs['uid']

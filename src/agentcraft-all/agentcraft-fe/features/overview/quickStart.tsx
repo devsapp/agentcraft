@@ -16,10 +16,11 @@ import { getDataSetList, useDataSetStore } from 'store/dataset';
 import { DataSetRequestPayload } from 'types/dataset';
 import { PROMPT_TEMPLATE, DEFAULT_SYSTEM_PROMPT } from 'constants/index';
 import { DATA_RETRIVAL_PROMPT_TEMPLATE } from 'constants/instructions';
-import { AGENTCRAFT_FM_PREFIX } from 'constants/foundation-model';
+import { AGENTCRAFT_FM_PREFIX, SUPPORT_LLM_MODEL_REGIONS } from 'constants/foundation-model';
 import { DEFAULT_CHUNK_SIZE } from 'constants/dataset';
 import { AGENT_TYPE } from 'constants/agent';
 import { Model } from 'types/model';
+import { getCorrectRegionAddress } from 'utils/cloudInfra';
 
 
 function Add() {
@@ -266,7 +267,8 @@ export function QuickStart({ workspaceId }: any) {
 
         try {
             const name = `${AGENTCRAFT_FM_PREFIX}_${nanoid()}`;
-            const _appName = await createFoundationModelOnly(Object.assign({}, values, { name }));
+
+            const _appName = await createFoundationModelOnly(Object.assign({}, values, { name, region: getCorrectRegionAddress(SUPPORT_LLM_MODEL_REGIONS, values.region) }));
             setAppName(_appName);
             const modelId = await checkFoundationModelStatusAndLLMProxy(_appName, values);
             //结束
@@ -335,7 +337,7 @@ export function QuickStart({ workspaceId }: any) {
             let app_id;
             try {
                 app_id = parseInt(workspaceId);
-            } catch (e) {}
+            } catch (e) { }
             instructionChatForm.setValues({
                 app_id
             });

@@ -10,8 +10,7 @@ export const AGENTCRAFT_FUNCTION = 'AgentCraftFunction';
 export const EMBEDDING_TEMPLATE_NAME = 'fc-embedding-api';
 export const NEW_EMBEDDING_TEMPLATE_NAME = 'fc3-embedding-api';
 
-
-
+export const SUPPORT_EMBEDDING_REGIONS = ['cn-beijing','cn-hangzhou','cn-shanghai','cn-shenzhen'];
 export const POSTGRESQL_QUICK_BUY_LINK =  'https://rdsbuy.console.aliyun.com/fastCreate?buyType=rds&region=cn-hangzhou&dbType=pg&dbversion=16&nodeType=basic&storageType=cloud_essd0&storageSize=20&class=pg.n2e.2c.1m&duration=1&unit=Month&num=1&vpc={{vpcId}}'
 export const ALIBABACLOUD_POSTGRESQL_TUTORIAL = `# 数据库获取实践教程
 
