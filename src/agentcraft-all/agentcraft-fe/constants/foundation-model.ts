@@ -9,7 +9,7 @@ export const AGENTCRAFT_FM_CHATGLM2_OPENSOURCE = 'agentcraft-fm-chatglm2-opensou
 export const AGENTCRAFT_FM_CHATGLM3_OPENSOURCE = 'agentcraft-fm-chatglm3-opensource';
 export const AGENTCRAFT_FM_LLAMA2_OPENSOURCE = 'agentcraft-fm-llama2-opensource';
 export const AGENTCRAFT_FM_QWEN_OPENSOURCE = 'agentcraft-fm-qwen-opensource';
-
+export const BAILIAN_ENDPOINT = 'https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions';  // 百炼通义千问API访问的endpoint
 
 export const AGENTCRAFT_FM_PREFIX = 'AgentCraft_FM';
 
@@ -53,12 +53,12 @@ export const FM_APP_STATUS: any = {
 
 export const FOUNDATION_MODEL_TEMPLATES = [
     {
-        name: 'DashscopeAI模型（代理Dashscope）',
+        name: '百炼模型（代理阿里云百炼）',
         tag: ['Dashcope', '通义千问'],
         type: 'llm',
         icon: '',
         iconText: '模型服务灵积',
-        description: 'Dashscope是阿里云的AI API基础设施平台，包含qwen-turbo，qwen-plus等商业版本的通义千问模型',
+        description: '阿里云百炼是阿里云的AI API基础设施平台，包含qwen-turbo，qwen-plus等商业版本的通义千问模型',
         fcLink: 'https://fcnext.console.aliyun.com/applications/create?template=agentcraft-fm-dashscope-biz',
         githubLink: '',
         template: 'agentcraft-fm-dashscope-biz',
@@ -78,8 +78,8 @@ export const FOUNDATION_MODEL_TEMPLATES = [
                 },
                 apiKey: {
                     type: 'string',
-                    title: 'Dashcope API-Key',
-                    description: 'Dashcope 的API-KEY，<a href="https://dashscope.console.aliyun.com/apiKey" target="_blank">免费申领地址</a>',
+                    title: '阿里云百炼 API-Key',
+                    description: '阿里云百炼 的API-KEY <a href="https://bailian.console.aliyun.com/?apiKey=1#/api-key" target="_blank">免费申领地址</a>',
                     default: '',
                     uiType: 'password'
                 }

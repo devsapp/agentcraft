@@ -56,7 +56,6 @@ async def chat(req: ChatRequest, request: Request, token: AgentJWTData = Depends
     else:
         resp: dict[str, Any] = service.chat(
             agent_session_id, query, request.client.host, agent_id, history_dict)
-        print(f"resp: {resp}")
         return ChatCompletionResponse(**resp)
 
 

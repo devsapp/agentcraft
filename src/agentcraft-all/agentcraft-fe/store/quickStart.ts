@@ -1,7 +1,7 @@
 
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
-import { AGENTCRAFT_FM_QWEN_BIZ } from 'constants/foundation-model';
+import { AGENTCRAFT_FM_QWEN_BIZ, BAILIAN_ENDPOINT } from 'constants/foundation-model';
 import { AGENTCRAFT_QUICK_START } from 'constants/index';
 import { request } from 'utils/clientRequest';
 export const enum QuickStartStep {
@@ -91,9 +91,7 @@ export const useQuickStartStore = create<any>(persist(
 ))
 
 function checkAppStatus(appName: string): Promise<any> {
-
     return new Promise((resolve, reject) => {
-
         const timmer = setInterval(async () => {
             try {
                 const result: any = await request(`/api/infra/alibaba-cloud/getApp?appName=${appName}`);
@@ -103,8 +101,7 @@ function checkAppStatus(appName: string): Promise<any> {
                     resolve(release);
                 }
             } catch (e) {
-                // 忽略超时 
-                // reject(e);
+    
             }
 
         }, 4000);
@@ -134,11 +131,30 @@ export async function createFoundationModelOnly(payload: any) {
     return res?.data?.name;
 
 }
-export async function checkFoundationModelStatusAndLLMProxy(appName: string, payload: any) {
 
+export async function createLLMProxyOnly(payload: any) {
+
+    const { description, model, name_alias, apiKey } = payload;
+    const llmProxyPayload = {
+        name: model,
+        name_alias,
+        url: BAILIAN_ENDPOINT,
+        token: apiKey,
+        description,
+        timeout: 600
+    };
+
+    const llmProxyResult = await request("/api/model/create", {
+        method: "POST",
+        body: JSON.stringify(llmProxyPayload),
+        headers: {
+            "Content-Type": "application/json",
+        },
+    });
+    return llmProxyResult.data.id
+}
+export async function checkFoundationModelStatusAndLLMProxy(appName: string, payload: any) {
     const appInfo = await checkAppStatus(appName);
-    // const domainData: any = appInfo?.output?.deploy['domain'];
-    // const appUrl = domainData.domainName;
     let system_url = '';
     try {
         system_url = appInfo?.output?.deploy?.apiServer?.url?.system_url;
@@ -194,7 +210,6 @@ export async function createDataAll(payload: any) {
 
 
 export async function createKnowledgeBaseApp(payload: any) {
-
     const appPayload = {
         name: payload.name,
         description: payload.description,

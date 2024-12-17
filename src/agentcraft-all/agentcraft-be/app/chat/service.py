@@ -497,6 +497,7 @@ def model_chat(agent_session_id,
         "presence_penalty": agent.presence_penalty,
         # "frequency_penalty": agent.frequency_penalty,
         "logit_bias": json.loads(agent.logit_bias) if agent.logit_bias else {}
+        
     }
     if(agent.stop != []):
         llm_request_options['stop'] = agent.stop
@@ -560,8 +561,12 @@ def model_chat_stream(agent_session_id,
         "max_tokens": agent.max_tokens,
         "presence_penalty": agent.presence_penalty,
         # "frequency_penalty": agent.frequency_penalty, # OpenAI 不支持该参数
-        "logit_bias": json.loads(agent.logit_bias) if agent.logit_bias else {}
+        "logit_bias": json.loads(agent.logit_bias) if agent.logit_bias else {},
+        "stream_options": {
+            "include_usage": True
+        }
     }
+
     if(agent.stop != []):
         llm_request_options['stop'] = agent.stop
     request_data = json.dumps(llm_request_options)
@@ -578,7 +583,6 @@ def model_chat_stream(agent_session_id,
                 line = line[5:].strip()
                 try:
                     chunk = json.loads(line)
-                    # print(f"chunk: {chunk}")
                     chunk["id"] = uid
                     chunk["created"] = created
                     chunk["model"] = model.name_alias

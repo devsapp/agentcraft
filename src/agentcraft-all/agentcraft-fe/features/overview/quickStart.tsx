@@ -8,7 +8,7 @@ import LLMProxy from 'features/overview/llmProxy';
 import DataAll from 'features/overview/dataAll';
 import { DEFAULT_CHAT_INSTRUCTION } from 'constants/instructions'
 import { Agent } from 'features/overview/agent';
-import { useQuickStartStore, QuickStartStep, createFoundationModelOnly, checkFoundationModelStatusAndLLMProxy, createDataAll } from "store/quickStart";
+import { useQuickStartStore, QuickStartStep, createFoundationModelOnly, checkFoundationModelStatusAndLLMProxy,createLLMProxyOnly, createDataAll } from "store/quickStart";
 import { addAssistant, refreshToken as refreshAssistantToken } from 'store/assistant';
 import { addKnowledgeBase, refreshToken } from 'store/knowledgeBase';
 import { getModelList, useModelStore } from 'store/model';
@@ -84,7 +84,7 @@ export function QuickStart({ workspaceId }: any) {
     const llmProxyForm: UseFormReturnType<any> = useForm({
         initialValues: {
             name_alias: '通义千问Plus版本',
-            description: '',
+            description: '阿里云百炼平台提供的通义千问Plus版本',
             region: 'cn-hangzhou',
             apiKey: '',
             model: 'qwen-plus'
@@ -266,12 +266,12 @@ export function QuickStart({ workspaceId }: any) {
         const values = llmProxyForm.values;
 
         try {
-            const name = `${AGENTCRAFT_FM_PREFIX}_${nanoid()}`;
+            // const name = `${AGENTCRAFT_FM_PREFIX}_${nanoid()}`;
+            // const _appName = await createFoundationModelOnly(Object.assign({}, values, { name, region: getCorrectRegionAddress(SUPPORT_LLM_MODEL_REGIONS, values.region) }));
+            // setAppName(_appName);
+            // const modelId = await checkFoundationModelStatusAndLLMProxy(_appName, values);
 
-            const _appName = await createFoundationModelOnly(Object.assign({}, values, { name, region: getCorrectRegionAddress(SUPPORT_LLM_MODEL_REGIONS, values.region) }));
-            setAppName(_appName);
-            const modelId = await checkFoundationModelStatusAndLLMProxy(_appName, values);
-            //结束
+            const modelId = await createLLMProxyOnly(values);
             configStepStatus.llm_proxy_create_loading = false;
             setConfigStepStatus(configStepStatus);
             setModelId(modelId);
@@ -371,7 +371,7 @@ export function QuickStart({ workspaceId }: any) {
                 <Stepper.Step label="基础模型&LLM代理" description="进行LLM基础模型的创建以及LLM代理关联" loading={llm_proxy_create_loading}>
                     <div style={{ position: 'relative' }}>
                         <LoadingOverlay
-                            loader={<Flex align={'center'} direction="column"><Flex align={'center'} >部署基础模型和LLM代理预计需要1分钟左右，请耐心等待<Loader variant="bars" color={'pink'} ml={12} /></Flex><Anchor href={`https://fcnext.console.aliyun.com/applications/${appName}/env/default?tab=envDetail`} target="_blank">点击查看应用创建日志</Anchor></Flex>}
+                            loader={<Flex align={'center'} direction="column">帮助您构建通义千问的代理服务，后续可以用于各类智能体</Flex>}
                             overlayOpacity={0.3}
                             overlayColor="#c5c5c5"
                             visible={llm_proxy_create_loading}

@@ -142,6 +142,7 @@ export function chatStream(options: ChatOptions, token: string) {
                 });
                 return finish();
             }
+            
             if (json.usage?.total_tokens) {
                 usage = json.usage;
             }

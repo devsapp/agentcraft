@@ -256,7 +256,10 @@ class ReasoningStream:
             "stop": stop_words,
             "presence_penalty": kwargs['presence_penalty'],
             # "frequency_penalty": kwargs['frequency_penalty'],
-            "logit_bias":  {}
+            "logit_bias":  {},
+            "stream_options": {
+                "include_usage": True
+            }
         })
         resp = requests.post(kwargs['url'], headers=headers, stream=True,
                              data=request_data, timeout=kwargs['timeout'])
@@ -301,9 +304,12 @@ class ReasoningStream:
                                     know_anwser = True
                             else:
                                 yield json.dumps(chunk)
-
+                        # 如果检测到chunk 中包含usage ，不为None ， 则输出
+                        else:
+                            if 'usage' in chunk and chunk['usage'] is not None:
+                                yield json.dumps(chunk)
                     except json.JSONDecodeError as err:
-                        print(err)
+                        logger.error(err)
 
         self.usage = (
             self.usage[0] + usage.get("prompt_tokens", 0),
@@ -380,7 +386,6 @@ class ReasoningStream:
                 })
         except Exception as e:
             logger.error(e)
-        print(action_tools, 'action_tools')
         self.tool_name_dict = {
             tool['name_for_model']: {'name': tool['name_for_human'], 'output': tool['output'], 'need_llm_call': tool['need_llm_call']} for tool in action_tools}
         model = model_database.get_model_by_id(assistant.model_id)
