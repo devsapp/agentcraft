@@ -186,6 +186,7 @@
     word-break: break-word;
     border: var(--border-in-light);
     position: relative;
+    min-height: 40px;
     p {
         margin: 0;
     }

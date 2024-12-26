@@ -9,6 +9,11 @@ export const AGENTCRAFT_FM_CHATGLM2_OPENSOURCE = 'agentcraft-fm-chatglm2-opensou
 export const AGENTCRAFT_FM_CHATGLM3_OPENSOURCE = 'agentcraft-fm-chatglm3-opensource';
 export const AGENTCRAFT_FM_LLAMA2_OPENSOURCE = 'agentcraft-fm-llama2-opensource';
 export const AGENTCRAFT_FM_QWEN_OPENSOURCE = 'agentcraft-fm-qwen-opensource';
+export const AGENTCRAFT_FM_GPT_SOVITS = 'fc-gpt-sovits-v2';
+export const AGENTCRAFT_FM_COSYVOICE = 'cosyvoice';
+export const AGENTCRAFT_FM_STABLEDIFFUSION= 'fc-stable-diffusion-v3';
+export const AgentCRAFT_FM_COMFYUI = 'fc-comfyui';
+
 export const BAILIAN_ENDPOINT = 'https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions';  // 百炼通义千问API访问的endpoint
 
 export const AGENTCRAFT_FM_PREFIX = 'AgentCraft_FM';
@@ -27,6 +32,33 @@ export const FM_NAME_MAP: any = {
     [AGENTCRAFT_FM_CHATGLM3_OPENSOURCE]: 'Chatglm3-6b开源',
     [AGENTCRAFT_FM_LLAMA2_OPENSOURCE]: 'Llama2-13B（int4量化）开源',
     [AGENTCRAFT_FM_QWEN_OPENSOURCE]: '通义千问-7b开源',
+    [AGENTCRAFT_FM_GPT_SOVITS]:'GptSovits 2.0',
+    [AGENTCRAFT_FM_COSYVOICE]:'CosyVoice 1.0',
+    [AGENTCRAFT_FM_STABLEDIFFUSION]:'Stable Diffusion',
+    [AgentCRAFT_FM_COMFYUI]: 'ComfyUI'
+}
+
+export const FM_DOCS: any = {
+    [AGENTCRAFT_FM_GPT_SOVITS]: [{
+        name: 'GptSovits 2.0 Serverless版使用介绍',
+        url: 'https://www.yuque.com/zxypro/mnayfw/yrvd2gsbvtzbxvnn'
+    },{
+        name: 'GptSovits 2.0 Serverless版模型训练',
+        url: 'https://www.yuque.com/zxypro/mnayfw/rg5hfc1za58q9zze'
+    }],
+    [AGENTCRAFT_FM_COSYVOICE]: [{
+        name: 'CosyVoice Serverless 版使用介绍',
+        url: 'https://developer.aliyun.com/article/1619858'
+    }],
+    [AgentCRAFT_FM_COMFYUI]: [{
+        name: 'ComfyUI API Serverless版使用介绍',
+        url: 'https://help.aliyun.com/zh/functioncompute/fc-3-0/use-cases/comfyui-api-serverless-version-solution'
+    }],
+    [AGENTCRAFT_FM_STABLEDIFFUSION]: [{
+        name: 'StableDiffusion API Serverless版使用介绍',
+        url: 'https://help.aliyun.com/zh/functioncompute/fc-3-0/use-cases/stable-diffusion-api-serverless-solution'
+    }],
+
 }
 
 export const FM_TEMPLATE_ACCESS_API_FUNCTION_MAP: any = {
@@ -50,14 +82,125 @@ export const FM_APP_STATUS: any = {
         text: '部署中'
     }
 }
-
+export const FOUNDATION_MODEL_TTI_TEMPLATES = [
+    {
+        name: 'ComfyUI 图像工作流',
+        tag: ['ComfyUI','图像生成','图像工作流'],
+        type: 'tti',
+        icon: '',
+        iconText: 'ComfyUI',
+        description: '',
+        fcLink: 'https://fcnext.console.aliyun.com/applications/create?template=fc-comfyui',
+        githubLink: '',
+        template: 'fc-comfyui',
+        templateParams: {
+            type: 'object',
+            additionalProperties: false,
+            required: ['region'],
+            properties: {
+                region: {
+                    type: 'string',
+                    title: '地域',
+                    default: 'cn-hangzhou',
+                    description: '该服务所在的地域',
+                    enum: ['cn-shanghai', 'cn-hangzhou'],
+                    uiType: 'select',
+                    dataSource: [{ label: '杭州', value: 'cn-hangzhou' }, { label: '上海', value: 'cn-shanghai' }]
+                }
+            }
+        }
+    },
+    // {
+    //     name: 'StableDiffusion图像生成',
+    //     tag: ['StableDuffusion','图像生成'],
+    //     type: 'tti',
+    //     icon: '',
+    //     iconText: 'StableDiffusion',
+    //     description: '',
+    //     fcLink: 'https://fcnext.console.aliyun.com/applications/create?template=fc-stable-diffusion-v3',
+    //     githubLink: '',
+    //     template: 'fc-stable-diffusion-v3',
+    //     templateParams: {
+    //         type: 'object',
+    //         additionalProperties: false,
+    //         required: ['region'],
+    //         properties: {
+    //             region: {
+    //                 type: 'string',
+    //                 title: '地域',
+    //                 default: 'cn-hangzhou',
+    //                 description: '该服务所在的地域',
+    //                 enum: ['cn-beijing', 'cn-hangzhou'],
+    //                 uiType: 'select',
+    //                 dataSource: [{ label: '杭州', value: 'cn-hangzhou' }, { label: '北京', value: 'cn-beijing' }]
+    //             }
+    //         }
+    //     }
+    // }
+    
+]
+export const FOUNDATION_MODEL_TTS_TEMPLATES = [
+    {
+        name: 'CosyVoice 语音生成 ',
+        tag: ['CosyVoice', '声音生成'],
+        type: 'tts',
+        icon: '',
+        iconText: 'CosyVoice语音生成',
+        description: 'CosyVoice语音生成(V1版本) 支持样本示例声音，自定义声音，支持 中文，粤语，英文，日语等多语种合成',
+        fcLink: 'https://fcnext.console.aliyun.com/applications/create?template=cosyvoice',
+        githubLink: '',
+        template: 'cosyvoice',
+        templateParams: {
+            type: 'object',
+            additionalProperties: false,
+            required: ['region'],
+            properties: {
+                region: {
+                    type: 'string',
+                    title: '地域',
+                    default: 'cn-hangzhou',
+                    description: '该服务所在的地域',
+                    enum: ['cn-beijing', 'cn-hangzhou','cn-shanghai','cn-shenzhen'],
+                    uiType: 'select',
+                    dataSource: [{ label: '杭州', value: 'cn-hangzhou' }, { label: '北京', value: 'cn-beijing' }, { label: '上海', value: 'cn-shanghai' },, { label: '深圳', value: 'cn-shenzhen' }]
+                }
+            }
+        }
+    },{
+        name: 'GptSovits 语音生成 ',
+        tag: ['GptSovits', '声音生成'],
+        type: 'tts',
+        icon: '',
+        iconText: 'GptSovits语音生成',
+        description: 'GptSovits语音合成V2版本 支持样本示例声音，自定义声音，支持 中文，粤语，英文，日语等多语种合成,支持模型训练',
+        fcLink: 'https://fcnext.console.aliyun.com/applications/create?template=fc-gpt-sovits-v2',
+        githubLink: '',
+        template: 'fc-gpt-sovits-v2',
+        templateParams: {
+            type: 'object',
+            additionalProperties: false,
+            required: ['region'],
+            properties: {
+                region: {
+                    type: 'string',
+                    title: '地域',
+                    default: 'cn-hangzhou',
+                    description: '该服务所在的地域',
+                    enum: ['cn-beijing', 'cn-hangzhou','cn-shanghai','cn-shenzhen'],
+                    uiType: 'select',
+                    dataSource: [{ label: '杭州', value: 'cn-hangzhou' }, { label: '北京', value: 'cn-beijing' }, { label: '上海', value: 'cn-shanghai' },, { label: '深圳', value: 'cn-shenzhen' }]
+                }
+            }
+        }
+    },
+]
 export const FOUNDATION_MODEL_TEMPLATES = [
     {
         name: '百炼模型（代理阿里云百炼）',
         tag: ['Dashcope', '通义千问'],
         type: 'llm',
         icon: '',
-        iconText: '模型服务灵积',
+        iconText: '模型服务百炼',
         description: '阿里云百炼是阿里云的AI API基础设施平台，包含qwen-turbo，qwen-plus等商业版本的通义千问模型',
         fcLink: 'https://fcnext.console.aliyun.com/applications/create?template=agentcraft-fm-dashscope-biz',
         githubLink: '',

@@ -1,6 +1,6 @@
 """Chat Schema"""
 # pylint: disable = too-few-public-methods
-from typing import List, Optional, Dict, Literal, Any
+from typing import List, Optional, Dict, Literal, Any, Union
 from pydantic import BaseModel, Field, validator  # pylint: disable = no-name-in-module
 
 
@@ -98,11 +98,11 @@ class ChatRequest(BaseModel):
             raise ValueError('session_id and keyword are mutually exclusive')
         return value
 
-
+PromptTokensDetails = Dict[str, int]
 class ChatCompletionResponse(BaseModel):
     id: str
     object: str
     created: int
     model: Optional[str]
     choices: List[Dict[str, Any]]
-    usage: Optional[Dict[str, int]]
+    usage: Dict[str, Union[int, PromptTokensDetails]]

@@ -94,8 +94,8 @@ function List({ assistantId }: { assistantId: any }) {
                         <th>智能体结果</th>
                         <th>使用模型</th>
                         <th>问答创建时间</th>
-                        <th>token(入)</th>
-                        <th>token(出)</th>
+                        <th>输入Token</th>
+                        <th>输出Token</th>
                     </tr>
                 </thead>
                 <tbody>{rows}</tbody>

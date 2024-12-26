@@ -53,6 +53,8 @@ export function History() {
             <th>访问IP</th>
             <th>使用模型</th>
             <th>问答创建时间</th>
+            <th>输入Token</th>
+            <th>输出Token</th>
           </tr>
         </thead>
         <tbody>
@@ -60,11 +62,13 @@ export function History() {
             <tr key={element.id}>
               <td>{element.id}</td>
               <td style={{ width: 210 }}><CopyNode value={element.question} /></td>
-              <td><CopyNode value={element.answer} /></td>
+              <td style={{ maxWidth: 210 }}><CopyNode value={element.answer} /></td>
               {/* <td style={{ width: 120 }}><CopyNode value={element.prompt} /></td> */}
               <td>{element.ip}</td>
               <td style={{ width: 160 }}>{element.model_name}</td>
               <td style={{ width: 120 }}>{formatDateTime(element.created)}</td>
+              <td style={{ width: 80 }}>{element.prompt_tokens || '-'}</td>
+              <td style={{ width: 80 }}>{element.completion_tokens || '-'}</td>
             </tr>
           ))}
         </tbody>

@@ -48,6 +48,25 @@ const components = {
             <source src={videoNode.props.src || ''} type={videoNode.props.type || 'video/mp4'} />
             你的浏览器不支持video标签
         </video>
+    },
+    audio: ({ node, ...props }: any) => {
+        let audioNode: any = { props: {} };
+        try {
+            props.children.map((item: any) => {
+                if (item.props && item.type === 'source') {
+                    audioNode = item;
+                }
+            });
+        } catch (e) {
+            console.error('Error processing audio children:', e);
+        }
+
+        return (
+            <audio controls {...props}>
+                <source src={audioNode.props.src || ''} type={audioNode.props.type || 'audio/mpeg'} />
+                你的浏览器不支持 audio 标签
+            </audio>
+        );
     }
 }
 
@@ -62,9 +81,7 @@ export function parseAndRender(mdxString: string) {
 export default function MDXContainer({ content, scope = {} }: any) {
     const [Component, setComponent] = useState(null);
     const [loading, setLoading] = useState(false);
-
     const timerRef: any = useRef();
-
     useEffect(() => {
         const parseMDX = async () => {
             let MDXComponent: any = null;
@@ -96,7 +113,11 @@ export default function MDXContainer({ content, scope = {} }: any) {
         <MDXProvider >
             <MdxLayout>
                 {Component}
-                {loading && <div>组件加载中...<Loader /></div>}
+                {
+                    loading && <div style={{ display: 'flex', justifyContent: 'flex-start', alignItems: 'center', height: 20, marginRight: 12 }}>
+                            组件加载中...<Loader size={'sm'} />
+                            </div>
+                }
             </MdxLayout>
         </MDXProvider>
 

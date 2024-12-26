@@ -113,7 +113,6 @@ class ReasoningStream:
         while True:
             llm_output = yield from self.text_completion(
                 planning_prompt + agent_final_text, **kwargs)
-
             action, action_input, output = self.parse_latest_plugin_call(
                 llm_output)
 
@@ -145,7 +144,7 @@ class ReasoningStream:
                         stream_response["session_id"] = session_id
                         stream_response["choices"].append({"index": 0,
                                                            "delta": {"role": "assistant",
-                                                                     "content": f'调用工具【{tool_name}】 \n'},
+                                                                     "content": f'使用🔨：【{tool_name}】\n '},
                                                            "finish_reason": "null"})
                         yield json.dumps(stream_response)
                         observation = self.call_plugin(action, action_input)
@@ -319,10 +318,13 @@ class ReasoningStream:
         output = answer[0]
         action, action_input, output_inner = self.parse_latest_plugin_call(
             output)
+        
         if(action == '' and know_anwser == False and reveal_all != ''):  # 无法触发 Final Answer 但又确实推理出结果的时候
-            reveal_all["choices"][0]["delta"]["content"] = output_inner
-            yield json.dumps(reveal_all)
-            (f"Output: {output_inner}")
+            if reveal_all["choices"] != None:
+                if len(reveal_all["choices"]) == 0:
+                    reveal_all["choices"].append({"delta": {"content": ""}})
+                reveal_all["choices"][0]["delta"]["content"] = output_inner
+                yield json.dumps(reveal_all)
         return output
 
     def parse_latest_plugin_call(self, text):

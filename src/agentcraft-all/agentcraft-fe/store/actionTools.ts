@@ -13,17 +13,21 @@ interface ActionToolsStore {
     toolList: IActionTool[],
     isEdit: boolean,
     functionList: [],
+    currentToolForm: any,
     open: boolean,
+    openToolForm: boolean, // 是否打开工具表单
     openToChoose: boolean,
     loading: boolean,
     loadingForChoose: boolean
     currentActionTool: IActionTool,
+    setCurrentToolForm: (currentToolForm: {}) => void;
     setEditStatus: (loading: boolean) => void;
     setCurrentActionTool: (currentActionTool: IActionTool) => void;
     updateFunctionList: (_: []) => void;
     updateToolList: (_: IActionTool[]) => void;
     setLoading: (loading: boolean) => void;
     setLoadingForChoose: (loading: boolean) => void;
+    setOpenToolForm: (open: boolean) => void;
     setOpen: (open: boolean) => void;
     setOpenToChoose: (open: boolean) => void;
 }
@@ -32,6 +36,8 @@ interface ActionToolsStore {
 export const useActionToolStore = create<ActionToolsStore>()(devtools((set) => ({
     toolList: [],
     open: false,
+    openToolForm: false,
+    currentToolForm: {functionConfig:{}},
     openToChoose: false,
     loading: false,
     loadingForChoose: false,
@@ -43,6 +49,7 @@ export const useActionToolStore = create<ActionToolsStore>()(devtools((set) => (
     setLoading: (status: boolean) => set((_state) => {
         return ({ loading: status })
     }),
+    setCurrentToolForm: (currentToolForm: any) => set((_state: any) => ({ currentToolForm })),
     setLoadingForChoose: (status: boolean) => set((_state) => {
         return ({ loadingForChoose: status })
     }),
@@ -51,6 +58,9 @@ export const useActionToolStore = create<ActionToolsStore>()(devtools((set) => (
     }),
     setEditStatus: (isEdit: boolean) => set((_state) => {
         return ({ isEdit })
+    }),
+    setOpenToolForm: (status: boolean) => set((_state) => {
+        return ({ openToolForm: status })
     }),
     setOpen: (status: boolean) => set((_state) => {
         return ({ open: status })

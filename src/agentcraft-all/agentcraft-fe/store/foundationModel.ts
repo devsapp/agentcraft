@@ -109,6 +109,5 @@ export async function addFoundationModel(template: string, payload: any) {
         },
     });
     return res.data;
-
 }
 

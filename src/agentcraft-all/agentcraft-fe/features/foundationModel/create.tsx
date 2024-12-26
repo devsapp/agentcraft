@@ -2,12 +2,12 @@ import React, { useEffect } from "react";
 import { useRouter } from 'next/router';
 import { nanoid } from 'nanoid';
 
-import { Breadcrumbs, Anchor, Loader, Stepper, Card, Button, Box, Select, PasswordInput, Group, Tabs, Notification, Image, Badge, Title, TextInput, Text, ActionIcon, Highlight, LoadingOverlay, Modal, Textarea, Flex, Space, NumberInput, FileInput, rem } from '@mantine/core';
+import { Loader, Stepper, Card, Button, Box, Select, PasswordInput, Group, Tabs, Notification, Image, Badge, Title, TextInput, Text, ActionIcon, Highlight, LoadingOverlay, Modal, Textarea, Flex, Space, NumberInput, FileInput, rem } from '@mantine/core';
 import { useForm } from '@mantine/form';
-import { IconMessageCircle, IconExternalLink, IconArrowBackUp } from '@tabler/icons-react';
+import { IconMessageCircle, IconExternalLink, IconArrowBackUp, IconPhoto, IconHeadphones } from '@tabler/icons-react';
 import { useFoundationModelStore, addFoundationModel, getFoundationModel, APP_STATUS } from 'store/foundationModel';
 import { FORM_WIDTH } from 'constants/index';
-import { FOUNDATION_MODEL_TEMPLATES, AGENTCRAFT_FM_PREFIX } from 'constants/foundation-model';
+import { FOUNDATION_MODEL_TEMPLATES, FOUNDATION_MODEL_TTI_TEMPLATES, FOUNDATION_MODEL_TTS_TEMPLATES, AGENTCRAFT_FM_PREFIX } from 'constants/foundation-model';
 import { ServerlessAppTemplate, TemplateParams, TemplatePropertyDetail } from 'types/serverless-devs-app';
 // import styles from './index.module.scss';
 
@@ -122,7 +122,7 @@ function FoundationModelForm() {
                     form.validate();
                     if (form.isValid()) {
                         try {
-                            const appName = `${AGENTCRAFT_FM_PREFIX}_${nanoid()}`;
+                            const appName = `${AGENTCRAFT_FM_PREFIX}_${fmTemplate.template}`;
                             setCreateLoading(true);
                             setAppStatus(APP_STATUS.INIT);
                             const data = await addFoundationModel(fmTemplate.template, Object.assign({}, form.values, { name: appName }));
@@ -166,7 +166,8 @@ function FoundationModelTab() {
         <Tabs variant="outline" defaultValue="text2text">
             <Tabs.List>
                 <Tabs.Tab value="text2text" icon={<IconMessageCircle size="0.8rem" />}>文本生成</Tabs.Tab>
-                {/* <Tabs.Tab value="text2img" icon={<IconPhoto size="0.8rem" />}>图像生成</Tabs.Tab> */}
+                <Tabs.Tab value="text2img" icon={<IconPhoto size="0.8rem" />}>图像生成</Tabs.Tab>
+                <Tabs.Tab value="text2speech" icon={<IconHeadphones size="0.8rem" />}>声音生成</Tabs.Tab>
             </Tabs.List>
             <Tabs.Panel value="text2text" pt="xs">
                 <Flex
@@ -187,7 +188,7 @@ function FoundationModelTab() {
                                     height={160}
                                     width={160}
                                     alt={item.tag.join('')}
-                                /> : <Box h={160} w={160} style={{ lineHeight: '160px', textAlign: 'center', margin: '10px auto', fontSize: '18px', fontWeight: 700 }}>
+                                /> : <Box h={160}  style={{ lineHeight: '160px', textAlign: 'center', margin: '10px auto', fontSize: '18px', fontWeight: 700 }}>
                                     {item.iconText}
                                 </Box>}
 
@@ -199,7 +200,7 @@ function FoundationModelTab() {
                                 } */}
                             </Group>
                             <Box>
-                                {item.tag.map((tag:string) => {
+                                {item.tag.map((tag: string) => {
                                     return <Badge color="green" variant="light" key={`template-${index}-${tag}`} mr={4}>
                                         {tag}
                                     </Badge>
@@ -225,7 +226,7 @@ function FoundationModelTab() {
                 </Flex>
             </Tabs.Panel>
 
-            {/* <Tabs.Panel value="text2img" pt="xs">
+            <Tabs.Panel value="text2img" pt="xs">
                 <Flex
                     mih={50}
                     gap="md"
@@ -233,33 +234,110 @@ function FoundationModelTab() {
                     align="flex-start"
                     direction="row"
                     wrap="wrap"
+                    pb={120}
                 >
-                    <Card shadow="sm" padding="lg" radius="md" withBorder style={{ width: 320 }} mr={12}>
-                        <Card.Section>
-                            <Image
-                                src="https://images.unsplash.com/photo-1527004013197-933c4bb611b3?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=720&q=80"
-                                height={160}
-                                alt="Norway"
-                            />
-                        </Card.Section>
+                    {FOUNDATION_MODEL_TTI_TEMPLATES.map((item: any, index: number) => {
+                        return <Card shadow="sm" padding="lg" radius="md" withBorder style={{ width: 320 }} mr={12} key={`template-${index}`}>
+                            <Card.Section >
+                                {item.icon ? <Image
+                                    src={item.icon}
+                                    style={{ margin: '10px auto' }}
+                                    height={160}
+                                    width={160}
+                                    alt={item.tag.join('')}
+                                /> : <Box h={160}  style={{ lineHeight: '160px', textAlign: 'center', margin: '10px auto', fontSize: '18px', fontWeight: 700 }}>
+                                    {item.iconText}
+                                </Box>}
 
-                        <Group position="apart" mt="md" mb="xs">
-                            <Text weight={500}>stable-diffusion</Text>
-                            <Badge color="green" variant="light">
-                                huggingface社区
-                            </Badge>
-                        </Group>
-
-                        <Text size="sm" color="dimmed">
-                            文生图系列模型，效果炸裂，可扩展性强
-                        </Text>
-
-                        <Button variant="light" color="blue" fullWidth mt="md" radius="md">
-                            创建
-                        </Button>
-                    </Card>
+                            </Card.Section>
+                            <Group mb={8} h={45} >
+                                <Text weight={300} align={'center'} style={{ textAlign: 'center', width: '100%' }}>{item.name}</Text>
+                                {/* {
+                                    item.githubLink ? <a href={item.githubLink} target="_blank"><IconBrandGithubFilled /></a> : null
+                                } */}
+                            </Group>
+                            <Box>
+                                {item.tag.map((tag: string) => {
+                                    return <Badge color="green" variant="light" key={`template-${index}-${tag}`} mr={4}>
+                                        {tag}
+                                    </Badge>
+                                })}
+                            </Box>
+                            <Text size="sm" color="dimmed" mt={12} h={60}>
+                                {item.description}
+                            </Text>
+                            <Flex align={'center'}>
+                                <Button mr={8} variant="light" fullWidth mt="md" radius="md" onClick={() => openToCreateFoundationModel(item)}>
+                                    直接创建
+                                </Button>
+                                <a target="_blank" href={item.fcLink}>
+                                    <Button variant="light" color="yellow" fullWidth mt="md" radius="md">
+                                        <Flex align={'center'}>
+                                            云创建<IconExternalLink />
+                                        </Flex>
+                                    </Button>
+                                </a>
+                            </Flex>
+                        </Card>
+                    })}
                 </Flex>
-            </Tabs.Panel> */}
+            </Tabs.Panel>
+            <Tabs.Panel value="text2speech" pt="xs">
+                <Flex
+                    mih={50}
+                    gap="md"
+                    justify="flex-start"
+                    align="flex-start"
+                    direction="row"
+                    wrap="wrap"
+                    pb={120}
+                >
+                    {FOUNDATION_MODEL_TTS_TEMPLATES.map((item: any, index: number) => {
+                        return <Card shadow="sm" padding="lg" radius="md" withBorder style={{ width: 320 }} mr={12} key={`template-${index}`}>
+                            <Card.Section >
+                                {item.icon ? <Image
+                                    src={item.icon}
+                                    style={{ margin: '10px auto' }}
+                                    height={160}
+                                    width={160}
+                                    alt={item.tag.join('')}
+                                /> : <Box h={160}  style={{ lineHeight: '160px', textAlign: 'center', margin: '10px auto', fontSize: '18px', fontWeight: 700 }}>
+                                    {item.iconText}
+                                </Box>}
+
+                            </Card.Section>
+                            <Group mb={8} h={45} >
+                                <Text weight={300} align={'center'} style={{ textAlign: 'center', width: '100%' }}>{item.name}</Text>
+                                {/* {
+                                    item.githubLink ? <a href={item.githubLink} target="_blank"><IconBrandGithubFilled /></a> : null
+                                } */}
+                            </Group>
+                            <Box>
+                                {item.tag.map((tag: string) => {
+                                    return <Badge color="green" variant="light" key={`template-${index}-${tag}`} mr={4}>
+                                        {tag}
+                                    </Badge>
+                                })}
+                            </Box>
+                            <Text size="sm" color="dimmed" mt={12} h={60}>
+                                {item.description}
+                            </Text>
+                            <Flex align={'center'}>
+                                <Button mr={8} variant="light" fullWidth mt="md" radius="md" onClick={() => openToCreateFoundationModel(item)}>
+                                    直接创建
+                                </Button>
+                                <a target="_blank" href={item.fcLink}>
+                                    <Button variant="light" color="yellow" fullWidth mt="md" radius="md">
+                                        <Flex align={'center'}>
+                                            云创建<IconExternalLink />
+                                        </Flex>
+                                    </Button>
+                                </a>
+                            </Flex>
+                        </Card>
+                    })}
+                </Flex>
+            </Tabs.Panel>
         </Tabs>
     </Box>
 }

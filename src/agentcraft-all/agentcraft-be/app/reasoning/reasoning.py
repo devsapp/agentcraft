@@ -57,6 +57,7 @@ class Reasoning:
         self.model = None
         self.result = None
         self.business = business
+        self.usage = {}
 
     def final_result(self, resp_data: str):
         match = re.search(r'Final Answer: (.+)', resp_data)
@@ -132,6 +133,7 @@ class Reasoning:
         }]
         resp_data["object"] = "chat.completion"
         resp_data["model"] = model
+        resp_data["usage"] = self.usage
         self.result = (text, content, planning_prompt)
         return resp_data
     def get_dataset_names(self, datasets):
@@ -217,7 +219,8 @@ class Reasoning:
             resp_data = json.loads(resp_data)
         answer = [ans["message"]["content"]
                   for ans in resp_data["choices"] if ans["message"]["role"] == "assistant"]
-
+ 
+        self.usage = resp_data.get('usage', {})
         output = answer[0]
         return output
 

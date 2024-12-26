@@ -101,8 +101,8 @@ function List() {
                         <th>知识库结果</th>
                         <th>使用模型</th>
                         <th>问答创建时间</th>
-                        <th>入参消耗</th>
-                        <th>出参消耗</th>
+                        <th>输入Token</th>
+                        <th>输出Token</th>
                     </tr>
                 </thead>
                 <tbody>{rows}</tbody>

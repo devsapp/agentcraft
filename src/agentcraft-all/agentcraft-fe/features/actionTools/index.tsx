@@ -1,13 +1,15 @@
 import React, { useEffect } from "react";
-import { Group, Card, Flex, Button, Box, Table, Modal, TextInput, Text, Highlight, LoadingOverlay, Select, Textarea, Code, Loader, Badge, Radio } from '@mantine/core';
+import { Group, Card, Flex, Button, Box, Table, Modal, TextInput, Text, Highlight, LoadingOverlay, Select, Textarea, Code, Loader, Badge, Radio, PasswordInput } from '@mantine/core';
 import { useForm } from '@mantine/form';
 import { modals } from '@mantine/modals';
 import { notifications } from '@mantine/notifications';
 import CopyToClipboard from 'components/CopyToClipboard';
+import { FORM_WIDTH } from 'constants/index';
 import { getToolList, useActionToolStore, addTool, deleteTool, updateTool, getFunctionList } from 'store/actionTools';
 import { createServerlessApp, checkAppStatus } from 'store/infra';
 import { useSystemConfigStore } from 'store/systemConfig';
 import { IActionTool, ActionToolType, ActionToolStatus } from 'types/actionTools';
+import { ServerlessAppTemplate, TemplateParams, TemplatePropertyDetail } from 'types/serverless-devs-app';
 import FeatureDescription from 'components/FeatureDescription';
 import { formatDateTime } from 'utils/index';
 import { ACTION_TOOL_TEMPLATES } from 'constants/action-tools';
@@ -78,18 +80,18 @@ function AddOrUpdate() {
                     data={functionList}
                     {...form.getInputProps('name')}
                 />
-                <TextInput mt={4}  label="名称" placeholder="工具名" {...form.getInputProps('alias')} />
-                <Textarea mt={4}  withAsterisk label="描述" placeholder="输入工具描述" {...form.getInputProps('description')} description={<div><span >参考示例：</span><CopyToClipboard value={"文生图是一个AI绘画（图像生成）服务，输入文本描述，返回根据文本作画得到的图片的URL"} content={"文生图是一个AI绘画（图像生成）服务，输入文本描述，返回根据文本作画得到的图片的URL"} position={"none"} /> </div>} />
-                <Textarea mt={4}  withAsterisk label="输入参数" placeholder="输入参数" {...form.getInputProps('input_schema')} description={<div><span >参考示例：</span><CopyToClipboard value={"[ { 'name': 'prompt', 'description': '英文关键词，描述了希望图像具有什么内容', 'required': True, 'schema': {'type': 'string'}, } ]"} content={"[ { 'name': 'prompt', 'description': '英文关键词，描述了希望图像具有什么内容', 'required': True, 'schema': {'type': 'string'}, } ]"} position={"none"} /> </div>} />
-                <Textarea mt={4}  label="输出参数" placeholder="输入参数" {...form.getInputProps('output_schema')} />
+                <TextInput mt={4} label="名称" placeholder="工具名" {...form.getInputProps('alias')} />
+                <Textarea mt={4} withAsterisk label="描述" placeholder="输入工具描述" {...form.getInputProps('description')} description={<div><span >参考示例：</span><CopyToClipboard value={"文生图是一个AI绘画（图像生成）服务，输入文本描述，返回根据文本作画得到的图片的URL"} content={"文生图是一个AI绘画（图像生成）服务，输入文本描述，返回根据文本作画得到的图片的URL"} position={"none"} /> </div>} />
+                <Textarea mt={4} withAsterisk label="输入参数" placeholder="输入参数" {...form.getInputProps('input_schema')} description={<div><span >参考示例：</span><CopyToClipboard value={"[ { 'name': 'prompt', 'description': '英文关键词，描述了希望图像具有什么内容', 'required': True, 'schema': {'type': 'string'}, } ]"} content={"[ { 'name': 'prompt', 'description': '英文关键词，描述了希望图像具有什么内容', 'required': True, 'schema': {'type': 'string'}, } ]"} position={"none"} /> </div>} />
+                <Textarea mt={4} label="输出参数" placeholder="输入参数" {...form.getInputProps('output_schema')} />
                 <Radio.Group
                     mt={4}
                     withAsterisk
                     name="need_llm_call"
-                    value={form.getInputProps('need_llm_call') ?.value as any}
+                    value={form.getInputProps('need_llm_call')?.value as any}
                     label="工具执行结果反馈与否"
                     description="如果选择否，智能体调用完工具会直接返回"
-                    onChange={(value:any) => {
+                    onChange={(value: any) => {
                         const _value = parseInt(value, 10);
                         form.setFieldValue('need_llm_call', _value);
                     }}
@@ -119,19 +121,122 @@ function AddOrUpdate() {
     );
 }
 
+
+function ActionToolModelForm() {
+    const { openToolForm, setOpenToolForm, currentToolForm, setLoadingForChoose, setOpenToChoose } = useActionToolStore();
+    const atTemplate: TemplateParams & { template: string, description: string } = Object.assign({}, currentToolForm.functionConfig.templateParams, { template: currentToolForm.functionConfig.template, description: currentToolForm.description });
+    let validate = {};
+    let initialValues = {};
+    const formParams: any = {};
+    if (atTemplate.properties) {
+        initialValues = Object.keys(atTemplate.properties).reduce((accumulator: any, filedName: string) => {
+            accumulator[filedName] = atTemplate.properties[filedName].default;
+            return accumulator;
+        }, {});
+        formParams.initialValues = initialValues;
+    }
+    const validateField = atTemplate?.required || [];
+    if (validateField.length > 0) {
+        validate = validateField.reduce((accumulator: any, filedName: string) => {
+            accumulator[filedName] = (value: any) => (!value ? '必需填写' : null);
+            return accumulator;
+        }, {});
+        formParams.validate = validate;
+    }
+
+    const form = useForm(formParams);
+    function renderFormUi(key: string, field: TemplatePropertyDetail) {
+        if (!field.hiddenUI) {
+            let FieldComponent = <TextInput withAsterisk label={field.title} placeholder="" {...form.getInputProps(key)} description={<div dangerouslySetInnerHTML={{ __html: field.description }} />} />
+            switch (field.type) {
+                case 'string':
+                    if (field.uiType === 'select') {
+                        FieldComponent = <Select
+                            withAsterisk={atTemplate.required.includes(key)}
+                            data={field.dataSource}
+                            description={<div dangerouslySetInnerHTML={{ __html: field.description }} />}
+                            label={field.title}
+                            placeholder=""
+
+                            {...form.getInputProps(key)}
+                        />
+                    }
+                    if (field.uiType === 'password') {
+                        FieldComponent = <PasswordInput
+                            withAsterisk label={field.title} placeholder="" {...form.getInputProps(key)} description={<div dangerouslySetInnerHTML={{ __html: field.description }} />} />
+                    }
+                    break;
+                default:
+                    break
+            }
+            return FieldComponent;
+        } else {
+            return null;
+        }
+    }
+
+    return (
+        <Modal opened={openToolForm} onClose={() => { setOpenToolForm(false) }} title="填写AI工具配置项" centered  >
+            <Box maw={FORM_WIDTH} mx="auto">
+                {atTemplate.properties && Object.keys(atTemplate?.properties).map((key: string) => {
+                    return <div key={key}>{renderFormUi(key, atTemplate?.properties[key])}</div>
+                })}
+            </Box>
+            <Box maw={FORM_WIDTH} mx="auto" pt={12} style={{ textAlign: 'right' }}>
+                <Button onClick={async () => {
+                    form.validate();
+                    if (form.isValid()) {
+                        try {
+                            setOpenToolForm(false);
+                            setLoadingForChoose(true);
+                            const createAppPayload = {
+                                description: currentToolForm.description,
+                                name: currentToolForm.functionConfig.functionName,
+                                ...form.values
+                            }
+                            const appName: any = await createServerlessApp(currentToolForm.functionConfig.template, createAppPayload);
+                            if (appName) {
+                                await checkAppStatus(appName);
+                            } else {
+                                throw new Error('创建应用失败');
+                            }
+                            const data = await addTool({
+                                name: currentToolForm.functionConfig.functionName,
+                                alias: currentToolForm.name,
+                                description: currentToolForm.description,
+                                input_schema: currentToolForm.input_schema,
+                                type: 1,
+                                status: 2,
+                                output_schema: '',
+                                author: '',
+                                proxy_url: '',
+                                need_llm_call: 1,
+                            });
+                            if (data) {
+                                await getToolList();
+                            } else {
+                                notifications.show({
+                                    title: '创建工具失败',
+                                    message: '请检查是否已经存在该工具',
+                                    color: 'red',
+                                });
+                            }
+                            setOpenToChoose(false);
+                            setLoadingForChoose(false);
+                        } catch (e) {
+                            console.log(e);
+                        }
+
+                    }
+
+                }}>确认</Button>
+            </Box>
+        </Modal>
+    );
+}
 function ActionToolCard(props: any) {
     const item = props.data;
-    return <Card shadow="sm" padding="lg" radius="md" withBorder style={{ width: 240, height: 120, cursor: 'pointer' }}>
-        {/* <Card.Section >
-        <Image
-            src={item.icon}
-            style={{ margin: '10px auto' }}
-            height={160}
-            width={160}
-            alt={item.tag.join('')}
-        />
-    </Card.Section> */}
-
+    return <Card shadow="sm" padding="lg" radius="md" withBorder style={{ width: 240, height: 160, cursor: 'pointer' }}>
         <div>
             {item.tag.map((tag: string, index: number) => {
                 return <Badge color="green" variant="light" key={`template-${index}-${tag}`} mr={4}>
@@ -146,53 +251,18 @@ function ActionToolCard(props: any) {
 }
 
 export function ChooseModal() {
-    const { openToChoose, setOpenToChoose, setLoadingForChoose, setOpen, loadingForChoose } = useActionToolStore();
+    const { openToChoose, setOpenToChoose, openToolForm, setOpen, loadingForChoose, setCurrentToolForm, setOpenToolForm } = useActionToolStore();
 
     const createActionTools = async (item: any) => {
-        setLoadingForChoose(true);
-        const createAppPayload = {
-            description: item.description,
-            region: useSystemConfigStore?.completeConfig?.regionId || 'cn-hangzhou',
-            name: item.functionConfig.functionName,
-        }
-        const appName: any = await createServerlessApp(item.functionConfig.template, createAppPayload);
-        if (appName) {
-            await checkAppStatus(appName);
-        }
-        const data = await addTool({
-            name: item.functionConfig.functionName,
-            alias: item.name,
-            description: item.description,
-            input_schema: item.input_schema,
-            type: 1,
-            status: 2,
-            output_schema: '',
-            author: '',
-            proxy_url: '',
-            need_llm_call: 1,
-        });
-        if (data) {
-            await getToolList();
-        } else {
-            notifications.show({
-                title: '创建工具失败',
-                message: '请检查是否已经存在该工具',
-                color: 'red',
-            });
-        }
-
-
-
-        setOpenToChoose(false);
-        setLoadingForChoose(false);
-
+        setOpenToolForm(true);
+        setCurrentToolForm(item);
     }
     return (
-        <Modal opened={openToChoose} onClose={() => { setOpenToChoose(false) }} title={'AI工具'} centered size="50%" closeOnClickOutside={false} >
+        <Modal opened={openToChoose} onClose={() => { setOpenToChoose(false) }} title={'AI工具'} centered size="800px" closeOnClickOutside={false} >
             <LoadingOverlay visible={loadingForChoose} overlayOpacity={0.6} loader={<Flex align={'center'} direction="column"><Flex align={'center'} >部署AI工具大约需要1分钟，请耐心等待<Loader variant="bars" color={'pink'} ml={12} /></Flex></Flex>} />
-            <Flex wrap={'wrap'} justify={'space-around'} pb={24} pl={12}>
+            <Flex wrap={'wrap'} justify={'flex-start'} pb={24} pl={12}>
                 {ACTION_TOOL_TEMPLATES.map((item: any, index: number) => {
-                    return <Box key={`template-${index}-${item.tag.join('-')}`} mb={12} onClick={() => createActionTools(item)} className={styles['action-tool-card']}>
+                    return <Box key={`template-${index}-${item.tag.join('-')}`} mb={12} mr={12} onClick={() => createActionTools(item)} className={styles['action-tool-card']}>
                         <ActionToolCard data={item} />
                     </Box>
                 })}
@@ -211,6 +281,7 @@ export function ChooseModal() {
                     </Card>
                 </Box>
             </Flex>
+            {openToolForm && <ActionToolModelForm />}
         </Modal>
     );
 }

@@ -216,7 +216,7 @@ export default function Conversation(props: ConversationProps) {
                 messages: requestMessage,
                 config: {
                     stream: true,
-                    max_tokens: 1024,
+                    max_tokens: 2000,
                     keyword,
                 },
                 onFinish: (msg, usage: IUsage) => {

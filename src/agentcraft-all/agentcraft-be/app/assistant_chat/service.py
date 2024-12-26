@@ -11,7 +11,8 @@ import app.database.assistant_session_chat as assistant_session_chat_database
 import app.database.assistant_session as assistant_session_database
 
 from app.reasoning.reasoning import Reasoning
-from app.reasoning.reasoning_stream import ReasoningStream
+# from app.reasoning.reasoning_stream import ReasoningStream
+from app.reasoning.reasoning_stream_functioncall import ReasoningStream
 
 DONE = "[DONE]"
 
@@ -86,9 +87,12 @@ def chat(assistant_session_id: int,query: str, ip_addr: str, assistant_id: int, 
     reason = Reasoning(query, assistant, datasets, credential_dict, history,
                        session_id=assistant_session_id)
     res = reason.call_assistant()
-
     reasoning_log, answer, prompt = reason.result
-    prompt_tokens, completion_tokens, total_tokens = reason.usage
+    usage = reason.usage
+    prompt_tokens = usage.get('prompt_tokens', 0)
+    completion_tokens= usage.get('completion_tokens', 0)
+    total_tokens = usage.get('total_tokens', 0)
+    # prompt_tokens, completion_tokens, total_tokens = reason[usage]
     chat_id = add_assistant_chat(query, prompt, answer, reasoning_log,
                                  ip_addr, assistant_id, prompt_tokens, completion_tokens, total_tokens,
                                  model_id=reason.model.id, model_name=reason.model.name)

@@ -304,16 +304,27 @@ def chat(agent_session_id: int, query: str, ip_addr: str, agent_id: int, history
             "usage": {},
             "uid": uid,
         } 
+        model = model_database.get_model_by_id(agent.model_id)
         chat_id = add_chat(**add_args)
         add_session_chat(agent_session_id, chat_id)
-
+     
         return {
             "id": uid,
             "object": "chat.illegal",
-            "message": [{
+            "model": model.name,
+            "choices": [{
+              "index": 0,
+              "message": {
                 "content": answer,
                 "role": "assistant"
+              },
+              "finish_reason": "null"
             }],
+            "usage": {
+                "prompt_tokens": 0,
+                "completion_tokens": 0,
+                "total_tokens": 0
+            },
             "created": created
         }
 
@@ -479,7 +490,6 @@ def model_chat(agent_session_id,
         search_choices: list, ip_addr: str, agent, chat_type: int, uid: str, created: int):
     """获取大模型的回答"""
     messages = build_messages(prompt, history, agent.system_message)
-    logger.info(messages)
     model = model_database.get_model_by_id(agent.model_id)
     if not model:
         raise ValueError("model does not exist")
@@ -612,8 +622,8 @@ def model_chat_stream(agent_session_id,
     #     yield json.dumps(search_info)
 
     yield DONE
-    logger.info(f'answer: {answer}')
-    logger.info(f'usage: {usage}')
+    # logger.info(f'answer: {answer}')
+    # logger.info(f'usage: {usage}')
     add_args = {
         "query": query,
         "prompt": prompt,

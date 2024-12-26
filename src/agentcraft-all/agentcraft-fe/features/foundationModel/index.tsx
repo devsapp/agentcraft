@@ -9,7 +9,7 @@ import { useFoundationModelStore, getFoundationModelList, deleteFoundationModel 
 
 import FeatureDescription from '@/components/FeatureDescription';
 
-import { FM_NAME_MAP } from 'constants/foundation-model';
+import { FM_NAME_MAP, FM_DOCS } from 'constants/foundation-model';
 import { formatDateTime } from 'utils/index';
 // import { FORM_WIDTH } from 'constants/index';
 // import styles from './index.module.scss';
@@ -56,6 +56,13 @@ function List() {
                     {element.name}
                 </div>
             </td>
+            <td>
+                { FM_DOCS[element.template] ? <div>
+                    {FM_DOCS[element.template].map((item: any, index: number) => (
+                        <div key={index}><Link href={item.url} target="_blank">{item.name}</Link></div>
+                    ))}
+                </div> : null}
+            </td>
             <td>{formatDateTime(parseInt(element.createdTime))}</td>
             <td> <a href={`https://fcnext.console.aliyun.com/applications/${element.name}/env/default?tab=envDetail`} target="_blank">访问云服务</a><Button ml={12} variant="filled" color="red" size="xs" onClick={() => removeFoundationModel(element.name)}>删除</Button></td>
         </tr>
@@ -80,6 +87,7 @@ function List() {
                 <thead>
                     <tr>
                         <th>基础模型</th>
+                        <th>使用文档</th>
                         <th>创建时间</th>
                         <th>操作</th>
                     </tr>
@@ -104,8 +112,7 @@ export function FoundationModel() {
 
     return (
         <>
-            {/* <Breadcrumbs>{items}</Breadcrumbs> */}
-            <FeatureDescription title="基础模型" description="AgentCraft可以构建通义千问的商业化大语言模型服务也能够对魔搭社区，huggingface社区的开源模型进行托管。由此构建的基础模型服务可以作为您的AIGC应用的核心" />
+            <FeatureDescription title="基础模型" description="AgentCraft提供了魔搭，huggingface社区精选模型的一键部署使用服务，包含LLM,文本生成，声音生成等模型，您可以通过该页面进行基础模型的创建和管理" />
             <Box mt={12}>
                 <Button onClick={() => router.push('/foundationModel/create')}>
                     创建基础模型
