@@ -10,3 +10,7 @@ docker-compose.yml
 postgresql/data
 venv
 Dockerfile
+.env.
+.dockerignore
+requirements.txt
+__pycache__

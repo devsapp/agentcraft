@@ -57,7 +57,7 @@ export const ACTION_TOOL_TEMPLATES = [
             }
         },
         description: 'CosyVoice声音生成是一个AI声音生成服务，输入文本描述，返回根据文本合成声音文件',
-        input_schema: `[ { 'name': 'content', 'description': '用来合成声音的文本内容', 'required': True, 'schema': {'type': 'string'}, } ]`
+        input_schema: `[ { 'name': 'content', 'description': '用来合成声音的文本内容', 'required': True, 'schema': {'type': 'string'} } ]`
     },
     {
         name: 'Paraformer声音识别',
@@ -108,7 +108,7 @@ export const ACTION_TOOL_TEMPLATES = [
             }
         },
         description: 'Paraformer声音识别是一个智能声音识别服务，输入语音文件的访问地址，返回根据该语音的内容文件',
-        input_schema: `[ { 'name': 'url', 'description': '语音文件的地址', 'required': True, 'schema': {'type': 'string'}, } ]`
+        input_schema: `[ { 'name': 'url', 'description': '语音文件的地址', 'required': True, 'schema': {'type': 'string'}} ]`
     },
     {
         name: 'FluxSchnell图像生成',
@@ -159,7 +159,7 @@ export const ACTION_TOOL_TEMPLATES = [
             }
         },
         description: 'FluxSchnell图像生成是一个AI生成图像的服务，输入提示词返回图像地址',
-        input_schema: `[ { 'name': 'prompt', 'description': '用来生成图像的提示词描述', 'required': True, 'schema': {'type': 'string'}, } ]`
+        input_schema: `[ { 'name': 'prompt', 'description': '用来生成图像的提示词描述', 'required': True, 'schema': {'type': 'string'} } ]`
     },
     {
         name: '解释器',
@@ -190,7 +190,7 @@ export const ACTION_TOOL_TEMPLATES = [
             }
         },
         description: '代码解释器可以执行输入的python代码，返回结果',
-        input_schema: `[ { 'name': 'code', 'description': '执行的python代码', 'required': True, 'schema': {'type': 'string'}, } ]`
+        input_schema: `[ { 'name': 'code', 'description': '执行的python代码', 'required': True, 'schema': {'type': 'string'} } ]`
 
     },
     {
@@ -222,7 +222,7 @@ export const ACTION_TOOL_TEMPLATES = [
             }
         },
         description: '文生图是一个AI绘画（图像生成）服务，输入文本描述，返回根据文本作画得到的图片的URL',
-        input_schema: `[ { 'name': 'prompt', 'description': '英文关键词，描述了希望图像具有什么内容', 'required': True, 'schema': {'type': 'string'}, } ]`
+        input_schema: `[ { 'name': 'prompt', 'description': '英文关键词，描述了希望图像具有什么内容', 'required': True, 'schema': {'type': 'string'} } ]`
 
     },
     {
@@ -254,7 +254,7 @@ export const ACTION_TOOL_TEMPLATES = [
             }
         },
         description: '代码解释器可以执行输入的python代码，返回结果',
-        input_schema: `[ { 'name': 'code', 'description': '执行的python代码', 'required': True, 'schema': {'type': 'string'}, } ]`
+        input_schema: `[ { 'name': 'code', 'description': '执行的python代码', 'required': True, 'schema': {'type': 'string'}} ]`
 
     },
     {
@@ -318,7 +318,7 @@ export const ACTION_TOOL_TEMPLATES = [
             }
         },
         description: '查看函数的详细信息',
-        input_schema: `[ { 'name': 'functionName', 'description': '函数英文名', 'required': True, 'schema': {'type': 'string'}, } `
+        input_schema: `[ { 'name': 'functionName', 'description': '函数英文名', 'required': True, 'schema': {'type': 'string'} }] `
 
     },
     {
@@ -350,7 +350,7 @@ export const ACTION_TOOL_TEMPLATES = [
             }
         },
         description: 'web搜索可以检索实事新闻，最新百科',
-        input_schema: `[ { 'name': 'search_input', 'description': '输入的搜索内容', 'required': True, 'schema': {'type': 'string'}, } `
+        input_schema: `[ { 'name': 'search_input', 'description': '输入的搜索内容', 'required': True, 'schema': {'type': 'string'} }] `
 
     }
 ];
