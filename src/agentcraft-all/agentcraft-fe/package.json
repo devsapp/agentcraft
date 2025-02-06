@@ -38,6 +38,7 @@
     "nanoid": "^4.0.2",
     "next": "^13.4.9",
     "next-connect": "^1.0.0-next.4",
+    "node-xlsx": "^0.24.0",
     "pdfjs-dist": "^3.11.174",
     "querystring": "^0.2.1",
     "react": "18.2.0",

@@ -1,6 +1,6 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useRouter } from 'next/router'
-import { Badge, Anchor, Button, Box, Table, Title, TextInput, Text, ActionIcon, Highlight, LoadingOverlay, Modal, Textarea, Flex, Space, NumberInput, FileInput, rem } from '@mantine/core';
+import { Badge, Anchor, Button, Box, Table, Title, TextInput, Text, ActionIcon, Highlight, LoadingOverlay, Modal, Textarea, Flex, Space, NumberInput, FileInput, rem, Loader, FileButton } from '@mantine/core';
 import { useForm, UseFormReturnType } from '@mantine/form';
 import { modals } from '@mantine/modals';
 import CopyToClipboard from 'components/CopyToClipboard';
@@ -13,6 +13,7 @@ import { DocumentRequestPayload, QuestionRequestPayload } from "types/datasource
 import { formatDateTime } from 'utils/index';
 import { DEFAULT_CHUNK_SIZE } from 'constants/dataset';
 import { FORM_WIDTH } from 'constants/index';
+import XLSX from "node-xlsx";
 
 interface DatasourceProps {
     dataSetId: number,
@@ -304,7 +305,10 @@ export function Datasource() {
             {item.title}
         </Anchor>
     ));
+    const [progress, setProgress] = useState(0);
+    const totalRef = useRef(0);
     const loading: boolean = useDataSourceStore().loading;
+    const setLoading = useDataSourceStore().setLoading;
     const setOpen = useDataSourceStore().setOpen;
     const setIsEdit = useDataSourceStore().setIsEdit;
     const setOpenUploadModel = useDataSourceStore().setOpenUploadModel;
@@ -336,6 +340,60 @@ export function Datasource() {
                     }}>
                         新建单条数据源
                     </Button>
+                    <FileButton
+                      onChange={(v: File) => {
+                        const reader = new FileReader();
+                        reader.onload = async function (e: any) {
+                          var data = e.target.result;
+                          const wb = XLSX.parse(data, {
+                            type: "binary",
+                          });
+                          const rows = wb[0].data;
+                          const cols = rows.shift(); // 去除列头
+                          setLoading(true);
+                          totalRef.current = rows.length;
+                          let progress = 0;
+                          const results = await Promise.all(
+                            rows.map((row) => {
+                              return new Promise(async (resolve) => {
+                                const target =
+                                  dataSetType === DataSetType.QUESTION
+                                    ? {
+                                        url: "",
+                                        tag: dataSetId,
+                                        title: `${row[1]}/${row[2]}/${row[3]}/${row[4]}}`,
+                                        question: row[4],
+                                        answer: row[5],
+                                      }
+                                    : {
+                                        url: "",
+                                        ext: "txt",
+                                        tag: dataSetId,
+                                        title: `${row[1]}/${row[2]}/${row[3]}/${row[4]}}`,
+                                        content: `question: ${row[4]},answer: ${row[5]}`,
+                                        chunk_size: 512,
+                                      };
+                                const result = await addDataSource(
+                                  {
+                                    dataSetId,
+                                    dataSetType,
+                                  },
+                                  target
+                                );
+                                progress += 1;
+                                setProgress(progress);
+                                resolve(result);
+                              });
+                            })
+                          );
+                          setLoading(false);
+                        };
+                        reader.readAsArrayBuffer(v);
+                      }}
+                      accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel"
+                    >
+                      {(props) => <Button {...props}>上传Excel</Button>}
+                    </FileButton>
                     <Space h="md" />
                     {dataSetType == DataSetType.DOCUMENT ? <Button onClick={() => setOpenUploadModel(true)} variant="filled" leftIcon={<IconFileUpload size="1rem" />}>
                         上传文件
@@ -343,13 +401,23 @@ export function Datasource() {
                 </Flex>
             </Box>
 
-            <LoadingOverlay visible={loading} overlayOpacity={0.3} />
+            <LoadingOverlay 
+              visible={loading} 
+              overlayOpacity={0.3} 
+              loader={
+                totalRef.current !== 0 ? (
+                  <Flex align={"center"} direction="column">
+                    <Flex align={"center"} bg="white" p={12}>
+                      {progress} / {totalRef.current}
+                      <Loader variant="bars" color={"pink"} ml={12} />
+                    </Flex>
+                  </Flex>
+                ) : <Loader />
+              } 
+            />
             <AddOrUpdate />
             <UploadDataSource />
             <List dataSetId={dataSetId} dataSetType={dataSetType} />
-
-
         </>
-
     );
 }
