@@ -48,10 +48,7 @@ def get_agent(_id: int, user_id: int):
     datasets_dict = [{**vars(relation),
                       "dataset_name": dataset_name}
                      for relation, dataset_name in relations]
-    exp = ""
-    if agent.token:
-        exp = decode_token(agent.token)["exp"]
-    agent_dict = {"exp": exp, "datasets": datasets_dict, "model_name": model_name, **vars(agent), }
+    agent_dict = {"datasets": datasets_dict, "model_name": model_name, **vars(agent), }
     return agent_dict
 
 
