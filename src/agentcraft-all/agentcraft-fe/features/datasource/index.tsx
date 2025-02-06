@@ -1,18 +1,53 @@
 import React, { useEffect, useRef, useState } from "react";
-import { useRouter } from 'next/router'
-import { Badge, Anchor, Button, Box, Table, Title, TextInput, Text, ActionIcon, Highlight, LoadingOverlay, Modal, Textarea, Flex, Space, NumberInput, FileInput, rem, Loader, FileButton } from '@mantine/core';
-import { useForm, UseFormReturnType } from '@mantine/form';
-import { modals } from '@mantine/modals';
-import CopyToClipboard from 'components/CopyToClipboard';
-import { IconFileUpload, IconUpload, IconArrowBackUp } from '@tabler/icons-react';
-import { getDataSourceList, useDataSourceStore, addDataSource, deleteDataSource, addDataSourceByUploadFile, updateDataSource } from 'store/datasource';
-import { DataSource } from 'types/datasource';
+import { useRouter } from "next/router";
+import {
+  Badge,
+  Anchor,
+  Button,
+  Box,
+  Table,
+  Title,
+  TextInput,
+  Text,
+  ActionIcon,
+  Highlight,
+  LoadingOverlay,
+  Modal,
+  Textarea,
+  Flex,
+  Space,
+  NumberInput,
+  FileInput,
+  rem,
+  Loader,
+  FileButton,
+} from "@mantine/core";
+import { useForm, UseFormReturnType } from "@mantine/form";
+import { modals } from "@mantine/modals";
+import CopyToClipboard from "components/CopyToClipboard";
+import {
+  IconFileUpload,
+  IconUpload,
+  IconArrowBackUp,
+} from "@tabler/icons-react";
+import {
+  getDataSourceList,
+  useDataSourceStore,
+  addDataSource,
+  deleteDataSource,
+  addDataSourceByUploadFile,
+  updateDataSource,
+} from "store/datasource";
+import { DataSource } from "types/datasource";
 import { DataSetType } from "types/dataset";
 
-import { DocumentRequestPayload, QuestionRequestPayload } from "types/datasource";
-import { formatDateTime } from 'utils/index';
-import { DEFAULT_CHUNK_SIZE } from 'constants/dataset';
-import { FORM_WIDTH } from 'constants/index';
+import {
+  DocumentRequestPayload,
+  QuestionRequestPayload,
+} from "types/datasource";
+import { formatDateTime } from "utils/index";
+import { DEFAULT_CHUNK_SIZE } from "constants/dataset";
+import { FORM_WIDTH } from "constants/index";
 import XLSX from "node-xlsx";
 
 type DatasourceProps = {
@@ -423,132 +458,144 @@ function List({ dataSetId, dataSetType }: DatasourceProps) {
 }
 
 export function Datasource() {
-    const router = useRouter()
-    const { query } = router;
-    const dataSetType: any = query.dataSetType;
-    const dataSetId: any = query.id;
-    const items = [
-        { title: 'AgentCraft', href: '/' },
-        { title: '数据集', href: '/dataset' },
-        { title: '数据源', href: `/dataset/${dataSetId}/datasource` },
-    ].map((item, index) => (
-        <Anchor href={item.href} key={index}>
-            {item.title}
-        </Anchor>
-    ));
-    const [progress, setProgress] = useState(0);
-    const totalRef = useRef(0);
-    const loading: boolean = useDataSourceStore().loading;
-    const setLoading = useDataSourceStore().setLoading;
-    const setOpen = useDataSourceStore().setOpen;
-    const setIsEdit = useDataSourceStore().setIsEdit;
-    const setOpenUploadModel = useDataSourceStore().setOpenUploadModel;
-    return (
-        <>
-            {/* <Breadcrumbs>{items}</Breadcrumbs> */}
-            <Flex justify={'flex-start'} align={'center'} mt={12} >
-                <Flex align={'center'} h={'100%'} >
-                    <ActionIcon onClick={() => {
-                        router.push('/dataset')
-                    }}>
-                        <IconArrowBackUp />
-                    </ActionIcon>
-                    <Title order={4}>文档数据管理</Title>
-                </Flex>
-            </Flex>
-            <Box mt={12} >
-                <Flex
-                    mih={50}
-                    gap="md"
-                    justify="flex-start"
-                    align="flex-start"
-                    direction="row"
-                    wrap="wrap"
-                >
-                    <Button onClick={() => {
-                        setIsEdit(false);
-                        setOpen(true);
-                    }}>
-                        新建单条数据源
-                    </Button>
-                    <FileButton
-                      onChange={(v: File) => {
-                        const reader = new FileReader();
-                        reader.onload = async function (e: any) {
-                          var data = e.target.result;
-                          const wb = XLSX.parse(data, {
-                            type: "binary",
-                          });
-                          const rows = wb[0].data;
-                          const cols = rows.shift(); // 去除列头
-                          setLoading(true);
-                          totalRef.current = rows.length;
-                          let progress = 0;
-                          const results = await Promise.all(
-                            rows.map((row) => {
-                              return new Promise(async (resolve) => {
-                                const target =
-                                  dataSetType === DataSetType.QUESTION
-                                    ? {
-                                        url: "",
-                                        tag: dataSetId,
-                                        title: `${row[1]}/${row[2]}/${row[3]}/${row[4]}}`,
-                                        question: row[4],
-                                        answer: row[5],
-                                      }
-                                    : {
-                                        url: "",
-                                        ext: "txt",
-                                        tag: dataSetId,
-                                        title: `${row[1]}/${row[2]}/${row[3]}/${row[4]}}`,
-                                        content: `question: ${row[4]},answer: ${row[5]}`,
-                                        chunk_size: 512,
-                                      };
-                                const result = await addDataSource(
-                                  {
-                                    dataSetId,
-                                    dataSetType,
-                                  },
-                                  target
-                                );
-                                progress += 1;
-                                setProgress(progress);
-                                resolve(result);
-                              });
-                            })
-                          );
-                          setLoading(false);
-                        };
-                        reader.readAsArrayBuffer(v);
-                      }}
-                      accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel"
-                    >
-                      {(props) => <Button {...props}>上传Excel</Button>}
-                    </FileButton>
-                    <Space h="md" />
-                    {dataSetType == DataSetType.DOCUMENT ? <Button onClick={() => setOpenUploadModel(true)} variant="filled" leftIcon={<IconFileUpload size="1rem" />}>
-                        上传文件
-                    </Button> : null}
-                </Flex>
-            </Box>
+  const router = useRouter();
+  const { query } = router;
+  const dataSetType: any = query.dataSetType;
+  const dataSetId: any = query.id;
+  const items = [
+    { title: "AgentCraft", href: "/" },
+    { title: "数据集", href: "/dataset" },
+    { title: "数据源", href: `/dataset/${dataSetId}/datasource` },
+  ].map((item, index) => (
+    <Anchor href={item.href} key={index}>
+      {item.title}
+    </Anchor>
+  ));
+  const [progress, setProgress] = useState(0);
+  const totalRef = useRef(0);
+  const loading: boolean = useDataSourceStore().loading;
+  const setLoading = useDataSourceStore().setLoading;
+  const setOpen = useDataSourceStore().setOpen;
+  const setIsEdit = useDataSourceStore().setIsEdit;
+  const setOpenUploadModel = useDataSourceStore().setOpenUploadModel;
+  return (
+    <>
+      {/* <Breadcrumbs>{items}</Breadcrumbs> */}
+      <Flex justify={"flex-start"} align={"center"} mt={12}>
+        <Flex align={"center"} h={"100%"}>
+          <ActionIcon
+            onClick={() => {
+              router.push("/dataset");
+            }}
+          >
+            <IconArrowBackUp />
+          </ActionIcon>
+          <Title order={4}>文档数据管理</Title>
+        </Flex>
+      </Flex>
+      <Box mt={12}>
+        <Flex
+          mih={50}
+          gap="md"
+          justify="flex-start"
+          align="flex-start"
+          direction="row"
+          wrap="wrap"
+        >
+          <Button
+            onClick={() => {
+              setIsEdit(false);
+              setOpen(true);
+            }}
+          >
+            新建单条数据源
+          </Button>
+          <FileButton
+            onChange={(v: File) => {
+              const reader = new FileReader();
+              reader.onload = async function (e: any) {
+                var data = e.target.result;
+                const wb = XLSX.parse(data, {
+                  type: "binary",
+                });
+                const rows = wb[0].data;
+                const cols = rows.shift(); // 去除列头
+                setLoading(true);
+                totalRef.current = rows.length;
+                let progress = 0;
+                const results = await Promise.all(
+                  rows.map((row) => {
+                    return new Promise(async (resolve) => {
+                      const target =
+                        dataSetType === DataSetType.QUESTION
+                          ? {
+                              url: "",
+                              tag: dataSetId,
+                              title: `${row[1]}/${row[2]}/${row[3]}/${row[4]}}`,
+                              question: row[4],
+                              answer: row[5],
+                            }
+                          : {
+                              url: "",
+                              ext: "txt",
+                              tag: dataSetId,
+                              title: `${row[1]}/${row[2]}/${row[3]}/${row[4]}}`,
+                              content: `question: ${row[4]},answer: ${row[5]}`,
+                              chunk_size: 512,
+                            };
+                      const result = await addDataSource(
+                        {
+                          dataSetId,
+                          dataSetType,
+                        },
+                        target
+                      );
+                      progress += 1;
+                      setProgress(progress);
+                      resolve(result);
+                    });
+                  })
+                );
+                setLoading(false);
+              };
+              reader.readAsArrayBuffer(v);
+            }}
+            accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel"
+          >
+            {(props) => <Button {...props}>上传Excel</Button>}
+          </FileButton>
+          <Space h="md" />
+          {dataSetType == DataSetType.DOCUMENT ? (
+            <Button
+              onClick={() => setOpenUploadModel(true)}
+              variant="filled"
+              leftIcon={<IconFileUpload size="1rem" />}
+            >
+              上传文件
+            </Button>
+          ) : null}
+        </Flex>
+      </Box>
 
-            <LoadingOverlay 
-              visible={loading} 
-              overlayOpacity={0.3} 
-              loader={
-                totalRef.current !== 0 ? (
-                  <Flex align={"center"} direction="column">
-                    <Flex align={"center"} bg="white" p={12}>
-                      {progress} / {totalRef.current}
-                      <Loader variant="bars" color={"pink"} ml={12} />
-                    </Flex>
-                  </Flex>
-                ) : <Loader />
-              } 
-            />
-            <AddOrUpdate />
-            <UploadDataSource />
-            <List dataSetId={dataSetId} dataSetType={dataSetType} />
-        </>
-    );
+      <LoadingOverlay
+        visible={loading}
+        overlayOpacity={0.3}
+        loader={
+          totalRef.current !== 0 ? (
+            <Flex align={"center"} direction="column">
+              <Flex align={"center"} bg="white" p={12}>
+                {progress} / {totalRef.current}
+                <Loader variant="bars" color={"pink"} ml={12} />
+              </Flex>
+            </Flex>
+          ) : (
+            <Loader />
+          )
+        }
+      />
+      <AddOrUpdate />
+      <UploadDataSource />
+      <List dataSetId={dataSetId} dataSetType={dataSetType} />
+    </>
+  );
 }
