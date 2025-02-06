@@ -50,10 +50,7 @@ def get_assistant(_id: int, user_id: int):
                       "dataset_name": dataset_name}
                      for relation, dataset_name in relations]
     action_tools_dict = [id for id in relations_at]
-    exp = ""
-    if assistant.token:
-        exp = decode_token(assistant.token)["exp"]
-    assistant_dict = {"exp": exp, "datasets": datasets_dict,"action_tools": action_tools_dict, "model_name": model_name, **vars(assistant), }
+    assistant_dict = {"datasets": datasets_dict,"action_tools": action_tools_dict, "model_name": model_name, **vars(assistant), }
     return assistant_dict
 
 

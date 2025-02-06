@@ -1,9 +1,11 @@
 edition: 3.0.0
-name: AgentCraft
+name: AgentCraft-CAP
+access: '{{ access }}'
 vars:
   region: '{{ region }}'
   beFunctionName: '{{ beFunctionName }}'
   feFunctionName: '{{ feFunctionName }}'
+  fcRole: "{{ fcRole }}"
 template:
   AgentCraftAll:
     internetAccess: true
@@ -29,7 +31,7 @@ resources:
         port: 8000
       runtime: custom.debian10
       instanceConcurrency: 10
-      role: AliyunFCDefaultRole
+      role: ${vars.fcRole}
       cpu: 8
       memorySize: 16384
       diskSize: 10240
@@ -65,18 +67,14 @@ resources:
               - OPTIONS
             authType: anonymous
             disableURLInternet: false
+      customDomain:
+        protocol: "HTTP"
+        route:
+          path: "/*"
+          qualifier: "LATEST"
+        domainName: auto
     extend:
       name: AgentCraftAll
-  agentcraft-backend-domain:
-    component: fc3-domain
-    props:
-      region: ${vars.region}
-      domainName: auto
-      protocol: HTTP
-      routeConfig:
-        routes:
-          - path: /*
-            functionName: ${vars.beFunctionName}
   agentcraft-frontend:
     component: fc3
     # actions:
@@ -99,7 +97,7 @@ resources:
       runtime: custom.debian10
       instanceConcurrency: 5
       memorySize: 3072
-      role: AliyunFCDefaultRole
+      role: ${vars.fcRole}
       cpu: 2
       environmentVariables:
         baseUrl: ${resources.agentcraft-backend.output.url.system_intranet_url} # 仅在fc环境使用内网地址
@@ -124,15 +122,12 @@ resources:
               - DELETE
             authType: anonymous
             disableURLInternet: false
+      customDomain:
+        protocol: "HTTP"
+        route:
+          path: "/*"
+          qualifier: "LATEST"
+        domainName: auto
     extend:
       name: AgentCraftAll
-  agentcraft-frontend-domain:
-    component: fc3-domain
-    props:
-      region: ${vars.region}
-      domainName: auto
-      protocol: HTTP
-      routeConfig:
-        routes:
-          - path: /*
-            functionName: ${vars.feFunctionName}
+  
