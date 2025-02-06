@@ -170,6 +170,12 @@ class ReasoningStreamFc:
                         output_chunk['choices'][0]['delta']['content'] = final_result_preview 
                         assistant_output = llm_outputs[0]['choices'][0]['delta']
                         yield json.dumps(output_chunk)
+                        tool_info['content'] = plugin_output
+                        #将工具返回的结果进行上下文的拼接
+                        messages.append(tool_info)
+                        answer, llm_outputs = yield from self.text_completion(
+                            messages, **kwargs)
+                        logger.info(f"{YELLOW}Answer: {answer}{RESET}")
                         break
                     tool_info['content'] = plugin_output
                     #将工具返回的结果进行上下文的拼接
