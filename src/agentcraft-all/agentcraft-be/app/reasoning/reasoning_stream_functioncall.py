@@ -340,6 +340,7 @@ class ReasoningStreamFc:
         self.time = time()
         text_input = self.query
         action_tools = []
+        action_tools_function_call = []
         assistant = self.assistant
         model = self.model
         try:
