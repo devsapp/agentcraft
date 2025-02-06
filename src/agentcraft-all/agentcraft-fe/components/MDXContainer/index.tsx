@@ -80,31 +80,21 @@ export function parseAndRender(mdxString: string) {
 }
 export default function MDXContainer({ content, scope = {} }: any) {
     const [Component, setComponent] = useState(null);
-    const [loading, setLoading] = useState(false);
-    const timerRef: any = useRef();
+   
     useEffect(() => {
         const parseMDX = async () => {
             let MDXComponent: any = null;
             try {
-                setLoading(false);
                 await compile(content);
                 MDXComponent = <MDX components={components} scope={scope} remarkPlugins={[RemarkMath, RemarkGfm, RemarkBreaks]}>
                     {content}
                 </MDX>;
-                setComponent(MDXComponent);
             } catch (e) {
-                setLoading(true);
                 MDXComponent = <div>
                     {content}
                 </div>;
-                setComponent(MDXComponent);
-                if (timerRef.current) {
-                    clearTimeout(timerRef.current);
-                }
-                timerRef.current = setTimeout(() => {
-                    setLoading(false);
-                }, 3000);
             }
+            setComponent(MDXComponent);
         }
         parseMDX();
     }, [content]);
@@ -113,11 +103,6 @@ export default function MDXContainer({ content, scope = {} }: any) {
         <MDXProvider >
             <MdxLayout>
                 {Component}
-                {
-                    loading && <div style={{ display: 'flex', justifyContent: 'flex-start', alignItems: 'center', height: 20, marginRight: 12 }}>
-                            组件加载中...<Loader size={'sm'} />
-                            </div>
-                }
             </MdxLayout>
         </MDXProvider>
 

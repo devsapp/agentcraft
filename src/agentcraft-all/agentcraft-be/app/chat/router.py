@@ -31,6 +31,7 @@ async def chat(req: ChatRequest, request: Request, token: AgentJWTData = Depends
     """
     if req.messages[-1].role != "user":
         raise HTTPException(status_code=400, detail="The last message must be from the user.")
+    
     agent_id = token.agent_id
 
     keyword = req.keyword

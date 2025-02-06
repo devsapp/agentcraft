@@ -4,13 +4,12 @@ import json
 import requests
 import codecs
 from time import time
-import re
 import uuid
-import app.database.model as model_database
 import app.database.assistant_action_tools as assistant_action_tools_database
 from app.reasoning.retrieval import data_retrieval, llm_retrieval_instruction_stream
 from app.common.logger import logger
 from app.reasoning.tools_client import ToolsActionClient
+from app.common.constants import  YELLOW, RESET, RED
 DONE = "[DONE]"
 DEFAULT_INSTRUCTION = "You are a helpful assistant."
 
@@ -42,7 +41,7 @@ Question: {query}"""
 
 
 class ReasoningStream:
-    def __init__(self, query, assistant, datasets, credential_dict, history, **business):
+    def __init__(self, query, assistant,model, datasets, credential_dict, history, **business):
         self.assistant = assistant
         self.query = query
         self.datasets = datasets
@@ -50,7 +49,7 @@ class ReasoningStream:
         self.time = time()
         self.tool_name_dict = {}
         self.history = history
-        self.model = None
+        self.model = model
         self.result = None
         self.business = business
         self.usage = (0, 0, 0)
@@ -107,8 +106,7 @@ class ReasoningStream:
         planning_prompt = self.build_input_text(
             chat_history, list_of_plugin_info, kwargs['instruction'])
         kwargs['need_react'] = True if len(
-            list_of_plugin_info) > 0 else False  # 补充
-        logger.info(f'Planing Prompt: {planning_prompt}')
+            list_of_plugin_info) > 0 else False  
         agent_final_text = ''
         while True:
             llm_output = yield from self.text_completion(
@@ -224,8 +222,8 @@ class ReasoningStream:
         assert prompt.endswith(f"\n{im_start}assistant\n{im_end}")
         prompt = prompt[: -len(f'{im_end}')]
         return prompt
-
     def text_completion(self, input_text: str, **kwargs) -> str:
+        """获取大模型的回答"""
         created = kwargs['created']
         uid = kwargs['uid']
         model = kwargs['model']
@@ -239,93 +237,117 @@ class ReasoningStream:
             "role": "user",
             "content": input_text
         })
-
         headers = {
             "Authorization": f"Bearer {kwargs['token']}",
             "Content-Type": "application/json"
         }
-        request_data = json.dumps({
-            "model": kwargs['model'],
-            "messages": messages,
-            "temperature": kwargs['temperature'],
-            "top_p": kwargs['top_p'],
-            "n": kwargs['n'],
-            "stream": True,
-            "max_tokens": kwargs['max_tokens'],
-            "stop": stop_words,
-            "presence_penalty": kwargs['presence_penalty'],
-            # "frequency_penalty": kwargs['frequency_penalty'],
-            "logit_bias":  {},
-            "stream_options": {
-                "include_usage": True
-            }
-        })
-        resp = requests.post(kwargs['url'], headers=headers, stream=True,
-                             data=request_data, timeout=kwargs['timeout'])
-        end_time = time()
-        execution_time = end_time - self.time
-        logger.info(f"Execution 完成大语言模型首次推理时间: {execution_time} seconds")
-
         know_anwser = False
         answer = [""]
+        output = ''
         reveal_all = ''
         usage = {}
-        for line in resp.iter_lines():
-            if line:
-                line = codecs.decode(line)
-                if line.startswith("data:"):
-                    line = line[5:].strip()
-                    try:
-                        chunk = json.loads(line)
-                        usage = chunk.get('usage', {})
-                        chunk["id"] = uid
-                        chunk["created"] = created
-                        chunk["model"] = model
-                        chunk["session_id"] = self.business.get(
-                            'session_id', None)
-                        reveal_all = chunk
-                        if "choices" in chunk and len(
-                                chunk["choices"]) > 0 and "delta" in chunk["choices"][0] and "content" in chunk["choices"][0]["delta"]:
-                            content = chunk["choices"][0]["delta"]["content"]
-
-                            answer[chunk["choices"][0]["index"]
-                                   ] += content
-                            if need_react == True:
-                                if(know_anwser):
+        try:
+            request_data = json.dumps({
+                "model": kwargs['model'],
+                "messages": messages,
+                "temperature": kwargs['temperature'],
+                "top_p": kwargs['top_p'],
+                "n": kwargs['n'],
+                "stream": True,
+                "max_tokens": kwargs['max_tokens'],
+                "stop": stop_words,
+                "presence_penalty": kwargs['presence_penalty'],
+                # "frequency_penalty": kwargs['frequency_penalty'],
+                "logit_bias":  {},
+                "stream_options": {
+                    "include_usage": True
+                }
+            },ensure_ascii=False)
+            logger.info(f"{YELLOW}request options:{request_data}{RESET}")
+            resp = requests.post(kwargs['url'], headers=headers, stream=True,
+                                data=request_data, timeout=kwargs['timeout'])
+            if(resp.status_code != 200):
+                logger.error(f"{RED}{resp.text}{RESET}")
+                yield json.dumps({
+                    "id": uid,
+                    "object": "chat.error",
+                    "message": [{
+                        "content": f"An unexpected error occurred: {str(resp.text)}",
+                        "role": "assistant"
+                    }],
+                    "created": created
+                })
+                yield DONE
+                return
+            for line in resp.iter_lines():
+                if line:
+                    line = codecs.decode(line)
+                    if line.startswith("data:"):
+                        line = line[5:].strip()
+                        try:
+                            chunk = json.loads(line)
+                            usage = chunk.get('usage', {})
+                            chunk["id"] = uid
+                            chunk["created"] = created
+                            chunk["model"] = model
+                            chunk["session_id"] = self.business.get(
+                                'session_id', None)
+                            reveal_all = chunk
+                            if "choices" in chunk and len(
+                                    chunk["choices"]) > 0 and "delta" in chunk["choices"][0] and "content" in chunk["choices"][0]["delta"]:
+                                content = chunk["choices"][0]["delta"]["content"]
+                                if(content != None):
+                                    answer[chunk["choices"][0]["index"]
+                                        ] += content
+                                if need_react == True:
+                                    if(know_anwser):
+                                        yield json.dumps(chunk)
+                                    final_content = self.final_result(  # 从每次结果中查找最终答案
+                                        answer[chunk["choices"][0]["index"]])
+                                    use_action = self.check_action_tool(answer[0])
+                                    # 如果找到带有 “Final Answer”标识，并且没有Action存在的情况下，代表结束
+                                    if(know_anwser == False and final_content != '' and use_action != True):
+                                        chunk["choices"][0]["delta"]["content"] = final_content
+                                        yield json.dumps(chunk)
+                                        know_anwser = True
+                                else:
                                     yield json.dumps(chunk)
-                                final_content = self.final_result(  # 从每次结果中查找最终答案
-                                    answer[chunk["choices"][0]["index"]])
-                                use_action = self.check_action_tool(answer[0])
-                                # 如果找到带有 “Final Answer”标识，并且没有Action存在的情况下，代表结束
-                                if(know_anwser == False and final_content != '' and use_action != True):
-                                    chunk["choices"][0]["delta"]["content"] = final_content
-                                    yield json.dumps(chunk)
-                                    know_anwser = True
+                            # 如果检测到chunk 中包含usage ，不为None ， 则输出
                             else:
-                                yield json.dumps(chunk)
-                        # 如果检测到chunk 中包含usage ，不为None ， 则输出
-                        else:
-                            if 'usage' in chunk and chunk['usage'] is not None:
-                                yield json.dumps(chunk)
-                    except json.JSONDecodeError as err:
-                        logger.error(err)
+                                if 'usage' in chunk and chunk['usage'] is not None:
+                                    yield json.dumps(chunk)
+                        except json.JSONDecodeError as err:
+                            logger.info(f"{YELLOW}Unconverted chunk {line}{RESET}")
 
-        self.usage = (
-            self.usage[0] + usage.get("prompt_tokens", 0),
-            self.usage[1] + usage.get("completion_tokens", 0),
-            self.usage[2] + usage.get("total_tokens", 0),
-        )
-        output = answer[0]
-        action, action_input, output_inner = self.parse_latest_plugin_call(
-            output)
-        
-        if(action == '' and know_anwser == False and reveal_all != ''):  # 无法触发 Final Answer 但又确实推理出结果的时候
-            if reveal_all["choices"] != None:
-                if len(reveal_all["choices"]) == 0:
-                    reveal_all["choices"].append({"delta": {"content": ""}})
-                reveal_all["choices"][0]["delta"]["content"] = output_inner
-                yield json.dumps(reveal_all)
-        return output
+            self.usage = (
+                self.usage[0] + usage.get("prompt_tokens", 0),
+                self.usage[1] + usage.get("completion_tokens", 0),
+                self.usage[2] + usage.get("total_tokens", 0),
+            )
+            output = answer[0]
+            action, action_input, output_inner = self.parse_latest_plugin_call(
+                output)
+            if(action == '' and know_anwser == False and reveal_all != ''):  # 无法触发 Final Answer 但又确实推理出结果的时候
+                if reveal_all["choices"] != None:
+                    if len(reveal_all["choices"]) == 0:
+                        reveal_all["choices"].append({"delta": {"content": ""}})
+                    reveal_all["choices"][0]["delta"]["content"] = output_inner
+                    yield json.dumps(reveal_all)
+            return output
+        except Exception as e:
+            logger.info(f'{YELLOW}original response:{resp.text}{RESET}')
+            logger.error(f"{RED}Unexpected error in model_chat_stream: {e}{RESET}", exc_info=True)
+            yield json.dumps({
+                "id": uid,
+                "object": "chat.error",
+                "message": [{
+                    "content": f"An error occurred: {str(e)}",
+                    "role": "assistant"
+                }],
+                "created": created
+            })
+            yield DONE
+            return output
 
     def parse_latest_plugin_call(self, text):
         plugin_name, plugin_args = '', ''
@@ -362,10 +384,10 @@ class ReasoningStream:
         text_input = self.query
         action_tools = []
         assistant = self.assistant
+        model = self.model
         try:
             action_tools = assistant_action_tools_database.list_action_tools_by_assistant_id(
                 assistant.id)
-
             action_tools = [
                 {
                     'name_for_human': item.alias,
@@ -390,8 +412,7 @@ class ReasoningStream:
             logger.error(e)
         self.tool_name_dict = {
             tool['name_for_model']: {'name': tool['name_for_human'], 'output': tool['output'], 'need_llm_call': tool['need_llm_call']} for tool in action_tools}
-        model = model_database.get_model_by_id(assistant.model_id)
-        self.model = model
+        
         llm_plugin_args = {
             "created": int(time()),
             "uid": f"assistant-compl-{uuid.uuid4()}",
@@ -413,5 +434,4 @@ class ReasoningStream:
         }
         yield from self.llm_with_plugin(
             prompt=text_input, list_of_plugin_info=action_tools, **llm_plugin_args)
-
         return

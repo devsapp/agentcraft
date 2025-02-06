@@ -1,4 +1,21 @@
+
+export const BASE_LLM_URL = [
+    {
+        label: '百炼通义千问',
+        value: 'https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions',
+    },
+    {
+        label: 'deepseek',
+        value: 'https://api.deepseek.com/chat/completions',
+    }
+]
+
 export const MODEL_NAME_LIST = [{
+    label: 'qwen-max-latest(最新模型)',
+    value: 'qwen-max-latest',
+    group: '通义系列'
+},
+{
     label: 'qwen-turbo',
     value: 'qwen-turbo',
     group: '通义系列'
@@ -19,6 +36,19 @@ export const MODEL_NAME_LIST = [{
     value: 'qwen-max-longcontext',
     group: '通义系列'
 }, {
+    label: 'deepseek-v3 基础模型',
+    value: 'deepseek-chat',
+    group: 'deepseek系列'
+}, {
+    label: 'deepseek-r1 推理模型',
+    value: 'deepseek-reasoner',
+    group: 'deepseek系列'
+}, {
+    label: 'moonshot-v1-32k',
+    value: 'moonshot-v1-32k',
+    group: '月之暗面AI系列'
+},
+{
     label: 'moonshot-v1-128k',
     value: 'moonshot-v1-128k',
     group: '月之暗面AI系列'

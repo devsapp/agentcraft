@@ -6,11 +6,12 @@ import codecs
 from time import time
 import re
 import uuid
-import app.database.model as model_database
+from app.common.logger import logger
 import app.database.assistant_action_tools as assistant_action_tools_database
 from app.reasoning.retrieval import data_retrieval, llm_retrieval_instruction_stream
 from app.common.logger import logger
 from app.reasoning.tools_client import ToolsActionClient
+from app.common.constants import  YELLOW, RESET, RED, CYAN
 DONE = "[DONE]"
 DEFAULT_INSTRUCTION = "You are a helpful assistant."
 
@@ -53,8 +54,8 @@ def convert_input_schema_to_function_params(data_str):
             data["parameters"]["required"].append(name)
     return data["parameters"]
 
-class ReasoningStream:
-    def __init__(self, query, assistant, datasets, credential_dict, history, **business):
+class ReasoningStreamFc:
+    def __init__(self, query, assistant,model, datasets, credential_dict, history, **business):
         self.assistant = assistant
         self.query = query
         self.datasets = datasets
@@ -62,7 +63,7 @@ class ReasoningStream:
         self.time = time()
         self.tool_name_dict = {}
         self.history = history
-        self.model = None
+        self.model = model
         self.result = None
         self.business = business
         self.usage = (0, 0, 0)
@@ -158,7 +159,7 @@ class ReasoningStream:
                     reasoning_log += f'Action: {action} Action Input: {action_input}\n'
                     tool_info = {"name": action, "role":"tool"}
                     plugin_output = self.call_plugin(action, action_input)
-                    logger.info(f'Tool Output: {plugin_output}')
+                    logger.info(f'{CYAN}Tool Output: {plugin_output}{RESET}')
                     reasoning_log += f'Tool Output: {plugin_output}\n'
                     tool_detail = self.tool_name_dict[action]
                     tool_name = tool_detail['name']
@@ -208,98 +209,108 @@ class ReasoningStream:
         return messages
 
     def text_completion(self, messages, **kwargs) -> str:
+        """获取大模型的回答"""
         created = kwargs['created']
         uid = kwargs['uid']
         model = kwargs['model']
         stop_words = kwargs['stop_words'].split(',')
         tool_call = True
+        answer = ""
+        llm_outputs = []
+        usage = {}
+        tool_use = [{"name":"","arguments":""}]
         headers = {
             "Authorization": f"Bearer {kwargs['token']}",
             "Content-Type": "application/json"
         }
-        request_data = {
-            "model": kwargs['model'],
-            "messages": messages,
-            "temperature": kwargs['temperature'],
-            "top_p": kwargs['top_p'],
-            "n": kwargs['n'],
-            "stream": True,
-            "max_tokens": kwargs['max_tokens'],
-            "stop": stop_words,
-            "presence_penalty": kwargs['presence_penalty'],
-            # "frequency_penalty": kwargs['frequency_penalty'],
-            "logit_bias":  {},
-            "stream_options": {
-                "include_usage": True
+        try:
+            request_data = {
+                "model": kwargs['model'],
+                "messages": messages,
+                "temperature": kwargs['temperature'],
+                "top_p": kwargs['top_p'],
+                "n": kwargs['n'],
+                "stream": True,
+                "max_tokens": kwargs['max_tokens'],
+                "stop": stop_words,
+                "presence_penalty": kwargs['presence_penalty'],
+                # "frequency_penalty": kwargs['frequency_penalty'],
+                "logit_bias":  {},
+                "stream_options": {
+                    "include_usage": True
+                }
             }
-        }
-        if(len(kwargs['tools'])>0):
-            request_data["tools"] = kwargs['tools']
-        else:
-            tool_call = False
-        request_data = json.dumps(request_data)
-        resp = requests.post(kwargs['url'], headers=headers, stream=True,
-                             data=request_data, timeout=kwargs['timeout'])
-        end_time = time()
-        execution_time = end_time - self.time
-        logger.info(f"Execution 完成大语言模型首次推理时间: {execution_time} seconds")
-        answer = ""
-        llm_outputs = []
-        usage = {}
-        
-        tool_use = [{"name":"","arguments":""}]
-     
-        for index, line in enumerate(resp.iter_lines()):
-            if line:
-                line = codecs.decode(line)
-                if line.startswith("data:"):
-                    line = line[5:].strip()
-                    try:
-                        chunk = json.loads(line)
-                        usage = chunk.get('usage', {})
-                        chunk["id"] = uid
-                        chunk["created"] = created
-                        chunk["model"] = model
-                        chunk["session_id"] = self.business.get(
-                            'session_id', None)
-                        if(index == 0):
-                            assistant_output = chunk['choices'][0]['delta']
-                            try:
-                                if assistant_output['tool_calls'] == None:  # 如果模型判断无需调用工具，则将assistant的回复直接打印出来，无需进行模型的第二轮调用
+            if(len(kwargs['tools'])>0):
+                request_data["tools"] = kwargs['tools']
+            else:
+                tool_call = False
+            request_data = json.dumps(request_data,ensure_ascii=False)
+            resp = requests.post(kwargs['url'], headers=headers, stream=True,
+                                data=request_data, timeout=kwargs['timeout'])
+            for index, line in enumerate(resp.iter_lines()):
+                if line:
+                    line = codecs.decode(line)
+                    if line.startswith("data:"):
+                        line = line[5:].strip()
+                        try:
+                            chunk = json.loads(line)
+                    
+                            usage = chunk.get('usage', {})
+                            chunk["id"] = uid
+                            chunk["created"] = created
+                            chunk["model"] = model
+                            chunk["session_id"] = self.business.get(
+                                'session_id', None)
+                            if(index == 0):
+                                assistant_output = chunk['choices'][0]['delta']
+                                try:
+                                    if assistant_output['tool_calls'] == None:  # 如果模型判断无需调用工具，则将assistant的回复直接打印出来，无需进行模型的第二轮调用
+                                        tool_call = False
+                                except KeyError:
                                     tool_call = False
-                            except KeyError:
-                                tool_call = False
-                        if "choices" in chunk and len(
-                                chunk["choices"]) > 0 and "delta" in chunk["choices"][0] and "content" in chunk["choices"][0]["delta"]:
-                            llm_outputs.append(chunk)
-                            content = chunk["choices"][0]["delta"]["content"]
-                            if content is not None:
-                               answer += content
-                            if(tool_call == False):
-                                yield json.dumps(chunk)
+                            if "choices" in chunk and len(
+                                    chunk["choices"]) > 0 and "delta" in chunk["choices"][0] and "content" in chunk["choices"][0]["delta"]:
+                                llm_outputs.append(chunk)
+                                content = chunk["choices"][0]["delta"]["content"]
+                                if content is not None:
+                                    answer += content
+                                if(tool_call == False):
+                                    yield json.dumps(chunk)
+                                else:
+                                    # 调用工具的返回，除了最后一个useage结果是'', 其余的content皆为None
+                                    if(content == None):
+                                        # logger.info(f"Tool Use: {chunk}")
+                                        tool_use[0]["name"]+=chunk["choices"][0]["delta"]["tool_calls"][0]["function"]["name"]
+                                        tool_use[0]["arguments"]+=chunk["choices"][0]["delta"]["tool_calls"][0]["function"]["arguments"]
                             else:
-                                # 调用工具的返回，除了最后一个useage结果是'', 其余的content皆为None
-                                if(content == None):
-                                    logger.info(f"Tool Use: {chunk}")
-                                    tool_use[0]["name"]+=chunk["choices"][0]["delta"]["tool_calls"][0]["function"]["name"]
-                                    tool_use[0]["arguments"]+=chunk["choices"][0]["delta"]["tool_calls"][0]["function"]["arguments"]
-                        else:
-                            if 'usage' in chunk and chunk['usage'] is not None:
-                                yield json.dumps(chunk)
-                    except Exception as err:
-                        logger.error(f"Failed to decode JSON: {err}")
-                        logger.error(err)
-        
-        self.usage = (
-            self.usage[0] + usage.get("prompt_tokens", 0),
-            self.usage[1] + usage.get("completion_tokens", 0),
-            self.usage[2] + usage.get("total_tokens", 0),
-        )
-        if(tool_call == True and llm_outputs[0] != None):
-            llm_outputs[0]['choices'][0]['delta']['tool_calls'][0]['function']['name']=tool_use[0]["name"]
-            llm_outputs[0]['choices'][0]['delta']['tool_calls'][0]['function']['arguments']=tool_use[0]["arguments"]
-        return answer,llm_outputs
-
+                                if 'usage' in chunk and chunk['usage'] is not None:
+                                    yield json.dumps(chunk)
+                        except Exception as err:
+                            logger.info(f"{YELLOW}Unconverted chunk {line}{RESET}")
+            
+            self.usage = (
+                self.usage[0] + usage.get("prompt_tokens", 0),
+                self.usage[1] + usage.get("completion_tokens", 0),
+                self.usage[2] + usage.get("total_tokens", 0),
+            )
+            if(tool_call == True and llm_outputs[0] != None):
+                llm_outputs[0]['choices'][0]['delta']['tool_calls'][0]['function']['name']=tool_use[0]["name"]
+                llm_outputs[0]['choices'][0]['delta']['tool_calls'][0]['function']['arguments']=tool_use[0]["arguments"]
+            return answer,llm_outputs
+        except Exception as e:
+                logger.info(f'{YELLOW}original response:{resp.text}{RESET}')
+                logger.error(f"{RED}Unexpected error in model_chat_stream: {e}{RESET}", exc_info=True)
+                yield json.dumps({
+                    "id": uid,
+                    "object": "chat.error",
+                    "message": [{
+                        "content": f"An error occurred: {str(e)}",
+                        "role": "assistant"
+                    }],
+                    "created": created
+                })
+                yield DONE
+                return answer,llm_outputs
 
 
     def call_plugin(self, plugin_name: str, plugin_args: str) -> str:
@@ -323,6 +334,7 @@ class ReasoningStream:
         text_input = self.query
         action_tools = []
         assistant = self.assistant
+        model = self.model
         try:
             action_tools = assistant_action_tools_database.list_action_tools_by_assistant_id(
                 assistant.id)
@@ -337,32 +349,29 @@ class ReasoningStream:
                 }
                 for item in action_tools
             ]
-            logger.info(f'Action Tools: {action_tools}')
-    
-            # if(self.datasets):
-            #     action_tools.append({
-            #         'type': 'function',
-            #         'function': {
-            #             'name': 'data_retrieval',
-            #             'description': '搜索本地数据集.经常在联网的搜索工具使用之前使用',
-            #             'parameters': {
-            #                 'type': 'object',
-            #                 'properties': {
-            #                     'user_question': {
-            #                         'type': 'string',
-            #                         'description': 'The extracted user questions should be prioritized in vector retrieval'
-            #                     }
-            #                 }
-            #             },
-            #             'required': ['user_question']
-            #         }
-            #     })
+            # logger.info(f'Action Tools: {action_tools}')
+            if(self.datasets):
+                action_tools.append({
+                    'type': 'function',
+                    'function': {
+                        'name': 'data_retrieval',
+                        'description': '搜索本地数据集.经常在联网的搜索工具使用之前使用',
+                        'parameters': {
+                            'type': 'object',
+                            'properties': {
+                                'user_question': {
+                                    'type': 'string',
+                                    'description': 'The extracted user questions should be prioritized in vector retrieval'
+                                }
+                            }
+                        },
+                        'required': ['user_question']
+                    }
+                })
         except Exception as e:
             logger.error(e)
         self.tool_name_dict = {
             tool.name: {'name': tool.alias, 'output': tool.output_schema, 'need_llm_call': tool.need_llm_call} for tool in action_tools}
-        model = model_database.get_model_by_id(assistant.model_id)
-        self.model = model
         llm_plugin_args = {
             "created": int(time()),
             "uid": f"assistant-compl-{uuid.uuid4()}",

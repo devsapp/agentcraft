@@ -9,6 +9,7 @@ import { Model, FM_INFO } from 'types/model';
 import { formatDateTime } from 'utils/index';
 import CopyToClipboard from 'components/CopyToClipboard';
 import { DEFAULT_MODEL_REQUEST_TIMEOUT } from 'constants/index';
+import {BASE_LLM_URL} from 'constants/llm-proxy';
 import { FM_NAME_MAP } from 'constants/foundation-model';
 import FeatureDescription from 'components/FeatureDescription';
 import { FORM_WIDTH } from 'constants/index';
@@ -111,7 +112,7 @@ function AddOrUpdate() {
     } = useModelStore();
 
     const [data, setData] = useState(MODEL_NAME_LIST);
-    const [fmData, setFmData] = useState<any>([]);
+    const [fmData, setFmData] = useState<any>(BASE_LLM_URL);
     const initialValues = {
         name: '',
         name_alias: '',
@@ -128,39 +129,39 @@ function AddOrUpdate() {
             url: (value) => (/(http|https):\/\/(\w+:{0,1}\w*@)?(\S+)(:[0-9]+)?(\/|\/([\w#!:.?+=&%@!\-\/]))?/.test(value) ? null : '请输入合法的访问地址'),
         },
     });
-    function supplementCustomModelNameAndUrl(modelName: string, url: string) {
-        let modelNameExist = false;
-        let modelUrlExist = false;
-        data.forEach((item) => {
-            if (item.value === modelName) {
-                modelNameExist = true;
-            }
-        });
-        fmData.forEach((item: any) => {
-            if (item.value === url) {
-                modelUrlExist = true;
-            };
-        });
-        if (!modelNameExist) {
-            data.push({
-                label: modelName,
-                value: modelName,
-                group: '用户自定义'
-            });
-            setData(data);
-        };
-        if (!modelUrlExist) {
-            fmData.push({
-                label: url,
-                value: url
-            });
-            setFmData(fmData);
-        };
-    }
-    useEffect(() => {
-        const fmSelectData = fmList.map((item: FM_INFO) => ({ label: `[${FM_NAME_MAP[item.app_template]}] ${item.system_internet_url}${CHAT_API_SUFIX} `, value: `${item.system_internet_url}${CHAT_API_SUFIX}` }));
-        setFmData(fmSelectData);
-    }, [fmList]);
+    // function supplementCustomModelNameAndUrl(modelName: string, url: string) {
+    //     let modelNameExist = false;
+    //     let modelUrlExist = false;
+    //     data.forEach((item) => {
+    //         if (item.value === modelName) {
+    //             modelNameExist = true;
+    //         }
+    //     });
+    //     fmData.forEach((item: any) => {
+    //         if (item.value === url) {
+    //             modelUrlExist = true;
+    //         };
+    //     });
+    //     if (!modelNameExist) {
+    //         data.push({
+    //             label: modelName,
+    //             value: modelName,
+    //             group: '用户自定义'
+    //         });
+    //         setData(data);
+    //     };
+    //     if (!modelUrlExist) {
+    //         fmData.push({
+    //             label: url,
+    //             value: url
+    //         });
+    //         setFmData(fmData);
+    //     };
+    // }
+    // useEffect(() => {
+    //     const fmSelectData = fmList.map((item: FM_INFO) => ({ label: `[${FM_NAME_MAP[item.app_template]}] ${item.system_internet_url}${CHAT_API_SUFIX} `, value: `${item.system_internet_url}${CHAT_API_SUFIX}` }));
+    //     setFmData(fmSelectData);
+    // }, [fmList]);
     useEffect(() => {
         if (isEdit && open) {
             form.setValues({
@@ -171,7 +172,7 @@ function AddOrUpdate() {
                 timeout: currentModel?.timeout || DEFAULT_MODEL_REQUEST_TIMEOUT,
                 description: currentModel?.description || ''
             });
-            supplementCustomModelNameAndUrl(currentModel?.name || '', currentModel?.url || '');
+            // supplementCustomModelNameAndUrl(currentModel?.name || '', currentModel?.url || '');
         }
 
     }, [currentModel?.id, open]);

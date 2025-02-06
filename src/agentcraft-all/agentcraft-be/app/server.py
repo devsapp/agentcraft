@@ -14,10 +14,18 @@ from app.model.router import router as model_router
 from app.assistant.router import router as assistant_router
 from app.assistant_session.router import router as assistant_session_router
 from app.action_tools.router import router as action_tools_router
-
+from app.common.logger import logger
+from app.common.constants import RED, YELLOW, RESET
 
 app = FastAPI()
 
+@app.exception_handler(ValueError)
+async def value_error_exception_handler(request: any, exc: ValueError):
+    logger.error(f"{RED}{exc}{RESET}")
+    return JSONResponse(
+        status_code=400,
+        content={"detail": str(exc)},
+    )
 
 @app.exception_handler(Exception)
 async def http_exception_handler(request, exc):

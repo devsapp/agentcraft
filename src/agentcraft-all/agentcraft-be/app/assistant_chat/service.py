@@ -2,20 +2,19 @@
 # pylint: disable = no-member
 from typing import Any
 import uuid
-# from app.database.redis import redis_db
 from app.common.logger import logger
 import app.database.assistant_chat as assistant_chat_database
 import app.database.assistant as assistant_database
 import app.database.assistant_dataset as assistant_dataset_database
 import app.database.assistant_session_chat as assistant_session_chat_database
 import app.database.assistant_session as assistant_session_database
-
+import app.database.model as model_database
 from app.reasoning.reasoning import Reasoning
-# from app.reasoning.reasoning_stream import ReasoningStream
-from app.reasoning.reasoning_stream_functioncall import ReasoningStream
+from app.reasoning.reasoning_stream import ReasoningStream
+from app.reasoning.reasoning_stream_functioncall import ReasoningStreamFc
 
 DONE = "[DONE]"
-
+COMPATIBLE_WITH_FUNCTION_CALL_MODELS = ["qwen-max-latest","qwen-max","qwen-plus"]
 def get_assistant_lite(assistant_id: int):
     assistant = assistant_database.get_assistant_lite(assistant_id)
     if not assistant:
@@ -108,10 +107,16 @@ def chat_stream(assistant_session_id: int, query: str, ip_addr: str, assistant_i
     datasets = [{**vars(relation),
                  "dataset_name": dataset_name}
                 for relation, dataset_name in relations]
-
-    reason_stream = ReasoningStream(
-        query, assistant, datasets, credential_dict, history,
-        session_id=assistant_session_id)
+    model = model_database.get_model_by_id(assistant.model_id)
+    # 如果model.name 是以qwen 开头的 使用ReasoningStreamFc
+    if(model.name in COMPATIBLE_WITH_FUNCTION_CALL_MODELS):
+        reason_stream = ReasoningStreamFc(
+            query, assistant, model, datasets, credential_dict, history,
+            session_id=assistant_session_id)
+    else:
+        reason_stream = ReasoningStream(
+            query, assistant, model, datasets, credential_dict, history,
+            session_id=assistant_session_id)
 
     yield from reason_stream.call_assistant_stream()
 

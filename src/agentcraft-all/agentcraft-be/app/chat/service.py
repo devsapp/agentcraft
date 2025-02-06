@@ -7,23 +7,19 @@ import json
 import codecs
 import requests
 from app.common import utils
-# from app.database.redis import redis_db
 import app.database.chat as database
 import app.database.agent as agent_database
 import app.database.agent_session as agent_session_database
 import app.database.agent_dataset as agent_dataset_database
 import app.database.agent_session_chat as agent_session_chat_dataset_database
 import app.database.model as model_database
-# import app.database.redis as redis
-# from app.chat.green_client import is_legal
 from app.common.logger import logger
+from app.common.constants import  YELLOW, RESET, RED
 from app.config import common as config
 
 DONE = "[DONE]"
-
 class get_related():
     def __init__(self, agent_id, query, agent = None):
-        # self.agent_session_id = chat_service.get_chat_session_id(None, keyword, agent_id, title = query)
         if not agent:
             agent = agent_database.get_agent_lite(agent_id)
             if not agent:
@@ -33,6 +29,7 @@ class get_related():
         self.agent_id = agent_id
         self.query = query
         self.embedding = utils.embed(query)[0]
+    
 
     def check_user_has_agent(self, user_id: int):
         if not self.agent.user_id == user_id:
@@ -49,21 +46,6 @@ class get_related():
         for _i, (_chunk, title, _url, _similarity) in enumerate(search_res):
             question.append(title)
         return question
-
-    # TODO: 新增文档提示的语句
-    # def docs(agent_id: int, embedding: list[float], search_similarity: float, search_limit = 3):
-    #     question = []
-    #     search_similarity_1 = search_similarity - 0.1 if search_similarity - 0.3 <= 0 else search_similarity - 0.3
-    #     logger.info(f'docs_search_similarity soucre: {search_similarity}, to {search_similarity_1}')
-    #     if search_similarity_1 <= 0:
-    #         return question
-    #     search_res, _use_exact = agent_dataset_database.similarity_search(agent_id, embedding, search_similarity_1, search_limit)
-    #     search_res = rank_search_res(search_res)
-    #     # 想办法提炼出问题几个最相近的问题
-    #     #   怎么走提炼？消耗的token算谁的，如果算是客户的是否需要保存记录。
-    #     return question
-
-
 def get_chat_session_id(session_id: int, keyword: str, agent_id: int, **kv):
     if keyword is not None:
         data = agent_session_database.get_session_by_agent_id(agent_id, keyword=keyword)
@@ -110,7 +92,6 @@ def list_chats_history_by_session_id(agent_id: int, session_id: int, limit = Non
     data, total = list_chats_id_by_session_id(agent_id, session_id, limit = limit, page = page)
     history = []
     for item in data:
-        # pdb.set_trace()
         agent_chat_data = database.get_chat_lite(item.get("chat_id"))
         if not agent_chat_data:
             logger.info(f'No information found for chat id({item.get("chat_id")})')
@@ -127,12 +108,9 @@ def list_chats(agent_id: int, user_id: int, page: int, limit: int):
     data_dict = [vars(chat) for chat in data]
     return data_dict, total
 
-
-
 def sanitize_text(text: str) -> str:
     """防止问题注入"""
     return text.replace("```", "")
-
 
 def generate_prompt(search_res: list, query: str, prompt_template: str) -> str:
     """生成提示词"""
@@ -257,12 +235,11 @@ def chat(agent_session_id: int, query: str, ip_addr: str, agent_id: int, history
         }
         return model_chat(agent_session_id, **chat_args)
     embedding = utils.embed(query)[0]
-
     # 精准问答
     similarity_search_res, use_exact = agent_dataset_database.exact_seach(agent.id, embedding, agent.exact_search_similarity, agent.exact_search_limit)
     # 匹配到精准问答
     if not similarity_search_res == []:
-        logger.info('only use_exact: true')
+        logger.info(f'only use_exact: true')
         choices, answer = convert_exact_search_res_stream(
             similarity_search_res)
         add_args = {
@@ -509,15 +486,15 @@ def model_chat(agent_session_id,
         "logit_bias": json.loads(agent.logit_bias) if agent.logit_bias else {}
         
     }
+    logger.info(f"{YELLOW}request options:{llm_request_options}{RESET}")
     if(agent.stop != []):
         llm_request_options['stop'] = agent.stop
     request_data = json.dumps(llm_request_options)
-    logger.info(request_data)
     resp = requests.post(model.url, headers=headers,
                          data=request_data, timeout=model.timeout)
     if resp.status_code != 200:
-        logger.error(resp.text)
-        raise ValueError("model request failed")
+        logger.error(f"{RED}{resp.text}{RESET}")
+        raise ValueError(resp.text)
     resp_data = resp.json()
     if isinstance(resp_data, str):
         resp_data = json.loads(resp_data)
@@ -549,96 +526,124 @@ def model_chat_stream(agent_session_id,
         query: str, prompt: str, history: list,
         search_choices: list, ip_addr: str, agent, chat_type: int, uid: str, created: int):
     """获取大模型的回答"""
-    messages = build_messages(prompt, history, agent.system_message)
-    logger.info(f'messages: {messages}')
-    model = model_database.get_model_by_id(agent.model_id)
-   
-    if not model:
-        raise ValueError("model does not exist")
-    logger.info(f"{model.token}")
-    headers = {
-        "Authorization": f"Bearer {model.token}",
-        "Content-Type": "application/json"
-    }
-    llm_request_options = {
-        "model": model.name,
-        "messages": messages,
-        "stream": True,
-        "temperature": agent.temperature,
-        "top_p": agent.top_p,
-        # "top_k": 50, # OpenAI 不支持该参数
-        "n": agent.n_sequences,
-        "max_tokens": agent.max_tokens,
-        "presence_penalty": agent.presence_penalty,
-        # "frequency_penalty": agent.frequency_penalty, # OpenAI 不支持该参数
-        "logit_bias": json.loads(agent.logit_bias) if agent.logit_bias else {},
-        "stream_options": {
-            "include_usage": True
+    try:
+        messages = build_messages(prompt, history, agent.system_message)
+        model = model_database.get_model_by_id(agent.model_id)
+        if not model:
+            raise ValueError("model does not exist")
+        headers = {
+            "Authorization": f"Bearer {model.token}",
+            "Content-Type": "application/json"
         }
-    }
+        llm_request_options = {
+            "model": model.name,
+            "messages": messages,
+            "stream": True,
+            "temperature": agent.temperature,
+            "top_p": agent.top_p,
+            # "top_k": 50, # OpenAI 不支持该参数
+            "n": agent.n_sequences,
+            "max_tokens": agent.max_tokens,
+            "presence_penalty": agent.presence_penalty,
+            # "frequency_penalty": agent.frequency_penalty, # OpenAI 不支持该参数
+            "logit_bias": json.loads(agent.logit_bias) if agent.logit_bias else {},
+            "stream_options": {
+                "include_usage": True
+            }
+        }
+        logger.info(f"{YELLOW}request options:{llm_request_options}{RESET}")
+        if(agent.stop != []):
+            llm_request_options['stop'] = agent.stop
+        request_data = json.dumps(llm_request_options,ensure_ascii=False)
+        resp = requests.post(model.url, headers=headers, data=request_data,
+                            stream=True, timeout=model.timeout)
+        answer = [""]*agent.n_sequences
 
-    if(agent.stop != []):
-        llm_request_options['stop'] = agent.stop
-    request_data = json.dumps(llm_request_options)
-    logger.debug(f"request_data: {request_data}")
-    logger.info(f"{model.url}")
-    req = requests.post(model.url, headers=headers, data=request_data,
-                        stream=True, timeout=model.timeout)
-    answer = [""]*agent.n_sequences
-    usage = {}
-    for line in req.iter_lines():
-        if line:
-            line = codecs.decode(line)
-            if line.startswith("data:"):
-                line = line[5:].strip()
-                try:
-                    chunk = json.loads(line)
-                    chunk["id"] = uid
-                    chunk["created"] = created
-                    chunk["model"] = model.name_alias
-                    usage = chunk.get('usage', {})
-                    yield json.dumps(chunk)
-                    if "choices" in chunk and len(
-                            chunk["choices"]) > 0 and "delta" in chunk["choices"][0] and "content" in chunk["choices"][0]["delta"]:
-                        answer[chunk["choices"][0]["index"]
-                               ] += chunk["choices"][0]["delta"]["content"]
-                except json.JSONDecodeError as err:
-                    logger.error(err)
-    # """添加检索来源信息"""
-    # if len(search_choices) > 0:
-    #     result_text = "\n\n相关链接\n"
-    #     for index, item in enumerate(search_choices):
-    #         if item['message']['url']:
-    #             markdown_text = f"\[{index+1}\] [{item['message']['title']}]({item['message']['url']})\n"
-    #             result_text += markdown_text
-    #     search_info = {"choices":[]}
-    #     search_info["id"] = uid
-    #     search_info["created"] = created
-    #     search_info["model"] = model.name_alias
-    #     search_info["choices"].append({"index": 0,
-    #                                 "delta": {"role": "assistant",
-    #                                             "content": result_text},
-    #                                 "finish_reason": "null"})
-    #     yield json.dumps(search_info)
+        if(resp.status_code != 200):
+            logger.error(f"{RED}{resp.text}{RESET}")
+            yield json.dumps({
+                "id": uid,
+                "object": "chat.error",
+                "message": [{
+                    "content": f"An unexpected error occurred: {str(resp.text)}",
+                    "role": "assistant"
+                }],
+                "created": created
+            })
+            yield DONE
+            return
+        usage = {}
+        for line in resp.iter_lines():
+            if line:
+                line = codecs.decode(line)
+                if line.startswith("data:"):
+                    line = line[5:].strip()
+                    try:
+                        chunk = json.loads(line)
+                        chunk["id"] = uid
+                        chunk["created"] = created
+                        chunk["model"] = model.name_alias
+                        usage = chunk.get('usage', {})
+                        yield json.dumps(chunk)
+                        if "choices" in chunk and len(
+                                chunk["choices"]) > 0 and "delta" in chunk["choices"][0] and "content" in chunk["choices"][0]["delta"]:
+                            content = chunk["choices"][0]["delta"]["content"]
+                            # reasoning_content = chunk["choices"][0]["delta"]["reasoning_content"]
+                            # if(reasoning_content != None):
+                            #     answer[chunk["choices"][0]["index"]
+                            #         ] += chunk["choices"][0]["delta"]["reasoning_content"]
+                            if(content != None):
+                                answer[chunk["choices"][0]["index"]
+                                    ] += chunk["choices"][0]["delta"]["content"]
+                    except json.JSONDecodeError as err:
+                        logger.info(f"{YELLOW}Unconverted chunk {line}{RESET}")
+        # """添加检索来源信息"""
+        # if len(search_choices) > 0:
+        #     result_text = "\n\n相关链接\n"
+        #     for index, item in enumerate(search_choices):
+        #         if item['message']['url']:
+        #             markdown_text = f"\[{index+1}\] [{item['message']['title']}]({item['message']['url']})\n"
+        #             result_text += markdown_text
+        #     search_info = {"choices":[]}
+        #     search_info["id"] = uid
+        #     search_info["created"] = created
+        #     search_info["model"] = model.name_alias
+        #     search_info["choices"].append({"index": 0,
+        #                                 "delta": {"role": "assistant",
+        #                                             "content": result_text},
+        #                                 "finish_reason": "null"})
+        #     yield json.dumps(search_info)
 
-    yield DONE
-    # logger.info(f'answer: {answer}')
-    # logger.info(f'usage: {usage}')
-    add_args = {
-        "query": query,
-        "prompt": prompt,
-        "answer": answer,
-        "source": search_choices,
-        "chat_type": chat_type,
-        "ip_addr": ip_addr,
-        "agent": agent,
-        "model": model,
-        "uid": uid,
-        "usage": usage,
-    }
-    chat_id = add_chat(**add_args)
-    add_session_chat(agent_session_id, chat_id)
+        yield DONE
+        add_args = {
+            "query": query,
+            "prompt": prompt,
+            "answer": answer,
+            "source": search_choices,
+            "chat_type": chat_type,
+            "ip_addr": ip_addr,
+            "agent": agent,
+            "model": model,
+            "uid": uid,
+            "usage": usage,
+        }
+        chat_id = add_chat(**add_args)
+        add_session_chat(agent_session_id, chat_id)
 
+    except Exception as e:
+        logger.info(f'{YELLOW}original response:{resp.text}{RESET}')
+        logger.error(f"{RED}Unexpected error in model_chat_stream: {e}{RESET}", exc_info=True)
+        yield json.dumps({
+            "id": uid,
+            "object": "chat.error",
+            "message": [{
+                "content": f"An error occurred: {str(e)}",
+                "role": "assistant"
+            }],
+            "created": created
+        })
+        yield DONE
+        return
 
 def add_chat(
         query: str, prompt: str, answer: list, source: list,
@@ -662,8 +667,6 @@ def add_chat(
     }
     chat_id = database.add_chat(**add_args)
     return chat_id
-
-
 def add_session_chat(session_id: int, chat_id: int):
     """添加到session_chat数据库"""
     agent_session_chat_dataset_database.insert_agent_session_chats(session_id, [chat_id])
