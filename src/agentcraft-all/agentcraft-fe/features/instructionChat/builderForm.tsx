@@ -52,7 +52,7 @@ export function BuilderForm({ workspaceId }: AssistantProps) {
         temperature: 0.5,
         top_p: 1.0,
         n_sequences: 1,
-        max_tokens: 1024,
+        max_tokens: 8000,
         stop: [],
         presence_penalty: 0,
         frequency_penalty: 0,

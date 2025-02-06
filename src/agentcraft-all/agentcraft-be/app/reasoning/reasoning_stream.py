@@ -247,7 +247,7 @@ class ReasoningStream:
         reveal_all = ''
         usage = {}
         try:
-            request_data = json.dumps({
+            llm_request_options = {
                 "model": kwargs['model'],
                 "messages": messages,
                 "temperature": kwargs['temperature'],
@@ -262,8 +262,10 @@ class ReasoningStream:
                 "stream_options": {
                     "include_usage": True
                 }
-            },ensure_ascii=False)
-            logger.info(f"{YELLOW}request options:{request_data}{RESET}")
+            }
+            request_data = json.dumps(llm_request_options)
+            request_data_for_log = json.dumps(llm_request_options,ensure_ascii=False)
+            logger.info(f"{YELLOW}Request Data:{request_data_for_log}{RESET}")
             resp = requests.post(kwargs['url'], headers=headers, stream=True,
                                 data=request_data, timeout=kwargs['timeout'])
             if(resp.status_code != 200):

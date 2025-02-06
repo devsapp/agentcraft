@@ -486,10 +486,11 @@ def model_chat(agent_session_id,
         "logit_bias": json.loads(agent.logit_bias) if agent.logit_bias else {}
         
     }
-    logger.info(f"{YELLOW}request options:{llm_request_options}{RESET}")
     if(agent.stop != []):
         llm_request_options['stop'] = agent.stop
-    request_data = json.dumps(llm_request_options)
+    request_data = json.dumps(llm_request_options) # 不转码存在服务器的特殊情况
+    request_data_for_log = json.dumps(llm_request_options,ensure_ascii=False)
+    logger.info(f"{YELLOW}Request Data:{request_data_for_log}{RESET}")
     resp = requests.post(model.url, headers=headers,
                          data=request_data, timeout=model.timeout)
     if resp.status_code != 200:
@@ -553,8 +554,9 @@ def model_chat_stream(agent_session_id,
         }
         if(agent.stop != []):
             llm_request_options['stop'] = agent.stop
-        request_data = json.dumps(llm_request_options,ensure_ascii=False)
-        logger.info(f"{YELLOW}request data:{request_data}{RESET}")
+        request_data = json.dumps(llm_request_options)
+        request_data_for_log = json.dumps(llm_request_options,ensure_ascii=False)
+        logger.info(f"{YELLOW}Request Data:{request_data_for_log}{RESET}")
         resp = requests.post(model.url, headers=headers, data=request_data,
                             stream=True, timeout=model.timeout)
         answer = [""]*agent.n_sequences
