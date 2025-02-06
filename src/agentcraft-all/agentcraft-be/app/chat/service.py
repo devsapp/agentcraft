@@ -551,10 +551,10 @@ def model_chat_stream(agent_session_id,
                 "include_usage": True
             }
         }
-        logger.info(f"{YELLOW}request options:{llm_request_options}{RESET}")
         if(agent.stop != []):
             llm_request_options['stop'] = agent.stop
         request_data = json.dumps(llm_request_options,ensure_ascii=False)
+        logger.info(f"{YELLOW}request data:{request_data}{RESET}")
         resp = requests.post(model.url, headers=headers, data=request_data,
                             stream=True, timeout=model.timeout)
         answer = [""]*agent.n_sequences

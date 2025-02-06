@@ -1,7 +1,7 @@
 
 export const BASE_LLM_URL = [
     {
-        label: '百炼通义千问',
+        label: '阿里云百炼',
         value: 'https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions',
     },
     {
@@ -13,28 +13,60 @@ export const BASE_LLM_URL = [
 export const MODEL_NAME_LIST = [{
     label: 'qwen-max-latest(最新模型)',
     value: 'qwen-max-latest',
-    group: '通义系列'
+    group: '百炼通义系列'
 },
 {
     label: 'qwen-turbo',
     value: 'qwen-turbo',
-    group: '通义系列'
+    group: '百炼通义系列'
 }, {
     label: 'qwen-plus',
     value: 'qwen-plus',
-    group: '通义系列'
+    group: '百炼通义系列'
 }, {
     label: 'qwen-max',
     value: 'qwen-max',
-    group: '通义系列'
+    group: '百炼通义系列'
 }, {
     label: 'qwen-plus-1201',
     value: 'qwen-plus-1201',
-    group: '通义系列'
+    group: '百炼通义系列'
 }, {
     label: 'qwen-max-longcontext',
     value: 'qwen-max-longcontext',
-    group: '通义系列'
+    group: '百炼通义系列'
+}, {
+    label: 'deepseek-r1',
+    value: 'deepseek-r1',
+    group: '百炼deepseek系列'
+}, {
+    label: 'deepseek-v3',
+    value: 'deepseek-v3',
+    group: '百炼deepseek系列'
+}, {
+    label: 'deepseek-r1-distill-qwen-1.5b',
+    value: 'deepseek-r1-distill-qwen-1.5b',
+    group: '百炼deepseek系列'
+}, {
+    label: 'deepseek-r1-distill-qwen-7b',
+    value: 'deepseek-r1-distill-qwen-7b',
+    group: '百炼deepseek系列'
+}, {
+    label: 'deepseek-r1-distill-llama-8b',
+    value: 'deepseek-r1-distill-llama-8b',
+    group: '百炼deepseek系列'
+}, {
+    label: 'deepseek-r1-distill-qwen-14b',
+    value: 'deepseek-r1-distill-qwen-14b',
+    group: '百炼deepseek系列'
+}, {
+    label: 'deepseek-r1-distill-qwen-32b',
+    value: 'deepseek-r1-distill-qwen-32b',
+    group: '百炼deepseek系列'
+}, {
+    label: 'deepseek-r1-distill-llama-70b',
+    value: 'deepseek-r1-distill-llama-70b',
+    group: '百炼deepseek系列'
 }, {
     label: 'deepseek-v3 基础模型',
     value: 'deepseek-chat',
@@ -43,7 +75,9 @@ export const MODEL_NAME_LIST = [{
     label: 'deepseek-r1 推理模型',
     value: 'deepseek-reasoner',
     group: 'deepseek系列'
-}, {
+}, 
+
+{
     label: 'moonshot-v1-32k',
     value: 'moonshot-v1-32k',
     group: '月之暗面AI系列'
