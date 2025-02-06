@@ -28,11 +28,11 @@ resources:
           - app/main.py
         port: 8000
       runtime: custom.debian10
-      instanceConcurrency: 10
+      instanceConcurrency: 100
       role: AliyunFCDefaultRole
       cpu: 8
       memorySize: 16384
-      diskSize: 10240
+      diskSize: 512
       environmentVariables:
         PATH: >-
           /var/fc/lang/python3.10/bin::/usr/local/bin/apache-maven/bin:/usr/local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/local/ruby/bin:/opt/bin:/code:/code/bin
@@ -97,7 +97,7 @@ resources:
         - >-
           acs:fc:${vars.region}:1154600634854327:layers/agentcraft-frontend/versions/12
       runtime: custom.debian10
-      instanceConcurrency: 5
+      instanceConcurrency: 100
       memorySize: 3072
       role: AliyunFCDefaultRole
       cpu: 2
