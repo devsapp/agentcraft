@@ -20,7 +20,7 @@ import {
   FileInput,
   rem,
   Loader,
-  FileButton,
+  FileButton
 } from "@mantine/core";
 import { useForm, UseFormReturnType } from "@mantine/form";
 import { modals } from "@mantine/modals";
@@ -576,7 +576,6 @@ export function Datasource() {
           ) : null}
         </Flex>
       </Box>
-
       <LoadingOverlay
         visible={loading}
         overlayOpacity={0.3}
