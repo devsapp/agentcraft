@@ -565,6 +565,7 @@ def model_chat_stream(agent_session_id,
         logger.info(f"{YELLOW}Request Data:{request_data_for_log}{RESET}")
         resp = requests.post(model.url, headers=headers, data=request_data,
                             stream=True, timeout=model.timeout)
+        resp.encoding = 'utf-8'
         answer = [""]*agent.n_sequences
         if(resp.status_code != 200):
             logger.error(f"{RED}{resp.text}{RESET}")
@@ -595,30 +596,31 @@ def model_chat_stream(agent_session_id,
                         chunk["created"] = created
                         chunk["model"] = model.name_alias
                         usage = chunk.get('usage', {})
-                        
                         if "choices" in chunk and len(
                                 chunk["choices"]) > 0 and "delta" in chunk["choices"][0] and "content" in chunk["choices"][0]["delta"]:
                             content = chunk["choices"][0]["delta"]["content"]
-                            logger.info(f"{RED}chunk:{chunk}{RESET}")
-                            reasoning_content = get_reasoning_content(chunk)
-                            if(reasoning_content != None):
-                                if(start_reasoning == False):
-                                    start_reasoning = True
-                                    reasoning_content = reason_prefix + reasoning_content
-                                    chunk["choices"][0]["delta"]["content"] = reasoning_content
-                                else:
-                                    chunk["choices"][0]["delta"]["content"] = reasoning_content
-                                answer[chunk["choices"][0]["index"]
-                                    ] += reasoning_content
-                                yield json.dumps(chunk)
-    
-                            if(content != None):
+                            # logger.info(f"{RED}chunk:{chunk}{RESET}")
+                            
+                            if(content != None and content != ''):
                                 if(start_real_content == False and start_reasoning == True):
                                     start_real_content = True
                                     content = reason_suffix + content
                                     chunk["choices"][0]["delta"]["content"] = reason_suffix + content
-                                answer[chunk["choices"][0]["index"]
-                                    ] += content
+                                answer[chunk["choices"][0]["index"]] += content
+                                yield json.dumps(chunk)
+                            else:
+                                reasoning_content = get_reasoning_content(chunk)
+                                if(reasoning_content != None and reasoning_content != ''):
+                                    if(start_reasoning == False):
+                                        start_reasoning = True
+                                        reasoning_content = reason_prefix + reasoning_content
+                                        chunk["choices"][0]["delta"]["content"] = reasoning_content
+                                    else:
+                                        chunk["choices"][0]["delta"]["content"] = reasoning_content
+
+                                    answer[chunk["choices"][0]["index"]] += reasoning_content
+                                    yield json.dumps(chunk)
+                            if 'usage' in chunk and chunk['usage'] is not None:
                                 yield json.dumps(chunk)
                         else:
                             if 'usage' in chunk and chunk['usage'] is not None:

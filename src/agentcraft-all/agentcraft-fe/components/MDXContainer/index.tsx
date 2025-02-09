@@ -6,26 +6,22 @@ import RemarkBreaks from "remark-breaks";
 import RemarkGfm from "remark-gfm";
 import { MDXProvider } from '@mdx-js/react';
 import { compile, evaluate, run } from '@mdx-js/mdx';
-// @ts-ignore
-import MDX from '@mdx-js/runtime';
 import RehypeKatex from "rehype-katex";
 import RehypeHighlight from "rehype-highlight";
 import CodeHighlight from 'components/CodeHighlight';
 import Markdown from 'components/MarkdownContainer';
 import { Think } from 'mdx/Think';
 
-
 function fixMDXContent(content: string) {
     // 替换中文括号为英文括号
-    let fixed = content.replace(/（/g, '(').replace(/）/g, ')');
-    // 替换其他中文标点
-    fixed = fixed.replace(/，/g, ',').replace(/。/g, '.');
-    // 确保LaTeX公式正确转义
-    fixed = fixed.replace(/\\\(/g, '$').replace(/\\\)/g, '$').replace(/\\\,/g,'');
-    // fixed = fixed.replace(/\\(?:\\\\)*(\[|\]|\(|\)|\{|\})/g, '\\$1');
-    // fixed = fixed.replace(/(\d)([^\d\s.,;!?])/g, "$1 $2");
+    return content
+        .replace(/（/g, '(').replace(/）/g, ')')
+        // 替换其他中文标点
+        .replace(/，/g, ',').replace(/。/g, '.')
+        .replace(/\\\[/g, '$$').replace(/\\\]/g, '$$')
+        // 确保LaTeX公式正确转义
+        .replace(/\\\(/g, '$').replace(/\\\)/g, '$').replace(/\\\,/g, '')
 
-    return fixed;
 }
 
 
@@ -35,14 +31,14 @@ function remarkThink(content: string) {
     for (let i = 0; i < parts.length; i++) {
         let part = parts[i];
         if (/<think>/i.test(part)) {
-            parts[i] = '<think>' + part.replace(/<think>/gi, '');
+            parts[i] = '<Think>' + part.replace(/<think>/gi, '');
         }
     }
-    let processedStr = parts.join('</think>');
+    let processedStr = parts.join('</Think>');
 
     // 处理步骤2：去除多余的</think>
     let openCount = 0, closeCount = 0, result = '';
-    const regex = /(<\/?think\b[^>]*>)|([^<]+)/gi;
+    const regex = /(<\/?think\b[^>]*>)|(<[^>]+>)|([^<]+)/gi;
     let match;
     while ((match = regex.exec(processedStr)) !== null) {
         if (match[1]) {
@@ -54,25 +50,44 @@ function remarkThink(content: string) {
                 closeCount++;
                 result += match[1];
             }
-        } else {
+        } else if (match[2]) {
+            // 直接添加其他标签（如 <span>）
             result += match[2];
+        } else {
+            result += match[3];
         }
     }
+
 
     // 处理步骤3：补充单个未闭合的<think>
     const currentOpen = (result.match(/<think>/gi) || []).length;
     const currentClose = (result.match(/<\/think>/gi) || []).length;
+
     if (currentOpen === 1 && currentClose === 0) {
-        result += '\n\n</think>\n\n';
+        result += '\n\n</Think>\n\n';
     }
     return result;
 }
-// 自定义 Think 组件
+
 const components = {
-    think: Think,
+    Think,
     pre: (props: any) => <div {...props} />,
     code: (props: any) => {
-        return <CodeHighlight textContent={props.children} language={props.className?.replace("language-", "")} />
+        const { children, className, node, ...rest } = props;
+        const match = /language-(\w+)/.exec(className || "");
+        return match ? (
+            <CodeHighlight
+                {...rest}
+                language={match[1]}
+
+            >
+                {children}
+            </CodeHighlight >
+        ) : (
+            <code className={className} {...props}>
+                {children}
+            </code>
+        );
     },
     p: (pProps: any) => <p {...pProps} dir="auto" />,
     a: (aProps: any) => {
@@ -140,69 +155,57 @@ class ErrorBoundary extends React.Component<{ content: any, children: React.Reac
 }
 
 export function MdxLayout({ children }: { children: React.ReactNode }) {
-
     return <div style={{ color: 'blue' }} className="markdown-body" >{children}</div>;
 }
 
-
-
 export default function MDXContainer({ content, scope = {} }: any) {
     const [component, setComponent] = useState<React.ReactNode | null>(null);
-    let mdxContent = '';
+    let mdxContent = content;
     useEffect(() => {
         const parseMDX = async () => {
             try {
-
                 mdxContent = fixMDXContent(content);
                 mdxContent = remarkThink(mdxContent);
-              
                 const vf = await compile(mdxContent, {
                     outputFormat: "function-body",
-                    remarkPlugins: [RemarkMath as any, RemarkGfm as any, RemarkBreaks as any],
-                    rehypePlugins: [[RehypeKatex as any, {
-                        katexOptions: {
-                            strict: false // 关闭严格模式
-                            // 其他 KaTeX 选项（如需）
-                        }
-                    }], [RehypeHighlight as any, { detect: false, ignoreMissing: true }]]
+                    remarkPlugins: [
+                        [RemarkMath],
+                        RemarkGfm,
+                        RemarkBreaks
+                    ],
+                    rehypePlugins: [
+                        [RehypeKatex, {
+                            katexOptions: {
+                                strict: true 
+                            }
+                        }],
+                        [RehypeHighlight, { detect: false, ignoreMissing: true }]]
                 });
-                // const { default: XComponent } = await run(vf, {
-                //     ...runtime,
-                //     Fragment: MdxLayout
-                // });
-                // const MDXComponent = (
-                //     <MDXProvider  >
-                //         <XComponent components={components} scope={scope} />
-                //     </MDXProvider>
-                // );
+                const { default: XComponent } = await run(vf, {
+                    ...runtime,
+                    Fragment: MdxLayout
+                });
+
                 const MDXComponent = (
-                    <MDXProvider>
-                        <MdxLayout>
-                            <MDX components={components}
-                                scope={scope}
-                                remarkPlugins={[RemarkMath, RemarkGfm, RemarkBreaks]}
-                                rehypePlugins={[RehypeKatex, [RehypeHighlight, { detect: false, ignoreMissing: true }]]}>
-                                {mdxContent}
-                            </MDX>
-                        </MdxLayout>
+                    <MDXProvider  >
+                        <XComponent components={components} scope={scope} />
                     </MDXProvider>
                 );
-
                 setComponent(MDXComponent);
             } catch (e) {
                 content = remarkThink(content);
                 const MarkdownComponent = <Markdown textContent={content} />;
                 setComponent(
                     MarkdownComponent
-                )
+                );
             }
         };
         parseMDX();
     }, [content]);
 
     return (
-        <>
+        <ErrorBoundary content={content}>
             {component}
-        </>
+        </ErrorBoundary>
     );
 }

@@ -47,15 +47,11 @@ const MarkdownContent = (props: MarkdownContentProps) => {
   };
   return (
     <ReactMarkdown
-
       className={'markdown-body'}
       rehypePlugins={[
-        //@ts-ignore
         RehypeKatex,
-        //@ts-ignore
         rehypeRaw,
         [
-          //@ts-ignore
           RehypeHighlight,
           {
             detect: false,
@@ -65,20 +61,15 @@ const MarkdownContent = (props: MarkdownContentProps) => {
       ]}
       remarkPlugins={[RemarkMath, RemarkGfm, RemarkBreaks]}
       components={{
-        code({ node,  className, children, ...props }) {
+        code(props: any) {
+          const { children, className, node } = props
           const match = /language-(\w+)/.exec(className || "");
           return match ? (
-            <div className={styles['code-container']} onMouseEnter={() => setShowCopy(true)} onMouseLeave={() => setShowCopy(false)}>
-              <button className={styles['copy-btn']} style={{ visibility: showCopy ? 'visible' : 'hidden' }} onClick={() => copy2Clipboard(value || textContent)}>复制</button>
-              <Suspense>
-                <CodeHighlight
-                  darkMode={darkMode}
-                  language={match[1]}
-                  {...props}
-                  textContent={String(children).replace(/\n$/, '')}
-                />
-              </Suspense>
-            </div>
+            <CodeHighlight
+              language={match[1]}
+            >
+              {children}
+            </CodeHighlight>
           ) : (
             <code className={className} {...props}>
               {children}
