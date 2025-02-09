@@ -11,7 +11,7 @@ type MainProps = {
     children: any
 }
 function hasNoNavbar(pathname: string) {
-    const noNavbarPaths = ['/login', '/register', '/config'];
+    const noNavbarPaths = ['/login', '/register', '/config', '/chatBot'];
     for (let i = 0; i < noNavbarPaths.length; i++) {
         if (pathname.indexOf(noNavbarPaths[i]) !== -1) {
             return true;

@@ -47,7 +47,7 @@ const MarkdownContent = (props: MarkdownContentProps) => {
   };
   return (
     <ReactMarkdown
-      linkTarget={"_blank"}
+
       className={'markdown-body'}
       rehypePlugins={[
         //@ts-ignore
@@ -65,9 +65,9 @@ const MarkdownContent = (props: MarkdownContentProps) => {
       ]}
       remarkPlugins={[RemarkMath, RemarkGfm, RemarkBreaks]}
       components={{
-        code({ node, inline, className, children, ...props }) {
+        code({ node,  className, children, ...props }) {
           const match = /language-(\w+)/.exec(className || "");
-          return !inline && match ? (
+          return match ? (
             <div className={styles['code-container']} onMouseEnter={() => setShowCopy(true)} onMouseLeave={() => setShowCopy(false)}>
               <button className={styles['copy-btn']} style={{ visibility: showCopy ? 'visible' : 'hidden' }} onClick={() => copy2Clipboard(value || textContent)}>复制</button>
               <Suspense>

@@ -190,7 +190,7 @@ export function BuilderForm({ workspaceId }: AssistantProps) {
         </Box>
         <Box w="50%" h="100%" p={16}>
             <Center maw={'100%'} h={38} mx="auto">
-                <Text fw={700}>预览</Text>
+                <Text fw={700}><a href={`/chatBot/${workspaceId}/${instructionChatId}`} target="_blank">预览</a></Text>
             </Center>
             {currentKnowledgeBase?.id ? <KnowledgeBaseChat /> : null}
         </Box>
