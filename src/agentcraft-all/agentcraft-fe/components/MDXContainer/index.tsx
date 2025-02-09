@@ -1,17 +1,15 @@
 import React, { useState, useEffect, useRef } from 'react';
-// import * as runtime from 'react/jsx-runtime'
+import * as runtime from 'react/jsx-runtime'
 import { Paper, Button, Text } from '@mantine/core';
 import RemarkMath from "remark-math";
 import RemarkBreaks from "remark-breaks";
 import RemarkGfm from "remark-gfm";
-import {MDXProvider} from '@mdx-js/react';
-import { compile, evaluate } from '@mdx-js/mdx';
+import { MDXProvider } from '@mdx-js/react';
+import { compile, evaluate, run } from '@mdx-js/mdx';
 // @ts-ignore
 import MDX from '@mdx-js/runtime';
 import RehypeKatex from "rehype-katex";
-// import RehypeRaw from 'rehype-raw';
 import RehypeHighlight from "rehype-highlight";
-
 import CodeHighlight from 'components/CodeHighlight';
 import Markdown from 'components/MarkdownContainer';
 import { Think } from 'mdx/Think';
@@ -23,50 +21,12 @@ function fixMDXContent(content: string) {
     // 替换其他中文标点
     fixed = fixed.replace(/，/g, ',').replace(/。/g, '.');
     // 确保LaTeX公式正确转义
-    fixed = fixed.replace(/\\\(/g, '$').replace(/\\\)/g, '$').replace(/\\text/g, '\\\\text');
+    fixed = fixed.replace(/\\\(/g, '$').replace(/\\\)/g, '$').replace(/\\\,/g,'');
     // fixed = fixed.replace(/\\(?:\\\\)*(\[|\]|\(|\)|\{|\})/g, '\\$1');
     // fixed = fixed.replace(/(\d)([^\d\s.,;!?])/g, "$1 $2");
 
     return fixed;
 }
-
-
-// function fixMDXContent(content: string): string {
-//     return content
-//         // 1. 基础标点修正（中文→英文）
-//         .replace(/（/g, '(')
-//         .replace(/）/g, ')')
-//         .replace(/，/g, ', ')
-//         .replace(/。/g, '. ')
-//         // 2. 数学公式增强处理（核心修正）
-//         // 处理公式块内的所有问题
-//         .replace(/(\${1,2})(.*?)\1/gs, (_, delim, formula) => {
-//             return delim + formula
-//                 // 修复下标空格问题（v_{0 y } → v_{0y}）
-//                 .replace(/_{\s*([^}]+?)\s*}/g, (m: any, p1: string) =>
-//                     `_{${p1.replace(/\s+/g, '')}}`
-//                 )
-//                 // 标准化单位格式（2.5\mathrm{m} → 2.5\ \mathrm{m}）
-//                 .replace(/(\d)(\\mathrm{)/g, '$1 $2')
-//                 // 移除多余空格（兼容\, \quad等格式）
-//                 .replace(/(\\[,\s]+)(\\mathrm)/g, ' $2')
-//                 // 强制数字单位分离（2.5m → 2.5\ \mathrm{m}）
-//                 .replace(/(\d+\.?\d*)([a-zA-Z]+)/g, '$1\\ \\mathrm{$2}')
-//         })
-
-//         // 3. 全局修复（公式外内容）
-//         // 处理文本中的数字单位粘连（6米 → 6 米）
-//         .replace(/(\d)([^\d\s.,;!?])/g, '$1 $2')
-//         // 修复独立公式的转义问题
-//         .replace(/\\\[/g, '\\\\[')
-//         .replace(/\\\]/g, '\\\\]')
-//         // 4. 语法容错处理
-//         // 清除公式内多余空格（h = 2.5 \, \mathrm{m} → h = 2.5\ \mathrm{m}）
-//         .replace(/(\\,)\s*(\\mathrm)/g, ' $2')
-//         // 兼容多空格情况（v_{ 0 y } → v_{0y}）
-//         .replace(/_{\s*([^}]+)\s*}/g, '_{$1}'.replace(/\s+/g, ''));
-// }
-
 
 
 function remarkThink(content: string) {
@@ -105,7 +65,6 @@ function remarkThink(content: string) {
     if (currentOpen === 1 && currentClose === 0) {
         result += '\n\n</think>\n\n';
     }
-
     return result;
 }
 // 自定义 Think 组件
@@ -181,7 +140,7 @@ class ErrorBoundary extends React.Component<{ content: any, children: React.Reac
 }
 
 export function MdxLayout({ children }: { children: React.ReactNode }) {
-    
+
     return <div style={{ color: 'blue' }} className="markdown-body" >{children}</div>;
 }
 
@@ -193,9 +152,12 @@ export default function MDXContainer({ content, scope = {} }: any) {
     useEffect(() => {
         const parseMDX = async () => {
             try {
+
                 mdxContent = fixMDXContent(content);
                 mdxContent = remarkThink(mdxContent);
-                await compile(mdxContent, {
+              
+                const vf = await compile(mdxContent, {
+                    outputFormat: "function-body",
                     remarkPlugins: [RemarkMath as any, RemarkGfm as any, RemarkBreaks as any],
                     rehypePlugins: [[RehypeKatex as any, {
                         katexOptions: {
@@ -204,44 +166,23 @@ export default function MDXContainer({ content, scope = {} }: any) {
                         }
                     }], [RehypeHighlight as any, { detect: false, ignoreMissing: true }]]
                 });
-                // const jsx = await evaluate(mdxContent, {
+                // const { default: XComponent } = await run(vf, {
                 //     ...runtime,
-                //     ...components,
-                //     // @ts-ignore
-                //     components: components,
-                //     remarkPlugins: [RemarkMath, RemarkGfm, RemarkBreaks],
-                //     rehypePlugins: [
-                //         // 配置 KaTeX 选项：关闭严格模式以允许 Unicode 字符
-                //         [RehypeKatex, {
-                //             katexOptions: {
-                //                 strict: false // 关闭严格模式
-                //             }
-                //         }],
-                //         // 配置代码高亮插件
-                //         [RehypeHighlight, {
-                //             detect: false,
-                //             ignoreMissing: true
-                //         }]
-                //     ],
-                //     format: 'mdx',
                 //     Fragment: MdxLayout
                 // });
-    
-                // const XComponent = jsx.default;
-                // console.log(String(jsx.default))
                 // const MDXComponent = (
-                //     <provider.MDXProvider  >
-                //         <XComponent components={components} />
-                //     </provider.MDXProvider>
+                //     <MDXProvider  >
+                //         <XComponent components={components} scope={scope} />
+                //     </MDXProvider>
                 // );
                 const MDXComponent = (
                     <MDXProvider>
                         <MdxLayout>
-                            <MDX components={components} 
-                                 scope={scope} 
-                                 remarkPlugins={[RemarkMath, RemarkGfm, RemarkBreaks]}
-                                 rehypePlugins={[RehypeKatex ,[RehypeHighlight,  { detect: false, ignoreMissing: true }]]}>
-                                { mdxContent }
+                            <MDX components={components}
+                                scope={scope}
+                                remarkPlugins={[RemarkMath, RemarkGfm, RemarkBreaks]}
+                                rehypePlugins={[RehypeKatex, [RehypeHighlight, { detect: false, ignoreMissing: true }]]}>
+                                {mdxContent}
                             </MDX>
                         </MdxLayout>
                     </MDXProvider>
@@ -249,8 +190,6 @@ export default function MDXContainer({ content, scope = {} }: any) {
 
                 setComponent(MDXComponent);
             } catch (e) {
-                console.log(mdxContent, 'mdxContent');
-                console.log(e, 'e');
                 content = remarkThink(content);
                 const MarkdownComponent = <Markdown textContent={content} />;
                 setComponent(
@@ -263,9 +202,7 @@ export default function MDXContainer({ content, scope = {} }: any) {
 
     return (
         <>
-            <ErrorBoundary content={content}>
-                {component}
-            </ErrorBoundary>
+            {component}
         </>
     );
 }

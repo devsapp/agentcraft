@@ -599,7 +599,7 @@ def model_chat_stream(agent_session_id,
                         if "choices" in chunk and len(
                                 chunk["choices"]) > 0 and "delta" in chunk["choices"][0] and "content" in chunk["choices"][0]["delta"]:
                             content = chunk["choices"][0]["delta"]["content"]
-                            # logger.info(f"{RED}chunk:{chunk}{RESET}")
+                            logger.info(f"{RED}chunk:{chunk}{RESET}")
                             reasoning_content = get_reasoning_content(chunk)
                             if(reasoning_content != None):
                                 if(start_reasoning == False):
