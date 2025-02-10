@@ -46,6 +46,12 @@ class get_related():
         for _i, (_chunk, title, _url, _similarity) in enumerate(search_res):
             question.append(title)
         return question
+def get_reasoning_content(chunk):
+    choices = chunk.get("choices")
+    if isinstance(choices, list) and choices:
+        delta = choices[0].get("delta", {})
+        return delta.get("reasoning_content")
+    return None
 def get_chat_session_id(session_id: int, keyword: str, agent_id: int, **kv):
     if keyword is not None:
         data = agent_session_database.get_session_by_agent_id(agent_id, keyword=keyword)
@@ -486,10 +492,11 @@ def model_chat(agent_session_id,
         "logit_bias": json.loads(agent.logit_bias) if agent.logit_bias else {}
         
     }
-    logger.info(f"{YELLOW}request options:{llm_request_options}{RESET}")
     if(agent.stop != []):
         llm_request_options['stop'] = agent.stop
-    request_data = json.dumps(llm_request_options)
+    request_data = json.dumps(llm_request_options) # 不转码存在服务器的特殊情况
+    request_data_for_log = json.dumps(llm_request_options,ensure_ascii=False)
+    logger.info(f"{YELLOW}Request Data:{request_data_for_log}{RESET}")
     resp = requests.post(model.url, headers=headers,
                          data=request_data, timeout=model.timeout)
     if resp.status_code != 200:
@@ -553,12 +560,13 @@ def model_chat_stream(agent_session_id,
         }
         if(agent.stop != []):
             llm_request_options['stop'] = agent.stop
-        request_data = json.dumps(llm_request_options,ensure_ascii=False)
-        logger.info(f"{YELLOW}request data:{request_data}{RESET}")
+        request_data = json.dumps(llm_request_options)
+        request_data_for_log = json.dumps(llm_request_options,ensure_ascii=False)
+        logger.info(f"{YELLOW}Request Data:{request_data_for_log}{RESET}")
         resp = requests.post(model.url, headers=headers, data=request_data,
                             stream=True, timeout=model.timeout)
+        resp.encoding = 'utf-8'
         answer = [""]*agent.n_sequences
-
         if(resp.status_code != 200):
             logger.error(f"{RED}{resp.text}{RESET}")
             yield json.dumps({
@@ -573,6 +581,10 @@ def model_chat_stream(agent_session_id,
             yield DONE
             return
         usage = {}
+        reason_prefix = '\n<think>\n'
+        reason_suffix = '\n</think>\n'
+        start_reasoning = False
+        start_real_content = False
         for line in resp.iter_lines():
             if line:
                 line = codecs.decode(line)
@@ -584,17 +596,35 @@ def model_chat_stream(agent_session_id,
                         chunk["created"] = created
                         chunk["model"] = model.name_alias
                         usage = chunk.get('usage', {})
-                        yield json.dumps(chunk)
                         if "choices" in chunk and len(
                                 chunk["choices"]) > 0 and "delta" in chunk["choices"][0] and "content" in chunk["choices"][0]["delta"]:
                             content = chunk["choices"][0]["delta"]["content"]
-                            # reasoning_content = chunk["choices"][0]["delta"]["reasoning_content"]
-                            # if(reasoning_content != None):
-                            #     answer[chunk["choices"][0]["index"]
-                            #         ] += chunk["choices"][0]["delta"]["reasoning_content"]
-                            if(content != None):
-                                answer[chunk["choices"][0]["index"]
-                                    ] += chunk["choices"][0]["delta"]["content"]
+                            # logger.info(f"{RED}chunk:{chunk}{RESET}")
+                            
+                            if(content != None and content != ''):
+                                if(start_real_content == False and start_reasoning == True):
+                                    start_real_content = True
+                                    content = reason_suffix + content
+                                    chunk["choices"][0]["delta"]["content"] = reason_suffix + content
+                                answer[chunk["choices"][0]["index"]] += content
+                                yield json.dumps(chunk)
+                            else:
+                                reasoning_content = get_reasoning_content(chunk)
+                                if(reasoning_content != None and reasoning_content != ''):
+                                    if(start_reasoning == False):
+                                        start_reasoning = True
+                                        reasoning_content = reason_prefix + reasoning_content
+                                        chunk["choices"][0]["delta"]["content"] = reasoning_content
+                                    else:
+                                        chunk["choices"][0]["delta"]["content"] = reasoning_content
+
+                                    answer[chunk["choices"][0]["index"]] += reasoning_content
+                                    yield json.dumps(chunk)
+                            if 'usage' in chunk and chunk['usage'] is not None:
+                                yield json.dumps(chunk)
+                        else:
+                            if 'usage' in chunk and chunk['usage'] is not None:
+                                yield json.dumps(chunk)
                     except json.JSONDecodeError as err:
                         logger.info(f"{YELLOW}Unconverted chunk {line}{RESET}")
         # """添加检索来源信息"""

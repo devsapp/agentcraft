@@ -11,7 +11,7 @@ import THEME from 'constants/theme';
 import '../styles/global.scss';
 import '../styles/markdown.scss';
 
-
+import 'katex/dist/katex.min.css';
 
 export default function App(props: AppProps) {
   const { Component, pageProps } = props;

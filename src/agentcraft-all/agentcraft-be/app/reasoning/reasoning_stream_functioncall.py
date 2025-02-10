@@ -230,7 +230,7 @@ class ReasoningStreamFc:
             "Content-Type": "application/json"
         }
         try:
-            request_data = {
+            llm_request_options = {
                 "model": kwargs['model'],
                 "messages": messages,
                 "temperature": kwargs['temperature'],
@@ -247,10 +247,12 @@ class ReasoningStreamFc:
                 }
             }
             if(len(kwargs['tools'])>0):
-                request_data["tools"] = kwargs['tools']
+                llm_request_options["tools"] = kwargs['tools']
             else:
                 tool_call = False
-            request_data = json.dumps(request_data,ensure_ascii=False)
+            request_data = json.dumps(llm_request_options)
+            request_data_for_log = json.dumps(llm_request_options,ensure_ascii=False)
+            logger.info(f"{YELLOW}Request Data:{request_data_for_log}{RESET}")
             resp = requests.post(kwargs['url'], headers=headers, stream=True,
                                 data=request_data, timeout=kwargs['timeout'])
             for index, line in enumerate(resp.iter_lines()):
@@ -304,7 +306,6 @@ class ReasoningStreamFc:
                 llm_outputs[0]['choices'][0]['delta']['tool_calls'][0]['function']['arguments']=tool_use[0]["arguments"]
             return answer,llm_outputs
         except Exception as e:
-                logger.info(f'{YELLOW}original response:{resp.text}{RESET}')
                 logger.error(f"{RED}Unexpected error in model_chat_stream: {e}{RESET}", exc_info=True)
                 yield json.dumps({
                     "id": uid,

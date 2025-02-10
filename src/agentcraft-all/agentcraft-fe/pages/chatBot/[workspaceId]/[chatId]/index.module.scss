@@ -1,0 +1,24 @@
+.chat-session-container {
+    width: 100%;
+    margin-top: 24px;
+}
+.chat-session-item {
+    cursor: pointer;
+    background-color: #F6F7F9;
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    padding: 0 12px;
+    &.active {
+        background-color: rgb(219 234 254);
+    }
+    .rename,
+    .delete {
+        cursor: pointer;
+    }
+    .chat-session-name {
+        width: 180px;
+        line-height: 32px;
+        height: 32px;
+    }
+}

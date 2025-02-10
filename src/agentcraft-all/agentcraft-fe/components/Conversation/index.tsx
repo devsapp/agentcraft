@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { nanoid } from 'nanoid';
-import { Loader, LoadingOverlay, Button, Modal, Group, Badge, CopyButton } from '@mantine/core';
-import MarkdownContent from 'components/MarkdownContent';
+import { Loader, LoadingOverlay, Button, Modal, Group, Badge, CopyButton, Text } from '@mantine/core';
+// import MarkdownContainer from 'components/Markdown';
 import { notifications } from '@mantine/notifications';
 import MDXContainer from 'components/MDXContainer';
 import { chatStream } from 'store/chat';
@@ -115,7 +115,7 @@ const ConversationComponent = React.memo((data: ConversationItem) => {
                 </div>
             )}
             <div className={styles.markdownanswer}>
-                {isUser ? <MarkdownContent textContent={data.content} /> : <MDXContainer content={data.content} />}
+                {isUser ? <Text style={{ whiteSpace: 'pre-wrap' }} >{data.content}</Text> : <MDXContainer content={data.content} />}
             </div>
             {
                 !isUser && (
@@ -132,7 +132,7 @@ const ConversationComponent = React.memo((data: ConversationItem) => {
         </div>
     )
 });
-ConversationComponent.displayName = 'ConversationComponent'; 
+ConversationComponent.displayName = 'ConversationComponent';
 
 export default function Conversation(props: ConversationProps) {
     const { token, version, keyword = '测试会话', id } = props;
@@ -146,7 +146,7 @@ export default function Conversation(props: ConversationProps) {
     useEffect(() => {
         (chatInputRef as any).current.focus();
         getMessages();
-    }, []);
+    }, [keyword, id]);
 
     useEffect(() => {
         if (messageListRef.current && conversations.length > 0) {
@@ -280,7 +280,7 @@ export default function Conversation(props: ConversationProps) {
                                 autoFocus={false}
                                 rows={1}
                                 name="chatInput"
-                                placeholder={loading ? "等待回复中" : "请输入你的问题，如AgentCraft的使用场景有哪些？ "}
+                                placeholder={loading ? "等待回复中" : "请输入你的问题 "}
                                 className={styles.textarea}
                             />
                             <button

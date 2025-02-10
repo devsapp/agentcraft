@@ -7,6 +7,7 @@ export const EXPAND_NAV_WIDTH = 220;
 export const CLOSE_NAV_WIDTH = 72;
 
 export const AGENTCRAFT_TOKEN = 'agent_craft_token';
+export const AGENTCRAFT_SHARE = 'agent_share_token';
 export const AGENTCRAFT_SYSTEMCONFIG_COMPLETED = 'agent_craft_systemconfig_completed';
 export const AGENTCRAFT_QUICK_START = 'agentcraft-quick-start';
 

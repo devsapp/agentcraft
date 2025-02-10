@@ -1,10 +1,10 @@
 Edition: 3.0.0
 Type: Project
-Name: AgentCraft—CAP
+Name: AgentCraft-CAP
 Version: dev
 Provider:
   - 阿里云
-Description: 基于Serverless架构的开源智能体平台，可以快速构建构内容提取、知识库、图文生成助手等智能应用,支持deepseek,通义千问等多种模型
+Description: 基于Serverless架构的开源智能体平台，可以快速构建构内容提取、知识库、图文生成助手等智能应用,支持deepseek r1、v3,通义千问等多种模型
 HomePage: https://github.com/devsapp/agentcraft
 Tags: #标签详情
   - AIGC
