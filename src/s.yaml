@@ -105,6 +105,7 @@ resources:
         beFunctionName: ${vars.beFunctionName}
         NODE_PATH: /opt/nodejs/node_modules
         Region: ${vars.region}
+        JWT_SECRET: {{ JWT_SECRET }}
         PATH: >-
           /opt/nodejs18/bin::/usr/local/bin/apache-maven/bin:/usr/local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/local/ruby/bin:/opt/bin:/code:/code/bin:/opt/nodejs/node_modules/.bin
       functionName: ${vars.feFunctionName}

@@ -1,5 +1,4 @@
 import crypto from 'crypto';
-
 const ecdsa = crypto.createECDH('secp256k1');
 ecdsa.generateKeys();
 
@@ -56,3 +55,4 @@ export function getTokenFromRequest(req: any) {
     const cookie = req.headers.cookie as string;
     return getTokenFromCookie(cookie);
 }
+

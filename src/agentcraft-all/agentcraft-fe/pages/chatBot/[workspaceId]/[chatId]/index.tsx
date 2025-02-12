@@ -4,7 +4,8 @@ import { nanoid } from 'nanoid';
 import { Box, Flex, Text, Button, Navbar, NavLink, Menu, createStyles, ActionIcon, Input } from '@mantine/core';
 import { modals } from '@mantine/modals';
 import { IconSettings } from '@tabler/icons-react';
-import { useKnowledgeBaseStore, getKnowledgeBase } from 'store/knowledgeBase';
+import { useKnowledgeBaseStore,  getKnowledgeBase } from 'store/knowledgeBase';
+
 import { useChatBotStore } from 'store/chatBot';
 import Conversation from 'components/Conversation';
 import styles from './index.module.scss';
@@ -69,22 +70,56 @@ export function getServerSideProps(context: any) {
   }
 }
 
+export const createDynamicSessionData = (prefix: string, workspaceId: string, chatBotId: string) => {
+  const sessionId = `${prefix}${nanoid()}`;
+  return {
+    value: sessionId,
+    label: `对话`,
+  };
+};
+
+function filterSessionList(sessionList: ISessionItem[], prefix: string) {
+  if (sessionList && sessionList.length > 0)
+    return sessionList.filter((item: ISessionItem) => item.value.includes(prefix));
+  return [];
+}
+
+function filterCurrentLocalSession(currentLocalSessions: ISessionItem[], prefix: string) {
+  if (currentLocalSessions.length > 0) {
+    return currentLocalSessions.filter((item: ISessionItem) => item.value.includes(prefix));
+  }
+  return [];
+}
 
 export default function IndexPage() {
   const router = useRouter();
   const { query } = router;
   const { updateCurrentKnowledgeBase, currentKnowledgeBase } = useKnowledgeBaseStore();
-  const chatBotId = query.chatId;
-  const { localSessions, setLocalSessions, currentLocalSession, setCurrentLocalSession } = useChatBotStore();
+  const { chatId: chatBotId, workspaceId, shareToken } = query;
+  const prefix = `chat-bot-${workspaceId}-${chatBotId}-`
+  const { localSessions, setLocalSessions, currentLocalSessions, setCurrentLocalSessions } = useChatBotStore();
+
   useEffect(() => {
     if (chatBotId) {
       (async () => {
-        const knowledgeBase = await getKnowledgeBase(chatBotId);
+        const knowledgeBase = await getKnowledgeBase(chatBotId, shareToken as string);
         updateCurrentKnowledgeBase(knowledgeBase);
       })()
     }
-  }, []);
 
+  }, []);
+  useEffect(() => {
+    const filteredSessions = filterSessionList(localSessions, prefix);
+    const filteredCurrentSessions = filterCurrentLocalSession(currentLocalSessions, prefix);
+    if (workspaceId && chatBotId && filteredSessions.length === 0 && filteredCurrentSessions.length === 0) {
+      const dynamicSessionData = createDynamicSessionData(prefix, workspaceId as string, chatBotId as string);
+      localSessions.push(dynamicSessionData);
+      currentLocalSessions.push(dynamicSessionData);
+      setLocalSessions(localSessions);
+      setCurrentLocalSessions(currentLocalSessions);
+    }
+  }, [])
+  const currentLocation: any = filterCurrentLocalSession(currentLocalSessions, prefix)[0] || {};
   return <Flex h={'100vh'} style={{ overflow: 'hidden' }}>
     <Box w="240px" h="100%" style={{ borderRight: '1px solid #ccc', padding: 12 }}>
       <Text
@@ -97,37 +132,61 @@ export default function IndexPage() {
       <Button
         style={{ width: '100%', marginTop: 24 }}
         onClick={() => {
-          const sessionId = `share-${chatBotId}-${nanoid()}`;
-          const sessionName = `对话${localSessions.length}`;
+          const sessionId = `${prefix}${nanoid()}`;
+          const _localSessions = filterSessionList(localSessions, prefix);
+
+          const sessionName = `对话${_localSessions.length}`;
           const newSession = {
             label: sessionName,
             value: sessionId
           };
           localSessions.push(newSession);
-          setLocalSessions(localSessions);
-          setCurrentLocalSession(newSession);
+          const newLocalSessions = localSessions;
+          const newCurrentLocalSessions = currentLocalSessions.map((_item: ISessionItem) => {
+            if (_item.value.indexOf(prefix) !== -1) {
+              _item = newSession;
+            }
+            return _item;
+          });
+          setLocalSessions(newLocalSessions);
+          setCurrentLocalSessions(newCurrentLocalSessions);
         }}
       >
         新对话
       </Button>
       <div className={styles['chat-session-container']}>
-        {localSessions.map((item: ISessionItem) => {
+        {filterSessionList(localSessions, prefix).map((item: ISessionItem) => {
           return <div
             key={item.value}
-            className={item.value === currentLocalSession.value ? [styles['chat-session-item'], styles['active']].join(" ") : styles['chat-session-item']}
+            className={item.value === currentLocation.value ? [styles['chat-session-item'], styles['active']].join(" ") : styles['chat-session-item']}
             onClick={() => {
-              setCurrentLocalSession(item);
+
+              const newCurrentLocalSessions = currentLocalSessions.map((_item: ISessionItem) => {
+                if (_item.value.indexOf(prefix) !== -1) {
+                  _item = item;
+                }
+                return _item;
+              });
+              setCurrentLocalSessions(newCurrentLocalSessions);
             }}
           >
             <SessionItem
               data={item}
               onChange={(data: ISessionItem) => {
-                localSessions.forEach((item: ISessionItem) => {
-                  if (item.value === data.value) {
-                    item.label = data.label
+                const newCurrentLocalSessions = currentLocalSessions.map((_item: ISessionItem) => {
+                  if (_item.value.indexOf(prefix) !== -1) {
+                    _item = data;
                   }
+                  return _item;
                 });
-                setLocalSessions(localSessions);
+                const newlocalSessions = localSessions.map((item: ISessionItem) => {
+                  if (item.value === data.value) {
+                    item = data;
+                  }
+                  return item;
+                })
+                setCurrentLocalSessions(newCurrentLocalSessions);
+                setLocalSessions(newlocalSessions);
               }}
               onDelete={(value: string) => {
                 modals.openConfirmModal({
@@ -152,8 +211,13 @@ export default function IndexPage() {
       </div>
     </Box>
     <Box style={{ height: '100%', width: 'calc(100vw - 240px)' }} >
-      <Box style={{ margin: '160px auto' }} w={'80%'}>
-        <Conversation version='v1' token={currentKnowledgeBase?.token || ''} id={currentKnowledgeBase?.id as number} keyword={currentLocalSession.value} />
+      <Box style={{ margin: '120px auto', height: '100%' }} w={'80%'}>
+        <Conversation 
+            version='v1' 
+            token={currentKnowledgeBase?.token || ''} 
+            shareToken={shareToken as string}
+            id={currentKnowledgeBase?.id as number} 
+            keyword={currentLocation.value} />
       </Box>
     </Box>
   </Flex>

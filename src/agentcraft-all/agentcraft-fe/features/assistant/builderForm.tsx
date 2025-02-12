@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
 import { useRouter } from 'next/router';
-
 import { Center, ActionIcon, Tooltip, Spoiler, Breadcrumbs, Anchor, Button, Checkbox, Box, Table, TextInput, Text, Highlight, Switch, Group, Badge, MultiSelect, Select, Drawer, LoadingOverlay, Modal, Textarea, Flex, NumberInput, Paper, Title, Divider } from '@mantine/core';
 import { useForm } from '@mantine/form';
 import { IconRefresh, IconArrowBackUp } from '@tabler/icons-react';
@@ -11,7 +10,7 @@ import { DataSet, DataSetType } from 'types/dataset';
 import { useAssistantStore, addAssistant, refreshToken, updateAssistant, getAssistant } from 'store/assistant';
 import { getToolList, useActionToolStore } from 'store/actionTools';
 import { Dataset } from 'types/assistant';
-import { DATA_RETRIVAL_PROMPT_TEMPLATE } from 'constants/instructions';
+import { DATA_RETRIVAL_PROMPT_TEMPLATE, DEFAULT_CHAT_INSTRUCTION } from 'constants/instructions';
 import AssistantChat from 'features/assistant/chat';
 
 
@@ -73,26 +72,6 @@ export function AssistantForm({ workspaceId, form }: { workspaceId: any, form: a
                 />
             </Box>
         </Paper>
-        {/* <Paper shadow="xs" p="md" withBorder style={{ width: pannelWidth }}>
-            <Flex justify={'space-between'} align={'center'}>
-                <Title order={5} size="h5" >内置能力（待开放）</Title>
-            </Flex>
-
-            <Box pl={4} pr={4} >
-                <Checkbox.Group
-                    value={form.values.capabilities}
-                    onChange={(values) => {
-                        form.setValues({
-                            capabilities: values
-                        })
-                    }}
-                >
-                    <Group mt="xs">
-                        <Checkbox value="code_interpreter" label="代码解释器" disabled />
-                    </Group>
-                </Checkbox.Group>
-            </Box>
-        </Paper> */}
         <Paper shadow="xs" p="md" withBorder style={{ width: pannelWidth }}>
             <Flex justify={'space-between'} align={'center'}>
                 <Title order={5} size="h5">AI工具</Title>
@@ -136,14 +115,13 @@ export function AssistantForm({ workspaceId, form }: { workspaceId: any, form: a
 }
 
 export function BuilderForm({ workspaceId }: AssistantProps) {
+    const { currentAssistant, setLoading, updateCurrentAssistant } = useAssistantStore();
     const router = useRouter();
     const { query } = router;
-    const initAgentName = query.initAgentName;
+    const initAgentName = query.initAgentName || currentAssistant?.id;
     const assistantId = query.assistantId;
     const [disabledSave, setDisabledSave] = useState(false);
-    const setLoading = useAssistantStore().setLoading;
-    const updateCurrentAssistant = useAssistantStore().updateCurrentAssistant;
-    const currentAssistant = useAssistantStore().currentAssistant;
+
     const modelList: Model[] = useModelStore().modelList;
     const initFormValue = {
         name: initAgentName,
@@ -154,7 +132,7 @@ export function BuilderForm({ workspaceId }: AssistantProps) {
         fuzzy_datasets: [],
         action_tools: [],
         exact_search_similarity: 0.9,
-        fuzzy_search_similarity: 0.6,
+        fuzzy_search_similarity: 0.4,
         temperature: 0.5,
         top_p: 1.0,
         n_sequences: 1,
@@ -169,9 +147,9 @@ export function BuilderForm({ workspaceId }: AssistantProps) {
         model_ip_limit: 0,
         llm_history_len: 0,
         system_message: '',
-        instruction: '',
+        instruction: DEFAULT_CHAT_INSTRUCTION,
         exact_search_limit: 1,
-        fuzzy_search_limit: 3,
+        fuzzy_search_limit: 10,
         prompt_starts: [],
         capabilities: []
     }
@@ -268,7 +246,6 @@ export function BuilderForm({ workspaceId }: AssistantProps) {
                                 if (form.isValid()) {
                                     setLoading(true);
                                     const values: any = form.values;
-                                    // console.log(values, 'values');
                                     if (currentAssistant?.id) {
                                         await updateAssistant(currentAssistant?.id, values);
                                     } else {
@@ -276,8 +253,12 @@ export function BuilderForm({ workspaceId }: AssistantProps) {
                                         const assistantId = result.id;
                                         if (assistantId) {
                                             await refreshToken(assistantId);
-                                            window.history.pushState({}, '', `?assistantId=${assistantId}`);
                                             const assistant = await getAssistant(assistantId);
+                                            // window.history.pushState({}, '', `?assistantId=${assistantId}`);
+                                            const url = new URL(window.location.href);
+                                            const newPath = `${url.pathname}/${assistantId}`;
+                                            const newUrl = new URL(newPath, url.origin);
+                                            window.history.pushState({}, '', newUrl.toString());
                                             updateCurrentAssistant(assistant);
                                         }
                                     }

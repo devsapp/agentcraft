@@ -5,12 +5,12 @@ import { useForm } from '@mantine/form';
 import { IconRefresh } from '@tabler/icons-react';
 import { getModelList, useModelStore } from 'store/model';
 import { getDataSetList } from 'store/dataset';
-
+import { createShare } from 'store/share';
 import { Model } from 'types/model';
 import { useKnowledgeBaseStore, addKnowledgeBase, refreshToken, updateKnowledgeBase, getKnowledgeBase } from 'store/knowledgeBase';
 import { Dataset } from 'types/knowledgeBase';
 import { DataSetType } from 'types/dataset';
-import { INSTRUCTION_TEMPLATES, DEFAULT_CHAT_INSTRUCTION } from 'constants/instructions'
+import { DEFAULT_CHAT_INSTRUCTION } from 'constants/instructions'
 import KnowledgeBaseChat from 'features/knowledgeBase/chat';
 import { InstructionLLMForm } from 'components/InstructionLLMForm';
 
@@ -33,11 +33,11 @@ export function InstructionChatForm({ form }: { form: any }) {
 }
 
 export function BuilderForm({ workspaceId }: AssistantProps) {
+    const { setLoading, currentKnowledgeBase, updateCurrentKnowledgeBase } = useKnowledgeBaseStore();
     const router = useRouter();
     const { query } = router;
-    const instructionChatId: any = query.instructionChatId;
+    const instructionChatId: any = query.instructionChatId || currentKnowledgeBase?.id;
     const initAgentName = query.initAgentName;
-    const { setLoading, currentKnowledgeBase, updateCurrentKnowledgeBase } = useKnowledgeBaseStore();
     const modelList: Model[] = useModelStore().modelList;
     const [disabledSave, setDisabledSave] = useState(modelList?.length === 0);
     const initFormValue = {
@@ -145,7 +145,11 @@ export function BuilderForm({ workspaceId }: AssistantProps) {
                     const instructionChatId = result.id;
                     if (instructionChatId) {
                         const { token } = await refreshToken(instructionChatId);
-                        window.history.pushState({}, '', `?instructionChatId=${instructionChatId}`);
+                        // window.history.pushState({}, '', `?instructionChatId=${instructionChatId}`);
+                        const url = new URL(window.location.href);
+                        const newPath = `${url.pathname}/${instructionChatId}`;
+                        const newUrl = new URL(newPath, url.origin);
+                        window.history.pushState({}, '', newUrl.toString());
                         updateCurrentKnowledgeBase(Object.assign({}, values, { id: instructionChatId, token }));
                     }
 
@@ -190,7 +194,15 @@ export function BuilderForm({ workspaceId }: AssistantProps) {
         </Box>
         <Box w="50%" h="100%" p={16}>
             <Center maw={'100%'} h={38} mx="auto">
-                <Text fw={700}><a href={`/chatBot/${workspaceId}/${instructionChatId}`} target="_blank">预览</a></Text>
+                <Text
+                    fw={700}
+                    style={{ cursor: 'pointer' }}
+                    onClick={async () => {
+                        const { token: shareToken } = await createShare(instructionChatId);
+                        window.open(`/chatBot/${workspaceId}/${instructionChatId}?shareToken=${shareToken}`);
+                    }}>
+                    对外分享
+                </Text>
             </Center>
             {currentKnowledgeBase?.id ? <KnowledgeBaseChat /> : null}
         </Box>

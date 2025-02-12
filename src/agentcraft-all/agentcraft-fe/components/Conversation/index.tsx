@@ -27,6 +27,7 @@ type ConversationProps = {
     keyword?: string,
     id: number,
     token: string,
+    shareToken?: string,
     version: 'v1' | 'v2' // v1 对应基础llm调用和rag检索， v2代表agent服务 二者在agentcraft的后端是分开的
 }
 
@@ -42,7 +43,6 @@ function transformMessage(data: any[]): ConversationItem[] {
     if (!Array.isArray(data)) {
         return [];
     }
-
     const m = [];
     for (const item of data) {
         if (item.question) {
@@ -135,7 +135,7 @@ const ConversationComponent = React.memo((data: ConversationItem) => {
 ConversationComponent.displayName = 'ConversationComponent';
 
 export default function Conversation(props: ConversationProps) {
-    const { token, version, keyword = '测试会话', id } = props;
+    const { token, version, keyword = '测试会话', id, shareToken = '' } = props;
     const [loading, setLoading] = useState(false);
     const [showModal, setShowModal] = useState(false);
     const [historyLoading, setHistoryLoading] = useState(false);
@@ -146,7 +146,7 @@ export default function Conversation(props: ConversationProps) {
     useEffect(() => {
         (chatInputRef as any).current.focus();
         getMessages();
-    }, [keyword, id]);
+    }, [keyword, id, shareToken]);
 
     useEffect(() => {
         if (messageListRef.current && conversations.length > 0) {
@@ -158,16 +158,16 @@ export default function Conversation(props: ConversationProps) {
     const getMessages = async () => {
         if (id) {
             setHistoryLoading(true);
-            const res = await ApiVersion[version].getSessionHistory(id, { keyword });
+            const res = await ApiVersion[version].getSessionHistory(id, { keyword, shareToken });
             setConversations(transformMessage(res.data));
             setHistoryLoading(false);
         }
     }
     const removeSession = async () => {
         setHistoryLoading(true);
-        const { data } = await ApiVersion[version].getSessionByKeyword(id, keyword);
+        const { data } = await ApiVersion[version].getSessionByKeyword(id, keyword, shareToken);
         if (data?.id) {
-            await ApiVersion[version].removeSessionHistory(data.id);
+            await ApiVersion[version].removeSessionHistory(data.id, shareToken);
             await getMessages();
         }
         setHistoryLoading(false);
@@ -244,7 +244,7 @@ export default function Conversation(props: ConversationProps) {
     };
 
     return (
-        <div>
+        <>
             <LoadingOverlay
                 visible={historyLoading}
                 overlayOpacity={0.3}
@@ -302,7 +302,7 @@ export default function Conversation(props: ConversationProps) {
                     </div>
                 </div>
             </main>
-        </div>
+        </>
 
     );
 }

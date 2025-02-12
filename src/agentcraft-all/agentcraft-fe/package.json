@@ -31,6 +31,7 @@
     "@tabler/icons-react": "^2.32.0",
     "autoprefixer": "^10.4.15",
     "axios": "^1.5.0",
+    "jsonwebtoken": "^9.0.2",
     "katex": "^0.16.21",
     "langchain": "^0.0.167",
     "mermaid": "^10.6.1",
@@ -57,6 +58,7 @@
     "zustand": "^4.4.1"
   },
   "devDependencies": {
+    "@types/jsonwebtoken": "^9.0.8",
     "@types/multer": "^1.4.8",
     "@types/next": "^9.0.0",
     "@types/node": "18.14.4",

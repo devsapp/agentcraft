@@ -1,22 +1,22 @@
 
 > 注：当前项目为 Serverless Devs 应用，由于应用中会存在需要初始化才可运行的变量（例如应用部署地区、函数名等等），所以**不推荐**直接 Clone 本仓库到本地进行部署或直接复制 s.yaml 使用，**强烈推荐**通过 `s init ${模版名称}` 的方法或应用中心进行初始化，详情可参考[部署 & 体验](#部署--体验) 。
 
-# AgentCraft 帮助文档
+# AgentCraft-CAP 帮助文档
 <p align="center" class="flex justify-center">
     <a href="https://www.serverless-devs.com" class="ml-1">
-    <img src="http://editor.devsapp.cn/icon?package=AgentCraft&type=packageType">
+    <img src="http://editor.devsapp.cn/icon?package=AgentCraft-CAP&type=packageType">
   </a>
-  <a href="http://www.devsapp.cn/details.html?name=AgentCraft" class="ml-1">
-    <img src="http://editor.devsapp.cn/icon?package=AgentCraft&type=packageVersion">
+  <a href="http://www.devsapp.cn/details.html?name=AgentCraft-CAP" class="ml-1">
+    <img src="http://editor.devsapp.cn/icon?package=AgentCraft-CAP&type=packageVersion">
   </a>
-  <a href="http://www.devsapp.cn/details.html?name=AgentCraft" class="ml-1">
-    <img src="http://editor.devsapp.cn/icon?package=AgentCraft&type=packageDownload">
+  <a href="http://www.devsapp.cn/details.html?name=AgentCraft-CAP" class="ml-1">
+    <img src="http://editor.devsapp.cn/icon?package=AgentCraft-CAP&type=packageDownload">
   </a>
 </p>
 
 <description>
 
-基于Serverless架构的开源智能体平台，可以快速构建构内容提取、知识库、图文生成助手等智能应用
+基于Serverless架构的开源智能体平台，可以快速构建构AI ChatBot、AI 知识库、AI智能助手等智能体应用,支持Deepseek满血,通义千问等多种模型
 
 </description>
 
@@ -42,7 +42,8 @@
 
 | 服务/业务 |  权限  | 相关文档 |
 | --- |  --- | --- |
-| 函数计算 |  创建函数 | [帮助文档](https://help.aliyun.com/product/2508973.html) [计费文档](https://help.aliyun.com/document_detail/2512928.html) |
+| 函数计算 |  AliyunFCFullAccess | [帮助文档](https://help.aliyun.com/product/2508973.html) [计费文档](https://help.aliyun.com/document_detail/2512928.html) |
+| 专有网络 |  AliyunFCServerlessDevsRolePolicy | [帮助文档](https://help.aliyun.com/zh/vpc) [计费文档](https://help.aliyun.com/zh/vpc/product-overview/billing) |
 
 </service>
 
@@ -62,16 +63,16 @@
 
 <appcenter>
    
-- :fire: 通过 [Serverless 应用中心](https://fcnext.console.aliyun.com/applications/create?template=AgentCraft) ，
-  [![Deploy with Severless Devs](https://img.alicdn.com/imgextra/i1/O1CN01w5RFbX1v45s8TIXPz_!!6000000006118-55-tps-95-28.svg)](https://fcnext.console.aliyun.com/applications/create?template=AgentCraft) 该应用。
+- :fire: 通过 [Serverless 应用中心](https://fcnext.console.aliyun.com/applications/create?template=AgentCraft-CAP) ，
+  [![Deploy with Severless Devs](https://img.alicdn.com/imgextra/i1/O1CN01w5RFbX1v45s8TIXPz_!!6000000006118-55-tps-95-28.svg)](https://fcnext.console.aliyun.com/applications/create?template=AgentCraft-CAP) 该应用。
    
 </appcenter>
 <deploy>
     
 - 通过 [Serverless Devs Cli](https://www.serverless-devs.com/serverless-devs/install) 进行部署：
   - [安装 Serverless Devs Cli 开发者工具](https://www.serverless-devs.com/serverless-devs/install) ，并进行[授权信息配置](https://docs.serverless-devs.com/fc/config) ；
-  - 初始化项目：`s init AgentCraft -d AgentCraft`
-  - 进入项目，并进行项目部署：`cd AgentCraft && s deploy -y`
+  - 初始化项目：`s init AgentCraft-CAP -d AgentCraft-CAP`
+  - 进入项目，并进行项目部署：`cd AgentCraft-CAP && s deploy -y`
    
 </deploy>
 
@@ -79,11 +80,28 @@
 
 <appdetail id="flushContent">
 
-基于本案例，您可以将  [AgentCraft](https://agentcraft-docs.serverless-developer.com/) 快速部署到函数计算FC，拥有一个专属的类似GPTS、COZE 的智能体平台，可以自由构建内容提取改写、RAG知识库、绘本制作、图文文案生成等智能应用。
+## 项目预览
+![](https://img.alicdn.com/imgextra/i1/O1CN01Q1uh7R1DalJcVZPyq_!!6000000000233-0-tps-3574-1808.jpg)
 
-[AgentCraft](https://agentcraft-docs.serverless-developer.com/) 是一个开源的智能体构建平台，致力于推进AI原生应用在业务场景的落地。提供了基础模型、数据集、AI工具、智能体构建、客户端接入等能力。可以帮助开发者快速构建，知识问答，智能助手等应用，能够极大的节省AI原生应用的开发成本。
+## 项目介绍
+### 应用场景
+基于Serverless架构的开源智能体平台，可以快速构建构AI ChatBot、AI 知识库、AI智能助手等智能体应用,支持Deepseek满血,通义千问等多种模型
+目前支持DeepSeek满血版的深度对话效果，同时支持打造DS的知识库能力
+### 适用人群
+泛开发者，即包含专业的开发者，也包含普通用户人群
 
-构建AI Agent平台 是一个非常复杂的工程，需要完成RAG, AgentRuntime的核心研发，以及权限管控、API管理、前端交互等， 借助Serverless开发平台，简单、方便地将 AgentCraft 这个Agent平台部署成独立服务，拥有AI时代强大的生产力工具。
++ 专业开发者 ，提供构建AI应用的一系列能力，包含基础模型托管部署， 数据集创建，以及更上层的智能体应用的搭建和API调用
+
++ 普通人群无需编程技术，通过无代码的软件操作，即可完成对话ChatBot以及知识库等应用
+
+
+## 项目架构图
+
+### 功能架构
+![agentcraft](https://img.alicdn.com/imgextra/i4/O1CN01eWiC1A1RHtWBMkOFS_!!6000000002087-0-tps-2774-1322.jpg)
+### 阿里云部署架构
+![agentcraft](https://img.alicdn.com/imgextra/i1/O1CN01PcY7H31hqjbFN7wM5_!!6000000004329-0-tps-2210-1166.jpg)
+
 
 </appdetail>
 
@@ -91,48 +109,117 @@
 
 <usedetail id="flushContent">
 
-### 创建及部署AgentCraft应用
-1.访问Serverless开发平台, 选择 AgentCraft 应用模板进行部署
+### 配置服务
+AgentCraft 需要通过配置界面完成数据库，向量模型等配置，之后才能访问功能
++ 1.数据库配置， 这里快速体验可以选择共享数据库，社区提供了一个独立数据库用于简单测试（测试完可以随时删除个人数据），强烈建议您使用自己的专属数据库，这样所有的数据都会由您专属管理，点击“专属数据库”可以查看指引。
+![agentcraft config](https://img.alicdn.com/imgextra/i4/O1CN01a2s7HB1XjjO4x0z8Y_!!6000000002960-2-tps-2386-1630.png)
++ 2.部署向量模型，AgentCraft采用的是large-bge向量模型，您可以在这里一键部署，如果不需要使用知识库检索能力，可以直接跳过
+![agentcraft config](https://img.alicdn.com/imgextra/i4/O1CN01ogE33T1SuCMRDalyf_!!6000000002306-0-tps-2456-1378.jpg)
++ 3部署齐活后，点击完成
+![agentcraft config](https://img.alicdn.com/imgextra/i2/O1CN01baqTjU1wBFy2TOK3H_!!6000000006269-0-tps-2270-1328.jpg)
+### 产品使用
+#### 注册登录
++ 1. 注册一个虚拟账号（可以随时删除配置的资源），然后登录
+![agentcraft config](https://img.alicdn.com/imgextra/i2/O1CN01CBMMSr1SsMmBC4Upv_!!6000000002302-0-tps-1362-900.jpg)
++ 2.配置DeepSeek满血的LLM服务以及通义千问最新版本的LLM服务
+![agentcraft config](https://img.alicdn.com/imgextra/i4/O1CN01voVWFB1yYH6bsiMej_!!6000000006590-0-tps-3556-1796.jpg)
+![agentcraft config](https://img.alicdn.com/imgextra/i2/O1CN01jUGkGh1fl7W0Ng2D7_!!6000000004046-0-tps-3574-1788.jpg)
+![agentcraft config](https://img.alicdn.com/imgextra/i4/O1CN01sY9prh1NsIdkUSSw8_!!6000000001625-0-tps-1388-1394.jpg)
 
-2.在应用创建详情，根据指引进行授权操作
-![AgentCraft应用授权](https://img.alicdn.com/imgextra/i2/O1CN01pLPCyi1EcQGJODr2h_!!6000000000372-0-tps-3576-1836.jpg)
-资源配置部分请注意“AgentCraft的JWT认证秘钥”, 填写您容易记住的秘钥，该秘钥可以在您创建另外一个版本的AgentCraft的时候使用，可以保证前后两个版本数据访问一致性（比如您应用程序是两个版本的代码，但是数据库还是连接同一个）
-![AgentCraft应用资源配置](https://img.alicdn.com/imgextra/i1/O1CN01AkEPzx1c7mXkfDlYE_!!6000000003554-0-tps-3414-1148.jpg)
-配置好之后请点击按钮“创建应用”,接下来您只需要等待一分钟即可完成AgentCraft的服务部署，部署过程的日志您可以随时查看
-![AgentCraft应用部署](https://img.alicdn.com/imgextra/i2/O1CN01sXIM9Y1EF43pABXvf_!!6000000000321-0-tps-3546-1828.jpg)
-### 访问及配置AgentCraft服务
-当部署完成，您可以获取两个域名，（页面上另外一个域名被隐藏在+1后面），AgentCraft是由一系列的服务构成，其中核心的就是前端的管控页面和后端的api服务，当您需要完全定制自己的界面的时候可以以后端的Api服务为主（那个被隐藏的），对于新手而言我们访问开放出来的域名即可
-![AgentCraft前端页面](https://img.alicdn.com/imgextra/i3/O1CN01jnMH0L1QLjDMZpvNH_!!6000000001960-0-tps-3544-1836.jpg)
-之后进入AgentCraft的系统配置页面
-![AgentCraft系统配置](https://img.alicdn.com/imgextra/i3/O1CN01jgT7gh1MP9iTjofN1_!!6000000001426-0-tps-2404-1720.jpg)
-#### 配置数据库（必须）
-您需要填写您的 ***Postgresql*** 配置,如果您已经有相应的数据库，可以将相应的配置进行填写，如果您还没有对应的数据库，在阿里云上有两种方式获得
+填写百炼的[API-KEY](https://bailian.console.aliyun.com/?apiKey=1#/api-key)
+![agentcraft config](https://img.alicdn.com/imgextra/i3/O1CN01rDDmBh1IneXhieH0U_!!6000000000938-0-tps-1446-1312.jpg)
+你可以把百炼deepseek-v3, qwen-max-latest 以及 deepseek官方的v3,r1模型按照同样步骤配置（注意需要到deepseek的开放平台获取apikey）
+![agentcraft_config](https://img.alicdn.com/imgextra/i3/O1CN01vU874U24Yd6hYxcdY_!!6000000007403-0-tps-3542-1428.jpg)
+配置好之后我们开始准备测试
 
-1. 免费的数据库服务，如果您是数据库的新用户，可以访问阿里云的具体可以查看[这里](https://free.aliyun.com/?product=1384)
-![函数计算免费资源包](https://img.alicdn.com/imgextra/i2/O1CN01oFRh8s25zTpwmbdm3_!!6000000007597-0-tps-3710-1894.jpg)
+#### ChatBot
+创建一个简单问答的智能体
+![agentcraft](https://img.alicdn.com/imgextra/i1/O1CN01hYKj4D1DR8zynBrL3_!!6000000000212-0-tps-3568-1788.jpg)
+![agentcraft](https://img.alicdn.com/imgextra/i1/O1CN01SUo2VF1iDB0b8iwdm_!!6000000004378-0-tps-3552-1764.jpg)
+![agentcraft](https://img.alicdn.com/imgextra/i1/O1CN01pqAGdK1ToX4mPV7u8_!!6000000002429-0-tps-3570-1824.jpg)
+对话
+![agentcraft](https://img.alicdn.com/imgextra/i2/O1CN01iT2KgP1ei5H2BFqBD_!!6000000003904-0-tps-3566-1804.jpg)
 
-2. 购买阿里云的数据库服务，这部分的引导方案在AgentCraft已经内置，您可以点击 “快速获取”按钮进行查看，这里我们已经将购买的流程做了极简的优化，另外实例购买最低可以按天付费，您可以以最低成本进行体验
-![阿里云数据库购买](https://img.alicdn.com/imgextra/i3/O1CN01go4Gu425XXg4HPZyi_!!6000000007536-0-tps-3180-1900.jpg)
-![AgentCraft数据库引导](https://img.alicdn.com/imgextra/i4/O1CN01DUTtAB1RZkxhZ1GRR_!!6000000002126-0-tps-3352-1856.jpg)
+#### 知识库
+新建数据集
+![agentcraft](https://img.alicdn.com/imgextra/i2/O1CN01msYHfm1ps7jHCHGdM_!!6000000005415-0-tps-3554-1756.jpg)
+![agentcraft](https://img.alicdn.com/imgextra/i1/O1CN010k3TKT29PXJyWYdjV_!!6000000008060-0-tps-3554-1800.jpg)
+![agentcraft](https://img.alicdn.com/imgextra/i3/O1CN01da1l9e1mzxeplijzH_!!6000000005026-0-tps-3566-1812.jpg)
+新建及配置知识库
+![agentcraft](https://img.alicdn.com/imgextra/i2/O1CN017fftDI1J53amsGrmr_!!6000000000976-0-tps-3560-1804.jpg)
+![agentcraft](https://img.alicdn.com/imgextra/i3/O1CN01bQWuP81PhQT56lpm3_!!6000000001872-0-tps-3574-1814.jpg)
+保存后点击右侧“预览”对话测试。
+![agentcraft](https://img.alicdn.com/imgextra/i1/O1CN01pqAGdK1ToX4mPV7u8_!!6000000002429-0-tps-3570-1824.jpg)
+![agentcraft](https://img.alicdn.com/imgextra/i1/O1CN01y9oJX21H2eHMMpFIK_!!6000000000700-0-tps-3558-1792.jpg)
+问答测试
 
-AgentCraft的数据库创建引导详细的展示了如何获取 数据库连接地址、数据库名、数据库账号、数据库密码 的配置项，建议仔细阅读
 
-#### 向量转化服务(非必填)
-向量转化服务可以将文本内容进行向量化处理，用于知识库搜索中的RAG技术，该部分作为并非必须的选项，（在通用Prompt提示场景和Agent场景并不是必须），因此您可以选择性的配置使用，
-![AgentCraft向量转化服务配置"](https://img.alicdn.com/imgextra/i3/O1CN01t4EiBP23rZlr4gasa_!!6000000007309-0-tps-2372-1228.jpg)
-如果您的确需要一个embedding服务，您可以点击“快速获取embedding服务”，需要注意的是，该服务依赖于阿里云的NAS文件存储，因为我们利用NAS进行了模型的存储（使用的是bge-lagre-zh模型，大约1.4个G）,所以您还需要对相关的NAS服务进行开通，[NAS服务的免费领取](https://free.aliyun.com/?product=1358)
-![AgentCraft向量转化服务配置"](https://img.alicdn.com/imgextra/i2/O1CN01cGwkQb1dAMOAorBfi_!!6000000003695-0-tps-2878-1554.jpg)
-![免费领取NAS服务](https://img.alicdn.com/imgextra/i2/O1CN01n3SbZI1T4jMZRdf6D_!!6000000002329-0-tps-3802-1886.jpg)
 
-当一些准备就绪之后您可以点击"下一步"以及最后的“完成”，接下来我们进入”快速使用体验AgentCraft“的教程
-### 使用教程
-访问 [AgentCraft 使用教程 ](https://agentcraft-docs.serverless-developer.com/quick-start/quick-use) 进行查看
+### 更多能力
+请访问[官方文档](http://agentcraft-docs.serverless-developer.com/)
+
+
 
 </usedetail>
 
 ## 注意事项
 
 <matters id="flushContent">
+
+选择共享数据库可以快速体验AgentCraft服务，但是存在数据隐患，包括AI 模型的 token ，以及数据集方面需要格外注意
+您可以在体验完成后删除相关的token, 数据集建议不要用私有的数据。
+另外强烈建议你使用自己的数据库配置。
+您可以选择通过云主机安装postgresql 也可以直接购买阿里云的数据库服务。 
+购买阿里云的数据库教程如下：
+### 1.创建数据库实例 (postgresql)
+[数据库实例购买链接](https://www.aliyun.com/product/rds?spm=5176.28536895.nav-v2-dropdown-menu-1.139.3e18586cAVXbW6)
+
+### 2.创建数据库 
+实例创建好之后进行数据库创建
+
+![image](http://img.alicdn.com/imgextra/i4/O1CN01OOS1QR1zJuA4P2KLC_!!6000000006694-0-tps-3522-1422.jpg)
+
+![image](http://img.alicdn.com/imgextra/i1/O1CN01MCvyQV1J6t2c4oRlH_!!6000000000980-0-tps-3542-1850.jpg)
+
+![image](http://img.alicdn.com/imgextra/i3/O1CN01d2lsUT27wOMsvnbPa_!!6000000007861-0-tps-3502-1226.jpg)
+
+### 3.创建管理账号
+
+![image](http://img.alicdn.com/imgextra/i3/O1CN01cEewJA28vlRUoSK6V_!!6000000007995-0-tps-3466-1450.jpg)
+
+注意选择高权限账号
+
+![image](http://img.alicdn.com/imgextra/i1/O1CN012WgalA1kLXKoqWmiu_!!6000000004667-0-tps-3380-1642.jpg)
+
+### 数据库连接测试
+
+![image](http://img.alicdn.com/imgextra/i3/O1CN01pD2lR626rywIkw6Eu_!!6000000007716-0-tps-3514-1158.jpg)
+
+![image](http://img.alicdn.com/imgextra/i4/O1CN01YPNEZC1Ddxx3r0ch9_!!6000000000240-0-tps-3468-1716.jpg)
+
+![image](http://img.alicdn.com/imgextra/i1/O1CN01FBkzpE253lu5Zi4xN_!!6000000007471-0-tps-2758-1550.jpg)
+
+### 最终配置
+
+#### 数据库连接地址 
+
+![image](http://img.alicdn.com/imgextra/i2/O1CN01FWVxkg1yVyzP5ZxrG_!!6000000006585-0-tps-1476-432.jpg)
+
+![image](http://img.alicdn.com/imgextra/i4/O1CN01WVXB3K205zkJxWzGs_!!6000000006799-0-tps-3546-990.jpg)
+
+#### 数据库名
+
+![image](http://img.alicdn.com/imgextra/i4/O1CN01Ra3bpd21J6hegBqfz_!!6000000006963-0-tps-3514-454.jpg)
+
+#### 数据库账号 
+
+_上面设置的高权限账号_
+
+#### 数据库密码 
+
+_上面设置的高权限账号密码_
+
+
 </matters>
 
 

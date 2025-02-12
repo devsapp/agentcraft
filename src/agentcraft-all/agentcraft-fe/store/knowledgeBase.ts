@@ -25,7 +25,7 @@ interface KnowledgeBaseStore {
     updateKnowledgeBaseList: (_: KnowledgeBaseResponseData[]) => void;
 }
 
-interface IPayload { keyword?: string, sessionId?: number }
+interface IPayload { keyword?: string, sessionId?: number, shareToken?: string }
 
 
 export const useKnowledgeBaseStore = create<KnowledgeBaseStore>()(devtools((set) => ({
@@ -71,9 +71,9 @@ export async function getKnowledgeBaseList(appId: number) {
 
 }
 
-export async function getKnowledgeBase(id: any): Promise<KnowledgeBase> {
+export async function getKnowledgeBase(id: any, shareToken?: string): Promise<KnowledgeBase> {
 
-    const res = await request(`/api/knowledgeBase/get?id=${id}`, {
+    const res = await request(`/api/knowledgeBase/get?id=${id}&shareToken=${shareToken || ''}`, {
         method: "GET",
         headers: {
             "Content-Type": "application/json",
@@ -82,6 +82,7 @@ export async function getKnowledgeBase(id: any): Promise<KnowledgeBase> {
     return res.data;
 
 }
+
 
 export async function addKnowledgeBase(payload: KnowledgeBaseRequestPayload) {
     const res = await request("/api/knowledgeBase/create", {
@@ -154,15 +155,16 @@ export async function getSessionHistory(
     if (count !== 1) {
         throw new Error('keyword or sessionId must be set');
     }
-
     let qr = `agent_id=${agentId}&page=0&limit=20`;
     if (payload.keyword) {
-        qr = `${qr}&keyword=${payload.keyword}`
+        qr = `${qr}&keyword=${payload.keyword}`;
     }
     if (payload.sessionId) {
-        qr = `${qr}&session_id=${payload.sessionId}`
+        qr = `${qr}&session_id=${payload.sessionId}`;
     }
-
+    if (payload.shareToken) {
+        qr = `${qr}&shareToken=${payload.shareToken}`;
+    }
     const res = await request(`/api/agentSession/history?${qr}`);
     return res;
 }
@@ -171,13 +173,14 @@ export async function getSessionHistory(
 export async function getSessionByKeyword(
     agentId: number,
     keyword: string,
+    shareToken?: string
 ): Promise<any> {
-    return await request(`/api/agentSession/detailByKeyword?agent_id=${agentId}&keyword=${keyword}`);
+    return await request(`/api/agentSession/detailByKeyword?agent_id=${agentId}&keyword=${keyword}&shareToken=${shareToken || ''}`);
 }
 
 
-export async function removeSessionHistory(sessionId: number): Promise<any> {
-    return await request(`/api/agentSession/remove?session_id=${sessionId}`, {
+export async function removeSessionHistory(sessionId: number, shareToken?: string): Promise<any> {
+    return await request(`/api/agentSession/remove?session_id=${sessionId}&shareToken=${shareToken || ''}`, {
         method: "DELETE",
         headers: {
             "Content-Type": "application/json",
