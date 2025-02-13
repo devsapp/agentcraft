@@ -6,6 +6,7 @@ vars:
   beFunctionName: '{{ beFunctionName }}'
   feFunctionName: '{{ feFunctionName }}'
   fcRole: "{{ fcRole }}"
+  JWT_SECRET: "{{ JWT_SECRET }}"
 template:
   AgentCraftAll:
     internetAccess: true
@@ -49,7 +50,7 @@ resources:
         CREATE_TABLES: '1'
         EMBEDDING_URL: ''
         EMBEDDING_DIM: ''
-        JWT_SECRET: {{ JWT_SECRET }}
+        JWT_SECRET: ${vars.JWT_SECRET}
         REGION: ${vars.region}
       functionName: ${vars.beFunctionName}
       code: ./agentcraft-all/agentcraft-be
@@ -93,7 +94,7 @@ resources:
       layers:
         - acs:fc:${vars.region}:official:layers/Nodejs18/versions/1
         - >-
-          acs:fc:${vars.region}:1154600634854327:layers/agentcraft-frontend-cap-release/versions/1
+          acs:fc:${vars.region}:1154600634854327:layers/agentcraft-frontend-cap-release/versions/2
       runtime: custom.debian10
       instanceConcurrency: 100
       memorySize: 3072
@@ -105,7 +106,7 @@ resources:
         beFunctionName: ${vars.beFunctionName}
         NODE_PATH: /opt/nodejs/node_modules
         Region: ${vars.region}
-        JWT_SECRET: {{ JWT_SECRET }}
+        JWT_SECRET: ${vars.JWT_SECRET}
         PATH: >-
           /opt/nodejs18/bin::/usr/local/bin/apache-maven/bin:/usr/local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/local/ruby/bin:/opt/bin:/code:/code/bin:/opt/nodejs/node_modules/.bin
       functionName: ${vars.feFunctionName}

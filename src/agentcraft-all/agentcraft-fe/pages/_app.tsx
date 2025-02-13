@@ -17,6 +17,7 @@ export default function App(props: AppProps) {
   const { Component, pageProps } = props;
   const [render, setRender] = useState(false);
   const hiddenConfigView = useSystemConfigStore().hiddenConfigView;
+  console.log(hiddenConfigView)
   useEffect(() => {
     setRender(true);
     getSystemConfig();

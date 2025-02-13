@@ -168,6 +168,9 @@ function remarkThink(content: string) {
 
 const components = {
     AC_DS_THINK: Think,
+    Button,
+    Paper,
+    Text,
     pre: (props: any) => <div {...props} />,
     code: (props: any) => {
         const { children, className, node, ...rest } = props;
