@@ -175,7 +175,11 @@ export async function getSessionByKeyword(
     keyword: string,
     shareToken?: string
 ): Promise<any> {
-    return await request(`/api/agentSession/detailByKeyword?agent_id=${agentId}&keyword=${keyword}&shareToken=${shareToken || ''}`);
+    let url = `/api/agentSession/detailByKeyword?agent_id=${agentId}&keyword=${keyword}`;
+    if (shareToken) {
+        url += `&shareToken=${shareToken}`
+    }
+    return await request(url);
 }
 
 

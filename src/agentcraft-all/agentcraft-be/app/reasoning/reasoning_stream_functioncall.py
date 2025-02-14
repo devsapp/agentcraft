@@ -219,7 +219,6 @@ class ReasoningStreamFc:
         created = kwargs['created']
         uid = kwargs['uid']
         model = kwargs['model']
-        stop_words = kwargs['stop_words'].split(',')
         tool_call = True
         answer = ""
         llm_outputs = []
@@ -238,7 +237,6 @@ class ReasoningStreamFc:
                 "n": kwargs['n'],
                 "stream": True,
                 "max_tokens": kwargs['max_tokens'],
-                "stop": stop_words,
                 "presence_penalty": kwargs['presence_penalty'],
                 # "frequency_penalty": kwargs['frequency_penalty'],
                 "logit_bias":  {},
@@ -269,10 +267,13 @@ class ReasoningStreamFc:
                             chunk["model"] = model
                             chunk["session_id"] = self.business.get(
                                 'session_id', None)
+                            # logger.info(f"{RED}chunk:{chunk}{RESET}")
+                            assistant_output = chunk['choices'][0]['delta']
                             if(index == 0):
-                                assistant_output = chunk['choices'][0]['delta']
                                 try:
-                                    if assistant_output['tool_calls'] == None:  # 如果模型判断无需调用工具，则将assistant的回复直接打印出来，无需进行模型的第二轮调用
+                                    # 使用 get 方法避免 KeyError
+                                    tool_calls = assistant_output.get('tool_calls', [])
+                                    if not tool_calls:  # 如果模型判断无需调用工具，则将assistant的回复直接打印出来，无需进行模型的第二轮调用
                                         tool_call = False
                                 except KeyError:
                                     tool_call = False
@@ -287,14 +288,20 @@ class ReasoningStreamFc:
                                 else:
                                     # 调用工具的返回，除了最后一个useage结果是'', 其余的content皆为None
                                     if(content == None):
-                                        # logger.info(f"Tool Use: {chunk}")
-                                        tool_use[0]["name"]+=chunk["choices"][0]["delta"]["tool_calls"][0]["function"]["name"]
-                                        tool_use[0]["arguments"]+=chunk["choices"][0]["delta"]["tool_calls"][0]["function"]["arguments"]
+                                        tool_calls = assistant_output.get('tool_calls', [])
+                                        logger.info(f"{YELLOW}Tool Use: {chunk}{RESET}")
+                                        function_name = tool_calls[0].get('function', {}).get('name', '')
+                                        function_arguments = tool_calls[0].get('function', {}).get('arguments', '')
+                                        tool_use[0]["name"] += function_name
+                                        tool_use[0]["arguments"] += function_arguments
+                                        # tool_use[0]["name"]+=chunk["choices"][0]["delta"]["tool_calls"][0]["function"]["name"]
+                                        # tool_use[0]["arguments"]+=chunk["choices"][0]["delta"]["tool_calls"][0]["function"]["arguments"]
                             else:
                                 if 'usage' in chunk and chunk['usage'] is not None:
                                     yield json.dumps(chunk)
                         except Exception as err:
-                            logger.info(f"{YELLOW}Unconverted chunk {line}{RESET}")
+                            logger.error(f"{RED}Unexpected error:{err} , original chunk line is: {line}{RESET}")
+                            # logger.info(f"{YELLOW}Unconverted chunk {line}{RESET}")
             
             self.usage = (
                 self.usage[0] + usage.get("prompt_tokens", 0),
@@ -387,7 +394,6 @@ class ReasoningStreamFc:
             "top_p": assistant.top_p,
             "n": assistant.n_sequences,
             "max_tokens": assistant.max_tokens,
-            "stop_words": assistant.stop if assistant.stop else 'Observation:, Observation:\n',
             "presence_penalty": assistant.presence_penalty,
             # "frequency_penalty": assistant.frequency_penalty,
             "logit_bias": assistant.logit_bias,

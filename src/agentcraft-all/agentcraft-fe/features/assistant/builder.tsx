@@ -18,7 +18,7 @@ export function AssistantBuilder({ workspaceId }: AssistantProps) {
     const router = useRouter();
     const { query } = router;
     const assistantId = query.assistantId;
-    const loading: boolean = useAssistantStore().loading;
+    const { loading, updateCurrentAssistant } = useAssistantStore();
     const [innerTab, setInnerTab] = useState('chat');
 
 
@@ -30,6 +30,7 @@ export function AssistantBuilder({ workspaceId }: AssistantProps) {
                     <Flex justify={'space-between'} align={'center'} h={'100%'} w={'50%'} >
                         <Flex align={'center'} h={'100%'} >
                             <ActionIcon onClick={() => {
+                                updateCurrentAssistant({} as any);
                                 router.push('/agent')
                             }}>
                                 <IconArrowBackUp />

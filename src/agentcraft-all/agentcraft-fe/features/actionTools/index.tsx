@@ -186,48 +186,47 @@ function ActionToolModelForm() {
                 <Button onClick={async () => {
                     form.validate();
                     if (form.isValid()) {
+
+                        setOpenToolForm(false);
+                        setLoadingForChoose(true);
+                        const createAppPayload = {
+                            description: currentToolForm.description,
+                            name: currentToolForm.functionConfig.functionName,
+                            ...form.values
+                        }
                         try {
-                            setOpenToolForm(false);
-                            setLoadingForChoose(true);
-                            const createAppPayload = {
-                                description: currentToolForm.description,
-                                name: currentToolForm.functionConfig.functionName,
-                                ...form.values
-                            }
                             const appName: any = await createServerlessApp(currentToolForm.functionConfig.template, createAppPayload);
                             if (appName) {
                                 await checkAppStatus(appName);
-                            } else {
-                                throw new Error('创建应用失败');
                             }
-                            const data = await addTool({
-                                name: currentToolForm.functionConfig.functionName,
-                                alias: currentToolForm.name,
-                                description: currentToolForm.description,
-                                input_schema: currentToolForm.input_schema,
-                                type: 1,
-                                status: 2,
-                                output_schema: '',
-                                author: '',
-                                proxy_url: '',
-                                need_llm_call: 1,
-                            });
-                            if (data) {
-                                await getToolList();
-                            } else {
-                                notifications.show({
-                                    title: '创建工具失败',
-                                    message: '请检查是否已经存在该工具',
-                                    color: 'red',
-                                });
-                            }
-                            setOpenToChoose(false);
-                            setLoadingForChoose(false);
                         } catch (e) {
-                            console.log(e);
                         }
-
+                        const data = await addTool({
+                            name: currentToolForm.functionConfig.functionName,
+                            alias: currentToolForm.name,
+                            description: currentToolForm.description,
+                            input_schema: currentToolForm.input_schema,
+                            type: 1,
+                            status: 2,
+                            output_schema: '',
+                            author: '',
+                            proxy_url: '',
+                            need_llm_call: 1,
+                        });
+                        if (data) {
+                            await getToolList();
+                        } else {
+                            notifications.show({
+                                title: '创建工具失败',
+                                message: '请检查是否已经存在该工具',
+                                color: 'red',
+                            });
+                        }
+                        setOpenToChoose(false);
+                        setLoadingForChoose(false);
                     }
+
+
 
                 }}>确认</Button>
             </Box>
