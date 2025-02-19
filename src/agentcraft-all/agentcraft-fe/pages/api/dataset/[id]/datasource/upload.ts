@@ -50,19 +50,12 @@ router.post(async (req: any, res: any) => {
     const file: FileProperty = req.file;
     const bodyData: DocProperty = req.body;
     const extName = getFileExtension(file.originalname);
-    const chunkSize = parseInt(bodyData.chunk_size)
+    const chunkSize = parseInt(bodyData.chunk_size);
     const token = getTokenFromRequest(req);
     request.defaults.headers.common['Authorization'] = token;
     let output: any = [];
     if (extName === '.txt') {
         const splitter = new CharacterTextSplitter({
-            chunkSize,
-            chunkOverlap: 100
-        });
-        output = await splitter.createDocuments([file.buffer.toString()]);
-    }
-    if (extName === '.md') {
-        const splitter = RecursiveCharacterTextSplitter.fromLanguage("markdown", {
             chunkSize,
             chunkOverlap: 100
         });
@@ -75,19 +68,29 @@ router.post(async (req: any, res: any) => {
         });
         output = await splitter.createDocuments([file.buffer.toString()]);
     }
+    if (extName === '.md') {
+        const splitter = RecursiveCharacterTextSplitter.fromLanguage("markdown", {
+            chunkSize,
+            chunkOverlap: 100
+        });
+        output = await splitter.createDocuments([file.buffer.toString()]);
+    }
+  
     if (extName === '.pdf') {
         const loadingTask = pdfjsLib.getDocument(new Uint8Array(file.buffer));
         const pdf = await loadingTask.promise;
         let totalContent = '';
+        console.log(pdf,'pdf');
         const totalPages = pdf._pdfInfo.numPages;
         for (let i = 1; i <= totalPages; i++) {
             const page = await pdf.getPage(i);
             const pageContent: any = await page.getTextContent();
+            console.log(pageContent,'pageContent');
             totalContent += pageContent.items.map((item: any) => item.str).join('');
         }
         const splitter = new CharacterTextSplitter({
             chunkSize,
-            chunkOverlap: 0,
+            chunkOverlap: 300,
             keepSeparator: false,
             separator: ""
         });

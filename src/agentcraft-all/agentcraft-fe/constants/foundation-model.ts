@@ -208,7 +208,7 @@ export const FOUNDATION_MODEL_TEMPLATES = [
         templateParams: {
             type: 'object',
             additionalProperties: false,
-            required: ['region', 'apiKey'],
+            required: ['region'],
             properties: {
                 region: {
                     type: 'string',
@@ -221,7 +221,7 @@ export const FOUNDATION_MODEL_TEMPLATES = [
                 },
                 apiKey: {
                     type: 'string',
-                    title: '阿里云百炼 API-Key',
+                    title: '阿里云百炼 API-Key[如已在部署时设置，此处可以忽略]',
                     description: '阿里云百炼 的API-KEY <a href="https://bailian.console.aliyun.com/?apiKey=1#/api-key" target="_blank">免费申领地址</a>',
                     default: '',
                     uiType: 'password'

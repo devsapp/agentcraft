@@ -48,6 +48,12 @@ Parameters:
       default: 'ag-${default-suffix}'
       pattern: "^[a-zA-Z_][a-zA-Z0-9-_:/.]{0,127}$"
       description: AgentCraft访问API时作为JWT认证秘钥，可以随机设置,建议修改为自己的专属秘钥
+    # dashscopeApiKey:
+    #   title: 百炼API KEY
+    #   type: string
+    #   sensitive: true
+    #   default: ""
+    #   description: 百炼的 API-KEY，获取方式请参考：<a href="https://help.aliyun.com/zh/model-studio/developer-reference/get-api-key" target="blank">如何获取</a>
     feFunctionName:
       title: 前端工程名
       type: string

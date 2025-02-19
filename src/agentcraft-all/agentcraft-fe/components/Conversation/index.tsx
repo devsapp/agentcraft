@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { nanoid } from 'nanoid';
 import { Loader, LoadingOverlay, Button, Modal, Group, Badge, CopyButton, Text } from '@mantine/core';
+import { useSystemConfigStore } from 'store/systemConfig';
 // import MarkdownContainer from 'components/Markdown';
 import { notifications } from '@mantine/notifications';
 import MDXContainer from 'components/MDXContainer';
@@ -69,7 +70,8 @@ function transformMessage(data: any[]): ConversationItem[] {
 
 const ConversationComponent = React.memo((data: ConversationItem) => {
     const isUser = data.role == MessageType.USER;
-
+    const { completeConfig = {} } = useSystemConfigStore();
+    const { chatBotIcon = '' } = completeConfig;
     const copyNode = ({ copied, copy }: any) => {
         if (copied) {
             notifications.show({
@@ -85,7 +87,6 @@ const ConversationComponent = React.memo((data: ConversationItem) => {
             </Badge>
         )
     }
-
     return (
         <div
             className={styles.usermessage}
@@ -93,7 +94,7 @@ const ConversationComponent = React.memo((data: ConversationItem) => {
             {!isUser ? (
                 <div className={styles["system_avatar"]} >
                     <img
-                        src="https://img.alicdn.com/imgextra/i1/O1CN01Ag2hWp1uz3fbGtWqB_!!6000000006107-2-tps-1024-1024.png"
+                        src={chatBotIcon}
                         style={{ width: '100%', height: '100%' }}
                     />
                 </div>
@@ -142,7 +143,6 @@ export default function Conversation(props: ConversationProps) {
     const [conversations, setConversations] = useState<ConversationItem[]>([]);
     const messageListRef = useRef(null);
     const chatInputRef = useRef<HTMLTextAreaElement>(null);
-
     useEffect(() => {
         (chatInputRef as any).current.focus();
         getMessages();
@@ -259,7 +259,7 @@ export default function Conversation(props: ConversationProps) {
                     <Button variant="outline" onClick={() => setShowModal(false)}>取消</Button>
                 </Group>
             </Modal>
-            <main className={styles.main}>
+            <div className={styles.main}>
                 <Button color="red" className={styles.clear} variant="subtle" onClick={() => setShowModal(true)}>
                     清空会话
                 </Button>
@@ -301,7 +301,7 @@ export default function Conversation(props: ConversationProps) {
                         </form>
                     </div>
                 </div>
-            </main>
+            </div>
         </>
 
     );

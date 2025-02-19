@@ -23,7 +23,7 @@ export default function QuickStart({ form }: any) {
                     }
                     if (field.uiType === 'password') {
                         FieldComponent = <PasswordInput
-                            withAsterisk label={field.title} placeholder="" {...form.getInputProps(key)} description={<div dangerouslySetInnerHTML={{ __html: field.description }} />} />
+                             label={field.title} placeholder="" {...form.getInputProps(key)} description={<div dangerouslySetInnerHTML={{ __html: field.description }} />} />
                     }
                     break;
                 default:

@@ -1,5 +1,6 @@
 """Chat Service"""
 # pylint: disable = no-member
+import os
 from typing import Any
 from time import time
 import uuid
@@ -474,10 +475,11 @@ def model_chat(agent_session_id,
     """获取大模型的回答"""
     messages = build_messages(prompt, history, agent.system_message)
     model = model_database.get_model_by_id(agent.model_id)
+    llm_token = model.token if model.token else os.environ.get("DASHSCOPE_API_KEY", "") # 如果不在数据库中，则从环境变量中获取
     if not model:
         raise ValueError("model does not exist")
     headers = {
-        "Authorization": f"Bearer {model.token}",
+        "Authorization": f"Bearer {llm_token}",
         "Content-Type": "application/json"
     }
     llm_request_options = {
@@ -536,10 +538,11 @@ def model_chat_stream(agent_session_id,
     try:
         messages = build_messages(prompt, history, agent.system_message)
         model = model_database.get_model_by_id(agent.model_id)
+        llm_token = model.token if model.token else os.environ.get("DASHSCOPE_API_KEY", "") # 如果不在数据库中，则从环境变量中获取
         if not model:
             raise ValueError("model does not exist")
         headers = {
-            "Authorization": f"Bearer {model.token}",
+            "Authorization": f"Bearer {llm_token}",
             "Content-Type": "application/json"
         }
         llm_request_options = {

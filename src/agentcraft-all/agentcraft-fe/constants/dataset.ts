@@ -1,1 +1,1 @@
-export const DEFAULT_CHUNK_SIZE = 512;
+export const DEFAULT_CHUNK_SIZE = 1024;

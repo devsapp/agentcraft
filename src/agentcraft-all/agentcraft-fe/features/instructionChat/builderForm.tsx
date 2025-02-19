@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useRouter } from 'next/router';
 import { Center, Button, Box, TextInput, Text, Group, Select, Textarea, Flex, Paper, Title, Radio } from '@mantine/core';
 import { useForm } from '@mantine/form';
-import { IconRefresh } from '@tabler/icons-react';
+import { IconRefresh, IconLink } from '@tabler/icons-react';
 import { getModelList, useModelStore } from 'store/model';
 import { getDataSetList } from 'store/dataset';
 import { createShare } from 'store/share';
@@ -196,6 +196,7 @@ export function BuilderForm({ workspaceId }: AssistantProps) {
             <Center maw={'100%'} h={38} mx="auto">
                 <Text
                     fw={700}
+                    td="underline"
                     style={{ cursor: 'pointer' }}
                     onClick={async () => {
                         const { token: shareToken } = await createShare(instructionChatId);
@@ -203,6 +204,7 @@ export function BuilderForm({ workspaceId }: AssistantProps) {
                     }}>
                     对外分享
                 </Text>
+                <IconLink size={'1rem'} />
             </Center>
             {currentKnowledgeBase?.id ? <KnowledgeBaseChat /> : null}
         </Box>

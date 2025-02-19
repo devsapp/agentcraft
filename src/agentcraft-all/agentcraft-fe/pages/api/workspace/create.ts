@@ -8,7 +8,6 @@ export default async function handler(
    
     const { name, description } = req.body;
     const token = getTokenFromRequest(req);
-    console.log(token,'token');
     request.defaults.headers.common['Authorization'] = token;
     const result = await request.post('/app/add', { name, description });
     res.status(result.status).json(result.data);

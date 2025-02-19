@@ -1,5 +1,5 @@
 """Chat Service"""
-
+import os
 import json
 import requests
 import codecs
@@ -414,7 +414,7 @@ class ReasoningStream:
             logger.error(e)
         self.tool_name_dict = {
             tool['name_for_model']: {'name': tool['name_for_human'], 'output': tool['output'], 'need_llm_call': tool['need_llm_call']} for tool in action_tools}
-        
+        llm_token = model.token if model.token else os.environ.get("DASHSCOPE_API_KEY", "")
         llm_plugin_args = {
             "created": int(time()),
             "uid": f"assistant-compl-{uuid.uuid4()}",
@@ -427,7 +427,7 @@ class ReasoningStream:
             # "frequency_penalty": assistant.frequency_penalty,
             "logit_bias": assistant.logit_bias,
             "model_id": model.id if model else None,
-            "token": model.token if model else None,
+            "token": llm_token,
             "timeout": model.timeout if model else None,
             "model": model.name,
             "instruction": assistant.instruction if assistant.instruction else DEFAULT_INSTRUCTION,

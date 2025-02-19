@@ -3,8 +3,10 @@ import { useRouter } from 'next/router';
 import { nanoid } from 'nanoid';
 import { Box, Flex, Text, Button, Navbar, NavLink, Menu, createStyles, ActionIcon, Input } from '@mantine/core';
 import { modals } from '@mantine/modals';
+import { IconMenu2 } from '@tabler/icons-react';
 import { IconSettings } from '@tabler/icons-react';
-import { useKnowledgeBaseStore,  getKnowledgeBase } from 'store/knowledgeBase';
+import { useKnowledgeBaseStore, getKnowledgeBase } from 'store/knowledgeBase';
+import { useSystemConfigStore } from 'store/systemConfig';
 
 import { useChatBotStore } from 'store/chatBot';
 import Conversation from 'components/Conversation';
@@ -60,6 +62,14 @@ const SessionItem = function ({ data, onChange, onDelete }: { data: ISessionItem
   </>
 }
 
+function isMobileDevice() {
+  // 检测是否为移动端
+  if (typeof window !== "undefined") {
+    return window.innerWidth < 768; // 假设宽度小于 768px 为移动端
+  }
+  return false;
+}
+
 export function getServerSideProps(context: any) {
   const { params } = context;
   const chatId = params.chatId;
@@ -95,9 +105,11 @@ export default function IndexPage() {
   const router = useRouter();
   const { query } = router;
   const { updateCurrentKnowledgeBase, currentKnowledgeBase } = useKnowledgeBaseStore();
+  const { completeConfig = {} } = useSystemConfigStore();
+  const { projectLogo = '', projectName = '' } = completeConfig;
   const { chatId: chatBotId, workspaceId, shareToken } = query;
-  const prefix = `chat-bot-${workspaceId}-${chatBotId}-`
-  const { localSessions, setLocalSessions, currentLocalSessions, setCurrentLocalSessions } = useChatBotStore();
+  const prefix = `chat-bot-${workspaceId}-${chatBotId}-`;
+  const { localSessions, setLocalSessions, currentLocalSessions, setCurrentLocalSessions, menuClose, setMenuClose } = useChatBotStore();
 
   useEffect(() => {
     if (chatBotId) {
@@ -108,6 +120,14 @@ export default function IndexPage() {
     }
 
   }, []);
+
+  useEffect(() => {
+    // 检测设备类型并初始化 menuClose
+    if (isMobileDevice()) {
+      setMenuClose(true); // 如果是移动端，关闭菜单
+    }
+  }, []); // 空依赖数组确保只在组件加载时运行一次
+  
   useEffect(() => {
     const filteredSessions = filterSessionList(localSessions, prefix);
     const filteredCurrentSessions = filterCurrentLocalSession(currentLocalSessions, prefix);
@@ -120,8 +140,8 @@ export default function IndexPage() {
     }
   }, [])
   const currentLocation: any = filterCurrentLocalSession(currentLocalSessions, prefix)[0] || {};
-  return <Flex h={'100vh'} style={{ overflow: 'hidden' }}>
-    <Box w="240px" h="100%" style={{ borderRight: '1px solid #ccc', padding: 12 }}>
+  return <Flex h={'100vh'} >
+    <div className={menuClose ? [styles['close'], styles['chatbot-menu']].join(" ") : styles['chatbot-menu']}>
       <Text
         align="center"
         h={40}
@@ -209,17 +229,23 @@ export default function IndexPage() {
           </div>
         })}
       </div>
-    </Box>
-    <Box style={{ height: '100%', width: 'calc(100vw - 240px)' }} >
-      <Box style={{ margin: '120px auto', height: '100%' }} w={'80%'}>
-        <Conversation 
-            version='v1' 
-            token={currentKnowledgeBase?.token || ''} 
-            shareToken={shareToken as string}
-            id={currentKnowledgeBase?.id as number} 
-            keyword={currentLocation.value} />
+    </div>
+    <div className={menuClose ? [styles['chatbot-main'], styles['close']].join(" ") : styles['chatbot-main']}>
+      {projectLogo && <img
+        src={projectLogo} // 图片路径（相对于 public 文件夹）
+        alt={projectName}
+        className={styles['chatbot-logo']}
+      />}
+      <IconMenu2 className={styles['chat-menu-button']} onClick={() => setMenuClose(!menuClose)} />
+      <Box className={styles['chatbot-main-content']}>
+        <Conversation
+          version='v1'
+          token={currentKnowledgeBase?.token || ''}
+          shareToken={shareToken as string}
+          id={currentKnowledgeBase?.id as number}
+          keyword={currentLocation.value} />
       </Box>
-    </Box>
+    </div>
   </Flex>
 }
 

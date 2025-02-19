@@ -22,3 +22,78 @@
         height: 32px;
     }
 }
+
+.chatbot-menu {
+    width: 240px;
+    border-right: 1px solid #eee;
+    padding: 12px;
+    &.close {
+        width: 0;
+        display: none;
+    }
+}
+
+.chatbot-main {
+    height: 100%;
+    position: relative;
+    width: calc(100vw - 240px);
+    &.close {
+        width: calc(100vw);
+    }
+    .chat-menu-button {
+        position: absolute;
+        top: 24px;
+        left: 10px;
+        cursor: pointer;
+        &:hover {
+            opacity: 0.8;
+        }
+    }
+    .chatbot-logo {
+        position: absolute;
+        top: 24px;
+        right: 9%;
+        width: auto;
+        height: 38px;
+        display: block;
+    }
+    .chatbot-main-content {
+        height: calc(100vh - 120px);
+        margin: 120px auto; 
+        position: relative;
+        width: 80%;
+
+    }
+}
+
+// chatbot-main 在移动视图情况下 100vw
+// chatbot-men 移动视图下隐藏
+@media screen and (max-width: 768px) {
+    .chatbot-main {
+        width: 100vw;
+        .chat-menu-button {
+            position: fixed;
+            display: block;
+            z-index: 99;
+            left: 210px;
+            top: 24px;
+        }
+        &.close {
+            .chat-menu-button {
+                left: 10px;    
+            }
+        }
+    }
+   
+    .chatbot-menu {
+        position: fixed;
+        z-index: 98;
+        bottom: 0;
+        top: 0;
+        background-color: #fff;
+        &.close {
+            display: none;
+          
+        }
+    }
+}
