@@ -80,7 +80,6 @@ router.post(async (req: any, res: any) => {
         const loadingTask = pdfjsLib.getDocument(new Uint8Array(file.buffer));
         const pdf = await loadingTask.promise;
         let totalContent = '';
-        console.log(pdf,'pdf');
         const totalPages = pdf._pdfInfo.numPages;
         for (let i = 1; i <= totalPages; i++) {
             const page = await pdf.getPage(i);

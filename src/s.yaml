@@ -7,7 +7,7 @@ vars:
   feFunctionName: '{{ feFunctionName }}'
   fcRole: "{{ fcRole }}"
   JWT_SECRET: "{{ JWT_SECRET }}"
-  dashscopeApiKey: "" #"{{ dashscopeApiKey }}"
+  dashscopeApiKey: "{{ dashscopeApiKey }}"
 template:
   AgentCraftAll:
     internetAccess: true
