@@ -1,7 +1,7 @@
 Edition: 3.0.0
 Type: Project
 Name: AgentCraft-CAP
-Version: 0.0.1
+Version: dev #0.0.4
 Provider:
   - 阿里云
 Description: 基于Serverless架构的开源智能体平台，可以快速构建构AI ChatBot、AI 知识库、AI智能助手等智能体应用,支持Deepseek满血,通义千问等多种模型
@@ -32,6 +32,7 @@ Parameters:
     - JWT_SECRET #后端服务的认证秘钥
     - feFunctionName
     - beFunctionName
+    - dashscopeApiKey
   properties:
     region:
       title: 地域

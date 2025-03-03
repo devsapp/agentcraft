@@ -134,7 +134,7 @@ export default function EmbeddingConfig({ form }: any) {
             <LoadingOverlay loader={<LoadingStepper />} visible={createLoading} overlayOpacity={0.8} overlayBlur={2} />
             <TextInput withAsterisk label="向量维度" description="向量的维度设置，跟使用embedding算法相关，并且在数据库持久化的时候不能修改" defaultValue={'1024'} placeholder="" {...form.getInputProps('EMBEDDING_DIM')} />
             <Flex align={'center'}>
-                <TextInput label="embedding服务访问地址" description="通过系统创建的embedding服务地址为安全的内部网络地址，不可以直接访问" style={{ width: '85%' }} {...form.getInputProps('EMBEDDING_URL')} defaultValue={completeConfig.EMBEDDING_URL || ''} />
+                <TextInput label="embedding服务访问地址" description={<div><span>embedding服务访问地址</span><a href="https://fcnext.console.aliyun.com/applications/ai/create?template=55" target="_blank">无法创建？点击此前往单独创建</a></div>} style={{ width: '85%' }} {...form.getInputProps('EMBEDDING_URL')} defaultValue={completeConfig.EMBEDDING_URL || ''} />
                 <Button variant="subtle" mt={42} ml={4} onClick={createEmbeddingService}>快速获取embedding服务</Button>
             </Flex>
             {embedding_internet_url ? <Flex align={'flex-start'}>

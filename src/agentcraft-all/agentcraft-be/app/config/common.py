@@ -17,3 +17,10 @@ CONNECT_TIMEOUT = 3000
 READ_TIMEOUT = 6000
 REGION_ID = 'cn-shanghai'
 ENDPOINT = 'green-cip.cn-shanghai.aliyuncs.com'
+
+
+
+# History Settings
+MAX_REQUEST_GROUPS = 10  # 请求历史最大保留对话组数
+MAX_DATABASE_GROUPS = 10  # 数据库最大保留对话组数
+MAX_TOTAL_GROUPS = 100   # 合并后总组数上限（按需添加）

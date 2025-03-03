@@ -15,9 +15,9 @@ export default async function handler(
             if (at === parseInt(id as string)) {
                 request.defaults.headers.common['Authorization'] = `Bearer ${sub}`;
                 const result = await request.get(`/agent/${id}`);
-                const response_data  = result.data;
+                const response_data = result.data;
                 const { name, token, max_tokens } = response_data.data;
-                response_data.data = { name, token, max_tokens };
+                response_data.data = { name, token, max_tokens, id };
                 res.status(result.status).json(response_data);
             }
         } catch (error) {

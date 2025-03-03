@@ -8,6 +8,7 @@ from app.assistant_chat import service
 from app.assistant_chat.schema import ChatRequest, UpdateChatRequest, ChatCompletionResponse
 from app.common.schema import DictListResponse
 from app.auth.security import validate_token, validate_agent_token
+from app.utils.message import process_history
 router = APIRouter()
 
 
@@ -51,13 +52,24 @@ async def chat(req: ChatRequest, request: Request, token: AgentJWTData = Depends
     logger.info(f'assistant_session_id: {assistant_session_id}; keyword: {keyword};')
 
     query = req.messages[-1].content
+
+    context_carry_enabled = req.context_carry_enabled
     assistant_session_id = service.get_assistant_session_id(assistant_session_id, keyword, assistant_id, title = query)
     logger.info(f'get assistant_session_id: {assistant_session_id}')
 
-    history = []
-    history, total = service.list_assistant_chats_history_by_session_id(assistant_session_id, 0, assistant.llm_history_len)
-    # history_dict = [{"user": d["question"], "assistant": d["reasoning_log"]} for d in history]
-    history_dict = [{"user": d["question"], "assistant": d["answer"]} for d in history]
+    
+    history_dict = []
+    if assistant_session_id is not None:
+        # 获取数据库历史
+        db_history, total = service.list_assistant_chats_history_by_session_id(assistant_session_id, 0, assistant.llm_history_len)
+        history_dict = [{"user": d["question"], "assistant": d["answer"]} for d in db_history]
+        # 合并处理历史
+        if context_carry_enabled:
+            history_dict = process_history(req.messages, history_dict)
+    logger.info(f"Combined history: {history_dict}")
+    # history = []
+    # history, total = service.list_assistant_chats_history_by_session_id(assistant_session_id, 0, assistant.llm_history_len)
+    # history_dict = [{"user": d["question"], "assistant": d["answer"]} for d in history]
     # logger.info(f"history: {history_dict}")
     # return {}
     if req.stream:

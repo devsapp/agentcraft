@@ -12,7 +12,7 @@ import app.database.model as model_database
 from app.reasoning.reasoning import Reasoning
 from app.reasoning.reasoning_stream import ReasoningStream
 from app.reasoning.reasoning_stream_functioncall import ReasoningStreamFc
-
+from app.config import common as config
 DONE = "[DONE]"
 COMPATIBLE_WITH_FUNCTION_CALL_MODELS = ["qwen-max-latest","qwen-max","qwen-plus"]
 def get_assistant_lite(assistant_id: int):
@@ -45,7 +45,7 @@ def get_assistant_session_id(assistant_session_id: int, keyword: str, assistant_
 
 def list_assistant_chats_id_by_session_id(session_id: int, **kv):
     """根据 session_id 获取 assistant_chats_id 的列表"""
-    limit = kv.get("limit") or 20
+    limit = kv.get("limit") or config.MAX_DATABASE_GROUPS * 2
     page = kv.get("page") or 0
     data, total = assistant_session_chat_database.list_assistant_session_chat_id_by_session_id(session_id, page, limit)
     return data, total

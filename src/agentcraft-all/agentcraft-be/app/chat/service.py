@@ -18,6 +18,7 @@ from app.common.logger import logger
 from app.common.constants import  YELLOW, RESET, RED
 from app.config import common as config
 
+
 DONE = "[DONE]"
 class get_related():
     def __init__(self, agent_id, query, agent = None):
@@ -88,7 +89,7 @@ def list_chats_id_by_session_id(agent_id: int, session_id: int, **kv):
         raise ValueError("agent does not exist")
     if not agent_database.check_user_has_agent(agent.user_id, agent_id):
         raise ValueError("user does not have this agent")
-    limit = kv.get("limit") or agent.llm_history_len or 20
+    limit = kv.get("limit") or agent.llm_history_len or config.MAX_DATABASE_GROUPS * 2
     page = kv.get("page") or 0
     data, total = agent_session_chat_dataset_database.list_chats_session_chat_id_by_session_id(session_id, page, limit)
     return data, total
@@ -332,7 +333,7 @@ def chat(agent_session_id: int, query: str, ip_addr: str, agent_id: int, history
     return model_chat(agent_session_id, **chat_args)
 
 
-def chat_stream(agent_session_id: int, query: str, ip_addr: str, agent_id: int, history = []):
+def chat_stream(agent_session_id: int, query: str, ip_addr: str, agent_id: int, history = [], model_name: str = None):
     """Chat with agent."""
     agent = agent_database.get_agent_lite(agent_id)
     if not agent:
@@ -350,6 +351,7 @@ def chat_stream(agent_session_id: int, query: str, ip_addr: str, agent_id: int, 
             "agent": agent,
             "chat_type": 0,
             "uid": uid,
+            "model_name": model_name,
             "created": created
         }
         yield from model_chat_stream(agent_session_id, **chat_args)
@@ -392,33 +394,33 @@ def chat_stream(agent_session_id: int, query: str, ip_addr: str, agent_id: int, 
 
     logger.info(f'has similarity_search_res: {similarity_search_res != []}')
     # 没有匹配到问答
-    if similarity_search_res == []:
-        answer = agent.default_answer or "抱歉，没有匹配到相关问题。"
+    # if similarity_search_res == []:
+    #     answer = agent.default_answer or "抱歉，没有匹配到相关问题。"
 
-        yield json.dumps({
-            "id": uid,
-            "object": "chat.illegal",
-            "message": [{
-                "content": answer,
-                "role": "assistant"
-            }],
-            "created": created
-        })
-        add_args = {
-            "query": query,
-            "prompt": "",
-            "answer": [answer],
-            "source": [],
-            "chat_type": 0,
-            "ip_addr": ip_addr,
-            "agent": agent,
-            "usage": {},
-            "uid": uid,
-        } 
-        chat_id = add_chat(**add_args)
-        add_session_chat(agent_session_id, chat_id)
-        yield DONE
-        return
+    #     yield json.dumps({
+    #         "id": uid,
+    #         "object": "chat.illegal",
+    #         "message": [{
+    #             "content": answer,
+    #             "role": "assistant"
+    #         }],
+    #         "created": created
+    #     })
+    #     add_args = {
+    #         "query": query,
+    #         "prompt": "",
+    #         "answer": [answer],
+    #         "source": [],
+    #         "chat_type": 0,
+    #         "ip_addr": ip_addr,
+    #         "agent": agent,
+    #         "usage": {},
+    #         "uid": uid,
+    #     } 
+    #     chat_id = add_chat(**add_args)
+    #     add_session_chat(agent_session_id, chat_id)
+    #     yield DONE
+    #     return
     
     # 使用文档集问答
     search_res = rank_search_res(similarity_search_res)
@@ -533,11 +535,12 @@ def model_chat(agent_session_id,
 
 def model_chat_stream(agent_session_id, 
         query: str, prompt: str, history: list,
-        search_choices: list, ip_addr: str, agent, chat_type: int, uid: str, created: int):
+        search_choices: list, ip_addr: str, agent, chat_type: int, uid: str, created: int, model_name: str = None):
     """获取大模型的回答"""
     try:
         messages = build_messages(prompt, history, agent.system_message)
         model = model_database.get_model_by_id(agent.model_id)
+        model_name = model_name or model.name
         llm_token = model.token if model.token else os.environ.get("DASHSCOPE_API_KEY", "") # 如果不在数据库中，则从环境变量中获取
         if not model:
             raise ValueError("model does not exist")
@@ -546,7 +549,7 @@ def model_chat_stream(agent_session_id,
             "Content-Type": "application/json"
         }
         llm_request_options = {
-            "model": model.name,
+            "model": model_name,
             "messages": messages,
             "stream": True,
             "temperature": agent.temperature,

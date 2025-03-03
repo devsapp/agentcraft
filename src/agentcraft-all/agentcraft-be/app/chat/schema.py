@@ -90,7 +90,14 @@ class ChatRequest(BaseModel):
     stream: bool = stream_field
     session_id: int = agent_session_id_field
     keyword: str = Field(default=None, description="Keyword for the chat")
-
+    model_name: Optional[str] = Field(  # 新增的模型名字段
+        default=None,
+        description="The name of the AI model to use for this chat request"
+    )
+    context_carry_enabled = Field(
+        default=False,
+        description="Whether to merge historical records is required when building multi-agent systems"
+    )
     @validator('keyword', pre=True)
     def mutually_exclusive(cls, value, values):
         session_id = values.get('session_id')
