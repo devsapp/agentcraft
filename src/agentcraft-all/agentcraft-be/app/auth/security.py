@@ -32,7 +32,7 @@ def create_access_token(
     expires_delta: timedelta = timedelta(days=auth_config.JWT_EXP),
 ) -> str:
     """Create Access Token"""
-    jwt_data = {"sub": user_id, "exp": datetime.utcnow() + expires_delta}
+    jwt_data = {"sub": str(user_id), "exp": datetime.utcnow() + expires_delta}
     return jwt.encode(jwt_data, auth_config.JWT_SECRET, algorithm=auth_config.JWT_ALG)
 
 
