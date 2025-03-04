@@ -8,7 +8,7 @@ uvicorn
 requests
 bcrypt
 sqlalchemy
-PyJWT
+PyJWT==2.9.0
 protobuf
 grpcio
 alibabacloud_green20220302
