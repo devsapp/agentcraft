@@ -442,7 +442,8 @@ def chat_stream(agent_session_id: int, query: str, ip_addr: str, agent_id: int, 
         "agent": agent,
         "chat_type": 0,
         "uid": uid,
-        "created": created
+        "created": created,
+        "model_name": model_name
     }
     yield from model_chat_stream(agent_session_id, **chat_args)
 
@@ -661,7 +662,7 @@ def model_chat_stream(agent_session_id,
             "agent": agent,
             "model": model,
             "uid": uid,
-            "usage": usage,
+            "usage": usage
         }
         chat_id = add_chat(**add_args)
         add_session_chat(agent_session_id, chat_id)
