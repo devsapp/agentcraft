@@ -12,7 +12,7 @@ export default async function handler(
     const { agentId } = payload;
     const token = getTokenFromRequest(req);
     request.defaults.headers.common['Authorization'] = token;
-    const result = await request.get(`/share/refresh_share/${agentId}`);
+    const result = await request.put(`/agent/public/${agentId}`, { is_public: 1 });
     const { status, data } = result;
     res.status(status).json(data);
 }

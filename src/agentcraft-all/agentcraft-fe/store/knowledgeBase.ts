@@ -183,8 +183,8 @@ export async function getSessionByKeyword(
 }
 
 
-export async function removeSessionHistory(sessionId: number, shareToken?: string): Promise<any> {
-    return await request(`/api/agentSession/remove?session_id=${sessionId}&shareToken=${shareToken || ''}`, {
+export async function removeSessionHistory(agentId: number , sessionId: number, shareToken?: string): Promise<any> {
+    return await request(`/api/agentSession/remove?agent_id=${agentId}&session_id=${sessionId}&shareToken=${shareToken || ''}`, {
         method: "DELETE",
         headers: {
             "Content-Type": "application/json",

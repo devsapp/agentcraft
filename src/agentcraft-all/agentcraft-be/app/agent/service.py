@@ -51,7 +51,21 @@ def get_agent(_id: int, user_id: int):
     agent_dict = {"datasets": datasets_dict, "model_name": model_name, **vars(agent), }
     return agent_dict
 
+def get_public_agent_streamline_info(_id: int):
+    """获取agent精简信息"""
+    agent, model_name = database.get_agent(_id, None)  # user_id 为 None 表示不检查用户身份
+    if agent.is_public == 1:
+        return {
+            "max_tokens": agent.max_tokens,
+            "token": agent.token,
+            "name": agent.name,
+            "id": _id
+        }
+    else:
+        return None
 
 def update_agent(**kwargs):
     """更新agent"""
     database.update_agent(**kwargs)
+def update_agent_is_public(agent_id: int, user_id: int, is_public: int):
+    database.update_is_public(agent_id, is_public, user_id)

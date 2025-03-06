@@ -199,8 +199,8 @@ export function BuilderForm({ workspaceId }: AssistantProps) {
                     td="underline"
                     style={{ cursor: 'pointer' }}
                     onClick={async () => {
-                        const { token: shareToken } = await createShare(instructionChatId);
-                        window.open(`/chatBot/${workspaceId}/${instructionChatId}?shareToken=${shareToken}`);
+                        await createShare(instructionChatId);
+                        window.open(`/chatBot/${workspaceId}/${instructionChatId}`);
                     }}>
                     对外分享
                 </Text>

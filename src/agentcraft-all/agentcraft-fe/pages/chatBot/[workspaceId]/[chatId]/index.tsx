@@ -107,7 +107,7 @@ export default function IndexPage() {
   const { updateCurrentKnowledgeBase, currentKnowledgeBase } = useKnowledgeBaseStore();
   const { completeConfig = {} } = useSystemConfigStore();
   const { projectLogo = '', projectName = '' } = completeConfig;
-  const { chatId: chatBotId, workspaceId, shareToken } = query;
+  const { chatId: chatBotId, workspaceId, shareToken=true } = query;
   const prefix = `chat-bot-${workspaceId}-${chatBotId}-`;
   const { localSessions, setLocalSessions, currentLocalSessions, setCurrentLocalSessions, menuClose, setMenuClose } = useChatBotStore();
 

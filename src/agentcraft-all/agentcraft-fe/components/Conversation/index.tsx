@@ -167,7 +167,7 @@ export default function Conversation(props: ConversationProps) {
         setHistoryLoading(true);
         const { data } = await ApiVersion[version].getSessionByKeyword(id, keyword, shareToken);
         if (data?.id) {
-            await ApiVersion[version].removeSessionHistory(data.id, shareToken);
+            await ApiVersion[version].removeSessionHistory(id, data.id, shareToken);
             await getMessages();
         }
         setHistoryLoading(false);
