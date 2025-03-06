@@ -57,7 +57,9 @@ router.post(async (req: any, res: any) => {
     if (extName === '.txt') {
         const splitter = new CharacterTextSplitter({
             chunkSize,
-            chunkOverlap: 100
+            chunkOverlap: 100,
+            keepSeparator: false,
+            separator: ""
         });
         output = await splitter.createDocuments([file.buffer.toString()]);
     }
@@ -100,6 +102,7 @@ router.post(async (req: any, res: any) => {
 
     for (const splitData of output) {
         const data = splitData.pageContent;
+        console.log(data.length);
         const documentData: RequestDocumentData = {
             title: bodyData.title,
             url: bodyData.url,
