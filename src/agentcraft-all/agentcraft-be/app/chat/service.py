@@ -276,42 +276,42 @@ def chat(agent_session_id: int, query: str, ip_addr: str, agent_id: int, history
     logger.info(f'has similarity_search_res: {similarity_search_res != []}')
 
     # 没有匹配到问答
-    if similarity_search_res == []:
-        answer = agent.default_answer or "抱歉，没有匹配到相关问题。"
-        add_args = {
-            "query": query,
-            "prompt": "",
-            "answer": [answer],
-            "source": [],
-            "chat_type": 0,
-            "ip_addr": ip_addr,
-            "agent": agent,
-            "usage": {},
-            "uid": uid,
-        } 
-        model = model_database.get_model_by_id(agent.model_id)
-        chat_id = add_chat(**add_args)
-        add_session_chat(agent_session_id, chat_id)
+    # if similarity_search_res == []:
+    #     answer = agent.default_answer or "抱歉，没有匹配到相关问题。"
+    #     add_args = {
+    #         "query": query,
+    #         "prompt": "",
+    #         "answer": [answer],
+    #         "source": [],
+    #         "chat_type": 0,
+    #         "ip_addr": ip_addr,
+    #         "agent": agent,
+    #         "usage": {},
+    #         "uid": uid,
+    #     } 
+    #     model = model_database.get_model_by_id(agent.model_id)
+    #     chat_id = add_chat(**add_args)
+    #     add_session_chat(agent_session_id, chat_id)
      
-        return {
-            "id": uid,
-            "object": "chat.illegal",
-            "model": model.name,
-            "choices": [{
-              "index": 0,
-              "message": {
-                "content": answer,
-                "role": "assistant"
-              },
-              "finish_reason": "null"
-            }],
-            "usage": {
-                "prompt_tokens": 0,
-                "completion_tokens": 0,
-                "total_tokens": 0
-            },
-            "created": created
-        }
+    #     return {
+    #         "id": uid,
+    #         "object": "chat.illegal",
+    #         "model": model.name,
+    #         "choices": [{
+    #           "index": 0,
+    #           "message": {
+    #             "content": answer,
+    #             "role": "assistant"
+    #           },
+    #           "finish_reason": "null"
+    #         }],
+    #         "usage": {
+    #             "prompt_tokens": 0,
+    #             "completion_tokens": 0,
+    #             "total_tokens": 0
+    #         },
+    #         "created": created
+    #     }
 
     search_res = rank_search_res(similarity_search_res)
     search_choices = convert_fuzzy_search_res(search_res)
@@ -632,6 +632,25 @@ def model_chat_stream(agent_session_id,
                         else:
                             if 'usage' in chunk and chunk['usage'] is not None:
                                 yield json.dumps(chunk)
+                    except json.JSONDecodeError as err:
+                        logger.info(f"{YELLOW}Unconverted chunk {line}{RESET}")
+                else:
+                    try:
+                        line_chunk = json.loads(line)
+                        content = line_chunk.get('message', {}).get('content','')
+                        has_done = line_chunk.get('done')
+                        chunk = {
+                            "id": uid,
+                            "model": model.name_alias,
+                            "created": created,
+                            "choices": [{"index": 0,
+                                        "delta": {"role": "assistant",
+                                                    "content": content},
+                                        "finish_reason": "stop" if has_done else None}],
+                        }
+                        answer[chunk["choices"][0]["index"]] += content
+                        yield json.dumps(chunk)
+                      
                     except json.JSONDecodeError as err:
                         logger.info(f"{YELLOW}Unconverted chunk {line}{RESET}")
         # """添加检索来源信息"""
