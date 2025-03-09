@@ -67,7 +67,8 @@
     color: #5f6368;
 }
 
-.generatebutton {
+.generatebutton,
+.stopbutton {
     position: absolute;
     top: 12px;
     right: 1rem;
@@ -76,6 +77,11 @@
     padding: 0.3rem;
     border: none;
     display: flex;
+}
+.stopbutton {
+    cursor: pointer;
+    border-radius: 50%;
+    border: 1px solid #ccc;
 }
 
 .loadingwheel {

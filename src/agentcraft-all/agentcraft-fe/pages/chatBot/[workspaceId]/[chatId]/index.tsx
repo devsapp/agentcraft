@@ -243,6 +243,7 @@ export default function IndexPage() {
           token={currentKnowledgeBase?.token || ''}
           shareToken={shareToken as string}
           id={currentKnowledgeBase?.id as number}
+          hiddenUseage
           keyword={currentLocation.value} />
       </Box>
     </div>

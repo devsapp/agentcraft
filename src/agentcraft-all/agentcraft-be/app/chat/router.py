@@ -65,7 +65,7 @@ async def chat(req: ChatRequest, request: Request, token: AgentJWTData = Depends
     if req.stream:
         return EventSourceResponse(
             service.chat_stream(
-                agent_session_id, query, request.client.host, agent_id, history_dict, model_name),
+                request, agent_session_id, query,  agent_id, history_dict, model_name),
             media_type="text/event-stream")
     else:
         resp: dict[str, Any] = service.chat(

@@ -333,13 +333,14 @@ def chat(agent_session_id: int, query: str, ip_addr: str, agent_id: int, history
     return model_chat(agent_session_id, **chat_args)
 
 
-def chat_stream(agent_session_id: int, query: str, ip_addr: str, agent_id: int, history = [], model_name: str = None):
+async def chat_stream(request, agent_session_id: int, query: str, agent_id: int, history = [], model_name: str = None):
     """Chat with agent."""
     agent = agent_database.get_agent_lite(agent_id)
     if not agent:
         raise ValueError("agent does not exist")
     created = int(time())
     uid = f"chatcompl-{uuid.uuid4()}"
+    ip_addr = request.client.host
     # 普通问答
     if not agent.prompt_template: 
         chat_args = {
@@ -354,7 +355,9 @@ def chat_stream(agent_session_id: int, query: str, ip_addr: str, agent_id: int, 
             "model_name": model_name,
             "created": created
         }
-        yield from model_chat_stream(agent_session_id, **chat_args)
+        async for chunk in model_chat_stream(request, agent_session_id, **chat_args):
+            yield chunk
+        # yield from model_chat_stream(request, agent_session_id, **chat_args)
         return
     # 知识库
     embedding = utils.embed(query)[0]
@@ -445,7 +448,9 @@ def chat_stream(agent_session_id: int, query: str, ip_addr: str, agent_id: int, 
         "created": created,
         "model_name": model_name
     }
-    yield from model_chat_stream(agent_session_id, **chat_args)
+    # yield from model_chat_stream(request, agent_session_id, **chat_args)
+    async for chunk in model_chat_stream(request, agent_session_id, **chat_args):
+        yield chunk
 
 
 def build_messages(prompt: str, history: list, system_message: str) -> list:
@@ -534,17 +539,20 @@ def model_chat(agent_session_id,
     return resp_data
 
 
-def model_chat_stream(agent_session_id, 
+async def model_chat_stream(request, agent_session_id, 
         query: str, prompt: str, history: list,
         search_choices: list, ip_addr: str, agent, chat_type: int, uid: str, created: int, model_name: str = None):
     """获取大模型的回答"""
+
+    answer = [""]*agent.n_sequences
+    messages = build_messages(prompt, history, agent.system_message)
+    model = model_database.get_model_by_id(agent.model_id)
+    model_name = model_name or model.name
+    usage = {}
+    llm_token = model.token if model.token else os.environ.get("DASHSCOPE_API_KEY", "") # 如果不在数据库中，则从环境变量中获取
+    if not model:
+        raise ValueError("model does not exist")
     try:
-        messages = build_messages(prompt, history, agent.system_message)
-        model = model_database.get_model_by_id(agent.model_id)
-        model_name = model_name or model.name
-        llm_token = model.token if model.token else os.environ.get("DASHSCOPE_API_KEY", "") # 如果不在数据库中，则从环境变量中获取
-        if not model:
-            raise ValueError("model does not exist")
         headers = {
             "Authorization": f"Bearer {llm_token}",
             "Content-Type": "application/json"
@@ -570,10 +578,10 @@ def model_chat_stream(agent_session_id,
         request_data = json.dumps(llm_request_options)
         request_data_for_log = json.dumps(llm_request_options,ensure_ascii=False)
         logger.info(f"{YELLOW}Request Data:{request_data_for_log}{RESET}")
+        
         resp = requests.post(model.url, headers=headers, data=request_data,
                             stream=True, timeout=model.timeout)
         resp.encoding = 'utf-8'
-        answer = [""]*agent.n_sequences
         if(resp.status_code != 200):
             logger.error(f"{RED}{resp.text}{RESET}")
             yield json.dumps({
@@ -587,12 +595,15 @@ def model_chat_stream(agent_session_id,
             })
             yield DONE
             return
-        usage = {}
+        
         reason_prefix = '\n<think>\n'
         reason_suffix = '\n</think>\n'
         start_reasoning = False
         start_real_content = False
         for line in resp.iter_lines():
+            if await request.is_disconnected():  # 检查客户端是否已断开
+                logger.warning("Client disconnected early")
+                break  # 主动终止循环
             if line:
                 line = codecs.decode(line)
                 if line.startswith("data:"):
@@ -602,7 +613,7 @@ def model_chat_stream(agent_session_id,
                         chunk["id"] = uid
                         chunk["created"] = created
                         chunk["model"] = model.name_alias
-                        usage = chunk.get('usage', {})
+                        usage = chunk.get('usage') if chunk.get('usage') != None else {}
                         if "choices" in chunk and len(
                                 chunk["choices"]) > 0 and "delta" in chunk["choices"][0] and "content" in chunk["choices"][0]["delta"]:
                             content = chunk["choices"][0]["delta"]["content"]
@@ -670,22 +681,6 @@ def model_chat_stream(agent_session_id,
         #                                 "finish_reason": "null"})
         #     yield json.dumps(search_info)
 
-        yield DONE
-        add_args = {
-            "query": query,
-            "prompt": prompt,
-            "answer": answer,
-            "source": search_choices,
-            "chat_type": chat_type,
-            "ip_addr": ip_addr,
-            "agent": agent,
-            "model": model,
-            "uid": uid,
-            "usage": usage
-        }
-        chat_id = add_chat(**add_args)
-        add_session_chat(agent_session_id, chat_id)
-
     except Exception as e:
         logger.info(f'{YELLOW}original response:{resp.text}{RESET}')
         logger.error(f"{RED}Unexpected error in model_chat_stream: {e}{RESET}", exc_info=True)
@@ -698,8 +693,22 @@ def model_chat_stream(agent_session_id,
             }],
             "created": created
         })
-        yield DONE
         return
+    yield DONE
+    add_args = {
+        "query": query,
+        "prompt": prompt,
+        "answer": answer,
+        "source": search_choices,
+        "chat_type": chat_type,
+        "ip_addr": ip_addr,
+        "agent": agent,
+        "model": model,
+        "uid": uid,
+        "usage": usage
+    }
+    chat_id = add_chat(**add_args)
+    add_session_chat(agent_session_id, chat_id)
 
 def add_chat(
         query: str, prompt: str, answer: list, source: list,

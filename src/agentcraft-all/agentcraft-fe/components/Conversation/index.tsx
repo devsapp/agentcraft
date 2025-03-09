@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { nanoid } from 'nanoid';
 import { Loader, LoadingOverlay, Button, Modal, Group, Badge, CopyButton, Text } from '@mantine/core';
+import { IconPlayerStop } from '@tabler/icons-react';
 import { useSystemConfigStore } from 'store/systemConfig';
 // import MarkdownContainer from 'components/Markdown';
 import { notifications } from '@mantine/notifications';
@@ -22,6 +23,7 @@ type ConversationItem = {
     completion_tokens?: number | string;
     feedback?: string;
     isRead?: boolean;
+    hiddenUseage?: boolean;
 }
 
 type ConversationProps = {
@@ -29,6 +31,7 @@ type ConversationProps = {
     id: number,
     token: string,
     shareToken?: string,
+    hiddenUseage?: boolean,
     version: 'v1' | 'v2' // v1 对应基础llm调用和rag检索， v2代表agent服务 二者在agentcraft的后端是分开的
 }
 
@@ -67,6 +70,7 @@ function transformMessage(data: any[]): ConversationItem[] {
     return m;
 }
 
+let currentController: AbortController | null = null;
 
 const ConversationComponent = React.memo((data: ConversationItem) => {
     const isUser = data.role == MessageType.USER;
@@ -121,9 +125,10 @@ const ConversationComponent = React.memo((data: ConversationItem) => {
             {
                 !isUser && (
                     <Group spacing="xs" mt={4} >
-                        <Badge radius="sm">
+                        {!data.hiddenUseage ? <Badge radius="sm">
                             输入token:{data.prompt_tokens || '-'}&nbsp;｜&nbsp;输出token:{data.completion_tokens || '-'}
-                        </Badge>
+                        </Badge> : null}
+
                         <CopyButton value={data.content}>
                             {copyNode}
                         </CopyButton>
@@ -136,7 +141,7 @@ const ConversationComponent = React.memo((data: ConversationItem) => {
 ConversationComponent.displayName = 'ConversationComponent';
 
 export default function Conversation(props: ConversationProps) {
-    const { token, version, keyword = '测试会话', id, shareToken = '' } = props;
+    const { token, version, keyword = '测试会话', id, shareToken = '', hiddenUseage } = props;
     const [loading, setLoading] = useState(false);
     const [showModal, setShowModal] = useState(false);
     const [historyLoading, setHistoryLoading] = useState(false);
@@ -155,6 +160,9 @@ export default function Conversation(props: ConversationProps) {
         }
     }, [conversations]);
 
+    useEffect(() => {
+        return () => currentController?.abort();
+    }, []);
     const getMessages = async () => {
         if (id) {
             setHistoryLoading(true);
@@ -177,6 +185,13 @@ export default function Conversation(props: ConversationProps) {
     const handleError = (e: any) => {
         setLoading(false);
         setTextAreaRef(chatInputRef, '');
+    };
+
+    // 取消请求
+    const handleCancel = () => {
+        currentController?.abort();
+        currentController = null;
+        setLoading(false);
     };
     const handleSubmit = (e: any) => {
         e.preventDefault();
@@ -218,6 +233,9 @@ export default function Conversation(props: ConversationProps) {
                     stream: true,
                     max_tokens: 2000,
                     keyword,
+                },
+                onController: (controller) => {
+                    currentController = controller; // 保存controller引用
                 },
                 onFinish: (msg, usage: IUsage) => {
                     if (usage?.total_tokens) {
@@ -266,7 +284,7 @@ export default function Conversation(props: ConversationProps) {
                 <div className={styles.cloud}>
                     <div ref={messageListRef} className={styles.messagelist}>
                         {conversations.map((item: ConversationItem) => (
-                            <ConversationComponent key={item.id} {...item} />
+                            <ConversationComponent key={item.id} {...item} hiddenUseage={hiddenUseage} />
                         ))}
                     </div>
                 </div>
@@ -283,12 +301,20 @@ export default function Conversation(props: ConversationProps) {
                                 placeholder={loading ? "等待回复中" : "请输入你的问题 "}
                                 className={styles.textarea}
                             />
-                            <button
-                                type="submit"
-                                disabled={loading}
-                                className={styles.generatebutton}
-                            >
-                                {loading ? <Loader mt={-8} /> : (
+
+
+                            {loading ?
+                                <button
+                                    className={styles.stopbutton}
+                                    onClick={handleCancel}
+                                >
+                                    <IconPlayerStop stroke={2} />
+                                </button>
+                                :
+                                <button
+                                    type="submit"
+                                    className={styles.generatebutton}
+                                >
                                     <svg
                                         viewBox="0 0 20 20"
                                         className={styles.svgicon}
@@ -296,8 +322,9 @@ export default function Conversation(props: ConversationProps) {
                                     >
                                         <path d="M10.894 2.553a1 1 0 00-1.788 0l-7 14a1 1 0 001.169 1.409l5-1.429A1 1 0 009 15.571V11a1 1 0 112 0v4.571a1 1 0 00.725.962l5 1.428a1 1 0 001.17-1.408l-7-14z"></path>
                                     </svg>
-                                )}
-                            </button>
+                                </button>
+                            }
+
                         </form>
                     </div>
                 </div>
