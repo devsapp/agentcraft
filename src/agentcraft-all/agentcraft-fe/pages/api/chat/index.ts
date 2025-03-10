@@ -56,7 +56,7 @@ export default async function handle(req: NextApiRequest, res: NextApiResponse) 
         }
     } catch (e: any) {
         if (e.name === 'AbortError') {
-            console.log('前端取消请求');
+            console.log('cancel from user');
         } else {
             res.status(500).json({ error: e.message });
         }

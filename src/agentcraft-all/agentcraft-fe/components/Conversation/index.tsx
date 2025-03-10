@@ -298,7 +298,7 @@ export default function Conversation(props: ConversationProps) {
                                 autoFocus={false}
                                 rows={1}
                                 name="chatInput"
-                                placeholder={loading ? "等待回复中" : "请输入你的问题 "}
+                                placeholder={loading ? "回复中" : "请输入你的问题 "}
                                 className={styles.textarea}
                             />
 

@@ -277,8 +277,8 @@ export function BuilderForm({ workspaceId }: AssistantProps) {
                     fw={700}
                     style={{ cursor: 'pointer' }}
                     onClick={async () => {
-                        const { token: shareToken } = await createShare(knowledgeBaseId);
-                        window.open(`/chatBot/${workspaceId}/${knowledgeBaseId}?shareToken=${shareToken}`);
+                        await createShare(knowledgeBaseId);
+                        window.open(`/chatBot/${workspaceId}/${knowledgeBaseId}`);
                     }}>
                     对外分享
                 </Text>
