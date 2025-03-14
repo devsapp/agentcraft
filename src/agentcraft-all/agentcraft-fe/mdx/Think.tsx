@@ -1,8 +1,10 @@
 import { Accordion } from '@mantine/core';
 export const Think = (props: any) => {
-    if(!props.children) {
+    let thinkContent = props.content || props.children;
+    if(!thinkContent) {
         return <div></div>
     }
+    if(props.content) {}
     return (
         <Accordion variant="filled" radius="xs" defaultValue="deep-thinking" style={{ marginBottom: 12,backgroundColor: '#FFF'}}>
             <Accordion.Item value="deep-thinking">
@@ -17,7 +19,7 @@ export const Think = (props: any) => {
                         fontStyle: 'italic',
                         marginBottom: 0
                     }}>
-                        {props.children}
+                        {decodeURIComponent(thinkContent)}
                     </blockquote>
                 </Accordion.Panel>
             </Accordion.Item>
