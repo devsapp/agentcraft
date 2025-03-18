@@ -4,9 +4,6 @@ import { IconBrandGithubFilled, IconExternalLink } from '@tabler/icons-react';
 
 import { FOUNDATION_MODEL_TEMPLATES } from 'constants/foundation-model';
 
-import { ServerlessAppTemplate, } from 'types/serverless-devs-app';
-
-
 
 function FoundationModelTab() {
 

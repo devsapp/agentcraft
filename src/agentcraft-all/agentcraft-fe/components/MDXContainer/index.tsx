@@ -1,7 +1,6 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import * as runtime from 'react/jsx-runtime'
-import { Paper, Button, Text, Code, TypographyStylesProvider } from '@mantine/core';
-
+import { Paper, Button, Text, Code } from '@mantine/core';
 import RemarkMath from "remark-math";
 import RemarkBreaks from "remark-breaks";
 import RemarkGfm from "remark-gfm";
@@ -11,7 +10,7 @@ import RehypeKatex from "rehype-katex";
 import RehypeHighlight from "rehype-highlight";
 import CodeHighlight from 'components/CodeHighlight';
 // import Markdown from 'components/MarkdownContainer';
-import  Features  from 'mdx/Features';
+import Features from 'mdx/Features';
 import { Think } from 'mdx/Think';
 
 
@@ -323,19 +322,28 @@ export function MdxLayout({ children }: { children: React.ReactNode }) {
 
 export async function renderMdx(mdxContent: string, scope: any) {
     try {
+        const componentTagRegex = /<([A-Z][a-zA-Z]*)\b/g;
+        const usedComponents = new Set<string>();
+        let match;
+        while ((match = componentTagRegex.exec(mdxContent)) !== null) {
+            usedComponents.add(match[1]);
+        }
+        const registeredComponents = new Set(Object.keys(components));
+        for (const component of usedComponents) {
+            if (!registeredComponents.has(component)) {
+                throw new Error(`Component ${component} is used but not registered in the components object.`);
+            }
+        }
         const vf = await compile(mdxContent, {
             outputFormat: "function-body",
             remarkPlugins: [
-                [RemarkMath, { strict: false, throwOnError: false, }],
+                [RemarkMath, { strict: true }],
                 RemarkGfm,
                 RemarkBreaks
             ],
             rehypePlugins: [
                 [RehypeKatex, {
-                    katexOptions: {
-                        strict: "ignore",
-                        throwOnError: false, // 抑制渲染错误(关键！)
-                    }
+
                 }],
                 [RehypeHighlight, { detect: false, ignoreMissing: true, plainText: ['unknow'] }]]
         });
@@ -348,7 +356,6 @@ export async function renderMdx(mdxContent: string, scope: any) {
         const MarkdownComponent = <Code style={{ fontSize: '14px', backgroundColor: 'transparent' }}  >{mdxContent}</Code>;
         return MarkdownComponent;
     }
-
 }
 export default function MDXContainer({ content, scope = {} }: any) {
     const [component, setComponent] = useState<React.ReactNode | null>(null);
@@ -361,6 +368,8 @@ export default function MDXContainer({ content, scope = {} }: any) {
             let ResultComponent: React.ReactElement | null = null;
 
             let { thinkContent, resultContent } = remarkThinkUpdate(mdxContent);
+
+
             if (thinkContent) {
                 ThinkComponent = await renderMdx(thinkContent, scope);
             }

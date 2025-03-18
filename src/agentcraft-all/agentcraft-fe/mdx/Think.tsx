@@ -4,7 +4,6 @@ export const Think = (props: any) => {
     if(!thinkContent) {
         return <div></div>
     }
-    if(props.content) {}
     return (
         <Accordion variant="filled" radius="xs" defaultValue="deep-thinking" style={{ marginBottom: 12,backgroundColor: '#FFF'}}>
             <Accordion.Item value="deep-thinking">

@@ -28,31 +28,6 @@ type MarkdownContentProps = {
     darkMode?: boolean; // markdown文本
 };
 
-const remarkThink = () => (tree: any, file: any) => {
-    visit(tree, (node: any, index, parent) => {
-        if (node.type === 'html' && node.value.indexOf('<think>') !== -1) {
-            const value = file.value;
-
-            // 从value 中取出 <think></think>标签内的内容
-            // 如果只包含了 <think>， 则取<think>之后的所有内容
-            // 使用正则表达式匹配 <think> 标签及其内容
-            const thinkRegex = /<think>(.*?)<\/think>/s;
-            const match = value.match(thinkRegex);
-
-            if (match) {
-                // 提取 <think> 标签中的内容
-                const thinkContent = match[1];
-                console.log(thinkContent)
-                node.data = {
-                    hName: 'think',
-                    hChildren: thinkContent,
-                };
-            }
-
-        }
-    });
-};
-
 const Markdown = (props: MarkdownContentProps) => {
     const { textContent } = props;
     return (
