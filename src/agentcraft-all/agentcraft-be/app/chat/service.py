@@ -622,7 +622,7 @@ async def model_chat_stream(request, agent_session_id,
                             if(content != None and content != ''):
                                 if(start_real_content == False and start_reasoning == True):
                                     start_real_content = True
-                                    content = reason_suffix + content
+                                    # content = reason_suffix + content
                                     chunk["choices"][0]["delta"]["content"] = reason_suffix + content
                                 answer[chunk["choices"][0]["index"]] += content
                                 yield json.dumps(chunk)
