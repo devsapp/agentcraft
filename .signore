@@ -12,5 +12,4 @@ venv
 Dockerfile
 .env.
 .dockerignore
-requirements.txt
 __pycache__
