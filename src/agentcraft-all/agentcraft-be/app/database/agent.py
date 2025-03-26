@@ -43,7 +43,7 @@ class Agent(postgresql.BaseModel):
     exact_search_limit = mapped_column(Integer, default=1, nullable=False)
     fuzzy_search_limit = mapped_column(Integer, default=3, nullable=False)
     is_public=mapped_column(Integer, default=0, nullable=True)
-    default_answer = mapped_column(String, default="抱歉，没有匹配到相关问题。", nullable=False)
+    default_answer = mapped_column(String, nullable=True)
     model = relationship("Model")
 
 
@@ -122,6 +122,14 @@ def update_token(agent_id: int, token: str, user_id: int):
         session.query(Agent).filter(
             Agent.id == agent_id, Agent.user_id == user_id).update(
             {Agent.token: token})
+        session.commit()
+        
+def update_is_public(agent_id: int, is_public: str, user_id: int):
+    """更新token"""
+    with Session(postgresql.postgres) as session:
+        session.query(Agent).filter(
+            Agent.id == agent_id, Agent.user_id == user_id).update(
+            {Agent.is_public: is_public})
         session.commit()
 
 

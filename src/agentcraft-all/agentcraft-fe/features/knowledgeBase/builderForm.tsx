@@ -5,7 +5,7 @@ import { useForm } from '@mantine/form';
 import { IconRefresh } from '@tabler/icons-react';
 import { getModelList, useModelStore } from 'store/model';
 import { getDataSetList, useDataSetStore } from 'store/dataset';
-
+import { createShare } from 'store/share';
 import { Model } from 'types/model';
 import { DataSet, DataSetType } from 'types/dataset';
 
@@ -40,19 +40,6 @@ export function KnowledgeBaseForm({ workspaceId, form }: { workspaceId: any, for
         <Paper shadow="xs" p="md" withBorder mt={12}>
             <Title order={5} size="h5">调试指令</Title>
             <Box pl={4} pr={4} >
-                {/* <Select
-                    data={INSTRUCTION_TEMPLATES}
-                    description=""
-                    defaultValue={DEFAULT_KNOWLEDGE_BAE_INSTRUCTION}
-                    {...form.getInputProps('system_message')}
-                    label="指令示例"
-                    placeholder=""
-                    onChange={(value: string) => {
-                        form.setValues({
-                            system_message: value
-                        })
-                    }}
-                /> */}
                 <Textarea label="系统指令" placeholder="输入系统指令" {...form.getInputProps('system_message')} minRows={12} description="系统提示词可以作为对大语言模型的约束指令" />
                 {/* <TextInput label="停止提示词" placeholder="停止输出的token" {...form.getInputProps('stop')} /> */}
             </Box>
@@ -123,12 +110,12 @@ export function KnowledgeBaseForm({ workspaceId, form }: { workspaceId: any, for
 }
 
 export function BuilderForm({ workspaceId }: AssistantProps) {
+    const { setLoading, currentKnowledgeBase, updateCurrentKnowledgeBase } = useKnowledgeBaseStore();
     const router = useRouter();
     const { query } = router;
     const [disabledSave, setDisabledSave] = useState(false);
-    const knowledgeBaseId: any = query.knowledgeBaseId;
+    const knowledgeBaseId: any = query.knowledgeBaseId || currentKnowledgeBase?.id;
     const initAgentName = query.initAgentName;
-    const { setLoading, currentKnowledgeBase, updateCurrentKnowledgeBase } = useKnowledgeBaseStore();
     const modelList: Model[] = useModelStore().modelList;
     const initFormValue = {
         name: initAgentName,
@@ -138,11 +125,11 @@ export function BuilderForm({ workspaceId }: AssistantProps) {
         exact_datasets: [],
         fuzzy_datasets: [],
         exact_search_similarity: 0.9,
-        fuzzy_search_similarity: 0.6,
+        fuzzy_search_similarity: 0.4,
         temperature: 0.5,
         top_p: 1.0,
         n_sequences: 1,
-        max_tokens: 1024,
+        max_tokens: 8000,
         stop: [],
         presence_penalty: 0,
         frequency_penalty: 0,
@@ -154,7 +141,7 @@ export function BuilderForm({ workspaceId }: AssistantProps) {
         llm_history_len: 0,
         system_message: DEFAULT_KNOWLEDGE_BAE_INSTRUCTION,
         exact_search_limit: 1,
-        fuzzy_search_limit: 3
+        fuzzy_search_limit: 10
     }
     const form: any = useForm({
         initialValues: initFormValue,
@@ -242,30 +229,41 @@ export function BuilderForm({ workspaceId }: AssistantProps) {
                 <Text fw={700}>配置</Text>
                 <Box style={{ position: 'absolute', top: 0, right: 0 }}>
                     <Flex justify={'flex-end'} align={'center'}>
-                        <Button h={32} mr={12} onClick={async () => {
-                            setDisabledSave(true);
-                            try {
-                                form.validate();
-                                if (form.isValid()) {
-                                    setLoading(true);
-                                    const values: any = form.values;
-                                    if (currentKnowledgeBase?.id) {
-                                        await updateKnowledgeBase(currentKnowledgeBase?.id, values);
-                                    } else {
-                                        const result = await addKnowledgeBase(values);
-                                        const knowledgeBaseId = result.id;
-                                        if (knowledgeBaseId) {
-                                            const { token } = await refreshToken(knowledgeBaseId);
-                                            console.log(token, 'token');
-                                            window.history.pushState({}, '', `?knowledgeBaseId=${knowledgeBaseId}`);
-                                            updateCurrentKnowledgeBase(Object.assign({}, values, { id: knowledgeBaseId, token }));
+                        <Button
+                            h={32}
+                            mr={12}
+                            onClick={async () => {
+                                setDisabledSave(true);
+                                try {
+                                    form.validate();
+                                    if (form.isValid()) {
+                                        setLoading(true);
+                                        const values: any = form.values;
+                                        if (currentKnowledgeBase?.id) {
+                                            await updateKnowledgeBase(currentKnowledgeBase?.id, values);
+                                        } else {
+                                            const result = await addKnowledgeBase(values);
+                                            const knowledgeBaseId = result.id;
+
+                                            if (knowledgeBaseId) {
+                                                const { token } = await refreshToken(knowledgeBaseId);
+                                                const knowledgeBase = await getKnowledgeBase(knowledgeBaseId);
+                                                // window.history.pushState({}, '', `?knowledgeBaseId=${knowledgeBaseId}`);
+                                                const url = new URL(window.location.href);
+                                                const newPath = `${url.pathname}/${knowledgeBaseId}`;
+                                                const newUrl = new URL(newPath, url.origin);
+                                                window.history.pushState({}, '', newUrl.toString());
+                                                updateCurrentKnowledgeBase(knowledgeBase);
+                                            }
                                         }
+                                        setLoading(false);
                                     }
-                                    setLoading(false);
-                                }
-                            } catch (e) { }
-                            setDisabledSave(false);
-                        }} disabled={disabledSave}>保存</Button>
+                                } catch (e) { }
+                                setDisabledSave(false);
+                            }}
+                            disabled={disabledSave}>
+                            保存
+                        </Button>
                     </Flex>
                 </Box>
             </Center>
@@ -275,7 +273,15 @@ export function BuilderForm({ workspaceId }: AssistantProps) {
         </Box>
         <Box w="50%" h="100%" p={16}>
             <Center maw={'100%'} h={38} mx="auto">
-                <Text fw={700}>预览</Text>
+                <Text
+                    fw={700}
+                    style={{ cursor: 'pointer' }}
+                    onClick={async () => {
+                        await createShare(knowledgeBaseId);
+                        window.open(`/chatBot/${workspaceId}/${knowledgeBaseId}`);
+                    }}>
+                    对外分享
+                </Text>
             </Center>
             {currentKnowledgeBase?.id ? <KnowledgeBaseChat /> : null}
         </Box>

@@ -1,9 +1,13 @@
 edition: 3.0.0
-name: AgentCraft
+name: AgentCraft-CAP
+access: '{{ access }}'
 vars:
   region: '{{ region }}'
   beFunctionName: '{{ beFunctionName }}'
   feFunctionName: '{{ feFunctionName }}'
+  fcRole: "{{ fcRole }}"
+  JWT_SECRET: "{{ JWT_SECRET }}"
+  dashscopeApiKey: "{{ dashscopeApiKey }}"
 template:
   AgentCraftAll:
     internetAccess: true
@@ -28,16 +32,17 @@ resources:
           - app/main.py
         port: 8000
       runtime: custom.debian10
-      instanceConcurrency: 10
-      role: AliyunFCDefaultRole
+      instanceConcurrency: 100
+      role: ${vars.fcRole}
       cpu: 8
       memorySize: 16384
-      diskSize: 10240
+      diskSize: 512
       environmentVariables:
         PATH: >-
           /var/fc/lang/python3.10/bin::/usr/local/bin/apache-maven/bin:/usr/local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/local/ruby/bin:/opt/bin:/code:/code/bin
         PYTHONPATH: /opt/python:/code
         EMBEDDING_TIMEOUT: '600'
+        DASHSCOPE_API_KEY: ${vars.dashscopeApiKey}
         WORKERS: '1'
         POSTGRES_HOST: ''
         POSTGRES_DATABASE: ''
@@ -47,7 +52,7 @@ resources:
         CREATE_TABLES: '1'
         EMBEDDING_URL: ''
         EMBEDDING_DIM: ''
-        JWT_SECRET: {{ JWT_SECRET }}
+        JWT_SECRET: ${vars.JWT_SECRET}
         REGION: ${vars.region}
       functionName: ${vars.beFunctionName}
       code: ./agentcraft-all/agentcraft-be
@@ -65,18 +70,14 @@ resources:
               - OPTIONS
             authType: anonymous
             disableURLInternet: false
+      customDomain:
+        protocol: "HTTP"
+        route:
+          path: "/*"
+          qualifier: "LATEST"
+        domainName: auto
     extend:
       name: AgentCraftAll
-  agentcraft-backend-domain:
-    component: fc3-domain
-    props:
-      region: ${vars.region}
-      domainName: auto
-      protocol: HTTP
-      routeConfig:
-        routes:
-          - path: /*
-            functionName: ${vars.beFunctionName}
   agentcraft-frontend:
     component: fc3
     # actions:
@@ -95,11 +96,11 @@ resources:
       layers:
         - acs:fc:${vars.region}:official:layers/Nodejs18/versions/1
         - >-
-          acs:fc:${vars.region}:1154600634854327:layers/agentcraft-frontend/versions/12
+          acs:fc:${vars.region}:1154600634854327:layers/agentcraft-frontend-cap-release/versions/2
       runtime: custom.debian10
-      instanceConcurrency: 5
+      instanceConcurrency: 100
       memorySize: 3072
-      role: AliyunFCDefaultRole
+      role: ${vars.fcRole}
       cpu: 2
       environmentVariables:
         baseUrl: ${resources.agentcraft-backend.output.url.system_intranet_url} # 仅在fc环境使用内网地址
@@ -107,6 +108,8 @@ resources:
         beFunctionName: ${vars.beFunctionName}
         NODE_PATH: /opt/nodejs/node_modules
         Region: ${vars.region}
+        DASHSCOPE_API_KEY: ${vars.dashscopeApiKey}
+        JWT_SECRET: ${vars.JWT_SECRET}
         PATH: >-
           /opt/nodejs18/bin::/usr/local/bin/apache-maven/bin:/usr/local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/local/ruby/bin:/opt/bin:/code:/code/bin:/opt/nodejs/node_modules/.bin
       functionName: ${vars.feFunctionName}
@@ -124,15 +127,12 @@ resources:
               - DELETE
             authType: anonymous
             disableURLInternet: false
+      customDomain:
+        protocol: "HTTP"
+        route:
+          path: "/*"
+          qualifier: "LATEST"
+        domainName: auto
     extend:
       name: AgentCraftAll
-  agentcraft-frontend-domain:
-    component: fc3-domain
-    props:
-      region: ${vars.region}
-      domainName: auto
-      protocol: HTTP
-      routeConfig:
-        routes:
-          - path: /*
-            functionName: ${vars.feFunctionName}
+  

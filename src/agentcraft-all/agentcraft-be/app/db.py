@@ -268,8 +268,7 @@ CREATE_AGENT_SESSION_TABLE = text(
     share_id VARCHAR(255),
     fingerprint_id VARCHAR(255),
     created TIMESTAMP NOT NULL DEFAULT NOW(),
-    modified TIMESTAMP NOT NULL DEFAULT NOW(),
-    UNIQUE (agent_id, keyword)
+    modified TIMESTAMP NOT NULL DEFAULT NOW()
     );"""
 )
 
@@ -295,8 +294,7 @@ CREATE_ASSISTANT_SESSION_TABLE = text(
     keyword VARCHAR(255) NOT NULL,
     fingerprint_id VARCHAR(255),
     created TIMESTAMP NOT NULL DEFAULT NOW(),
-    modified TIMESTAMP NOT NULL DEFAULT NOW(),
-    UNIQUE (assistant_id, keyword)
+    modified TIMESTAMP NOT NULL DEFAULT NOW()
     );"""
 )
 

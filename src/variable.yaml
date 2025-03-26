@@ -1,0 +1,11 @@
+shared:   # 共享变量
+  JWT_SECRET:
+    value: ''
+    description: 'AgentCraft访问API时作为JWT认证秘钥，可以随机设置,建议修改为自己的专属秘钥'
+    type: string
+    sensitive: true
+  dashscopeApiKey:
+    value: ''
+    description: '百炼的 API-KEY，获取方式请参考：<a href="https://help.aliyun.com/zh/model-studio/developer-reference/get-api-key" target="blank">如何获取</a>'
+    type: string
+    sensitive: true

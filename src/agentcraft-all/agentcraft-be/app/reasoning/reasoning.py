@@ -1,5 +1,5 @@
 """Chat Service"""
-
+import os
 import json
 import requests
 from time import time
@@ -285,6 +285,7 @@ class Reasoning:
         self.tool_name_dict = {tool['name_for_model']: tool['name_for_human'] for tool in action_tools}
 
         model = model_database.get_model_by_id(assistant.model_id)
+        llm_token = model.token if model.token else os.environ.get("DASHSCOPE_API_KEY", "")
         self.model = model
         llm_plugin_args = {
             "created": int(time()),
@@ -298,7 +299,7 @@ class Reasoning:
             # "frequency_penalty": assistant.frequency_penalty,
             "logit_bias": assistant.logit_bias,
             "model_id": model.id if model else None,
-            "token": model.token if model else None,
+            "token": llm_token,
             "timeout": model.timeout if model else None,
             "model": model.name,
             "instruction": assistant.instruction if assistant.instruction else DEFAULT_INSTRUCTION,

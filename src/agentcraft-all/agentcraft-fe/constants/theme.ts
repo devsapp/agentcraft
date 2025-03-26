@@ -8,7 +8,9 @@ const THEME: any = {
         AppShell: {
             styles: {
                 main: {
-                    height: '100hv'
+                    height: '100vh',
+                    overflowY: 'auto',
+                    paddingBottom: 'calc(var(--mantine-footer-height, 0px) + 2rem)'
                 },
             }
         },

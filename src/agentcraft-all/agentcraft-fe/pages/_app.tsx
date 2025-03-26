@@ -10,13 +10,13 @@ import { useSystemConfigStore, getSystemConfig } from 'store/systemConfig';
 import THEME from 'constants/theme';
 import '../styles/global.scss';
 import '../styles/markdown.scss';
-
-
+import 'katex/dist/katex.min.css';
 
 export default function App(props: AppProps) {
   const { Component, pageProps } = props;
   const [render, setRender] = useState(false);
-  const hiddenConfigView = useSystemConfigStore().hiddenConfigView;
+  const { hiddenConfigView, completeConfig = {} } = useSystemConfigStore();
+  const { projectFavicon, projectName, projectTheme = THEME } = completeConfig;
   useEffect(() => {
     setRender(true);
     getSystemConfig();
@@ -24,19 +24,17 @@ export default function App(props: AppProps) {
   return (
     <>
       <Head>
-        <title>AgentCraft</title>
-        <link rel="shortcut icon" href="/favicon.ico" />
-        <meta
-          name="viewport"
-          content="minimum-scale=1, initial-scale=1, width=device-width"
-        />
+        <title>{projectName}</title>
+        <link rel="shortcut icon" href={projectFavicon} />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"></meta>
 
       </Head>
       <MantineProvider
         withGlobalStyles
         withNormalizeCSS
-        theme={THEME}
+        theme={projectTheme}
       >
+        {/* 前端页面监控，专属部署建议使用自己的rum */}
         <script dangerouslySetInnerHTML={{
           __html: `
             !(function(c,b,d,a){c[a]||(c[a]={});c[a]={

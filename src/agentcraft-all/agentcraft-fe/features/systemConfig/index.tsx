@@ -130,28 +130,30 @@ export function SystemConfig() {
     }
 
     return (
-        <Paper shadow="xs" p="xl" style={{ width: '60%', margin: '0 auto' }}>
-            <LoadingOverlay visible={loading} />
-            <Notification title="系统配置" mb={148} withCloseButton={false} radius="xs" >
-                在进行系统操作前，您需要准备好Postgresql数据库（必填），embedding服务(选填)，AgentCraft提供了引导式的配置服务，帮助您快速完成系统配置
-            </Notification>
-            <div>
-                <Stepper active={activeStep} onStepClick={setActiveStep}>
-                    <Stepper.Step label="配置数据库" description="进行关系型数据库和向量数据库配置">
-                        <DataBaseConfig form={databaseConfigForm} />
-                    </Stepper.Step>
-                    <Stepper.Step label="配置Embedding服务" description="配置向量服务">
-                        <EmbeddingConfig form={embeddingServiceForm} />
-                    </Stepper.Step>
-                    <Stepper.Completed >
-                        <CompleteConfirm embeddingServiceForm={embeddingServiceForm} databaseForm={databaseConfigForm} />
-                    </Stepper.Completed>
-                </Stepper>
-                <Group mt="xl" pl={24}>
-                    {activeStep > SystemConfigStep.DATABASE && <Button variant="default" onClick={prevStep}>上一步</Button>}
-                    {activeStep === SystemConfigStep.COMPLETE ? <Button onClick={handleSubmit} >完成</Button> : <Button onClick={nextStep}>下一步</Button>}
-                </Group>
-            </div>
-        </Paper>
+        <div style={{ height: '100vh', overflowY: 'auto' }}>
+            <Paper shadow="xs" p="xl" style={{ width: '60%', margin: '0 auto' }}>
+                <LoadingOverlay visible={loading} />
+                <Notification title="系统配置" mb={148} withCloseButton={false} radius="xs" >
+                    在进行系统操作前，您需要准备好Postgresql数据库（必填），embedding服务(选填)，AgentCraft提供了引导式的配置服务，帮助您快速完成系统配置
+                </Notification>
+                <div>
+                    <Stepper active={activeStep} onStepClick={setActiveStep}>
+                        <Stepper.Step label="配置数据库" description="进行关系型数据库和向量数据库配置">
+                            <DataBaseConfig form={databaseConfigForm} />
+                        </Stepper.Step>
+                        <Stepper.Step label="配置Embedding服务" description="配置向量服务">
+                            <EmbeddingConfig form={embeddingServiceForm} />
+                        </Stepper.Step>
+                        <Stepper.Completed >
+                            <CompleteConfirm embeddingServiceForm={embeddingServiceForm} databaseForm={databaseConfigForm} />
+                        </Stepper.Completed>
+                    </Stepper>
+                    <Group mt="xl" pl={24}>
+                        {activeStep > SystemConfigStep.DATABASE && <Button variant="default" onClick={prevStep}>上一步</Button>}
+                        {activeStep === SystemConfigStep.COMPLETE ? <Button onClick={handleSubmit} >完成</Button> : <Button onClick={nextStep}>下一步</Button>}
+                    </Group>
+                </div>
+            </Paper>
+        </div>
     );
 }

@@ -1,5 +1,5 @@
 """Chat Service"""
-
+import os
 import json
 import requests
 import codecs
@@ -170,6 +170,12 @@ class ReasoningStreamFc:
                         output_chunk['choices'][0]['delta']['content'] = final_result_preview 
                         assistant_output = llm_outputs[0]['choices'][0]['delta']
                         yield json.dumps(output_chunk)
+                        tool_info['content'] = plugin_output
+                        #将工具返回的结果进行上下文的拼接
+                        messages.append(tool_info)
+                        answer, llm_outputs = yield from self.text_completion(
+                            messages, **kwargs)
+                        logger.info(f"{YELLOW}Answer: {answer}{RESET}")
                         break
                     tool_info['content'] = plugin_output
                     #将工具返回的结果进行上下文的拼接
@@ -213,7 +219,6 @@ class ReasoningStreamFc:
         created = kwargs['created']
         uid = kwargs['uid']
         model = kwargs['model']
-        stop_words = kwargs['stop_words'].split(',')
         tool_call = True
         answer = ""
         llm_outputs = []
@@ -224,7 +229,7 @@ class ReasoningStreamFc:
             "Content-Type": "application/json"
         }
         try:
-            request_data = {
+            llm_request_options = {
                 "model": kwargs['model'],
                 "messages": messages,
                 "temperature": kwargs['temperature'],
@@ -232,7 +237,6 @@ class ReasoningStreamFc:
                 "n": kwargs['n'],
                 "stream": True,
                 "max_tokens": kwargs['max_tokens'],
-                "stop": stop_words,
                 "presence_penalty": kwargs['presence_penalty'],
                 # "frequency_penalty": kwargs['frequency_penalty'],
                 "logit_bias":  {},
@@ -241,10 +245,12 @@ class ReasoningStreamFc:
                 }
             }
             if(len(kwargs['tools'])>0):
-                request_data["tools"] = kwargs['tools']
+                llm_request_options["tools"] = kwargs['tools']
             else:
                 tool_call = False
-            request_data = json.dumps(request_data,ensure_ascii=False)
+            request_data = json.dumps(llm_request_options)
+            request_data_for_log = json.dumps(llm_request_options,ensure_ascii=False)
+            logger.info(f"{YELLOW}Request Data:{request_data_for_log}{RESET}")
             resp = requests.post(kwargs['url'], headers=headers, stream=True,
                                 data=request_data, timeout=kwargs['timeout'])
             for index, line in enumerate(resp.iter_lines()):
@@ -261,10 +267,13 @@ class ReasoningStreamFc:
                             chunk["model"] = model
                             chunk["session_id"] = self.business.get(
                                 'session_id', None)
+                            # logger.info(f"{RED}chunk:{chunk}{RESET}")
+                            assistant_output = chunk['choices'][0]['delta']
                             if(index == 0):
-                                assistant_output = chunk['choices'][0]['delta']
                                 try:
-                                    if assistant_output['tool_calls'] == None:  # 如果模型判断无需调用工具，则将assistant的回复直接打印出来，无需进行模型的第二轮调用
+                                    # 使用 get 方法避免 KeyError
+                                    tool_calls = assistant_output.get('tool_calls', [])
+                                    if not tool_calls:  # 如果模型判断无需调用工具，则将assistant的回复直接打印出来，无需进行模型的第二轮调用
                                         tool_call = False
                                 except KeyError:
                                     tool_call = False
@@ -279,14 +288,20 @@ class ReasoningStreamFc:
                                 else:
                                     # 调用工具的返回，除了最后一个useage结果是'', 其余的content皆为None
                                     if(content == None):
-                                        # logger.info(f"Tool Use: {chunk}")
-                                        tool_use[0]["name"]+=chunk["choices"][0]["delta"]["tool_calls"][0]["function"]["name"]
-                                        tool_use[0]["arguments"]+=chunk["choices"][0]["delta"]["tool_calls"][0]["function"]["arguments"]
+                                        tool_calls = assistant_output.get('tool_calls', [])
+                                        logger.info(f"{YELLOW}Tool Use: {chunk}{RESET}")
+                                        function_name = tool_calls[0].get('function', {}).get('name', '')
+                                        function_arguments = tool_calls[0].get('function', {}).get('arguments', '')
+                                        tool_use[0]["name"] += function_name
+                                        tool_use[0]["arguments"] += function_arguments
+                                        # tool_use[0]["name"]+=chunk["choices"][0]["delta"]["tool_calls"][0]["function"]["name"]
+                                        # tool_use[0]["arguments"]+=chunk["choices"][0]["delta"]["tool_calls"][0]["function"]["arguments"]
                             else:
                                 if 'usage' in chunk and chunk['usage'] is not None:
                                     yield json.dumps(chunk)
                         except Exception as err:
-                            logger.info(f"{YELLOW}Unconverted chunk {line}{RESET}")
+                            logger.error(f"{RED}Unexpected error:{err} , original chunk line is: {line}{RESET}")
+                            # logger.info(f"{YELLOW}Unconverted chunk {line}{RESET}")
             
             self.usage = (
                 self.usage[0] + usage.get("prompt_tokens", 0),
@@ -298,7 +313,6 @@ class ReasoningStreamFc:
                 llm_outputs[0]['choices'][0]['delta']['tool_calls'][0]['function']['arguments']=tool_use[0]["arguments"]
             return answer,llm_outputs
         except Exception as e:
-                logger.info(f'{YELLOW}original response:{resp.text}{RESET}')
                 logger.error(f"{RED}Unexpected error in model_chat_stream: {e}{RESET}", exc_info=True)
                 yield json.dumps({
                     "id": uid,
@@ -333,6 +347,7 @@ class ReasoningStreamFc:
         self.time = time()
         text_input = self.query
         action_tools = []
+        action_tools_function_call = []
         assistant = self.assistant
         model = self.model
         try:
@@ -372,6 +387,7 @@ class ReasoningStreamFc:
             logger.error(e)
         self.tool_name_dict = {
             tool.name: {'name': tool.alias, 'output': tool.output_schema, 'need_llm_call': tool.need_llm_call} for tool in action_tools}
+        llm_token = model.token if model.token else os.environ.get("DASHSCOPE_API_KEY", "")
         llm_plugin_args = {
             "created": int(time()),
             "uid": f"assistant-compl-{uuid.uuid4()}",
@@ -379,12 +395,11 @@ class ReasoningStreamFc:
             "top_p": assistant.top_p,
             "n": assistant.n_sequences,
             "max_tokens": assistant.max_tokens,
-            "stop_words": assistant.stop if assistant.stop else 'Observation:, Observation:\n',
             "presence_penalty": assistant.presence_penalty,
             # "frequency_penalty": assistant.frequency_penalty,
             "logit_bias": assistant.logit_bias,
             "model_id": model.id if model else None,
-            "token": model.token if model else None,
+            "token": llm_token,
             "timeout": model.timeout if model else None,
             "model": model.name,
             "instruction": assistant.instruction if assistant.instruction else DEFAULT_INSTRUCTION,

@@ -3,7 +3,7 @@ node_modules
 .git
 .github
 .DS_Store
-agentcraft-all/agentcraft-fe/.next/cache
+src/agentcraft-all/agentcraft-fe/.next/cache
 cache
 Makefile
 docker-compose.yml

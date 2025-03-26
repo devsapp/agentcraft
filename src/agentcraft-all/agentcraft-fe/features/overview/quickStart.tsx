@@ -8,7 +8,7 @@ import LLMProxy from 'features/overview/llmProxy';
 import DataAll from 'features/overview/dataAll';
 import { DEFAULT_CHAT_INSTRUCTION } from 'constants/instructions'
 import { Agent } from 'features/overview/agent';
-import { useQuickStartStore, QuickStartStep, createFoundationModelOnly, checkFoundationModelStatusAndLLMProxy,createLLMProxyOnly, createDataAll } from "store/quickStart";
+import { useQuickStartStore, QuickStartStep, createFoundationModelOnly, checkFoundationModelStatusAndLLMProxy, createLLMProxyOnly, createDataAll } from "store/quickStart";
 import { addAssistant, refreshToken as refreshAssistantToken } from 'store/assistant';
 import { addKnowledgeBase, refreshToken } from 'store/knowledgeBase';
 import { getModelList, useModelStore } from 'store/model';
@@ -83,16 +83,15 @@ export function QuickStart({ workspaceId }: any) {
     const [appName, setAppName] = useState('');
     const llmProxyForm: UseFormReturnType<any> = useForm({
         initialValues: {
-            name_alias: '通义千问Plus版本',
-            description: '阿里云百炼平台提供的通义千问Plus版本',
+            name_alias: '满血版DeepSeek-R1',
+            description: '基于阿里云百炼的满血DS-R1',
             region: 'cn-hangzhou',
             apiKey: '',
-            model: 'qwen-plus'
+            model: 'deepseek-r1'
         },
         validate: {
             name_alias: (value) => (!value ? 'LLM代理名称必填' : null),
-            region: (value) => (!value ? 'LLM代理所在地域必填' : null),
-            apiKey: (value) => (!value ? 'API Key必填' : null)
+            region: (value) => (!value ? 'LLM代理所在地域必填' : null)
         },
     });
 
@@ -104,7 +103,7 @@ export function QuickStart({ workspaceId }: any) {
             const instructionChatId = result.id;
             if (instructionChatId) {
                 await refreshToken(instructionChatId);
-                await router.push(`/agent/${workspaceId}/instructionChat/${instructionChatId}`)
+                await router.push(`/agent/${workspaceId}/instructionChat/${instructionChatId}`);
             }
             return true;
         } else {
@@ -155,7 +154,7 @@ export function QuickStart({ workspaceId }: any) {
             temperature: 0.5,
             top_p: 1.0,
             n_sequences: 1,
-            max_tokens: 1024,
+            max_tokens: 8000,
             stop: [],
             presence_penalty: 0,
             frequency_penalty: 0,
@@ -187,7 +186,7 @@ export function QuickStart({ workspaceId }: any) {
             temperature: 0.5,
             top_p: 1.0,
             n_sequences: 1,
-            max_tokens: 1024,
+            max_tokens: 8000,
             stop: [],
             presence_penalty: 0,
             frequency_penalty: 0,
@@ -221,7 +220,7 @@ export function QuickStart({ workspaceId }: any) {
             temperature: 0.5,
             top_p: 1.0,
             n_sequences: 1,
-            max_tokens: 1024,
+            max_tokens: 8000,
             stop: [],
             presence_penalty: 0,
             frequency_penalty: 0,
@@ -247,8 +246,10 @@ export function QuickStart({ workspaceId }: any) {
         setActiveStep,
         setConfigStepStatus,
         setAutoQuickStart,
-        currentAgentType
+        currentAgentType,
+        autoQuickStart
     } = useQuickStartStore();
+
     const {
         llm_proxy_create_loading,
         data_all_create_loading,
@@ -260,6 +261,7 @@ export function QuickStart({ workspaceId }: any) {
         if (!llmProxyForm.isValid()) {
             return;
         }
+        let modelId = '';
         configStepStatus.llm_proxy_create_loading = true;
         setConfigStepStatus(configStepStatus);
         //处理
@@ -271,7 +273,7 @@ export function QuickStart({ workspaceId }: any) {
             // setAppName(_appName);
             // const modelId = await checkFoundationModelStatusAndLLMProxy(_appName, values);
 
-            const modelId = await createLLMProxyOnly(values);
+            modelId = await createLLMProxyOnly(values);
             configStepStatus.llm_proxy_create_loading = false;
             setConfigStepStatus(configStepStatus);
             setModelId(modelId);
@@ -291,6 +293,7 @@ export function QuickStart({ workspaceId }: any) {
             configStepStatus.llm_proxy_create_loading = false;
             setConfigStepStatus(configStepStatus);
         }
+        return modelId;
 
     }
 
@@ -329,9 +332,34 @@ export function QuickStart({ workspaceId }: any) {
         const currentStep = activeStep > 0 ? activeStep - 1 : activeStep;
         setActiveStep(currentStep);
     };
-    useEffect(() => {
-        getModelList();
-    }, []);
+    const autoCreate = async () => {
+        // 检测是否已经存在智能体
+        if (autoQuickStart) {
+
+            const modelId = await createLLMProxy();
+            if (modelId) {
+                instructionChatForm.setValues({
+                    model_id: modelId,
+                    name: '满血版DeepSeek-R1',
+                    description: '满血DeepSeek-R1智能助手'
+                });
+            }
+            setTimeout(async () => {
+                configStepStatus.knowledge_base_create_loading = true;
+                setConfigStepStatus(configStepStatus);
+                await createInstructionChat(instructionChatForm);
+                configStepStatus.knowledge_base_create_loading = false;
+                setConfigStepStatus(configStepStatus);
+                setAutoQuickStart(false);
+            }, 1000);
+        }
+
+    };
+
+    // useEffect(() => {
+    //     autoCreate(); // 自动创建代理及智能体
+    // }, []);
+
     useEffect(() => {
         if (workspaceId) {
             let app_id;
@@ -348,12 +376,19 @@ export function QuickStart({ workspaceId }: any) {
                 app_id
             });
         }
-    }, [workspaceId])
+    }, [workspaceId]);
+
+    useEffect(() => {
+        getModelList();
+    }, []);
+
     useEffect(() => {
         if (modelList.length > 0) {
             const model_id = modelList[0].id;
             instructionChatForm.setValues({
-                model_id
+                model_id,
+                name: '满血版DeepSeek-R1',
+                description: '满血DeepSeek-R1智能助手'
             });
             knowledgeBaseForm.setValues({
                 model_id
@@ -363,6 +398,7 @@ export function QuickStart({ workspaceId }: any) {
             });
         }
     }, [modelList]);
+
     const modelSelectData: any = modelList.map((item: Model) => { return { label: item.name_alias, value: item.id } });
     return (
         <>

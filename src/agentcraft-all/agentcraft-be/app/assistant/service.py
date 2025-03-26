@@ -8,7 +8,7 @@ from app.database import assistant as database, assistant_dataset as relation_da
 def create_token(assistant_id: int, expires_delta: timedelta = timedelta(days=jwt_config.JWT_EXP)):
     """创建token"""
     exp = datetime.utcnow() + expires_delta
-    jwt_data = {"sub": assistant_id, "exp": exp}
+    jwt_data = {"sub": str(assistant_id), "exp": exp}
     return jwt.encode(jwt_data, jwt_config.JWT_SECRET, algorithm=jwt_config.JWT_ALG), exp
 
 
@@ -50,10 +50,7 @@ def get_assistant(_id: int, user_id: int):
                       "dataset_name": dataset_name}
                      for relation, dataset_name in relations]
     action_tools_dict = [id for id in relations_at]
-    exp = ""
-    if assistant.token:
-        exp = decode_token(assistant.token)["exp"]
-    assistant_dict = {"exp": exp, "datasets": datasets_dict,"action_tools": action_tools_dict, "model_name": model_name, **vars(assistant), }
+    assistant_dict = {"datasets": datasets_dict,"action_tools": action_tools_dict, "model_name": model_name, **vars(assistant), }
     return assistant_dict
 
 

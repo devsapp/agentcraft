@@ -47,3 +47,17 @@ def update_session_status(agent_session_id: int, user_id: int, status: int, sour
   logger.error(f'agent_id={agent_id}')
   check_user_has_agent(user_id, agent_id)
   agent_session_database.update_session(agent_session_id, status = status)
+
+
+def public_update_session_status(agent_session_id: int, status: int, source_status: int = 1):
+  data = agent_session_database.get_session(agent_session_id, source_status)
+  if not data:
+    raise HTTPException(status_code=403, detail="user does not have this assistant session")
+  agent_id = data.get('agent_id')
+  logger.error(f'agent_id={agent_id}')
+  agent_session_database.update_session(agent_session_id, status = status)
+
+
+
+
+

@@ -8,6 +8,7 @@ from app.chat import service
 from app.chat.schema import ChatRequest, UpdateChatRequest, ChatCompletionResponse
 from app.common.schema import DictListResponse
 from app.auth.security import validate_token, validate_agent_token
+from app.utils.message import process_history
 router = APIRouter()
 
 
@@ -35,6 +36,7 @@ async def chat(req: ChatRequest, request: Request, token: AgentJWTData = Depends
     agent_id = token.agent_id
 
     keyword = req.keyword
+    model_name = req.model_name
     agent_session_id = req.session_id
     logger.info(f'agent_session_id: {agent_session_id}; keyword: {keyword};')
 
@@ -42,17 +44,28 @@ async def chat(req: ChatRequest, request: Request, token: AgentJWTData = Depends
     agent_session_id = service.get_chat_session_id(agent_session_id, keyword, agent_id, title = query)
     logger.info(f'agent_session_id: {agent_session_id}')
 
-    history = []
-    if agent_session_id is not None:
-        history, _total = service.list_chats_history_by_session_id(agent_id, agent_session_id)
+    # history = []
+    # if agent_session_id is not None:
+    #     history, _total = service.list_chats_history_by_session_id(agent_id, agent_session_id)
 
-    history_dict = [{"user": d["question"], "assistant": d["answer"]} for d in history]
+    # history_dict = [{"user": d["question"], "assistant": d["answer"]} for d in history]
     # logger.info(f"history: {history_dict}")
+
+    context_carry_enabled = req.context_carry_enabled
+    history_dict = []
+    if agent_session_id is not None:
+        # 获取数据库历史
+        db_history, _total = service.list_chats_history_by_session_id(agent_id, agent_session_id)
+        history_dict = [{"user": d["question"], "assistant": d["answer"]} for d in db_history]
+        # 合并处理历史
+        if context_carry_enabled:
+            history_dict = process_history(req.messages, history_dict)
+    logger.info(f"Combined history: {history_dict}")
 
     if req.stream:
         return EventSourceResponse(
             service.chat_stream(
-                agent_session_id, query, request.client.host, agent_id, history_dict),
+                request, agent_session_id, query,  agent_id, history_dict, model_name),
             media_type="text/event-stream")
     else:
         resp: dict[str, Any] = service.chat(

@@ -82,7 +82,7 @@ function AddOrUpdate() {
                 />
                 <TextInput mt={4} label="名称" placeholder="工具名" {...form.getInputProps('alias')} />
                 <Textarea mt={4} withAsterisk label="描述" placeholder="输入工具描述" {...form.getInputProps('description')} description={<div><span >参考示例：</span><CopyToClipboard value={"文生图是一个AI绘画（图像生成）服务，输入文本描述，返回根据文本作画得到的图片的URL"} content={"文生图是一个AI绘画（图像生成）服务，输入文本描述，返回根据文本作画得到的图片的URL"} position={"none"} /> </div>} />
-                <Textarea mt={4} withAsterisk label="输入参数" placeholder="输入参数" {...form.getInputProps('input_schema')} description={<div><span >参考示例：</span><CopyToClipboard value={"[ { 'name': 'prompt', 'description': '英文关键词，描述了希望图像具有什么内容', 'required': True, 'schema': {'type': 'string'}, } ]"} content={"[ { 'name': 'prompt', 'description': '英文关键词，描述了希望图像具有什么内容', 'required': True, 'schema': {'type': 'string'}, } ]"} position={"none"} /> </div>} />
+                <Textarea mt={4} withAsterisk label="输入参数" placeholder="输入参数" {...form.getInputProps('input_schema')} description={<div><span >参考示例：</span><CopyToClipboard value={"[ { 'name': 'prompt', 'description': '英文关键词，描述了希望图像具有什么内容', 'required': True, 'schema': {'type': 'string'} } ]"} content={"[ { 'name': 'prompt', 'description': '英文关键词，描述了希望图像具有什么内容', 'required': True, 'schema': {'type': 'string'} } ]"} position={"none"} /> </div>} />
                 <Textarea mt={4} label="输出参数" placeholder="输入参数" {...form.getInputProps('output_schema')} />
                 <Radio.Group
                     mt={4}
@@ -186,48 +186,47 @@ function ActionToolModelForm() {
                 <Button onClick={async () => {
                     form.validate();
                     if (form.isValid()) {
+
+                        setOpenToolForm(false);
+                        setLoadingForChoose(true);
+                        const createAppPayload = {
+                            description: currentToolForm.description,
+                            name: currentToolForm.functionConfig.functionName,
+                            ...form.values
+                        }
                         try {
-                            setOpenToolForm(false);
-                            setLoadingForChoose(true);
-                            const createAppPayload = {
-                                description: currentToolForm.description,
-                                name: currentToolForm.functionConfig.functionName,
-                                ...form.values
-                            }
                             const appName: any = await createServerlessApp(currentToolForm.functionConfig.template, createAppPayload);
                             if (appName) {
                                 await checkAppStatus(appName);
-                            } else {
-                                throw new Error('创建应用失败');
                             }
-                            const data = await addTool({
-                                name: currentToolForm.functionConfig.functionName,
-                                alias: currentToolForm.name,
-                                description: currentToolForm.description,
-                                input_schema: currentToolForm.input_schema,
-                                type: 1,
-                                status: 2,
-                                output_schema: '',
-                                author: '',
-                                proxy_url: '',
-                                need_llm_call: 1,
-                            });
-                            if (data) {
-                                await getToolList();
-                            } else {
-                                notifications.show({
-                                    title: '创建工具失败',
-                                    message: '请检查是否已经存在该工具',
-                                    color: 'red',
-                                });
-                            }
-                            setOpenToChoose(false);
-                            setLoadingForChoose(false);
                         } catch (e) {
-                            console.log(e);
                         }
-
+                        const data = await addTool({
+                            name: currentToolForm.functionConfig.functionName,
+                            alias: currentToolForm.name,
+                            description: currentToolForm.description,
+                            input_schema: currentToolForm.input_schema,
+                            type: 1,
+                            status: 2,
+                            output_schema: '',
+                            author: '',
+                            proxy_url: '',
+                            need_llm_call: 1,
+                        });
+                        if (data) {
+                            await getToolList();
+                        } else {
+                            notifications.show({
+                                title: '创建工具失败',
+                                message: '请检查是否已经存在该工具',
+                                color: 'red',
+                            });
+                        }
+                        setOpenToChoose(false);
+                        setLoadingForChoose(false);
                     }
+
+
 
                 }}>确认</Button>
             </Box>

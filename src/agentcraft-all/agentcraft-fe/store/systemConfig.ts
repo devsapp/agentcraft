@@ -15,7 +15,12 @@ export interface VpcInfo {
 export interface CompleteConfigData {
     regionId: string,
     EMBEDDING_URL: string,
-    vpcInfo: VpcInfo
+    vpcInfo: VpcInfo,
+    projectFavicon: string,
+    projectName: string,
+    projectLogo: string,
+    projectTheme: object,
+    chatBotIcon: string,
 }
 
 
@@ -23,7 +28,7 @@ export interface CompleteConfigData {
 export const useSystemConfigStore = create<any>(persist(
     (set) => ({
         completeConfig: {},
-        hiddenConfigView: false,
+        hiddenConfigView: true,
         embeddingConfig: {
             EMBEDDING_DIM: '1024',
             EMBEDDING_URL: '',

@@ -52,6 +52,7 @@ export async function getModelList() {
     if (modelList) {
         updateModelList(modelList);
     }
+    return modelList;
 }
 
 export async function getFmAppList() {

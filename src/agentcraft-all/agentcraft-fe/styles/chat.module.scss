@@ -8,7 +8,7 @@
     .clear {
         position: absolute;
         right: 0;
-        top: -40px;
+        top: -5%;
     }
 }
 
@@ -67,7 +67,8 @@
     color: #5f6368;
 }
 
-.generatebutton {
+.generatebutton,
+.stopbutton {
     position: absolute;
     top: 12px;
     right: 1rem;
@@ -76,6 +77,31 @@
     padding: 0.3rem;
     border: none;
     display: flex;
+}
+.stopbutton {
+    cursor: pointer;
+    border-radius: 50%;
+    border: 1px solid #ccc;
+    animation: breathing 1.5s ease-in-out infinite; // 持续呼吸动画
+    @keyframes breathing {
+        0% {
+            transform: scale(0.95); 
+            border-color: #ccc; // 初始边框颜色
+        }
+        50% { 
+            transform: scale(1.05); 
+            border-color: #2f667b; // 中间状态边框颜色（可根据需要调整）
+        }
+        100% { 
+            transform: scale(0.95); 
+            border-color: #ccc; // 回到初始边框颜色
+        }
+    }
+    
+    &:hover {
+        animation: none; // 悬停时停止呼吸
+        transform: scale(1.1);
+    }
 }
 
 .loadingwheel {
@@ -244,7 +270,6 @@
     justify-content: center;
     align-items: center;
     position: relative;
-    padding-top: 2rem;
     // flex-direction: column;
 }
 

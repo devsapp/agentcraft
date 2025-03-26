@@ -3,6 +3,9 @@ from typing import List, Optional
 from pydantic import BaseModel, Field  # pylint: disable = no-name-in-module
 
 
+class UpdateIsPublicRequest(BaseModel):
+    is_public: int = Field(description="是否公开智能体")
+
 class UpsertAgentRequest(BaseModel):
     """增改Agent请求"""
     name: str = Field(description="Agent名称")

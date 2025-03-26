@@ -20,7 +20,7 @@ export function KnowledgeBaseBuilder({ workspaceId }: AssistantProps) {
     const router = useRouter();
     const { query } = router;
     const knowledgeBaseId = query.knowledgeBaseId;
-    const loading: boolean = useKnowledgeBaseStore().loading;
+    const { loading, updateCurrentKnowledgeBase } = useKnowledgeBaseStore();
     const [innerTab, setInnerTab] = useState('chat')
 
 
@@ -32,7 +32,8 @@ export function KnowledgeBaseBuilder({ workspaceId }: AssistantProps) {
                     <Flex justify={'space-between'} align={'center'} h={'100%'} w={'50%'} >
                         <Flex align={'center'} h={'100%'} >
                             <ActionIcon onClick={() => {
-                                router.push('/agent')
+                                updateCurrentKnowledgeBase({} as any); //清理状态缓存
+                                router.replace('/agent');
                             }}>
                                 <IconArrowBackUp />
                             </ActionIcon>

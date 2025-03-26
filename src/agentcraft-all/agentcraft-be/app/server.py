@@ -3,6 +3,7 @@ from fastapi import FastAPI, HTTPException
 from fastapi.responses import RedirectResponse, JSONResponse
 from app.auth.router import router as auth_router
 from app.chat.router import router as chat_router
+from app.share.router import router as share_router
 from app.assistant_chat.router import router as assistant_chat_router
 from app.document.router import router as document_router
 from app.question.router import router as question_router
@@ -46,6 +47,7 @@ def index():
 
 
 app.include_router(auth_router, prefix="/auth", tags=["Auth"])
+app.include_router(share_router, prefix="/share", tags=["Share"])
 app.include_router(chat_router, prefix="/v1/chat", tags=["Chat"])
 app.include_router(agent_router, prefix="/agent", tags=["Agent"])
 app.include_router(chat_session_router, prefix="/agent_session", tags=["AgentSession"])
