@@ -12,6 +12,7 @@ import app.database.model as model_database
 from app.reasoning.reasoning import Reasoning
 from app.reasoning.reasoning_stream import ReasoningStream
 from app.reasoning.reasoning_stream_functioncall import ReasoningStreamFc
+from app.reasoning.reasoning_stream_mcp import ReasoningStreamMcp
 from app.config import common as config
 DONE = "[DONE]"
 COMPATIBLE_WITH_FUNCTION_CALL_MODELS = ["qwen-max-latest","qwen-max","qwen-plus"]
@@ -108,18 +109,21 @@ def chat_stream(assistant_session_id: int, query: str, ip_addr: str, assistant_i
                  "dataset_name": dataset_name}
                 for relation, dataset_name in relations]
     model = model_database.get_model_by_id(assistant.model_id)
+    
+    reason_stream = ReasoningStreamMcp(
+            query, assistant, model, datasets, credential_dict, history,
+            session_id=assistant_session_id)
     # 如果model.name 是以qwen 开头的 使用ReasoningStreamFc
-    if(model.name in COMPATIBLE_WITH_FUNCTION_CALL_MODELS):
-        reason_stream = ReasoningStreamFc(
-            query, assistant, model, datasets, credential_dict, history,
-            session_id=assistant_session_id)
-    else:
-        reason_stream = ReasoningStream(
-            query, assistant, model, datasets, credential_dict, history,
-            session_id=assistant_session_id)
+    # if(model.name in COMPATIBLE_WITH_FUNCTION_CALL_MODELS):
+    #     reason_stream = ReasoningStreamFc(
+    #         query, assistant, model, datasets, credential_dict, history,
+    #         session_id=assistant_session_id)
+    # else:
+    #     reason_stream = ReasoningStream(
+    #         query, assistant, model, datasets, credential_dict, history,
+    #         session_id=assistant_session_id)
 
     yield from reason_stream.call_assistant_stream()
-
     # reasoning_log: 完整的推理日志
     # answer: 展示用户的答案
     reasoning_log, answer, prompt = reason_stream.result

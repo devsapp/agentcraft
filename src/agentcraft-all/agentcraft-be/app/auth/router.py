@@ -1,4 +1,5 @@
 """Auth Router"""
+import json
 from fastapi import APIRouter, Depends, HTTPException, status
 from app.auth import service
 from app.common.schema import BasicResponse, DictResponse
@@ -8,6 +9,10 @@ from app.auth.schema import AuthUser, JWTData, LoginResponse, RegisterResponse
 
 router = APIRouter()
 
+def remove_sa_instance_state(obj: dict) -> dict:
+    """移除 SQLAlchemy 的 _sa_instance_state 属性"""
+    obj.pop("_sa_instance_state", None)
+    return obj
 
 @router.post("/login", status_code=status.HTTP_200_OK, response_model=LoginResponse)
 async def login(
@@ -45,4 +50,6 @@ async def get_user_info(
     token: JWTData = Depends(validate_token),
 ) -> dict[str, str]:
     """获取用户信息"""
-    return {"code": 200, "msg": "success", "data": service.get_user_info(token.user_id)}
+    data = service.get_user_info(token.user_id)
+    data = remove_sa_instance_state(data)
+    return {"code": 200, "msg": "success", "data": data}

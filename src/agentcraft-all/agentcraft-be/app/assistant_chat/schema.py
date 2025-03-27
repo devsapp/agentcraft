@@ -90,7 +90,7 @@ class ChatRequest(BaseModel):
     stream: bool = stream_field
     session_id: int = assistant_session_id_field
     keyword: str = Field(default=None, description="Keyword for the chat")
-    context_carry_enabled = Field(
+    context_carry_enabled: bool = Field(
         default=False,
         description="Whether to merge historical records is required when building multi-agent systems"
     )

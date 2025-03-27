@@ -7,6 +7,12 @@ from app.agent.schema import UpsertAgentRequest, UpdateIsPublicRequest
 from app.auth.security import validate_token
 router = APIRouter()
 
+def remove_sa_instance_state(obj: dict) -> dict:
+    """移除 SQLAlchemy 的 _sa_instance_state 属性"""
+    obj.pop("_sa_instance_state", None)
+    return obj
+
+
 # 公开agent 后无需进行登录验证
 @router.get("/public/{agent_id}", response_model=DictResponse)
 async def get_public_agent_streamline_info(agent_id: int):
@@ -22,6 +28,7 @@ async def get_public_agent_streamline_info(agent_id: int):
 async def list_agents(app_id: int, page: int, limit: int, token: JWTData = Depends(validate_token)):
     """获取agent列表"""
     data, total = service.list_agents(app_id, token.user_id, page, limit)
+    data = [remove_sa_instance_state(item) for item in data]
     return {
         "code": 200,
         "msg": "success",

@@ -17,7 +17,6 @@ class App(postgresql.BaseModel):
     modified = mapped_column(TIMESTAMP, default=func.now(), onupdate=func.now(), nullable=False)
     user_id = mapped_column(ForeignKey("users.id", ondelete="cascade"))
 
-
 def list_apps(user_id: int, page: int = 0, limit: int = 3000) -> tuple[list[App], int]:
     """获取应用列表"""
     with Session(postgresql.postgres) as session:

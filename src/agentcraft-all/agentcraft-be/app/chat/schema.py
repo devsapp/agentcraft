@@ -94,7 +94,7 @@ class ChatRequest(BaseModel):
         default=None,
         description="The name of the AI model to use for this chat request"
     )
-    context_carry_enabled = Field(
+    context_carry_enabled: bool = Field(
         default=False,
         description="Whether to merge historical records is required when building multi-agent systems"
     )
