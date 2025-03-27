@@ -237,3 +237,12 @@ _上面设置的高权限账号密码_
 | <center>微信公众号：`serverless`</center>                                                                                         | <center>微信小助手：`xiaojiangwh`</center>                                                                                        | <center>钉钉交流群：`33947367`</center>                                                                                           |
 </p>
 </devgroup>
+
+
+cd agentcraft/src/agentcraft-all/agentcraft-be
+cp .env.example .env
+python3 -m venv venv
+source venv/bin/activate
+pip install -r  requirements.txt
+export PYTHONPATH="${PYTHONPATH}:$(pwd)"
+python3 -u app/main.py

@@ -5,13 +5,18 @@ from app.auth.schema import JWTData
 from app.common.schema import BasicResponse, DictResponse, DictListResponse
 from app.apps.schema import UpsertAppRequest
 from app.auth.security import validate_token
-router = APIRouter()
 
+router = APIRouter()
+def remove_sa_instance_state(obj: dict) -> dict:
+    """移除 SQLAlchemy 的 _sa_instance_state 属性"""
+    obj.pop("_sa_instance_state", None)
+    return obj
 
 @router.get("/list", response_model=DictListResponse)
 async def list_apps(page: int, limit: int, token: JWTData = Depends(validate_token)):
     """获取应用列表"""
     data, total = service.list_apps(token.user_id, page, limit)
+    data = [remove_sa_instance_state(item) for item in data]
     return {
         "code": 200,
         "msg": "success",

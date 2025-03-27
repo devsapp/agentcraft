@@ -26,4 +26,4 @@ def create_user(user: AuthUser) -> bool:
 def get_user_info(user_id: int) -> dict[str, str]:
     """获取用户信息"""
     user = database.get_user_info(user_id)
-    return {"username": user.username, "created": user.created}
+    return {"username": user.username, "created": int(user.created.timestamp())}

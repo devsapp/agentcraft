@@ -1,6 +1,7 @@
 """Auth Config"""
 import os
-from pydantic import BaseSettings
+# from pydantic import BaseSettings
+from pydantic_settings import BaseSettings
 
 class AuthConfig(BaseSettings):
     """Auth Config Class"""

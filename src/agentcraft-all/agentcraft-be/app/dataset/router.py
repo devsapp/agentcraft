@@ -7,11 +7,16 @@ from app.dataset.schema import UpsertDatasetRequest
 from app.auth.security import validate_token
 router = APIRouter()
 
+def remove_sa_instance_state(obj: dict) -> dict:
+    """移除 SQLAlchemy 的 _sa_instance_state 属性"""
+    obj.pop("_sa_instance_state", None)
+    return obj
 
 @router.get("/list", response_model=DictListResponse)
 async def list_datasets(page: int, limit: int, dataset_type: int | None = None, token: JWTData = Depends(validate_token)):
     """获取数据集列表"""
     data, total = service.list_datasets(token.user_id, page, limit, dataset_type)
+    data = [remove_sa_instance_state(obj) for obj in data]
     return {
         "code": 200,
         "msg": "success",
@@ -33,11 +38,13 @@ async def add_dataset(req: UpsertDatasetRequest, token: JWTData = Depends(valida
 
 @router.get("/{dataset_id}", response_model=DictResponse)
 async def get_dataset(dataset_id: int, token: JWTData = Depends(validate_token)):
+    data = service.get_dataset(dataset_id, token.user_id)
+    data = remove_sa_instance_state(data)
     """获取数据集信息"""
     return {
         "code": 200,
         "msg": "success",
-        "data": service.get_dataset(dataset_id, token.user_id)
+        "data": data
     }
 
 
