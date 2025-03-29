@@ -33,27 +33,46 @@ export default async function handle(req: NextApiRequest, res: NextApiResponse) 
             body: JSON.stringify(Object.assign({}, chatData, { messages })),
         });
         if (!response.ok) {
-            // 如果状态码不是200，抛出错误
             throw new Error(`Request failed with status ${response.status}`);
         }
+
         const reader = response.body.getReader();
         if (!reader) {
             throw new Error('No reader available');
         }
-        const readableStream = new Readable({
-            read(_size) { },
-        });
-        res.setHeader("Content-Type", "application/octet-stream")
-        res.setHeader('Cache-Control', 'no-cache');
-        readableStream.pipe(res);
+
+        // 使用文本输出方案开始
+        res.setHeader('Content-Type', 'text/event-stream;charset=utf-8');
+        res.setHeader('Cache-Control', 'no-cache, no-transform');
         while (!controller.signal.aborted) {
             const { done, value } = await reader.read();
             if (done) {
-                await readableStream.push(null);
+                res.end();
                 break;
             }
-            await readableStream.push(value);
+            const text = new TextDecoder().decode(value);
+            res.write(text);
         }
+        // 使用文本输出方案结束
+        
+
+
+        // 使用二进制输出方案开始
+        // res.setHeader("Content-Type", "application/octet-stream");
+        // res.setHeader('Cache-Control', 'no-cache');
+        // const readableStream = new Readable({
+        //     read(_size) { },
+        // });
+        // readableStream.pipe(res);
+        // while (!controller.signal.aborted) {
+        //     const { done, value } = await reader.read();
+        //     if (done) {
+        //         await readableStream.push(null);
+        //         break;
+        //     }
+        //     await readableStream.push(value);
+        // }
+        // 使用二进制输出方案结束
     } catch (e: any) {
         if (e.name === 'AbortError') {
             console.log('cancel from user');
