@@ -2,12 +2,14 @@
 import { create } from "zustand";
 import { devtools } from "zustand/middleware";
 import { fetchEventSource } from "@fortaine/fetch-event-source";
+
 import { notifications } from '@mantine/notifications';
 import Locale from "locales/index";
 import { ChatOptions, ChatItem, IUsage } from 'types/chat';
 import { REQUEST_TIMEOUT_MS } from 'constants/index';
 import { prettyObject } from 'utils/chat';
 import { request } from 'utils/clientRequest';
+
 
 interface ChatStore {
     chatList: ChatItem[],
@@ -82,6 +84,7 @@ export function chatStream(options: ChatOptions, token: string) {
 
     const finish = () => {
         if (!finished) {
+            
             options.onFinish(responseText, usage);
             finished = true;
         }
@@ -98,30 +101,25 @@ export function chatStream(options: ChatOptions, token: string) {
             }
             if (
                 !res.ok ||
-                !res.headers
-                    .get("content-type")
-                    ?.startsWith('application/octet-stream') ||
                 res.status !== 200
             ) {
                 const responseTexts = [responseText];
                 let extraInfo = await res.clone().text();
-
                 try {
                     const resJson = await res.clone().json();
+
                     extraInfo = prettyObject(resJson);
                 } catch (e) {
                     console.log(e);
-                }
 
+                }
                 if (res.status === 401) {
                     responseTexts.push(Locale.Error.Unauthorized);
                 }
                 if (extraInfo) {
                     responseTexts.push(extraInfo);
                 }
-
                 responseText = responseTexts.join("\n\n");
-
                 return finish();
             }
         },
