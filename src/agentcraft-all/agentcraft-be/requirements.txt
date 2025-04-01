@@ -21,5 +21,7 @@ sse_starlette
 gunicorn
 python-dotenv
 python-multipart
+
 mcp
 pydantic==2.*
+pydantic_settings
