@@ -84,7 +84,6 @@ class ReasoningStreamMcp:
         self.llm_output = []
         self.session: Optional[ClientSession] = None
         self.exit_stack = AsyncExitStack()
-        asyncio.run(self.connect_to_server())
 
     async def connect_to_server(self):
         """Connect to an MCP server
@@ -92,7 +91,7 @@ class ReasoningStreamMcp:
         server_script_path: Path to the server script (.py or .js)
         """
         async with sse_client(
-            "http://localhost:3002/sse", {"Accept": "text/event-stream"}
+            "http://localhost:3002/sse", {"Accept": "text/event-stream"}, 60*5, 60*5
         ) as (read, write):
             async with ClientSession(read, write) as session:
                 await session.initialize()
@@ -144,7 +143,7 @@ class ReasoningStreamMcp:
         else:
             return "{}"
 
-    def llm_with_plugin(self, prompt: str, **kwargs):
+    async def llm_with_plugin(self, prompt: str, **kwargs):
         reasoning_log = ""  # 推理过程
         final_answer = ""  # 最终答案
         need_function_call = True  # 是否需要调用工具
@@ -164,16 +163,27 @@ class ReasoningStreamMcp:
         input_messages = self.build_input_messages(chat_history)
         messages = [{"role": "system", "content": kwargs["instruction"]}]
         messages.extend(input_messages)
-        
+
         # 进行第一次的调用
-        answer, llm_outputs = yield from self.text_completion(messages, **kwargs)
+        # answer, llm_outputs = yield from self.text_completion(messages, **kwargs)
+        async for chunk in self.text_completion(messages, **kwargs):
+            # answer, llm_outputs = chunk
+            print("==========")
+            print(chunk)
+            # content = chunk["choices"][0]["delta"]["content"]
+            # final_answer += answer
+            # assistant_output = llm_outputs[0]["choices"][0]["delta"]
+            # if assistant_output["content"] is None:
+            #     assistant_output["content"] = ""
+            # messages.append(assistant_output)
+
         final_answer += answer
         # 提出chunk的首次输出
         assistant_output = llm_outputs[0]["choices"][0]["delta"]
         if assistant_output["content"] is None:
             assistant_output["content"] = ""
         messages.append(assistant_output)
-        
+
         # 判断模型是否需要继续调用工具
         try:
             if (
@@ -182,7 +192,7 @@ class ReasoningStreamMcp:
                 need_function_call = False
         except KeyError:
             need_function_call = False
-            
+
         # 开始执行调用工具
         if need_function_call == True:
             try:
@@ -195,7 +205,7 @@ class ReasoningStreamMcp:
                     logger.info(f"Action Input: {action_input}")
                     reasoning_log += f"Action: {action} Action Input: {action_input}\n"
                     tool_info = {"name": action, "role": "tool"}
-                    plugin_output = self.call_plugin(action, action_input)
+                    plugin_output = await self.call_plugin(action, action_input)
                     plugin_output = self.mcp_tool_result
                     logger.info(f"{CYAN}Tool Output: {plugin_output}{RESET}")
                     reasoning_log += f"Tool Output: {plugin_output}\n"
@@ -215,7 +225,7 @@ class ReasoningStreamMcp:
                         tool_info["content"] = plugin_output
                         # 将工具返回的结果进行上下文的拼接
                         messages.append(tool_info)
-                        answer, llm_outputs = yield from self.text_completion(
+                        answer, llm_outputs = await self.text_completion(
                             messages, **kwargs
                         )
                         logger.info(f"{YELLOW}Answer: {answer}{RESET}")
@@ -223,9 +233,7 @@ class ReasoningStreamMcp:
                     tool_info["content"] = plugin_output
                     # 将工具返回的结果进行上下文的拼接
                     messages.append(tool_info)
-                    answer, llm_outputs = yield from self.text_completion(
-                        messages, **kwargs
-                    )
+                    answer, llm_outputs = await self.text_completion(messages, **kwargs)
                     final_answer += answer
                     assistant_output = llm_outputs[0]["choices"][0]["delta"]
                     if assistant_output["content"] is None:
@@ -259,7 +267,7 @@ class ReasoningStreamMcp:
                 messages.append({"role": "assistant", "content": response})
         return messages
 
-    def text_completion(self, messages, **kwargs) -> str:
+    async def text_completion(self, messages, **kwargs) -> str:
         """获取大模型的回答"""
         created = kwargs["created"]
         uid = kwargs["uid"]
@@ -383,7 +391,7 @@ class ReasoningStreamMcp:
                 llm_outputs[0]["choices"][0]["delta"]["tool_calls"][0]["function"][
                     "arguments"
                 ] = tool_use[0]["arguments"]
-            return answer, llm_outputs
+            # return answer, llm_outputs
         except Exception as e:
             logger.error(
                 f"{RED}Unexpected error in model_chat_stream: {e}{RESET}", exc_info=True
@@ -399,7 +407,7 @@ class ReasoningStreamMcp:
                 }
             )
             yield DONE
-            return answer, llm_outputs
+            # return answer, llm_outputs
 
     async def call_plugin(self, plugin_name: str, plugin_args: str) -> str:
         plugin_args = self.extract_json_content(plugin_args)
@@ -409,12 +417,25 @@ class ReasoningStreamMcp:
             return data_retrieval(user_question, self.assistant)
         elif any(tool.name == plugin_name for tool in self.mcp_tools):
             plugin_args = json.loads(plugin_args)
+            print("start to call mcp tool", plugin_name, plugin_args)
             try:
-                result = await self.mcp_session.call_tool(
-                    plugin_name, arguments=plugin_args
-                )
-                self.mcp_tool_result = result
-                return ""
+                async with sse_client(
+                    "http://localhost:3002/sse", {"Accept": "text/event-stream"}, 9999
+                ) as (read, write):
+                    async with ClientSession(read, write) as session:
+                        await session.initialize()
+                        result = await self.mcp_session.call_tool(
+                            plugin_name, arguments=plugin_args
+                        )
+                        self.mcp_tool_result = result
+                        print(result)
+                        return result
+                # result = await self.mcp_session.call_tool(
+                #     plugin_name, arguments=plugin_args
+                # )
+                # print(result)
+                # self.mcp_tool_result = result
+                # return ""
             except Exception as e:
                 logger.error(e)
                 return ""
@@ -428,7 +449,7 @@ class ReasoningStreamMcp:
                 logger.error(e)
                 return ""
 
-    def call_assistant_stream(self):
+    async def call_assistant_stream(self):
         self.time = time()
         text_input = self.query
         action_tools = []
@@ -436,6 +457,7 @@ class ReasoningStreamMcp:
         tools_function_call = []
         assistant = self.assistant
         model = self.model
+        await self.connect_to_server()
         try:
             action_tools = (
                 assistant_action_tools_database.list_action_tools_by_assistant_id(
@@ -504,7 +526,8 @@ class ReasoningStreamMcp:
         llm_token = (
             model.token if model.token else os.environ.get("DASHSCOPE_API_KEY", "")
         )
-        llm_plugin_args = {
+        prompt = text_input
+        kwargs = {
             "created": int(time()),
             "uid": f"assistant-compl-{uuid.uuid4()}",
             "temperature": assistant.temperature,
@@ -525,5 +548,145 @@ class ReasoningStreamMcp:
             "url": model.url if model else None,
             "tools": tools_function_call,
         }
-        yield from self.llm_with_plugin(prompt=text_input, **llm_plugin_args)
+        reasoning_log = ""  # 推理过程
+        final_answer = ""  # 最终答案
+        need_function_call = True  # 是否需要调用工具
+        created = kwargs["created"]
+        uid = kwargs["uid"]
+        model = kwargs["model"]
+        history = self.history
+        session_id = self.business.get("session_id", None)
+        chat_history = [(x["user"], x["assistant"]) for x in history] + [(prompt, "")]
+        stream_response = {}
+        stream_response["session_id"] = session_id
+        stream_response["id"] = uid
+        stream_response["created"] = created
+        stream_response["model"] = model
+        input_messages = self.build_input_messages(chat_history)
+        messages = [{"role": "system", "content": kwargs["instruction"]}]
+        messages.extend(input_messages)
+        # 进行第一次的调用
+        # answer, llm_outputs = yield from self.text_completion(messages, **kwargs)
+
+        # 第一次询问，不涉及工具调用
+        final_answer = ""
+        final_function_name = ""
+        final_function_arguments = ""
+        final_chunks = []
+        async for _chunk in self.text_completion(messages, **kwargs):
+            # answer, llm_outputs = chunk
+            # chunk = codecs.decode(chunk)
+            yield _chunk
+            final_chunks.append(_chunk)
+            chunk = json.loads(_chunk)
+
+            if (
+                "choices" in chunk
+                and len(chunk["choices"]) > 0
+                and "delta" in chunk["choices"][0]
+                and "content" in chunk["choices"][0]["delta"]
+            ):
+                final_answer += chunk["choices"][0]["delta"]["content"] or ""
+
+            if (
+                "choices" in chunk
+                and len(chunk["choices"]) > 0
+                and "delta" in chunk["choices"][0]
+                and "tool_calls" in chunk["choices"][0]["delta"]
+                and len(chunk["choices"][0]["delta"]["tool_calls"]) > 0
+            ):
+                if "name" in chunk["choices"][0]["delta"]["tool_calls"][0]["function"]:
+                    final_function_name += (
+                        chunk["choices"][0]["delta"]["tool_calls"][0]["function"][
+                            "name"
+                        ]
+                        or ""
+                    )
+                if (
+                    "arguments"
+                    in chunk["choices"][0]["delta"]["tool_calls"][0]["function"]
+                ):
+                    final_function_arguments += (
+                        chunk["choices"][0]["delta"]["tool_calls"][0]["function"][
+                            "arguments"
+                        ]
+                        or ""
+                    )
+                    print(final_function_arguments)
+
+        # 提出chunk的首次输出
+        print("========")
+        print(final_answer)
+        print(final_chunks)
+        print("========")
+        assistant_output = json.loads(final_chunks[0])["choices"][0]["delta"]
+        assistant_output["content"] = final_answer
+        assistant_output["tool_calls"] = [
+            {
+                "type": "function",
+                "function": {
+                    "name": final_function_name,
+                    "arguments": final_function_arguments,
+                },
+            }
+        ]
+        messages.append(assistant_output)
+        # 判断模型是否需要继续调用工具
+        try:
+            if assistant_output["tool_calls"] == None:
+                need_function_call = False
+        except KeyError:
+            need_function_call = False
+
+        # 开始执行调用工具
+        if need_function_call == True:
+            try:
+                while assistant_output["tool_calls"] != None:
+                    action = final_function_name
+                    action_input = final_function_arguments
+                    logger.info(f"Action: {final_function_name}")
+                    logger.info(f"Action Input: {final_function_arguments}")
+                    reasoning_log += f"Action: {action} Action Input: {action_input}\n"
+                    tool_info = {"name": action, "role": "tool"}
+                    plugin_output = await self.call_plugin(action, action_input)
+                    plugin_output = self.mcp_tool_result
+                    logger.info(f"{CYAN}Tool Output: {plugin_output}{RESET}")
+                    reasoning_log += f"Tool Output: {plugin_output}\n"
+                    tool_detail = self.tool_name_dict[action]
+                    tool_name = tool_detail["name"]
+                    need_llm_call = tool_detail["need_llm_call"]
+                    if need_llm_call == 2:  # 如果工具设置为直接返回
+                        final_result_preview = self.wrapperUiRenderdPreview(
+                            tool_name, plugin_output
+                        )
+                        output_chunk = llm_outputs[0]
+                        output_chunk["choices"][0]["delta"][
+                            "content"
+                        ] = final_result_preview
+                        assistant_output = llm_outputs[0]["choices"][0]["delta"]
+                        json.dumps(output_chunk)
+                        tool_info["content"] = plugin_output
+                        # 将工具返回的结果进行上下文的拼接
+                        messages.append(tool_info)
+                        answer, llm_outputs = await self.text_completion(
+                            messages, **kwargs
+                        )
+                        logger.info(f"{YELLOW}Answer: {answer}{RESET}")
+                        break
+                    tool_info["content"] = plugin_output
+                    # 将工具返回的结果进行上下文的拼接
+                    messages.append(tool_info)
+                    answer, llm_outputs = await self.text_completion(messages, **kwargs)
+                    final_answer += answer
+                    assistant_output = llm_outputs[0]["choices"][0]["delta"]
+                    if assistant_output["content"] is None:
+                        assistant_output["content"] = ""
+                    messages.append(assistant_output)
+            except KeyError:
+                pass
+        input_messages = self.get_input_content_from_messages(messages)
+        self.result = (reasoning_log, final_answer, input_messages)
+        yield DONE
+        return
+
         return
