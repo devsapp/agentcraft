@@ -506,39 +506,6 @@ class ReasoningStreamMcp:
             final_function_name += tmp_name
             final_function_arguments += tmp_arguments
 
-            # if (
-            #     "choices" in chunk
-            #     and len(chunk["choices"]) > 0
-            #     and "delta" in chunk["choices"][0]
-            #     and "content" in chunk["choices"][0]["delta"]
-            # ):
-            #     final_answer += chunk["choices"][0]["delta"]["content"] or ""
-            # if (
-            #     "choices" in chunk
-            #     and len(chunk["choices"]) > 0
-            #     and "delta" in chunk["choices"][0]
-            #     and "tool_calls" in chunk["choices"][0]["delta"]
-            #     and len(chunk["choices"][0]["delta"]["tool_calls"]) > 0
-            # ):
-            #     # 当前仅处理一个工具调用 tool_calls[0]
-            #     if "name" in chunk["choices"][0]["delta"]["tool_calls"][0]["function"]:
-            #         final_function_name += (
-            #             chunk["choices"][0]["delta"]["tool_calls"][0]["function"][
-            #                 "name"
-            #             ]
-            #             or ""
-            #         )
-            #     if (
-            #         "arguments"
-            #         in chunk["choices"][0]["delta"]["tool_calls"][0]["function"]
-            #     ):
-            #         final_function_arguments += (
-            #             chunk["choices"][0]["delta"]["tool_calls"][0]["function"][
-            #                 "arguments"
-            #             ]
-            #             or ""
-            #         )
-
         # 第一次询问后的结果构造
         assistant_output = json.loads(final_chunks[0])["choices"][0]["delta"]
         assistant_output["content"] = final_answer
