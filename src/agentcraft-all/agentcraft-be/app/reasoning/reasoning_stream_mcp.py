@@ -143,108 +143,108 @@ class ReasoningStreamMcp:
         else:
             return "{}"
 
-    async def llm_with_plugin(self, prompt: str, **kwargs):
-        reasoning_log = ""  # 推理过程
-        final_answer = ""  # 最终答案
-        need_function_call = True  # 是否需要调用工具
-        created = kwargs["created"]
-        uid = kwargs["uid"]
-        model = kwargs["model"]
+    # async def llm_with_plugin(self, prompt: str, **kwargs):
+    #     reasoning_log = ""  # 推理过程
+    #     final_answer = ""  # 最终答案
+    #     need_function_call = True  # 是否需要调用工具
+    #     created = kwargs["created"]
+    #     uid = kwargs["uid"]
+    #     model = kwargs["model"]
 
-        history = self.history
-        session_id = self.business.get("session_id", None)
-        chat_history = [(x["user"], x["assistant"]) for x in history] + [(prompt, "")]
-        stream_response = {}
-        stream_response["session_id"] = session_id
-        stream_response["id"] = uid
-        stream_response["created"] = created
-        stream_response["model"] = model
+    #     history = self.history
+    #     session_id = self.business.get("session_id", None)
+    #     chat_history = [(x["user"], x["assistant"]) for x in history] + [(prompt, "")]
+    #     stream_response = {}
+    #     stream_response["session_id"] = session_id
+    #     stream_response["id"] = uid
+    #     stream_response["created"] = created
+    #     stream_response["model"] = model
 
-        input_messages = self.build_input_messages(chat_history)
-        messages = [{"role": "system", "content": kwargs["instruction"]}]
-        messages.extend(input_messages)
+    #     input_messages = self.build_input_messages(chat_history)
+    #     messages = [{"role": "system", "content": kwargs["instruction"]}]
+    #     messages.extend(input_messages)
 
-        # 进行第一次的调用
-        # answer, llm_outputs = yield from self.text_completion(messages, **kwargs)
-        async for chunk in self.text_completion(messages, **kwargs):
-            # answer, llm_outputs = chunk
-            print("==========")
-            print(chunk)
-            # content = chunk["choices"][0]["delta"]["content"]
-            # final_answer += answer
-            # assistant_output = llm_outputs[0]["choices"][0]["delta"]
-            # if assistant_output["content"] is None:
-            #     assistant_output["content"] = ""
-            # messages.append(assistant_output)
+    #     # 进行第一次的调用
+    #     # answer, llm_outputs = yield from self.text_completion(messages, **kwargs)
+    #     async for chunk in self.text_completion(messages, **kwargs):
+    #         # answer, llm_outputs = chunk
+    #         print("==========")
+    #         print(chunk)
+    #         # content = chunk["choices"][0]["delta"]["content"]
+    #         # final_answer += answer
+    #         # assistant_output = llm_outputs[0]["choices"][0]["delta"]
+    #         # if assistant_output["content"] is None:
+    #         #     assistant_output["content"] = ""
+    #         # messages.append(assistant_output)
 
-        final_answer += answer
-        # 提出chunk的首次输出
-        assistant_output = llm_outputs[0]["choices"][0]["delta"]
-        if assistant_output["content"] is None:
-            assistant_output["content"] = ""
-        messages.append(assistant_output)
+    #     final_answer += answer
+    #     # 提出chunk的首次输出
+    #     assistant_output = llm_outputs[0]["choices"][0]["delta"]
+    #     if assistant_output["content"] is None:
+    #         assistant_output["content"] = ""
+    #     messages.append(assistant_output)
 
-        # 判断模型是否需要继续调用工具
-        try:
-            if (
-                assistant_output["tool_calls"] == None
-            ):  # 如果模型判断无需调用工具，则将assistant的回复直接打印出来，无需进行模型的第二轮调用
-                need_function_call = False
-        except KeyError:
-            need_function_call = False
+    #     # 判断模型是否需要继续调用工具
+    #     try:
+    #         if (
+    #             assistant_output["tool_calls"] == None
+    #         ):  # 如果模型判断无需调用工具，则将assistant的回复直接打印出来，无需进行模型的第二轮调用
+    #             need_function_call = False
+    #     except KeyError:
+    #         need_function_call = False
 
-        # 开始执行调用工具
-        if need_function_call == True:
-            try:
-                while assistant_output["tool_calls"] != None:
-                    action = assistant_output["tool_calls"][0]["function"]["name"]
-                    action_input = assistant_output["tool_calls"][0]["function"][
-                        "arguments"
-                    ]
-                    logger.info(f"Action: {action}")
-                    logger.info(f"Action Input: {action_input}")
-                    reasoning_log += f"Action: {action} Action Input: {action_input}\n"
-                    tool_info = {"name": action, "role": "tool"}
-                    plugin_output = await self.call_plugin(action, action_input)
-                    plugin_output = self.mcp_tool_result
-                    logger.info(f"{CYAN}Tool Output: {plugin_output}{RESET}")
-                    reasoning_log += f"Tool Output: {plugin_output}\n"
-                    tool_detail = self.tool_name_dict[action]
-                    tool_name = tool_detail["name"]
-                    need_llm_call = tool_detail["need_llm_call"]
-                    if need_llm_call == 2:  # 如果工具设置为直接返回
-                        final_result_preview = self.wrapperUiRenderdPreview(
-                            tool_name, plugin_output
-                        )
-                        output_chunk = llm_outputs[0]
-                        output_chunk["choices"][0]["delta"][
-                            "content"
-                        ] = final_result_preview
-                        assistant_output = llm_outputs[0]["choices"][0]["delta"]
-                        json.dumps(output_chunk)
-                        tool_info["content"] = plugin_output
-                        # 将工具返回的结果进行上下文的拼接
-                        messages.append(tool_info)
-                        answer, llm_outputs = await self.text_completion(
-                            messages, **kwargs
-                        )
-                        logger.info(f"{YELLOW}Answer: {answer}{RESET}")
-                        break
-                    tool_info["content"] = plugin_output
-                    # 将工具返回的结果进行上下文的拼接
-                    messages.append(tool_info)
-                    answer, llm_outputs = await self.text_completion(messages, **kwargs)
-                    final_answer += answer
-                    assistant_output = llm_outputs[0]["choices"][0]["delta"]
-                    if assistant_output["content"] is None:
-                        assistant_output["content"] = ""
-                    messages.append(assistant_output)
-            except KeyError:
-                pass
-        input_messages = self.get_input_content_from_messages(messages)
-        self.result = (reasoning_log, final_answer, input_messages)
-        yield DONE
-        return
+    #     # 开始执行调用工具
+    #     if need_function_call == True:
+    #         try:
+    #             while assistant_output["tool_calls"] != None:
+    #                 action = assistant_output["tool_calls"][0]["function"]["name"]
+    #                 action_input = assistant_output["tool_calls"][0]["function"][
+    #                     "arguments"
+    #                 ]
+    #                 logger.info(f"Action: {action}")
+    #                 logger.info(f"Action Input: {action_input}")
+    #                 reasoning_log += f"Action: {action} Action Input: {action_input}\n"
+    #                 tool_info = {"name": action, "role": "tool"}
+    #                 plugin_output = await self.call_plugin(action, action_input)
+    #                 plugin_output = self.mcp_tool_result
+    #                 logger.info(f"{CYAN}Tool Output: {plugin_output}{RESET}")
+    #                 reasoning_log += f"Tool Output: {plugin_output}\n"
+    #                 tool_detail = self.tool_name_dict[action]
+    #                 tool_name = tool_detail["name"]
+    #                 need_llm_call = tool_detail["need_llm_call"]
+    #                 if need_llm_call == 2:  # 如果工具设置为直接返回
+    #                     final_result_preview = self.wrapperUiRenderdPreview(
+    #                         tool_name, plugin_output
+    #                     )
+    #                     output_chunk = llm_outputs[0]
+    #                     output_chunk["choices"][0]["delta"][
+    #                         "content"
+    #                     ] = final_result_preview
+    #                     assistant_output = llm_outputs[0]["choices"][0]["delta"]
+    #                     json.dumps(output_chunk)
+    #                     tool_info["content"] = plugin_output
+    #                     # 将工具返回的结果进行上下文的拼接
+    #                     messages.append(tool_info)
+    #                     answer, llm_outputs = await self.text_completion(
+    #                         messages, **kwargs
+    #                     )
+    #                     logger.info(f"{YELLOW}Answer: {answer}{RESET}")
+    #                     break
+    #                 tool_info["content"] = plugin_output
+    #                 # 将工具返回的结果进行上下文的拼接
+    #                 messages.append(tool_info)
+    #                 answer, llm_outputs = await self.text_completion(messages, **kwargs)
+    #                 final_answer += answer
+    #                 assistant_output = llm_outputs[0]["choices"][0]["delta"]
+    #                 if assistant_output["content"] is None:
+    #                     assistant_output["content"] = ""
+    #                 messages.append(assistant_output)
+    #         except KeyError:
+    #             pass
+    #     input_messages = self.get_input_content_from_messages(messages)
+    #     self.result = (reasoning_log, final_answer, input_messages)
+    #     yield DONE
+    #     return
 
     def get_dataset_names(self, datasets):
         names = [dataset["dataset_name"] for dataset in datasets]
