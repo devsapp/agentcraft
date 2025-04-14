@@ -91,6 +91,12 @@ export function AssistantForm({ workspaceId, form }: { workspaceId: any, form: a
                     placeholder=""
                     {...form.getInputProps('action_tools')}
                 />
+                <TextInput 
+                    label="MCP SSE 接入点" 
+                    placeholder="请输入MCP SSE 接入点"
+                    description="MCP(Model Context Protocol)能够让LLM调用标准协议的AI工具"
+                    {...form.getInputProps('mcp_server')} 
+                />
             </Box>
         </Paper>
         <Paper shadow="xs" p="md" withBorder mt={12}>
@@ -131,6 +137,7 @@ export function BuilderForm({ workspaceId }: AssistantProps) {
         exact_datasets: [],
         fuzzy_datasets: [],
         action_tools: [],
+        mcp_server: '',
         exact_search_similarity: 0.9,
         fuzzy_search_similarity: 0.4,
         temperature: 0.5,
@@ -181,6 +188,7 @@ export function BuilderForm({ workspaceId }: AssistantProps) {
                 description: currentAssistant?.description,
                 retrieval_prompt_template: currentAssistant?.retrieval_prompt_template,
                 action_tools: currentAssistant?.action_tools?.map((item: any) => item.id),
+                mcp_server: currentAssistant?.mcp_server,
                 app_id: currentAssistant?.app_id,
                 exact_datasets: datasets?.filter((item: Dataset) => item.dataset_type === DataSetType.QUESTION).map((item: Dataset) => item.dataset_id),
                 fuzzy_datasets: datasets?.filter((item: Dataset) => item.dataset_type === DataSetType.DOCUMENT).map((item: Dataset) => item.dataset_id),

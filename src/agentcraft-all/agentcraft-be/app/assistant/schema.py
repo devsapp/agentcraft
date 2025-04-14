@@ -7,6 +7,7 @@ class UpsertAssistantRequest(BaseModel):
     """增改Assistant请求"""
     name: str = Field(description="Assistant名称")
     description: str = Field(description="Assistant描述")
+    mcp_server: str = Field(mcp_server="MCP Server 接入点")
     instruction: str = Field(description="Assistant系统指令")
     system_message: Optional[str] = Field(description="系统提示词，过期")
     retrieval_prompt_template: str = Field(description="数据召回提示词模板，应该包含{query}和{context}两个占位符，用于处理召回数据")

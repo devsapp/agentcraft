@@ -4,6 +4,10 @@ import jwt
 from app.agent import jwt_config
 from app.database import agent as database, agent_dataset as relation_database
 
+def remove_sa_instance_state(obj: dict) -> dict:
+    """移除 SQLAlchemy 的 _sa_instance_state 属性"""
+    obj.pop("_sa_instance_state", None)
+    return obj
 
 def create_token(agent_id: int, expires_delta: timedelta = timedelta(days=jwt_config.JWT_EXP)):
     """创建token"""
@@ -45,10 +49,15 @@ def get_agent(_id: int, user_id: int):
     """获取agent信息"""
     agent, model_name = database.get_agent(_id, user_id)
     relations = relation_database.list_datasets_by_agent_id(_id)
+    
     datasets_dict = [{**vars(relation),
                       "dataset_name": dataset_name}
                      for relation, dataset_name in relations]
-    agent_dict = {"datasets": datasets_dict, "model_name": model_name, **vars(agent), }
+    
+    datasets_dict = [remove_sa_instance_state(item) for item in datasets_dict]
+    print(vars(agent), '111')
+    agent = remove_sa_instance_state(vars(agent))
+    agent_dict = {"datasets": datasets_dict, "model_name": model_name, **(agent), }
     return agent_dict
 
 def get_public_agent_streamline_info(_id: int):

@@ -196,7 +196,8 @@ CREATE_ASSISTANT_TABLE = text(
     model_ip_limit INTEGER NOT NULL DEFAULT 50,
     exact_search_limit INTEGER NOT NULL DEFAULT 1,
     fuzzy_search_limit INTEGER NOT NULL DEFAULT 3,
-    is_public INTEGER DEFAULT 0
+    is_public INTEGER DEFAULT 0,
+    mcp_server VARCHAR(255)
     );"""
 )
 

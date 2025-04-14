@@ -72,7 +72,7 @@ class ReasoningStreamMcp:
         self.credential_dict = credential_dict
         self.time = time()
         self.tool_name_dict = {}
-        self.mcp_tools = None
+        self.mcp_tools = []
         self.mcp_session = None
         self.mcp_tool_result = None
         self.history = history
@@ -90,8 +90,10 @@ class ReasoningStreamMcp:
         Args:
         server_script_path: Path to the server script (.py or .js)
         """
+        if self.assistant.mcp_server is None:
+            return
         async with sse_client(
-            "http://localhost:3002/sse", {"Accept": "text/event-stream"}, 60 * 5, 60 * 5
+            self.assistant.mcp_server, {"Accept": "text/event-stream"}, 60 * 5, 60 * 5
         ) as (read, write):
             async with ClientSession(read, write) as session:
                 await session.initialize()
@@ -505,9 +507,11 @@ class ReasoningStreamMcp:
             final_answer += tmp_content
             final_function_name += tmp_name
             final_function_arguments += tmp_arguments
+            print(final_answer, final_function_name, final_function_arguments)
 
         # 第一次询问后的结果构造
         assistant_output = json.loads(final_chunks[0])["choices"][0]["delta"]
+        assistant_output["role"] = "assistant"
         assistant_output["content"] = final_answer
 
         # 构造需要的工具调用
@@ -522,7 +526,7 @@ class ReasoningStreamMcp:
                 }
             ]
         messages.append(assistant_output)
-      
+
         try:
             # 如果模型输出结果包含工具调用，则循环调用工具
             while final_function_name and final_function_arguments:
@@ -552,23 +556,22 @@ class ReasoningStreamMcp:
 
                 output_chunk["choices"][0]["delta"]["content"] = tool_result_content
                 yield json.dumps(output_chunk)
-
+                output_chunk["choices"][0]["delta"]["content"] = "[break]"
+                yield json.dumps(output_chunk)
                 # 将工具返回的结果进行上下文的拼接
                 messages.append(tool_info)
-                
+
                 # 重置变量
                 final_answer = ""
                 final_function_name = ""
                 final_function_arguments = ""
-                
+
                 # 处理最终的结果 Review
                 async for _chunk in self.text_completion(messages, **kwargs):
                     yield _chunk
                     final_chunks.append(_chunk)
                     chunk = json.loads(_chunk)
-                    tmp_content, tmp_name, tmp_arguments = self.handleChunkResult(
-                        chunk
-                    )
+                    tmp_content, tmp_name, tmp_arguments = self.handleChunkResult(chunk)
                     final_answer += tmp_content
                     final_function_name += tmp_name
                     final_function_arguments += tmp_arguments
