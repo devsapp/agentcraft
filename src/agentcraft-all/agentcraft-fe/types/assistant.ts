@@ -70,6 +70,7 @@ export interface Assistant {
     app_id: number;
     stop: string[];
     redis_history_ex: number;
+    mcp_server: any;
 }
 
 
@@ -103,4 +104,5 @@ export interface AssistantResponseData {
     user_id: number;
     max_tokens: number;
     redis_ip_ex: number;
+    mcp_server: string;
 }

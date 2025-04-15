@@ -4,6 +4,10 @@ import jwt
 from app.assistant import jwt_config
 from app.database import assistant as database, assistant_dataset as relation_database , assistant_action_tools as action_tools_database
 
+def remove_sa_instance_state(obj: dict) -> dict:
+    """移除 SQLAlchemy 的 _sa_instance_state 属性"""
+    obj.pop("_sa_instance_state", None)
+    return obj
 
 def create_token(assistant_id: int, expires_delta: timedelta = timedelta(days=jwt_config.JWT_EXP)):
     """创建token"""
@@ -49,7 +53,7 @@ def get_assistant(_id: int, user_id: int):
     datasets_dict = [{**vars(relation),
                       "dataset_name": dataset_name}
                      for relation, dataset_name in relations]
-    action_tools_dict = [id for id in relations_at]
+    action_tools_dict = [vars(item).get('id') for item in relations_at]
     assistant_dict = {"datasets": datasets_dict,"action_tools": action_tools_dict, "model_name": model_name, **vars(assistant), }
     return assistant_dict
 

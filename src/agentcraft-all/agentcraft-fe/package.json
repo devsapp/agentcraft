@@ -28,9 +28,12 @@
     "@mantine/notifications": "^6.0.21",
     "@mdx-js/mdx": "^3.0.0",
     "@mdx-js/react": "^3.0.0",
+    "@modelcontextprotocol/sdk": "^1.7.0",
     "@tabler/icons-react": "^2.32.0",
+    "acorn": "^8.14.0",
     "autoprefixer": "^10.4.15",
     "axios": "^1.5.0",
+    "dotenv": "^16.4.7",
     "jsonwebtoken": "^9.0.2",
     "katex": "^0.16.21",
     "langchain": "^0.0.167",
@@ -39,6 +42,7 @@
     "nanoid": "^4.0.2",
     "next": "^13.4.9",
     "next-connect": "^1.0.0-next.4",
+    "openai": "^4.89.0",
     "pdfjs-dist": "^3.11.174",
     "querystring": "^0.2.1",
     "react": "18.2.0",
@@ -61,13 +65,13 @@
     "@types/jsonwebtoken": "^9.0.8",
     "@types/multer": "^1.4.8",
     "@types/next": "^9.0.0",
-    "@types/node": "18.14.4",
+    "@types/node": "^18.14.4",
     "@types/react": "18.0.28",
     "@types/react-dom": "18.0.11",
     "@types/react-syntax-highlighter": "^15.5.9",
     "eslint": "8.35.0",
     "eslint-config-next": "13.2.3",
     "sass": "^1.66.1",
-    "typescript": "4.9.5"
+    "typescript": "^4.9.5"
   }
 }

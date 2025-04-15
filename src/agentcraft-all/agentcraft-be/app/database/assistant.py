@@ -17,6 +17,7 @@ class Assistant(postgresql.BaseModel):
     id = mapped_column(Integer, primary_key=True, index=True)
     name = mapped_column(String, nullable=False)
     description = mapped_column(String, nullable=True)
+    mcp_server = mapped_column(String, nullable=True)
     retrieval_prompt_template = mapped_column(String, nullable=False) # should contain {query} and {context} for replacement
     prompt_starts = mapped_column(ARRAY(String, dimensions=1), default=[], nullable=False)
     capabilities = mapped_column(ARRAY(String, dimensions=1), default=[], nullable=False)
