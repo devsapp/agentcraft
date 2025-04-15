@@ -24,7 +24,7 @@ export async function getSessionHistory(
   if (payload.sessionId) {
     qr = `${qr}&session_id=${payload.sessionId}`
   }
-  
+
   const res = await request(`/api/assistantSession/history?${qr}`);
   return res;
 }
@@ -37,7 +37,7 @@ export async function getSessionByKeyword(
 }
 
 
-export async function removeSessionHistory(sessionId: number): Promise<any> {
+export async function removeSessionHistory(agentId: number, sessionId: number): Promise<any> {
   return await request(`/api/assistantSession/remove?session_id=${sessionId}`, {
     method: "DELETE",
     headers: {
