@@ -90,7 +90,8 @@ class ReasoningStreamMcp:
         Args:
         server_script_path: Path to the server script (.py or .js)
         """
-        if self.assistant.mcp_server is None:
+
+        if not self.assistant.mcp_server:
             return
         async with sse_client(
             self.assistant.mcp_server, {"Accept": "text/event-stream"}, 60 * 5, 60 * 5
@@ -100,11 +101,7 @@ class ReasoningStreamMcp:
                 response = await session.list_tools()
                 self.mcp_tools = response.tools
                 self.mcp_session = session
-                print(
-                    "\nConnected to server with tools:",
-                    [tool.name for tool in response.tools],
-                )
-
+                logger.info(f"{CYAN}\nConnected to server with tools: {[tool.name for tool in response.tools]}{RESET}")
     def final_result(self, resp_data: str):
         return self.extract_final_answer(resp_data)
 
@@ -129,7 +126,7 @@ class ReasoningStreamMcp:
                     json.loads(fixed_json_content)
                     return fixed_json_content
                 except json.JSONDecodeError as e:
-                    print(f"Failed to decode fixed JSON: {e}")
+                    logger.error(f"Failed to decode fixed JSON: {e}")
                     return "{}"
         elif start_index != -1:
             # 如果找到了开始的 '{' 但没有找到结束的 '}'
@@ -181,6 +178,7 @@ class ReasoningStreamMcp:
             "Content-Type": "application/json",
         }
         try:
+            # messages.append({"role": "user", "content": "请确保输出内容足够的详细，请确保按照系统提示词的结构进行输出"})
             llm_request_options = {
                 "model": kwargs["model"],
                 "messages": messages,
@@ -211,16 +209,17 @@ class ReasoningStreamMcp:
             for index, line in enumerate(resp.iter_lines()):
                 if line:
                     line = codecs.decode(line)
+                  
                     if line.startswith("data:") and line != "data: [DONE]":
                         line = line[5:].strip()
                         try:
                             chunk = json.loads(line)
+                            yield json.dumps(chunk)
                             usage = chunk.get("usage", {})
                             chunk["id"] = uid
                             chunk["created"] = created
                             chunk["model"] = model
                             chunk["session_id"] = self.business.get("session_id", None)
-                            # logger.info(f"{RED}chunk:{chunk}{RESET}")
                             if (
                                 len(chunk["choices"]) > 0
                                 and "delta" in chunk["choices"][0]
@@ -247,9 +246,10 @@ class ReasoningStreamMcp:
                                 if content is not None:
                                     answer += content
                                 if tool_call == False:
-                                    yield json.dumps(chunk)
+                                    pass
+                                    # yield json.dumps(chunk)
                                 else:
-                                    yield json.dumps(chunk)
+                                    # yield json.dumps(chunk)
                                     # 调用工具的返回，除了最后一个useage结果是'', 其余的content皆为None
                                     if content == None:
                                         tool_calls = assistant_output.get(
@@ -271,7 +271,8 @@ class ReasoningStreamMcp:
                                         # tool_use[0]["arguments"]+=chunk["choices"][0]["delta"]["tool_calls"][0]["function"]["arguments"]
                             else:
                                 if "usage" in chunk and chunk["usage"] is not None:
-                                    yield json.dumps(chunk)
+                                    pass
+                                    # yield json.dumps(chunk)
                         except Exception as err:
                             logger.error(
                                 f"{RED}Unexpected error:{err} , original chunk line is: {line}{RESET}"
@@ -316,11 +317,11 @@ class ReasoningStreamMcp:
             return data_retrieval(user_question, self.assistant)
         elif any(tool.name == plugin_name for tool in self.mcp_tools):
             plugin_args = json.loads(plugin_args)
-            print("start to call mcp tool", plugin_name, plugin_args)
+            logger.info(f"{CYAN}\nStart to call mcp tool: {plugin_name} {plugin_args} {RESET}")
             try:
                 # TODO: 后续优化为将 sse_client 全局持久化，先暂时按重新创建链接的方式解决
                 async with sse_client(
-                    "http://localhost:3002/sse", {"Accept": "text/event-stream"}, 9999
+                    self.assistant.mcp_server, {"Accept": "text/event-stream"}, 9999
                 ) as (read, write):
                     async with ClientSession(read, write) as session:
                         await session.initialize()
@@ -342,11 +343,10 @@ class ReasoningStreamMcp:
                 logger.error(e)
                 return ""
 
-    def handleChunkResult(self, chunk):
+    def handleChunkResult(self, chunk, tool_call_id):
         content = ""
         name = ""
         argument = ""
-        print(chunk)
         if (
             "choices" in chunk
             and len(chunk["choices"]) > 0
@@ -374,7 +374,9 @@ class ReasoningStreamMcp:
                     ]
                     or ""
                 )
-        return content, name, argument
+            if "id" in chunk["choices"][0]["delta"]["tool_calls"][0]:
+                tool_call_id = chunk["choices"][0]["delta"]["tool_calls"][0]["id"]
+        return content, name, argument, tool_call_id
 
     async def call_assistant_stream(self):
         self.time = time()
@@ -497,18 +499,17 @@ class ReasoningStreamMcp:
         final_function_name = ""
         final_function_arguments = ""
         final_chunks = []
-
+        tool_call_id = ""
         # 处理 text_completion 异步生成器返回的大模型输出
         async for _chunk in self.text_completion(messages, **kwargs):
             yield _chunk
             final_chunks.append(_chunk)
             chunk = json.loads(_chunk)
-            tmp_content, tmp_name, tmp_arguments = self.handleChunkResult(chunk)
+            tmp_content, tmp_name, tmp_arguments , call_id = self.handleChunkResult(chunk, tool_call_id)
+            tool_call_id = call_id
             final_answer += tmp_content
             final_function_name += tmp_name
             final_function_arguments += tmp_arguments
-            print(final_answer, final_function_name, final_function_arguments)
-
         # 第一次询问后的结果构造
         assistant_output = json.loads(final_chunks[0])["choices"][0]["delta"]
         assistant_output["role"] = "assistant"
@@ -519,6 +520,7 @@ class ReasoningStreamMcp:
             assistant_output["tool_calls"] = [
                 {
                     "type": "function",
+                    "id": tool_call_id,
                     "function": {
                         "name": final_function_name,
                         "arguments": final_function_arguments,
@@ -549,15 +551,17 @@ class ReasoningStreamMcp:
                 tool_info = {
                     "name": action,
                     "role": "tool",
+                    "tool_call_id": tool_call_id,
                     "content": tool_result_content,
                 }
-                # 将工具返回的结果放回 sse stream
-                output_chunk = json.loads(final_chunks[0])
 
-                output_chunk["choices"][0]["delta"]["content"] = tool_result_content
-                yield json.dumps(output_chunk)
-                output_chunk["choices"][0]["delta"]["content"] = "[break]"
-                yield json.dumps(output_chunk)
+                # 将工具返回的结果放回 sse stream
+                # output_chunk = json.loads(final_chunks[0])
+                # output_chunk["choices"][0]["delta"]["content"] = tool_result_content
+                # yield json.dumps(output_chunk)
+                # output_chunk["choices"][0]["delta"]["content"] = "[break]"
+                # yield json.dumps(output_chunk)
+
                 # 将工具返回的结果进行上下文的拼接
                 messages.append(tool_info)
 
@@ -567,11 +571,13 @@ class ReasoningStreamMcp:
                 final_function_arguments = ""
 
                 # 处理最终的结果 Review
+                # 删除messages[5]
                 async for _chunk in self.text_completion(messages, **kwargs):
                     yield _chunk
                     final_chunks.append(_chunk)
                     chunk = json.loads(_chunk)
-                    tmp_content, tmp_name, tmp_arguments = self.handleChunkResult(chunk)
+                    tmp_content, tmp_name, tmp_arguments ,call_id = self.handleChunkResult(chunk, tool_call_id)
+                    tool_call_id = call_id
                     final_answer += tmp_content
                     final_function_name += tmp_name
                     final_function_arguments += tmp_arguments

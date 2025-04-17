@@ -27,7 +27,6 @@ export function AssistantForm({ workspaceId, form }: { workspaceId: any, form: a
         getDataSetList();
         getToolList();
     }, []);
-
     const documentSelectData: any = dataSetList.filter((item: DataSet) => item.dataset_type == DataSetType.DOCUMENT).map((item: DataSet) => { return { label: item.name, value: item.id } });
     const qaSelectData: any = dataSetList.filter((item: DataSet) => item.dataset_type == DataSetType.QUESTION).map((item: DataSet) => { return { label: item.name, value: item.id } });
     let pannelWidth = '100%';
@@ -187,7 +186,7 @@ export function BuilderForm({ workspaceId }: AssistantProps) {
                 name: currentAssistant?.name,
                 description: currentAssistant?.description,
                 retrieval_prompt_template: currentAssistant?.retrieval_prompt_template,
-                action_tools: currentAssistant?.action_tools?.map((item: any) => item.id),
+                action_tools: currentAssistant?.action_tools?.map((tools_id: any) => tools_id),
                 mcp_server: currentAssistant?.mcp_server,
                 app_id: currentAssistant?.app_id,
                 exact_datasets: datasets?.filter((item: Dataset) => item.dataset_type === DataSetType.QUESTION).map((item: Dataset) => item.dataset_id),
