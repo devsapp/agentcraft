@@ -9,10 +9,7 @@ from app.auth.schema import AuthUser, JWTData, LoginResponse, RegisterResponse
 
 router = APIRouter()
 
-def remove_sa_instance_state(obj: dict) -> dict:
-    """移除 SQLAlchemy 的 _sa_instance_state 属性"""
-    obj.pop("_sa_instance_state", None)
-    return obj
+
 
 @router.post("/login", status_code=status.HTTP_200_OK, response_model=LoginResponse)
 async def login(
@@ -51,5 +48,4 @@ async def get_user_info(
 ) -> dict[str, str]:
     """获取用户信息"""
     data = service.get_user_info(token.user_id)
-    data = remove_sa_instance_state(data)
     return {"code": 200, "msg": "success", "data": data}

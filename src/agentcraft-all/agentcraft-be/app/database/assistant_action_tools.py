@@ -24,11 +24,12 @@ def list_action_tools_by_assistant_id(
         assistant_id: int, page: int = 0, limit: int = 3000) -> list[Any]:
     """根据assistant id获取 action_tools"""
     with Session(postgresql.postgres) as session:
-        return session.query(
+        data = session.query(
             ActionTools).filter(
             AssistantActionTools.assistant_id == assistant_id).join(
             AssistantActionTools.action_tools).offset(page*limit).limit(limit).all()
-
+        data_dict = [item.as_dict() for item in data]
+        return data_dict
 
 def bulk_insert(assistant_id: int, action_tools: list[int]):
     """批量插入"""

@@ -1,5 +1,6 @@
 """Chat Router"""
 from typing import Any
+
 from fastapi import APIRouter, Request, Depends, HTTPException
 from app.common.logger import logger
 from sse_starlette.sse import EventSourceResponse
@@ -46,7 +47,6 @@ async def chat(req: ChatRequest, request: Request, token: AgentJWTData = Depends
 
     assistant_id = token.agent_id
     assistant = service.get_assistant_lite(assistant_id)
-
     assistant_session_id = req.session_id
     keyword = req.keyword
     logger.info(f'assistant_session_id: {assistant_session_id}; keyword: {keyword};')

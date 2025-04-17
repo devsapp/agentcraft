@@ -5,8 +5,7 @@ import app.database.action_tools as database
 def list_action_tools(user_id: int, page: int, limit: int):
     """获取action_tools列表"""
     data, total = database.list_action_tools(user_id, page, limit)
-    data_dict = [vars(action_tools) for action_tools in data]
-    return data_dict, total
+    return data, total
 
 
 def add_action_tools(**kwargs):

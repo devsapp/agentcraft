@@ -24,8 +24,8 @@ def decode_token(token: str):
 def list_assistants(app_id: int, user_id: int, page: int, limit: int) -> tuple[list[dict], int]:
     """获取assistant列表"""
     data, total = database.list_assistants(app_id, user_id, page, limit)
-    data_dict = [vars(assistant) for assistant in data]
-    return data_dict, total
+
+    return data, total
 
 
 def add_assistant(**kwargs):
@@ -50,11 +50,13 @@ def get_assistant(_id: int, user_id: int):
     assistant, model_name = database.get_assistant(_id, user_id)
     relations = relation_database.list_datasets_by_assistant_id(_id)
     relations_at = action_tools_database.list_action_tools_by_assistant_id(_id)
-    datasets_dict = [{**vars(relation),
+
+    datasets_dict = [{**(relation),
                       "dataset_name": dataset_name}
                      for relation, dataset_name in relations]
-    action_tools_dict = [vars(item).get('id') for item in relations_at]
-    assistant_dict = {"datasets": datasets_dict,"action_tools": action_tools_dict, "model_name": model_name, **vars(assistant), }
+    action_tools_dict = [item.get('id') for item in relations_at]
+    assistant_dict = {"datasets": datasets_dict,"action_tools": action_tools_dict, "model_name": model_name, **(assistant), }
+    
     return assistant_dict
 
 

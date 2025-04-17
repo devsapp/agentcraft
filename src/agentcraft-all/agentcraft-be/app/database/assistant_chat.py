@@ -67,7 +67,8 @@ def list_chats(assistant_id: int, day: int = 0,  page: int = 0, limit: int = 300
             total = session.query(AssistantChat).filter(
                 AssistantChat.assistant_id == assistant_id, AssistantChat.type < 3, AssistantChat.created >
                 (datetime.now() - timedelta(days=day))).count()
-        return data, total
+        data_dict = [item.as_dict() for item in data]
+        return data_dict, total
 
 
 def add_chat(**kwargs):
@@ -91,4 +92,4 @@ def get_assistant_chat_lite(assistant_id: int) -> AssistantChat:
     """获取assistant_chat表信息"""
     with Session(postgresql.postgres) as session:
         data = session.query(AssistantChat).filter(AssistantChat.id == assistant_id).first()
-        return vars(data)
+        return data.as_dict()

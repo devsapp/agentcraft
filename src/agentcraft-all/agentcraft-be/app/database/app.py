@@ -25,7 +25,8 @@ def list_apps(user_id: int, page: int = 0, limit: int = 3000) -> tuple[list[App]
             App.modified.desc()).offset(
             page * limit).limit(limit).all()
         total = session.query(App).filter(App.user_id == user_id).count()
-        return data, total
+        data_dict = [item.as_dict() for item in data]
+        return data_dict, total
 
 
 def delete_app(app_id: int, user_id: int):
@@ -47,8 +48,9 @@ def add_app(**kwargs):
 def get_app(app_id: int, user_id: int) -> App:
     """获取应用信息"""
     with Session(postgresql.postgres) as session:
-        return session.query(App).filter(
+        data = session.query(App).filter(
             App.id == app_id, App.user_id == user_id).order_by(App.modified.desc()).first()
+        return data.is_dict()
 
 
 def update_app(app_id: int, user_id: int, **kwargs):

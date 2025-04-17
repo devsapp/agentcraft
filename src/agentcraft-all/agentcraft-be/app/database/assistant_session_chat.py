@@ -30,7 +30,7 @@ def list_assistant_session_chat_id_by_session_id(
             ).offset(page*limit).limit(limit).all()
         total = session.query(AssistantSessionChat).filter(
             AssistantSessionChat.assistant_session_id == assistant_session_id).count()
-        sorted_data = sorted([vars(chat) for chat in data], key=lambda x: x['id'], reverse=True)
+        sorted_data = sorted([chat.as_dict() for chat in data], key=lambda x: x['id'], reverse=True)
         return sorted_data, total
 
 

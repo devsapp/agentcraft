@@ -62,7 +62,8 @@ def list_agents(app_id: int, user_id: int, page: int = 0, limit: int = 3000) -> 
             Agent.user_id == user_id),
             Agent.is_public == 1
         )).count() 
-        return data, total
+        data_dict = [item.as_dict() for item in data]
+        return data_dict, total
 
 def list_public_agents(page: int = 0, limit: int = 3000) -> tuple[list[Agent], int]:
     """获取公共agent列表"""
@@ -73,7 +74,8 @@ def list_public_agents(page: int = 0, limit: int = 3000) -> tuple[list[Agent], i
             page * limit).limit(limit).all()
         total = session.query(Agent).filter(
             Agent.is_public == 1).count()
-        return data, total
+        data_dict = [item.as_dict() for item in data]
+        return data_dict, total
 
 
 def delete_agent(agent_id: int, user_id: int):
@@ -133,11 +135,22 @@ def update_is_public(agent_id: int, is_public: str, user_id: int):
         session.commit()
 
 
-def get_agent(agent_id: int, user_id: int):
-    """联表获取agent"""
+def get_agent(agent_id: int, user_id: int) -> dict:
+    """联表获取agent，并转换为字典"""
     with Session(postgresql.postgres) as session:
-        return session.query(Agent, Model.name.label("model_name")).filter(
-            or_(and_(Agent.id == agent_id, Agent.user_id == user_id),and_(Agent.is_public == 1,Agent.id == agent_id))).join(Agent.model).first()
+        result = session.query(Agent, Model.name.label("model_name")).filter(
+            or_(
+                and_(Agent.id == agent_id, Agent.user_id == user_id),
+                and_(Agent.is_public == 1, Agent.id == agent_id)
+            )
+        ).join(Agent.model).first()
+        
+        if not result:
+            return None
+        
+        agent, model_name = result
+        agent_dict = agent.as_dict()  # 使用 as_dict 获取 Agent 的属性
+        return agent_dict , model_name
 
 
 def update_agent(
@@ -159,4 +172,5 @@ def update_agent(
 def get_agent_lite(agent_id: int) -> Agent:
     """获取agent"""
     with Session(postgresql.postgres) as session:
-        return session.query(Agent).filter(Agent.id == agent_id).first()
+        data = session.query(Agent).filter(Agent.id == agent_id).first()
+        return data.as_dict()

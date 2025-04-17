@@ -31,7 +31,7 @@ def list_sessions(assistant_id: int, page: int = 0, limit: int = 3000) -> tuple[
             AssistantSession.modified.desc()).offset(
             page * limit).limit(limit).all()
         total = session.query(AssistantSession).filter(AssistantSession.assistant_id == assistant_id).count()
-        return [vars(session) for session in data], total
+        return [session.as_dict() for session in data], total
 
 
 def get_session_by_assistant_id_and_keyword(assistant_id: int, keyword: str, status: int = 1) -> Session:
@@ -42,7 +42,7 @@ def get_session_by_assistant_id_and_keyword(assistant_id: int, keyword: str, sta
             AssistantSession.status == status,
             AssistantSession.keyword == keyword).first()
         if data is not None:
-            return vars(data)
+            return data.as_dict()
         return data
 
 
@@ -69,7 +69,7 @@ def get_session(sessions_id: int, status: int = 1) -> Session:
             AssistantSession.id == sessions_id,
             AssistantSession.status == status).order_by(AssistantSession.modified.desc()).first()
         if data is not None:
-            return vars(data)
+            return data.as_dict()
         return data
 
 

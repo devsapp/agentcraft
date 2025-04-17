@@ -59,7 +59,8 @@ def list_assistants(app_id: int, user_id: int, page: int = 0, limit: int = 3000)
             page * limit).limit(limit).all()
         total = session.query(Assistant).filter(
             Assistant.app_id == app_id, Assistant.user_id == user_id).count()
-        return data, total
+        data_dict = [item.as_dict() for item in data]
+        return data_dict, total
 
 
 def delete_assistant(assistant_id: int, user_id: int):
@@ -127,8 +128,16 @@ def update_token(assistant_id: int, token: str, user_id: int):
 def get_assistant(assistant_id: int, user_id: int):
     """联表获取assistant"""
     with Session(postgresql.postgres) as session:
-        return session.query(Assistant, Model.name.label("model_name")).filter(
-            Assistant.id == assistant_id, Assistant.user_id == user_id).join(Assistant.model).first()
+        result = session.query(Assistant, Model.name.label("model_name")).filter(
+            Assistant.id == assistant_id, Assistant.user_id == user_id
+        ).join(Assistant.model).first()
+        
+        if not result:
+            return None
+        
+        assistant, model_name = result
+        assistant_dict = assistant.as_dict()  # 使用 as_dict 获取 Assistant 的属性
+        return assistant_dict, model_name
 
 
 def update_assistant(
@@ -154,4 +163,5 @@ def update_assistant(
 def get_assistant_lite(assistant_id: int) -> Assistant:
     """获取assistant"""
     with Session(postgresql.postgres) as session:
-        return session.query(Assistant).filter(Assistant.id == assistant_id).first()
+        data = session.query(Assistant).filter(Assistant.id == assistant_id).first()
+        return data.as_dict()

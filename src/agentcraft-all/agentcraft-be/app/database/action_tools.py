@@ -35,7 +35,8 @@ def list_action_tools(user_id: int, page: int = 0, limit: int = 3000) -> tuple[l
             ActionTools.modified.desc()).offset(
             page * limit).limit(limit).all()
         total = session.query(ActionTools).filter(ActionTools.user_id == user_id).count()
-        return data, total
+        data_dict = [item.as_dict() for item in data]
+        return data_dict, total
 
 
 def delete_action_tools(action_tools_id: int, user_id: int):
@@ -57,8 +58,9 @@ def add_action_tools(**kwargs):
 def get_action_tools(action_tools_id: int) -> ActionTools:
     """获取action_tools信息"""
     with Session(postgresql.postgres) as session:
-        return session.query(ActionTools).filter(
+        data = session.query(ActionTools).filter(
             ActionTools.id == action_tools_id).order_by(ActionTools.modified.desc()).first()
+        return data.as_dict()
 
 
 def update_action_tools(action_tools_id: int, **kwargs):

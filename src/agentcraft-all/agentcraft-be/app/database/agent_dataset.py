@@ -26,10 +26,18 @@ def list_datasets_by_agent_id(
         agent_id: int, page: int = 0, limit: int = 3000) -> list[Any]:
     """根据agent id获取数据集"""
     with Session(postgresql.postgres) as session:
-        return session.query(
-            AgentDataset, Dataset.name).filter(
+        results = session.query(AgentDataset, Dataset.name).filter(
             AgentDataset.agent_id == agent_id).join(
-            AgentDataset.datasets).offset(page*limit).limit(limit).all()
+            AgentDataset.datasets).offset(page * limit).limit(limit).all()
+        
+        # 将结果转换为字典
+        datasets_dict = []
+        for agent_dataset, dataset_name in results:
+            dataset_info = agent_dataset.as_dict()  # 使用 as_dict 获取 AgentDataset 的属性
+            dataset_info["dataset_name"] = dataset_name  # 添加 Dataset.name
+            datasets_dict.append(dataset_info)
+        
+        return datasets_dict
 
 
 def bulk_insert(agent_id: int, exact_datasets: list[int], fuzzy_datasets: list[int]):

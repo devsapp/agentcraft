@@ -26,9 +26,8 @@ class Dataset(postgresql.BaseModel):
     user_id = mapped_column(ForeignKey("users.id"))
 
 
-def list_datasets(
-        user_id: int, page: int = 0, limit: int = 3000, dataset_type: int = None) -> list[Dataset]:
-    """获取数据集列表"""
+def list_datasets(user_id: int, page: int = 0, limit: int = 3000, dataset_type: int = None) -> tuple[list[dict], int]:
+    """获取数据集列表，并转换为字典"""
     with Session(postgresql.postgres) as session:
         query = session.query(Dataset)
         total_query = None
@@ -39,8 +38,13 @@ def list_datasets(
             total_query = query.filter(
                 Dataset.user_id == user_id, Dataset.dataset_type == dataset_type)
             query = query.filter(Dataset.user_id == user_id, Dataset.dataset_type == dataset_type)
+        
         data = query.order_by(Dataset.modified.desc()).offset(page * limit).limit(limit).all()
-        return data, total_query.count()
+        total = total_query.count()
+        
+        # 将 Dataset 对象列表转换为字典列表
+        data_dict = [dataset.as_dict() for dataset in data]
+        return data_dict, total
 
 
 def delete_dataset(dataset_id: int, user_id: int):
@@ -71,5 +75,6 @@ def update_dataset(dataset_id: int, user_id: int, **kwargs):
 def get_dataset(_id: int, user_id: int) -> Dataset:
     """获取数据集"""
     with Session(postgresql.postgres) as session:
-        return session.query(Dataset).filter(
+        data = session.query(Dataset).filter(
             Dataset.id == _id, Dataset.user_id == user_id).first()
+        return data.as_dict()

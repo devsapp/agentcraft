@@ -35,6 +35,7 @@ def list_questions(dataset_id: int, user_id: int, page: int = 0, limit: int = 30
         total = session.query(
             Question).filter(
             Question.tag == dataset_id, Question.user_id == user_id).count()
+
         return data, total
 
 

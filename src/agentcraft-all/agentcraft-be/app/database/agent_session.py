@@ -30,7 +30,7 @@ def list_sessions(agent_id: int, page: int = 0, limit: int = 3000) -> tuple[list
             AgentSession.modified.desc()).offset(
             page * limit).limit(limit).all()
         total = session.query(AgentSession).filter(AgentSession.agent_id == agent_id).count()
-        return [vars(session) for session in data], total
+        return [session.as_dict() for session in data], total
 
 def get_session_by_agent_id(agent_id: int, keyword: str = None, status = 1) -> Session:
     """获取assistant 的测试 session"""
@@ -40,7 +40,7 @@ def get_session_by_agent_id(agent_id: int, keyword: str = None, status = 1) -> S
             AgentSession.keyword == keyword,
             AgentSession.status == status).first()
         if data is not None:
-            return vars(data)
+            return data.as_dict()
         return data
 
 def delete_session(sessions_id: int, user_id: int):
@@ -66,7 +66,7 @@ def get_session(sessions_id: int, status = 1) -> Session:
             AgentSession.id == sessions_id,
             AgentSession.status == status).order_by(AgentSession.modified.desc()).first()
         if data is not None:
-            return vars(data)
+            return data.as_dict()
         return data
 
 

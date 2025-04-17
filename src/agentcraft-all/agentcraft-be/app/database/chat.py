@@ -60,7 +60,8 @@ def list_chats(agent_id: int, day: int = 0,  page: int = 0, limit: int = 3000) -
             total = session.query(Chat).filter(
                 Chat.agent_id == agent_id, Chat.type < 3, Chat.created >
                 (datetime.now() - timedelta(days=day))).count()
-        return data, total
+        data_dict = [item.as_dict() for item in data]
+        return data_dict, total
 
 
 def add_chat(**kwargs):
@@ -84,4 +85,4 @@ def get_chat_lite(agent_id: int) -> Chat:
     """获取chat表信息"""
     with Session(postgresql.postgres) as session:
         data = session.query(Chat).filter(Chat.id == agent_id).first()
-        return vars(data)
+        return data.as_dict()

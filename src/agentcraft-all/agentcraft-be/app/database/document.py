@@ -35,6 +35,7 @@ def list_documents(dataset_id: int, user_id: int, page: int = 0, limit: int = 30
         total = session.query(
             Document).filter(
             Document.tag == dataset_id, Document.user_id == user_id).count()
+   
         return data, total
 
 

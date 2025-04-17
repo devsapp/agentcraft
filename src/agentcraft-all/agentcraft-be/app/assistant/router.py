@@ -7,17 +7,13 @@ from app.assistant.schema import UpsertAssistantRequest
 from app.auth.security import validate_token
 router = APIRouter()
 
-def remove_sa_instance_state(obj: dict) -> dict:
-    """移除 SQLAlchemy 的 _sa_instance_state 属性"""
-    obj.pop("_sa_instance_state", None)
-    return obj
+
 
 
 @router.get("/list/{app_id}", response_model=DictListResponse)
 async def list_assistants(app_id: int, page: int, limit: int, token: JWTData = Depends(validate_token)):
     """获取assistant列表"""
     data, total = service.list_assistants(app_id, token.user_id, page, limit)
-    data = [remove_sa_instance_state(obj) for obj in data]
     return {
         "code": 200,
         "msg": "success",
@@ -56,7 +52,7 @@ async def get_assistant(assistant_id: int, token: JWTData = Depends(validate_tok
     return {
         "code": 200,
         "msg": "success",
-        "data": remove_sa_instance_state(service.get_assistant(assistant_id, token.user_id))
+        "data": service.get_assistant(assistant_id, token.user_id)
     }
 
 

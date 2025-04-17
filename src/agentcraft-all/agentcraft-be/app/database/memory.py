@@ -27,7 +27,8 @@ def list_memorys(agent_id: int, page: int = 0, limit: int = 3000) -> tuple[list[
             Memory.modified.desc()).offset(
             page * limit).limit(limit).all()
         total = session.query(Memory).filter(Memory.agent_id == agent_id).count()
-        return data, total
+        data_dict = [item.as_dict() for item in data]
+        return data_dict, total
 
 
 def delete_memory(memory_id: int, user_id: int):
@@ -49,8 +50,9 @@ def add_memory(**kwargs):
 def get_memory(memory_id: int) -> Memory:
     """获取memory信息"""
     with Session(postgresql.postgres) as session:
-        return session.query(Memory).filter(
+        data = session.query(Memory).filter(
             Memory.id == memory_id).order_by(Memory.modified.desc()).first()
+        return data.as_dict()
 
 
 def update_memory(memory_id: int, **kwargs):

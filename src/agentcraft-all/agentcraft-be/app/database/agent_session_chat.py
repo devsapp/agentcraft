@@ -30,7 +30,7 @@ def list_chats_session_chat_id_by_session_id(
         total = session.query(AgentSessionChat).filter(
             AgentSessionChat.agent_session_id == agent_session_id).join(
             AgentSessionChat.chat).count()
-        sorted_data = sorted([vars(chat) for chat in data], key=lambda x: x['id'], reverse=True)
+        sorted_data = sorted([chat.as_dict() for chat in data], key=lambda x: x['id'], reverse=True)
         return sorted_data, total
 
 

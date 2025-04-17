@@ -5,8 +5,7 @@ import app.database.app as database
 def list_apps(user_id: int, page: int, limit: int):
     """获取应用列表"""
     data, total = database.list_apps(user_id, page, limit)
-    data_dict = [vars(app) for app in data]
-    return data_dict, total
+    return data, total
 
 
 def add_app(**kwargs):
@@ -22,7 +21,7 @@ def delete_app(app_id: int, user_id: int):
 def get_app(_id: int, user_id: int):
     """获取应用信息"""
     app = database.get_app(_id, user_id)
-    return vars(app)
+    return app
 
 
 def update_app(**kwargs):

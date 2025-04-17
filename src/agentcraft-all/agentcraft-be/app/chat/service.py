@@ -2,6 +2,7 @@
 # pylint: disable = no-member
 import os
 from typing import Any
+from types import SimpleNamespace
 from time import time
 import uuid
 import json
@@ -85,6 +86,7 @@ def create_agent_session(**add_args):
 def list_chats_id_by_session_id(agent_id: int, session_id: int, **kv):
     """根据 session_id 获取 agent_chats_id 的列表"""
     agent = agent_database.get_agent_lite(agent_id)
+    agent = SimpleNamespace(**agent)
     if not agent:
         raise ValueError("agent does not exist")
     if not agent_database.check_user_has_agent(agent.user_id, agent_id):
@@ -113,8 +115,8 @@ def list_chats(agent_id: int, user_id: int, page: int, limit: int):
     if not agent_database.check_user_has_agent(user_id, agent_id):
         raise ValueError("user does not have this agent")
     data, total = database.list_chats(agent_id, 0, page, limit)
-    data_dict = [vars(chat) for chat in data]
-    return data_dict, total
+
+    return data, total
 
 def sanitize_text(text: str) -> str:
     """防止问题注入"""
@@ -336,6 +338,7 @@ def chat(agent_session_id: int, query: str, ip_addr: str, agent_id: int, history
 async def chat_stream(request, agent_session_id: int, query: str, agent_id: int, history = [], model_name: str = None):
     """Chat with agent."""
     agent = agent_database.get_agent_lite(agent_id)
+    agent = SimpleNamespace(**agent)
     if not agent:
         raise ValueError("agent does not exist")
     created = int(time())
@@ -547,6 +550,7 @@ async def model_chat_stream(request, agent_session_id,
     answer = [""]*agent.n_sequences
     messages = build_messages(prompt, history, agent.system_message)
     model = model_database.get_model_by_id(agent.model_id)
+    model = SimpleNamespace(**model)
     model_name = model_name or model.name
     usage = {}
     llm_token = model.token if model.token else os.environ.get("DASHSCOPE_API_KEY", "") # 如果不在数据库中，则从环境变量中获取

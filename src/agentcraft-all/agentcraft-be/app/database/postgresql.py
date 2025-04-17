@@ -8,3 +8,5 @@ postgres = create_engine(config.POSTGRES_URL)
 
 class BaseModel(DeclarativeBase):
     """Base Model"""
+    def as_dict(self):
+        return {c.name: getattr(self, c.name) for c in self.__table__.columns}

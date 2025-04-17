@@ -7,17 +7,13 @@ from app.action_tools.schema import UpsertActionToolsRequest
 from app.auth.security import validate_token
 router = APIRouter()
 
-def remove_sa_instance_state(obj: dict) -> dict:
-    """移除 SQLAlchemy 的 _sa_instance_state 属性"""
-    obj.pop("_sa_instance_state", None)
-    return obj
+
 
 
 @router.get("/list", response_model=DictListResponse)
 async def list_action_tools(page: int, limit: int, token: JWTData = Depends(validate_token)):
     """获取action_tools列表"""
     data, total = service.list_action_tools(token.user_id, page, limit)
-    data = [remove_sa_instance_state(item) for item in data]
     return {
         "code": 200,
         "msg": "success",
@@ -55,7 +51,7 @@ async def get_action_tools(action_tools_id: int, token: JWTData = Depends(valida
     return {
         "code": 200,
         "msg": "success",
-        "data": remove_sa_instance_state(service.get_action_tools(action_tools_id, token.user_id))
+        "data": service.get_action_tools(action_tools_id, token.user_id)
     }
 
 

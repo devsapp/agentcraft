@@ -5,7 +5,7 @@ import app.database.dataset as database
 def list_datasets(user_id: int, page: int, limit: int, dataset_type: int = None):
     """列出所有数据集."""
     data, total=database.list_datasets(user_id, page, limit, dataset_type)
-    return [vars(dataset) for dataset in data], total
+    return data, total
 
 
 def add_dataset(**kwargs):

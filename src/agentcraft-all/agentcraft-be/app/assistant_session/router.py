@@ -10,16 +10,12 @@ from app.auth.security import validate_token
 from app.common.logger import logger
 
 router = APIRouter()
-def remove_sa_instance_state(obj: dict) -> dict:
-    """移除 SQLAlchemy 的 _sa_instance_state 属性"""
-    obj.pop("_sa_instance_state", None)
-    return obj
+
 @router.get("/list/{assistant_id}", response_model=DictListResponse)
 async def list_assistant_session(assistant_id: int, page: int, limit: int, token: JWTData = Depends(validate_token)):
   """获取会话列表"""
   service.check_user_has_assistant(token.user_id, assistant_id)
   data, total = service.list_assistant_session(assistant_id, page, limit)
-  data = [remove_sa_instance_state(item) for item in data]
   return {
     "code": 200,
     "msg": "success",
@@ -35,7 +31,6 @@ async def get_session_by_keyword(assistant_id: int, session_id: int, token: JWTD
     service.check_user_has_assistant(token.user_id, assistant_id)
 
     data = service.get_session_by_id(session_id)
-    data = remove_sa_instance_state(data)
     return {
         "code": 200,
         "msg": "success",
@@ -48,7 +43,6 @@ async def get_session_by_keyword(assistant_id: int, keyword: str, token: JWTData
     logger.info(f'get_session_by_keyword assistant_id: {assistant_id}; keyword: {keyword}')
     service.check_user_has_assistant(token.user_id, assistant_id)
     data = service.get_session_by_assistant_id_and_keyword(assistant_id, keyword)
-    data = remove_sa_instance_state(data)
     return {
         "code": 200,
         "msg": "success",
@@ -61,7 +55,6 @@ async def list_chat(assistant_id: int, page: int = 0, limit: int = 20, session_i
     logger.info(f'assistant_id: {assistant_id}; session_id: {session_id}; keyword: {keyword};')
     service.check_user_has_assistant(token.user_id, assistant_id)
     data, total, session_id = service.get_assistant_histroy(assistant_id, session_id, keyword, page, limit)
-    data = [remove_sa_instance_state(item) for item in data]
     return {
         "code": 200,
         "msg": "success",

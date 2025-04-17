@@ -5,8 +5,7 @@ import app.database.model as database
 def list_models(user_id: int, page: int, limit: int):
     """列出所有模型"""
     data, total = database.list_models(user_id, page, limit)
-    data_dict = [vars(model) for model in data]
-    return data_dict, total
+    return data, total
 
 
 def add_model(**kwargs):

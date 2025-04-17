@@ -2,6 +2,7 @@
 
 # pylint: disable = no-member
 from typing import Any
+from types import SimpleNamespace
 import uuid
 from app.common.logger import logger
 import app.database.assistant_chat as assistant_chat_database
@@ -20,6 +21,7 @@ DONE = "[DONE]"
 COMPATIBLE_WITH_FUNCTION_CALL_MODELS = ["qwen-max-latest","qwen-max","qwen-plus"]
 def get_assistant_lite(assistant_id: int):
     assistant = assistant_database.get_assistant_lite(assistant_id)
+    assistant = SimpleNamespace(**assistant)
     if not assistant:
         raise ValueError("assistant does not exist")
     if not assistant_database.check_user_has_assistant(assistant.user_id, assistant_id):
@@ -61,7 +63,7 @@ def list_assistant_chats_history_by_session_id(session_id: int, page, limit):
     for item in data:
         assistant_chat_data = assistant_chat_database.get_assistant_chat_lite(item.get("chat_id"))
         if not assistant_chat_data:
-            print(f'No information found for assistant_chat id({item.get("chat_id")})')
+            logger.info(f'No information found for assistant_chat id({item.get("chat_id")})')
             continue
         history.append(assistant_chat_data)
     return history[::-1], total
@@ -72,8 +74,7 @@ def list_chats(assistant_id: int, user_id: int, page: int, limit: int):
     if not assistant_database.check_user_has_assistant(user_id, assistant_id):
         raise ValueError("user does not have this assistant")
     data, total = assistant_chat_database.list_chats(assistant_id, 0, page, limit)
-    data_dict = [vars(chat) for chat in data]
-    return data_dict, total
+    return data, total
 
 
 def update_chat(uid: str, assistant_id: int, **kwargs):
@@ -121,7 +122,7 @@ async def chat_stream(
                  "dataset_name": dataset_name}
                 for relation, dataset_name in relations]
     model = model_database.get_model_by_id(assistant.model_id)
-
+    model = SimpleNamespace(**model)
     reason_stream = ReasoningStreamMcp(
         query,
         assistant,

@@ -31,7 +31,8 @@ def list_models(user_id: int, page: int = 0, limit: int = 3000) -> tuple[list[Mo
             Model.modified.desc()).offset(
             page * limit).limit(limit).all()
         total = session.query(Model).filter(Model.user_id == user_id).count()
-        return data, total
+        data_dict = [item.as_dict() for item in data]
+        return data_dict, total
 
 
 def delete_model(model_id: int, user_id: int):
@@ -53,15 +54,17 @@ def add_model(**kwargs):
 def get_model(model_id: int, user_id: int) -> Model:
     """获取模型信息"""
     with Session(postgresql.postgres) as session:
-        return session.query(Model).filter(
+        data = session.query(Model).filter(
             Model.id == model_id, Model.user_id == user_id).order_by(Model.modified.desc()).first()
+        return data.as_dict()
 
 
 def get_model_by_id(model_id: int) -> Model:
     """通过ID获取模型"""
     with Session(postgresql.postgres) as session:
-        return session.query(Model).filter(
+        data = session.query(Model).filter(
             Model.id == model_id).order_by(Model.modified.desc()).first()
+        return data.as_dict()
 
 
 def update_model(model_id: int, user_id: int,**kwargs):

@@ -25,10 +25,12 @@ def list_datasets_by_assistant_id(
         assistant_id: int, page: int = 0, limit: int = 3000) -> list[Any]:
     """根据assistant id获取数据集"""
     with Session(postgresql.postgres) as session:
-        return session.query(
+        data = session.query(
             AssistantDataset, Dataset.name).filter(
             AssistantDataset.assistant_id == assistant_id).join(
             AssistantDataset.datasets).offset(page*limit).limit(limit).all()
+        data_dict = [item.as_dict() for item in data]
+        return data_dict
 
 
 def bulk_insert(assistant_id: int, exact_datasets: list[int], fuzzy_datasets: list[int]):
