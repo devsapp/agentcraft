@@ -42,14 +42,11 @@ def delete_agent(agent_id: int, user_id: int):
 
 def get_agent(_id: int, user_id: int):
     """获取agent信息"""
+
     agent, model_name = database.get_agent(_id, user_id)
     relations = relation_database.list_datasets_by_agent_id(_id)
-    
-    datasets_dict = [{**(relation),
-                      "dataset_name": dataset_name}
-                     for relation, dataset_name in relations]
+    agent_dict = {"datasets": relations, "model_name": model_name, **(agent), }
 
-    agent_dict = {"datasets": datasets_dict, "model_name": model_name, **(agent), }
     return agent_dict
 
 def get_public_agent_streamline_info(_id: int):
