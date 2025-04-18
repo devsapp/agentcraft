@@ -93,15 +93,34 @@ class ReasoningStreamMcp:
 
         if not self.assistant.mcp_server:
             return
-        async with sse_client(
-            self.assistant.mcp_server, {"Accept": "text/event-stream"}, 60 * 5, 60 * 5
-        ) as (read, write):
-            async with ClientSession(read, write) as session:
-                await session.initialize()
-                response = await session.list_tools()
-                self.mcp_tools = response.tools
-                self.mcp_session = session
-                logger.info(f"{CYAN}\nConnected to server with tools: {[tool.name for tool in response.tools]}{RESET}")
+
+        if self.assistant.mcp_server.startswith("http"):
+        # 如果是 HTTP 协议，使用 sse_client
+            async with sse_client(
+                self.assistant.mcp_server, {"Accept": "text/event-stream"}, 60 * 5, 60 * 5
+            ) as (read, write):
+                async with ClientSession(read, write) as session:
+                    await session.initialize()
+                    response = await session.list_tools()
+                    self.mcp_tools = response.tools
+                    logger.info(f"{CYAN}\nConnected to server with tools: {[tool.name for tool in response.tools]}{RESET}")
+        else:
+            # 如果是 stdio 类型，按照空格切割
+            parts = self.assistant.mcp_server.split()
+            command = parts[0]  # 首个索引为指令名
+            args = parts[1:] if len(parts) > 1 else []  # 后面的部分作为 args
+
+            server_params = StdioServerParameters(
+                command=command,  # 指令名
+                args=args,  # 参数列表
+                env=None,  # 可选的环境变量
+            )
+            async with stdio_client(server_params) as (read, write):
+                async with ClientSession(read, write) as session:
+                    await session.initialize()
+                    response = await session.list_tools()
+                    self.mcp_tools = response.tools
+                    logger.info(f"{CYAN}\nConnected to server with tools: {[tool.name for tool in response.tools]}{RESET}")
     def final_result(self, resp_data: str):
         return self.extract_final_answer(resp_data)
 
@@ -319,18 +338,42 @@ class ReasoningStreamMcp:
             plugin_args = json.loads(plugin_args)
             logger.info(f"{CYAN}\nStart to call mcp tool: {plugin_name} {plugin_args} {RESET}")
             try:
-                # TODO: 后续优化为将 sse_client 全局持久化，先暂时按重新创建链接的方式解决
-                async with sse_client(
-                    self.assistant.mcp_server, {"Accept": "text/event-stream"}, 9999
-                ) as (read, write):
-                    async with ClientSession(read, write) as session:
-                        await session.initialize()
-                        result = await session.call_tool(
-                            plugin_name, arguments=plugin_args
-                        )
-                        self.mcp_tool_result = result
-                        return result.content[0].text
+                if self.assistant.mcp_server.startswith("http"):
+                    # TODO: 后续优化为将 sse_client 全局持久化，先暂时按重新创建链接的方式解决
+                    async with sse_client(
+                        self.assistant.mcp_server, {"Accept": "text/event-stream"}, 9999
+                    ) as (read, write):
+                        async with ClientSession(read, write) as session:
+                            await session.initialize()
+                            result = await session.call_tool(
+                                plugin_name, arguments=plugin_args
+                            )
+                            self.mcp_tool_result = result
+                            return result.content[0].text
+                else:
+                     # 如果是 stdio 类型，按照空格切割
+                    parts = self.assistant.mcp_server.split()
+                    command = parts[0]  # 首个索引为指令名
+                    args = parts[1:] if len(parts) > 1 else []  # 后面的部分作为 args
+
+                    server_params = StdioServerParameters(
+                        command=command,  # 指令名
+                        args=args,  # 参数列表
+                        env=None,  # 可选的环境变量
+                    )
+                    async with stdio_client(
+                        server_params,
+                    ) as (read, write):
+                        async with ClientSession(read, write) as session:
+                            await session.initialize()
+                            result = await session.call_tool(
+                                plugin_name, arguments=plugin_args
+                            )
+                            self.mcp_tool_result = result
+                            return result.content[0].text
+                
             except Exception as e:
+                print(e)
                 logger.error(e)
                 return ""
         else:
