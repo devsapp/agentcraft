@@ -141,8 +141,11 @@ async def chat_stream(
     #     reason_stream = ReasoningStream(
     #         query, assistant, model, datasets, credential_dict, history,
     #         session_id=assistant_session_id)
+
+    
     async for chunk in reason_stream.call_assistant_stream():
         yield chunk
+        
     # yield from reason_stream.call_assistant_stream()
     # reasoning_log: 完整的推理日志
     # answer: 展示用户的答案

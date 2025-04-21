@@ -16,10 +16,8 @@ from app.reasoning.retrieval import data_retrieval, llm_retrieval_instruction_st
 from app.common.logger import logger
 from app.reasoning.tools_client import ToolsActionClient
 from app.common.constants import YELLOW, RESET, RED, CYAN
+from app.mcps.mcp import McpSingleton
 
-from mcp import ClientSession, StdioServerParameters, types
-from mcp.client.stdio import stdio_client
-from mcp.client.sse import sse_client
 
 
 DONE = "[DONE]"
@@ -73,7 +71,6 @@ class ReasoningStreamMcp:
         self.time = time()
         self.tool_name_dict = {}
         self.mcp_tools = []
-        self.mcp_session = None
         self.mcp_tool_result = None
         self.history = history
         self.model = model
@@ -82,45 +79,8 @@ class ReasoningStreamMcp:
         self.usage = (0, 0, 0)
         self.answer = ""
         self.llm_output = []
-        self.session: Optional[ClientSession] = None
-        self.exit_stack = AsyncExitStack()
+        self.mcp = None
 
-    async def connect_to_server(self):
-        """Connect to an MCP server
-        Args:
-        server_script_path: Path to the server script (.py or .js)
-        """
-
-        if not self.assistant.mcp_server:
-            return
-
-        if self.assistant.mcp_server.startswith("http"):
-        # 如果是 HTTP 协议，使用 sse_client
-            async with sse_client(
-                self.assistant.mcp_server, {"Accept": "text/event-stream"}, 60 * 5, 60 * 5
-            ) as (read, write):
-                async with ClientSession(read, write) as session:
-                    await session.initialize()
-                    response = await session.list_tools()
-                    self.mcp_tools = response.tools
-                    logger.info(f"{CYAN}\nConnected to server with tools: {[tool.name for tool in response.tools]}{RESET}")
-        else:
-            # 如果是 stdio 类型，按照空格切割
-            parts = self.assistant.mcp_server.split()
-            command = parts[0]  # 首个索引为指令名
-            args = parts[1:] if len(parts) > 1 else []  # 后面的部分作为 args
-
-            server_params = StdioServerParameters(
-                command=command,  # 指令名
-                args=args,  # 参数列表
-                env=None,  # 可选的环境变量
-            )
-            async with stdio_client(server_params) as (read, write):
-                async with ClientSession(read, write) as session:
-                    await session.initialize()
-                    response = await session.list_tools()
-                    self.mcp_tools = response.tools
-                    logger.info(f"{CYAN}\nConnected to server with tools: {[tool.name for tool in response.tools]}{RESET}")
     def final_result(self, resp_data: str):
         return self.extract_final_answer(resp_data)
 
@@ -197,7 +157,7 @@ class ReasoningStreamMcp:
             "Content-Type": "application/json",
         }
         try:
-            # messages.append({"role": "user", "content": "请确保输出内容足够的详细，请确保按照系统提示词的结构进行输出"})
+            messages.append({"role": "user", "content": "Please make sure to follow the structural conventions of the system prompt words."})
             llm_request_options = {
                 "model": kwargs["model"],
                 "messages": messages,
@@ -225,6 +185,7 @@ class ReasoningStreamMcp:
                 data=request_data,
                 timeout=kwargs["timeout"],
             )
+            # logger.info(f"{CYAN}Response Data:{resp.text}{RESET}")
             for index, line in enumerate(resp.iter_lines()):
                 if line:
                     line = codecs.decode(line)
@@ -338,39 +299,9 @@ class ReasoningStreamMcp:
             plugin_args = json.loads(plugin_args)
             logger.info(f"{CYAN}\nStart to call mcp tool: {plugin_name} {plugin_args} {RESET}")
             try:
-                if self.assistant.mcp_server.startswith("http"):
-                    # TODO: 后续优化为将 sse_client 全局持久化，先暂时按重新创建链接的方式解决
-                    async with sse_client(
-                        self.assistant.mcp_server, {"Accept": "text/event-stream"}, 9999
-                    ) as (read, write):
-                        async with ClientSession(read, write) as session:
-                            await session.initialize()
-                            result = await session.call_tool(
-                                plugin_name, arguments=plugin_args
-                            )
-                            self.mcp_tool_result = result
-                            return result.content[0].text
-                else:
-                     # 如果是 stdio 类型，按照空格切割
-                    parts = self.assistant.mcp_server.split()
-                    command = parts[0]  # 首个索引为指令名
-                    args = parts[1:] if len(parts) > 1 else []  # 后面的部分作为 args
-
-                    server_params = StdioServerParameters(
-                        command=command,  # 指令名
-                        args=args,  # 参数列表
-                        env=None,  # 可选的环境变量
-                    )
-                    async with stdio_client(
-                        server_params,
-                    ) as (read, write):
-                        async with ClientSession(read, write) as session:
-                            await session.initialize()
-                            result = await session.call_tool(
-                                plugin_name, arguments=plugin_args
-                            )
-                            self.mcp_tool_result = result
-                            return result.content[0].text
+                result = await self.mcp.call_tool(plugin_name, plugin_args)
+                self.mcp_tool_result = result
+                return result.content[0].text
                 
             except Exception as e:
                 print(e)
@@ -428,8 +359,10 @@ class ReasoningStreamMcp:
         action_tools_function_call = []
         tools_function_call = []
         assistant = self.assistant
+        session_id = self.business.get("session_id", None)
         model = self.model
-        await self.connect_to_server()
+        self.mcp = McpSingleton(assistant.id, session_id)
+        self.mcp_tools = await self.mcp.connect_to_server(assistant.mcp_server)
         try:
             action_tools = (
                 assistant_action_tools_database.list_action_tools_by_assistant_id(
@@ -580,8 +513,8 @@ class ReasoningStreamMcp:
 
                 logger.info(f"Action: {final_function_name}")
                 logger.info(f"Action Input: {final_function_arguments}")
+        
                 reasoning_log += f"Action: {action} Action Input: {action_input}\n"
-
                 plugin_output = await self.call_plugin(action, action_input)
                 logger.info(f"{CYAN}Tool Output: {plugin_output}{RESET}")
                 reasoning_log += f"Tool Output: {plugin_output}\n"

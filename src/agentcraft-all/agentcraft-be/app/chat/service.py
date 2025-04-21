@@ -227,6 +227,7 @@ def convert_fuzzy_search_res(search_res: list):
 def chat(agent_session_id: int, query: str, ip_addr: str, agent_id: int, history = []):
     """Chat with agent."""
     agent = agent_database.get_agent_lite(agent_id)
+    agent = SimpleNamespace(**agent)
     created = int(time())
     if not agent:
         raise ValueError("agent does not exist")
@@ -486,6 +487,7 @@ def model_chat(agent_session_id,
     """获取大模型的回答"""
     messages = build_messages(prompt, history, agent.system_message)
     model = model_database.get_model_by_id(agent.model_id)
+    model = SimpleNamespace(**model)
     llm_token = model.token if model.token else os.environ.get("DASHSCOPE_API_KEY", "") # 如果不在数据库中，则从环境变量中获取
     if not model:
         raise ValueError("model does not exist")
@@ -557,6 +559,7 @@ async def model_chat_stream(request, agent_session_id,
     if not model:
         raise ValueError("model does not exist")
     try:
+        messages.append({"role": "user", "content": "Please make sure to follow the structural conventions of the system prompt words."})
         headers = {
             "Authorization": f"Bearer {llm_token}",
             "Content-Type": "application/json"
