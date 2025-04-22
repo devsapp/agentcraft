@@ -17,7 +17,7 @@ from app.common.logger import logger
 from app.reasoning.tools_client import ToolsActionClient
 from app.common.constants import YELLOW, RESET, RED, CYAN
 from app.mcps.mcp import McpSingleton
-
+from types import SimpleNamespace
 
 
 DONE = "[DONE]"
@@ -304,7 +304,6 @@ class ReasoningStreamMcp:
                 return result.content[0].text
                 
             except Exception as e:
-                print(e)
                 logger.error(e)
                 return ""
         else:
@@ -369,6 +368,7 @@ class ReasoningStreamMcp:
                     assistant.id
                 )
             )
+
             mcp_tools_function_call = [
                 {
                     "type": "function",
@@ -378,7 +378,7 @@ class ReasoningStreamMcp:
                         "parameters": item.inputSchema,
                     },
                 }
-                for item in self.mcp_tools
+                for item in (SimpleNamespace(**tool) for tool in self.mcp_tools)
             ]
             action_tools_function_call = [
                 {
@@ -391,7 +391,7 @@ class ReasoningStreamMcp:
                         ),
                     },
                 }
-                for item in action_tools
+                for item in (SimpleNamespace(**tool) for tool in action_tools)
             ]
             tools_function_call = [
                 *action_tools_function_call,

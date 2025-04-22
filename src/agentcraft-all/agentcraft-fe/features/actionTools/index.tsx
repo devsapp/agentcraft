@@ -78,6 +78,15 @@ function AddOrUpdate() {
                     label={<span >执行函数<a href="https://fcnext.console.aliyun.com/cn-hangzhou/functions/create" target="_blank" style={{ marginLeft: 12 }}>还没有执行函数？点击前往创建</a></span>}
                     placeholder="请选择执行函数"
                     data={functionList}
+                    creatable
+                    getCreateLabel={(query) => `+ Create ${query}`}
+                    onCreate={(query) => {
+                            const item = { value: query, label: query };
+                            functionList.push(item);
+                            updateFunctionList(functionList as []);
+                            return item;
+                        }
+                    }
                     {...form.getInputProps('name')}
                 />
                 <TextInput mt={4} label="名称" placeholder="工具名" {...form.getInputProps('alias')} />

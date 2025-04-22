@@ -9,10 +9,15 @@ export interface ActionToolsRequestPayload {
     description: string
 }
 
+interface IFunctionListItem {
+    label: string,
+    value: string
+}
+
 interface ActionToolsStore {
     toolList: IActionTool[],
     isEdit: boolean,
-    functionList: [],
+    functionList: IFunctionListItem[],
     currentToolForm: any,
     open: boolean,
     openToolForm: boolean, // 是否打开工具表单
@@ -44,7 +49,7 @@ export const useActionToolStore = create<ActionToolsStore>()(devtools((set) => (
     isEdit: false,
     functionList: [],
     currentActionTool: {} as IActionTool,
-    updateFunctionList: (functionList: []) => set((_state: any) => ({ functionList })),
+    updateFunctionList: (functionList: IFunctionListItem[]) => set((_state: any) => ({ functionList })),
     updateToolList: (toolList: IActionTool[]) => set((_state: any) => ({ toolList })),
     setLoading: (status: boolean) => set((_state) => {
         return ({ loading: status })

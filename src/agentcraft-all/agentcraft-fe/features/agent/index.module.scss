@@ -44,6 +44,10 @@
         letter-spacing: 0px;
         color: #1A1A1A;
         margin-bottom: 4px;
+        width: 90%;
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
     }
 
     .agent-tag {
@@ -113,6 +117,7 @@
         letter-spacing: 0px;
         color: #1A1A1A;
         margin-right: 32px;
+       
     }
 
     .agent-container {

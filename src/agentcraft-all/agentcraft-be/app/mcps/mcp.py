@@ -24,7 +24,7 @@ class McpSingleton:
     async def connect_to_server(self, mcp_server: str):
         """Connect to an MCP server"""
         if not mcp_server:
-            return
+            return []
         # if not mcp_server or self.tools:
         #     return self.tools
         self.mcp_server = mcp_server
