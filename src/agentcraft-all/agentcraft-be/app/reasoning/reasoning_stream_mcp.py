@@ -378,7 +378,7 @@ class ReasoningStreamMcp:
                         "parameters": item.inputSchema,
                     },
                 }
-                for item in (SimpleNamespace(**tool) for tool in self.mcp_tools)
+                for item in self.mcp_tools
             ]
             action_tools_function_call = [
                 {
@@ -391,7 +391,7 @@ class ReasoningStreamMcp:
                         ),
                     },
                 }
-                for item in (SimpleNamespace(**tool) for tool in action_tools)
+                for item in action_tools
             ]
             tools_function_call = [
                 *action_tools_function_call,
