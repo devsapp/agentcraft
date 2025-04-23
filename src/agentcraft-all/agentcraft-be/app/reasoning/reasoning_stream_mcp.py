@@ -391,12 +391,16 @@ class ReasoningStreamMcp:
                         ),
                     },
                 }
-                for item in action_tools
+                for item in (SimpleNamespace(**tool) for tool in action_tools)
             ]
+
+
+           
             tools_function_call = [
                 *action_tools_function_call,
                 *mcp_tools_function_call,
             ]
+
             if self.datasets:
                 tools_function_call.append(
                     {

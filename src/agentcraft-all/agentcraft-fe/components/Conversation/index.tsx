@@ -174,7 +174,6 @@ export default function Conversation(props: ConversationProps) {
     const removeSession = async () => {
         setHistoryLoading(true);
         const { data } = await ApiVersion[version].getSessionByKeyword(id, keyword, shareToken);
-        console.log(data,'data');
         if (data?.id) {
             await ApiVersion[version].removeSessionHistory(id, data.id, shareToken);
             await getMessages();
