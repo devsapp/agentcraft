@@ -14,7 +14,7 @@ class UpsertDocumentRequest(BaseModel):
     @validator('ext')
     def ext_validator(cls, v: str):  # pylint: disable=no-self-argument, invalid-name
         """检查支持的文件格式"""
-        if v not in ('txt', 'md', 'html', 'pdf'):
+        if v not in ('txt', 'md', 'html', 'pdf', 'jpeg', 'png','jpg','pptx','xlsx','docx'):
             raise ValueError('extension not valid')
         return v
 
