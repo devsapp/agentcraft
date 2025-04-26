@@ -162,7 +162,7 @@ function UploadDataSource() {
 
     return (
         <Modal size="70%" opened={open} onClose={() => { setOpen(false); setIsEdit(false) }} title="上传数据集文档" centered>
-            <FileInput withAsterisk accept=".md,.txt,.html,.pdf" name="file" label="选择文档" description="选择本地文件上传，支持 .pdf,.txt,.md,.html文件" placeholder="点击上传文档" icon={<IconUpload size={rem(14)} />} {...form.getInputProps('file')} />
+            <FileInput withAsterisk accept=".md,.txt,.html,.pdf,.pptx,.xlsx,.docx,.jpg,.jpeg,.png" name="file" label="选择文档" description="选择本地文件上传，支持 .pdf,.txt,.md,.html,docx,pptx,xslx,jpg,jpeg,png文件" placeholder="点击上传文档" icon={<IconUpload size={rem(14)} />} {...form.getInputProps('file')} />
             <TextInput withAsterisk label="标题" description="标题内容作为检索的数据来源，用来展示检索结果" placeholder="" {...form.getInputProps('title')} />
             <NumberInput withAsterisk label="文档切片大小" description="" placeholder="" {...form.getInputProps('chunk_size')} />
             <TextInput label="来源url" placeholder="" {...form.getInputProps('url')} />
