@@ -1,7 +1,9 @@
 
-export const D1 = 'p[AgentCraft]gm[AgentCraft]-[AgentCraft]uf6nf1mg1oqpgg4wqo.p[AgentCraft]g.rd[AgentCraft]s.a[AgentCraft]l[AgentCraft]iyunc[AgentCraft]s.[AgentCraft]com';
-export const D2 = 'agentcraft_[AgentCraft]share';
-export const D3 = 'agentcraft_[AgentCraft]share@001';
+export const D1 = 'p[AgentCraft]gm[AgentCraft]-[AgentCraft]bp15r62cb3e1q187to.p[AgentCraft]g.rd[AgentCraft]s.a[AgentCraft]l[AgentCraft]iyunc[AgentCraft]s.[AgentCraft]com';
+export const D2 = 'agentcraft_[AgentCraft]share_01';
+export const D3 = 'agentcraft_[AgentCraft]share_01';
+export const D4 = 'agentcraft_[AgentCraft]share';
+
 export const AGENTCRAFT_PERFIX = '[AgentCraft]';
 export const SYSTEM_AGENTCRAFT_PREFIX = 'SYSTEM_AGPENTCRAFT';  // AgentCraft的核心服务
 export const DEFAULT_EMBEDDING_DIM = 1024; //默认向量维度

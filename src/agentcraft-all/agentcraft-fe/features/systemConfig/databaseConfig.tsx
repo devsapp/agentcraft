@@ -2,7 +2,7 @@ import React from "react";
 import { useDisclosure } from '@mantine/hooks';
 import { PasswordInput, Paper, Drawer, Button, TextInput, Text, Flex } from '@mantine/core';
 import MarkdownContent from "components/MDXContainer";
-import { ALIBABACLOUD_POSTGRESQL_TUTORIAL, D1, D2, D3, AGENTCRAFT_PERFIX } from 'constants/system-config';
+import { ALIBABACLOUD_POSTGRESQL_TUTORIAL, D1, D2, D3,D4, AGENTCRAFT_PERFIX } from 'constants/system-config';
 import { useSystemConfigStore } from 'store/systemConfig';
 
 function dynamicAddition(content: string, { vpcId = '', vpcName = '' }: { vpcId: string, vpcName: string }) {
@@ -15,9 +15,10 @@ export default function DataBaseConfig({ form }: any) {
     const vpcInfo = completeConfig?.vpcInfo || {};
     function setShareDbInfo() {
        const d = D2.replaceAll(AGENTCRAFT_PERFIX,'');
+       const c = D4.replaceAll(AGENTCRAFT_PERFIX,'');
        const dbInfo = {
             POSTGRES_HOST: D1.replaceAll(AGENTCRAFT_PERFIX,''),
-            POSTGRES_DATABASE: d,
+            POSTGRES_DATABASE: c,
             POSTGRES_USER: d,
             POSTGRES_PASSWORD: D3.replaceAll(AGENTCRAFT_PERFIX,''),
        }

@@ -85,7 +85,8 @@ class ReasoningStreamMcp:
         return self.extract_final_answer(resp_data)
 
     def wrapperUiRenderdPreview(self, title, content):
-        return f"""<ChatUIPreview title='{title}' component='{content}' />"""
+        return ""
+       #return f"""<ChatUIPreview title='{title}' component='{content}' />"""
 
     def extract_json_content(self, text):
         start_index = text.find("{")
@@ -544,7 +545,6 @@ class ReasoningStreamMcp:
 
                 # 将工具返回的结果进行上下文的拼接
                 messages.append(tool_info)
-
                 # 重置变量
                 final_answer = ""
                 final_function_name = ""
