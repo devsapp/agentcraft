@@ -52,7 +52,7 @@ async def chat(req: ChatRequest, request: Request, token: AgentJWTData = Depends
     logger.info(f'assistant_session_id: {assistant_session_id}; keyword: {keyword};')
 
     query = req.messages[-1].content
-
+    enable_thinking = req.enable_thinking
     context_carry_enabled = req.context_carry_enabled
     assistant_session_id = service.get_assistant_session_id(assistant_session_id, keyword, assistant_id, title = query)
     logger.info(f'get assistant_session_id: {assistant_session_id}')
@@ -75,7 +75,7 @@ async def chat(req: ChatRequest, request: Request, token: AgentJWTData = Depends
     if req.stream:
         return EventSourceResponse(
             service.chat_stream(
-                assistant_session_id, query, request.client.host, assistant_id, credential_dict, history_dict, assistant),
+                assistant_session_id, query, request.client.host, assistant_id, credential_dict, history_dict, assistant, enable_thinking),
             media_type="text/event-stream")
     else:
         resp: dict[str, Any] = service.chat(

@@ -249,6 +249,46 @@ CREATE_ACTION_TOOLS_TABLE = text(
     );"""
 )
 
+CREATE_MCP_TABLE = text( # 1 sse 2 sdtio
+    """CREATE TABLE IF NOT EXISTS mcp (
+    id BIGSERIAL PRIMARY KEY,
+    name VARCHAR(255) NOT NULL,
+    alias VARCHAR(255) ,
+    overview VARCHAR(255) ,
+    content VARCHAR(255) ,
+    server_config VARCHAR(255) NOT NULL,
+    icon VARCHAR(255) ,
+    arn VARCHAR(255) ,
+    type INTEGER NOT NULL DEFAULT 1, 
+    tools JSON,  
+    template TEXT,
+    user_id BIGINT REFERENCES users(id) ON DELETE CASCADE,
+    created TIMESTAMP NOT NULL DEFAULT NOW(),
+    modified TIMESTAMP NOT NULL DEFAULT NOW(),
+    UNIQUE (name, user_id)
+    );"""
+)
+
+CREATE_AGENTIC_APP_TABLE = text( # 1 sse 2 sdtio
+    """CREATE TABLE IF NOT EXISTS agentic_app (
+    id BIGSERIAL PRIMARY KEY,
+    name VARCHAR(255) NOT NULL,
+    project_name VARCHAR(255) NOT NULL,
+    description TEXT NOT NULL,
+    template VARCHAR(255) ,
+    domain VARCHAR(255) ,
+    endpoint VARCHAR(255) ,
+    icon VARCHAR(255),
+    phase  VARCHAR(255),
+    config JSON ,
+    user_id BIGINT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    created_at TIMESTAMP NOT NULL DEFAULT NOW(),
+    updated_at TIMESTAMP NOT NULL DEFAULT NOW(),
+    UNIQUE (name, project_name)
+    );"""
+)
+
+
 CREATE_ASSISTANT_ACTION_TOOLS_TABLE = text(
     """CREATE TABLE IF NOT EXISTS assistant_action_tools (
     id BIGSERIAL PRIMARY KEY,
@@ -360,4 +400,8 @@ def create_tables():
         session.execute(CREATE_ASSISTANT_CHAT_TABLE)
         session.execute(CREATE_ASSISTANT_SESSION_TABLE)
         session.execute(CREATE_ASSISTANT_SESSION_CHAT_TABLE)
+        
+        session.execute(CREATE_MCP_TABLE)
+        session.execute(CREATE_AGENTIC_APP_TABLE)
+        
         session.commit()

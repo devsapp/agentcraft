@@ -38,8 +38,8 @@ export function OverView() {
                 <Box className={'content-container'} mt={24} >
                     <Box>
                         <Flex gap="xs">
-                            <Flex direction="column" style={{ width: '68%' }}>
-                                <Paper shadow="xs" p="xl" mb={24} withBorder >
+                            <Flex direction="column" style={{ flex: 1 }}> {/* 左侧布局占满剩余空间 */}
+                                <Paper shadow="xs" p="xl" mb={24} withBorder>
                                     <Flex justify={'space-around'}>
                                         <Card shadow="sm" padding="lg" radius="md" withBorder style={{ width: '33%' }}>
                                             <Group position="apart" mt="md" mb="xs">
@@ -79,7 +79,7 @@ export function OverView() {
                                         </Card>
                                     </Flex>
                                 </Paper>
-                                <Paper shadow="xs" p="xl" withBorder >
+                                <Paper shadow="xs" p="xl" withBorder>
                                     <Box mt={12}>
                                         <Title order={5} mb={12}>智能体列表</Title>
                                         <AgentList workspaceId={currentWorkspace} />
@@ -87,8 +87,8 @@ export function OverView() {
                                 </Paper>
                             </Flex>
 
-                            <Flex direction="column" style={{ width: '30%' }}>
-                                <Paper shadow="xs" p="xl" mb={24} withBorder >
+                            <Flex direction="column" style={{ width: '22.4%' }}> {/* 右侧布局固定宽度 */}
+                                <Paper shadow="xs" p="xl" mb={24} withBorder>
                                     <Title order={3}>常用信息</Title>
                                     <Flex align="center" mb={8} justify="space-between" mt={8}>
                                         <div style={{ width: '50%' }}>
@@ -101,24 +101,22 @@ export function OverView() {
                                                 ServerlessDevs地址
                                             </Anchor>
                                         </div>
-
                                     </Flex>
                                     <Flex align="center" mb={8} justify="space-between" mt={8}>
                                         <Anchor href={accessUrl.openApiUrl} target="_blank" mr={8}>
                                             当前项目API地址
                                         </Anchor>
-
                                     </Flex>
                                     <div>
                                         <Title order={4} mt={8}>交流群</Title>
                                         <img style={{ width: 160, height: 160 }} src="https://img.alicdn.com/imgextra/i3/O1CN01cweOtQ1EEbgBlp4ch_!!6000000000320-2-tps-474-478.png" alt="交流群" />
                                     </div>
                                 </Paper>
-                                <Paper shadow="xs" p="xl" mb={24} withBorder >
+                                <Paper shadow="xs" p="xl" mb={24} withBorder>
                                     <Title order={3}>新手引导</Title>
                                     <Button compact variant="subtle" onClick={() => setAutoQuickStart(true)} mb={12}>打开快速引导</Button>
                                 </Paper>
-                                <Paper shadow="xs" p="xl" mb={24} withBorder >
+                                <Paper shadow="xs" p="xl" mb={24} withBorder>
                                     <Title order={3}>算力资源相关</Title>
                                     <Flex align="center" mb={8} justify="space-between" mt={8}>
                                         <div style={{ width: '50%' }}>
@@ -145,10 +143,9 @@ export function OverView() {
                                         </div>
                                     </Flex>
                                 </Paper>
-                                <Paper shadow="xs" p="xl" mb={24} withBorder >
+                                <Paper shadow="xs" p="xl" mb={24} withBorder>
                                     <Title order={3}>相关阅读</Title>
                                     <Flex align="start" mb={8} justify="space-between" mt={8}>
-
                                         <div style={{ width: '50%' }}>
                                             <Anchor href="https://www.gatesnotes.com/AI-agents" target="_blank">
                                                 人工智能即将彻底改变你使用计算机的方式
@@ -162,7 +159,6 @@ export function OverView() {
                                     </Flex>
                                     <Flex align="center" justify="space-between">
                                         <div style={{ width: '50%' }}>
-
                                             <Anchor href="https://github.com/tensorchord/Awesome-LLMOps" target="_blank" mr={8}>
                                                 Awesome-LLMOPs
                                             </Anchor>

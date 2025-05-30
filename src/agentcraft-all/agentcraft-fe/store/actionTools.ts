@@ -84,6 +84,7 @@ export async function getToolList() {
     if (data) {
         updateToolList(data);
     }
+    return data;
 
 }
 

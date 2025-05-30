@@ -36,12 +36,26 @@ class McpSingleton:
             parts = mcp_server.split()
             command = parts[0]
             args = parts[1:] if len(parts) > 1 else []
-
             self.server_params = StdioServerParameters(
                 command=command,
                 args=args,
                 env=None,
             )
+            # self.server_params = StdioServerParameters(
+            #     command=command,
+            #     args=args,
+            #     env={
+            #         "ALLOW_DANGEROUS": "true",
+            #         "NODE_PATH": "/opt/nodejs/node_modules",
+            #         "LD_LIBRARY_PATH": "/code:/code/lib:/usr/local/lib:/opt/lib:/opt/php8.1/lib:/opt/php8.0/lib:/opt/php7.2/lib",
+            #         "PUPPETEER_LAUNCH_OPTIONS": '''{
+            #                 "headless": true,
+            #                 "executablePath": "/opt/cache/puppeteer/chrome/linux-1108766/chrome-linux/chrome",
+            #                 "args": ["--no-sandbox", "--single-process", "--no-zygote"],
+            #                 "timeout": 15000
+            #         }'''
+            #     },
+            # )
             transport = await self.exit_stack.enter_async_context(stdio_client(self.server_params))
 
         # Common logic for both sse_client and stdio_client

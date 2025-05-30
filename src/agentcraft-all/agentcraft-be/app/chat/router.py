@@ -38,6 +38,7 @@ async def chat(req: ChatRequest, request: Request, token: AgentJWTData = Depends
     keyword = req.keyword
     model_name = req.model_name
     agent_session_id = req.session_id
+    enable_thinking = req.enable_thinking
     logger.info(f'agent_session_id: {agent_session_id}; keyword: {keyword};')
 
     query = req.messages[-1].content
@@ -65,7 +66,7 @@ async def chat(req: ChatRequest, request: Request, token: AgentJWTData = Depends
     if req.stream:
         return EventSourceResponse(
             service.chat_stream(
-                request, agent_session_id, query,  agent_id, history_dict, model_name),
+                request, agent_session_id, query,  agent_id, history_dict, model_name, enable_thinking),
             media_type="text/event-stream")
     else:
         resp: dict[str, Any] = service.chat(

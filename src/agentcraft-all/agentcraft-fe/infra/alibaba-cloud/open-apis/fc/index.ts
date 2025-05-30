@@ -198,4 +198,17 @@ export class ServerlessBridgeFcV3 {
 
         return await this.client.putAsyncInvokeConfigWithOptions(functionName, putAsyncInvokeConfigRequest, headers, runtime);
     }
+
+    async invokeFunction(functionName: string, payload: any) {
+        const invokeFunctionHeaders = new $FC20230330.InvokeFunctionHeaders({});
+        const invokeFunctionRequest = new $FC20230330.InvokeFunctionRequest({
+            body: payload
+        });
+        const runtime = new $Util.RuntimeOptions({
+            readTimeout: 60000,  // 设置读取响应的超时时间为60秒
+            connectTimeout: 10000  // 设置建立连接的超时时间为10秒
+        });
+
+        return await this.client.invokeFunctionWithOptions(functionName, invokeFunctionRequest, invokeFunctionHeaders, runtime);
+    }
 }

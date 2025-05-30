@@ -83,11 +83,11 @@ export function QuickStart({ workspaceId }: any) {
     const [appName, setAppName] = useState('');
     const llmProxyForm: UseFormReturnType<any> = useForm({
         initialValues: {
-            name_alias: '满血版DeepSeek-R1',
-            description: '基于阿里云百炼的满血DS-R1',
+            name_alias: 'QWEN3-235b',
+            description: 'QWEN最新模型QWEN3-235b',
             region: 'cn-hangzhou',
             apiKey: '',
-            model: 'deepseek-r1'
+            model: 'qwen3-235b-a22b'
         },
         validate: {
             name_alias: (value) => (!value ? 'LLM代理名称必填' : null),

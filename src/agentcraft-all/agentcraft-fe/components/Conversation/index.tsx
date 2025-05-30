@@ -120,7 +120,11 @@ const ConversationComponent = React.memo((data: ConversationItem) => {
                 </div>
             )}
             <div className={styles.markdownanswer}>
-                {isUser ? <Text style={{ whiteSpace: 'pre-wrap' }} >{data.content}</Text> : <MDXContainer content={data.content} />}
+                {isUser ? <Text style={{ whiteSpace: 'pre-wrap' }} >{data.content}</Text> : <MDXContainer content={data.content} scope={{
+                    sendMessage: (input: string) => {
+                        console.log(input);
+                    }
+                }} />}
             </div>
             {
                 !isUser && (

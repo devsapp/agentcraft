@@ -28,6 +28,7 @@ export interface CompleteConfigData {
 export const useSystemConfigStore = create<any>(persist(
     (set) => ({
         completeConfig: {},
+        modelType: 'bailian',
         hiddenConfigView: true,
         embeddingConfig: {
             EMBEDDING_DIM: '1024',
@@ -42,6 +43,7 @@ export const useSystemConfigStore = create<any>(persist(
             POSTGRES_PASSWORD: ''
         },
         activeStep: SystemConfigStep.EMBEDDING_SERVICE,
+        setModelType: (modelType: string) => set({ modelType }),
         setHiddenConfigView: (hiddenConfigView: boolean) => set({ hiddenConfigView }),
         setEmbeddingConfig: (embeddingConfig: any) => set({ embeddingConfig }),
         setDatabaseConfig: (databaseConfig: any) => set({ databaseConfig }),

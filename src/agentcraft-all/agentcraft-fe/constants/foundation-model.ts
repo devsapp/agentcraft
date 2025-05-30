@@ -22,7 +22,7 @@ export const SUPPORT_LLM_MODEL_REGIONS = ['cn-beijing','cn-hangzhou'];
 
 export const FM_NAME_MAP: any = {
     [AGENTCRAFT_FM_QWEN_BIZ]: '通义千问商业版',
-    [AGENTCRAFT_FM_DASHSCOPE_BIZ]: 'DashscopeAI',
+    // [AGENTCRAFT_FM_DASHSCOPE_BIZ]: 'DashscopeAI',
     [AGENTCRAFT_FM_ZHIPUAI_BIZ]:'智普AI',
     [AGENTCRAFT_FM_BAICHUANAI_BIZ]:'百川AI',
     [AGENTCRAFT_FM_LINGYIAI_BIZ]:'零一万物AI',
@@ -63,7 +63,7 @@ export const FM_DOCS: any = {
 
 export const FM_TEMPLATE_ACCESS_API_FUNCTION_MAP: any = {
     [AGENTCRAFT_FM_QWEN_BIZ]: 'apiServer',
-    [AGENTCRAFT_FM_DASHSCOPE_BIZ]: 'apiServer',
+    // [AGENTCRAFT_FM_DASHSCOPE_BIZ]: 'apiServer',
     [AGENTCRAFT_FM_TOGETHERAI_BIZ]: 'apiServer',
     [AGENTCRAFT_FM_ZHIPUAI_BIZ]:  'apiServer',
     [AGENTCRAFT_FM_BAICHUANAI_BIZ]:  'apiServer',

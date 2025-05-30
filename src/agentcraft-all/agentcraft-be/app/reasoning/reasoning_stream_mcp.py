@@ -16,7 +16,7 @@ from app.reasoning.retrieval import data_retrieval, llm_retrieval_instruction_st
 from app.common.logger import logger
 from app.reasoning.tools_client import ToolsActionClient
 from app.common.constants import YELLOW, RESET, RED, CYAN
-from app.mcps.mcp import McpSingleton
+from app.mcp_proxy.mcp import McpSingleton
 from types import SimpleNamespace
 
 
@@ -158,7 +158,7 @@ class ReasoningStreamMcp:
             "Content-Type": "application/json",
         }
         try:
-            messages.append({"role": "user", "content": "Please make sure to follow the structural conventions of the system prompt words."})
+            # messages.append({"role": "user", "content": "Please make sure to follow the structural conventions of the system prompt words."})
             llm_request_options = {
                 "model": kwargs["model"],
                 "messages": messages,
@@ -172,6 +172,9 @@ class ReasoningStreamMcp:
                 "logit_bias": {},
                 "stream_options": {"include_usage": True},
             }
+            enable_thinking = self.business.get("enable_thinking", None)
+            if(enable_thinking != None):
+                llm_request_options["enable_thinking"] = kwargs["enable_thinking"] 
             if len(kwargs["tools"]) > 0:
                 llm_request_options["tools"] = kwargs["tools"]
             else:
@@ -305,8 +308,7 @@ class ReasoningStreamMcp:
                 return result.content[0].text
                 
             except Exception as e:
-                logger.error(e)
-                return ""
+                return { "ERROR": str(e) }
         else:
             try:
                 tools_client = ToolsActionClient(self.credential_dict)
@@ -522,6 +524,18 @@ class ReasoningStreamMcp:
                 reasoning_log += f"Action: {action} Action Input: {action_input}\n"
                 plugin_output = await self.call_plugin(action, action_input)
                 logger.info(f"{CYAN}Tool Output: {plugin_output}{RESET}")
+                if "ERROR" in plugin_output:
+                    error_message = plugin_output["ERROR"]
+                    yield json.dumps({
+                        "id": uid,
+                        "object": "chat.error",
+                        "message": [
+                            {"content": f"Tool execution failed: {error_message}", "role": "assistant"}
+                        ],
+                        "created": created,
+                    })
+                    yield DONE
+                    return
                 reasoning_log += f"Tool Output: {plugin_output}\n"
                 # function_tool 执行完毕后的结构构造, mcp tool 塞入返回结果, 否则是 MDX 字符串
                 tool_result_content = (

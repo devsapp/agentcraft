@@ -11,8 +11,16 @@ export const BASE_LLM_URL = [
 ]
 
 export const MODEL_NAME_LIST = [{
-    label: 'qwen-max-latest(最新模型)',
+    label: 'qwen-max-latest(最新模型qwen3)',
     value: 'qwen-max-latest',
+    group: '百炼通义系列'
+},{
+    label: 'qwen3-235b-a22b',
+    value: 'qwen3-235b-a22b',
+    group: '百炼通义系列'
+},{
+    label: 'qwen3-30b-a3b',
+    value: 'qwen3-30b-a3b',
     group: '百炼通义系列'
 },
 {

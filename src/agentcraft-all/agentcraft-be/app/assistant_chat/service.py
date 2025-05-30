@@ -114,6 +114,7 @@ async def chat_stream(
     credential_dict,
     history,
     assistant,
+    enable_thinking
 ):
     """Chat with assistant."""
     relations = assistant_dataset_database.list_datasets_by_assistant_id(
@@ -131,6 +132,7 @@ async def chat_stream(
         credential_dict,
         history,
         session_id=assistant_session_id,
+        enable_thinking=enable_thinking
     )
     # 如果model.name 是以qwen 开头的 使用ReasoningStreamFc
     # if(model.name in COMPATIBLE_WITH_FUNCTION_CALL_MODELS):
@@ -145,7 +147,7 @@ async def chat_stream(
     
     async for chunk in reason_stream.call_assistant_stream():
         yield chunk
-        
+
     # yield from reason_stream.call_assistant_stream()
     # reasoning_log: 完整的推理日志
     # answer: 展示用户的答案

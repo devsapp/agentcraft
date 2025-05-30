@@ -1,75 +1,81 @@
-import React, { useState, Suspense } from "react";
+import React, { useState } from "react";
 import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
-import {
-  vs,
-  vscDarkPlus,
-} from "react-syntax-highlighter/dist/cjs/styles/prism";
-import { notifications } from '@mantine/notifications';
-import styles from '@/styles/chat.module.scss';
-type tProps = {
+import { vs, vscDarkPlus } from "react-syntax-highlighter/dist/cjs/styles/prism";
+import MermaidRenderer from "@/components/Mermaind"; // 假设这是正确的路径
+import { notifications } from "@mantine/notifications";
+
+type CodeHighlightProps = {
+  textContent: string;
   language: string;
   darkMode?: boolean;
-  children: any;
 };
 
-const them = {
+const themes = {
   dark: vscDarkPlus,
   light: vs,
 };
 
-const CodeHighlight = (props: tProps) => {
-  const { language = "txt", children, ...rest } = props;
+const CodeHighlight: React.FC<CodeHighlightProps> = ({ textContent, language = "txt", darkMode }) => {
   const [showCopy, setShowCopy] = useState(false);
-  const copy2Clipboard = async (text: string) => {
+
+  const copyToClipboard = async (text: string) => {
     try {
       await navigator.clipboard.writeText(text);
-    } catch (error) {
-      const textArea = document.createElement("textarea");
-      textArea.value = text;
-      document.body.appendChild(textArea);
-      textArea.focus();
-      textArea.select();
+    } catch (err) {
+      // Fallback for older browsers
+      const textarea = document.createElement("textarea");
+      textarea.value = text;
+      document.body.appendChild(textarea);
+      textarea.select();
       try {
         document.execCommand("copy");
       } catch (error) {
-        console.log(error);
+        console.error("Fallback copy failed", error);
       }
-      document.body.removeChild(textArea);
-
+      document.body.removeChild(textarea);
     }
+
     notifications.show({
-      title: '复制成功',
-      message: '您已完成复制',
-      color: 'green',
+      title: "复制成功",
+      message: "代码已复制到剪贴板",
+      color: "green",
     });
   };
-  const extractTextFromChildren = (children: any): string => {
-    return React.Children.toArray(children).map(child => {
-      if (typeof child === 'string') {
-        return child;
-      }
-      if (React.isValidElement(child)) {
-        return extractTextFromChildren(child.props.children);
-      }
-      return '';
-    }).join('');
-  };
-  const value = extractTextFromChildren(children).replace(/\n$/, '');
-  return (
-    <div className={styles['code-container']} onMouseEnter={() => setShowCopy(true)} onMouseLeave={() => setShowCopy(false)}>
-      <button className={styles['copy-btn']} style={{ visibility: showCopy ? 'visible' : 'hidden' }} onClick={() => copy2Clipboard(value)}>复制</button>
-      <Suspense>
-        <SyntaxHighlighter
-          {...rest}
-          PreTag="div"
-          style={them.dark}
-          language={language}
-        >
-          {value}
-        </SyntaxHighlighter >
-      </Suspense>
-    </div>
 
+  if (language === "mermaid") {
+    // @ts-ignore
+    return <MermaidRenderer chart={String(textContent)} key={Date.now()} />;
+  }
+
+  return (
+    <div style={{ position: "relative" }}>
+      <button
+        style={{
+          position: "absolute",
+          right: "10px",
+          top: "5px",
+          zIndex: 1,
+          background: "#333",
+          color: "#fff",
+          border: "none",
+          padding: "4px 8px",
+          fontSize: "12px",
+          cursor: "pointer",
+          borderRadius: "4px",
+        }}
+        onClick={(e) => {
+          e.preventDefault();
+          copyToClipboard(String(textContent));
+        }}
+        onMouseEnter={() => setShowCopy(true)}
+        onMouseLeave={() => setShowCopy(false)}
+      >
+        复制
+      </button>
+      <SyntaxHighlighter style={themes.dark} language={language} PreTag="div">
+        {String(textContent).replace(/\n$/, "")}
+      </SyntaxHighlighter>
+    </div>
   );
 };
 

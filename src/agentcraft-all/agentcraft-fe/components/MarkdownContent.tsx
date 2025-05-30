@@ -21,30 +21,7 @@ type MarkdownContentProps = {
 
 const MarkdownContent = (props: MarkdownContentProps) => {
   const { textContent, darkMode, value } = props;
-  const [showCopy, setShowCopy] = useState(false);
-  const copy2Clipboard = async (text: string) => {
-    try {
-      await navigator.clipboard.writeText(text);
-    } catch (error) {
-      const textArea = document.createElement("textarea");
-      textArea.value = text;
-      document.body.appendChild(textArea);
-      textArea.focus();
-      textArea.select();
-      try {
-        document.execCommand("copy");
-      } catch (error) {
-        console.log(error);
-      }
-      document.body.removeChild(textArea);
 
-    }
-    notifications.show({
-      title: '复制成功',
-      message: '您已完成复制',
-      color: 'green',
-    });
-  };
   return (
     <ReactMarkdown
       className={'markdown-body'}
@@ -62,14 +39,28 @@ const MarkdownContent = (props: MarkdownContentProps) => {
       remarkPlugins={[RemarkMath, RemarkGfm, RemarkBreaks]}
       components={{
         code(props: any) {
-          const { children, className, node } = props
+          const { children, className, node, ...rest } = props;
           const match = /language-(\w+)/.exec(className || "");
+          const a = String(children).replace(/\n$/, '');
+          const extractText = (children: React.ReactNode): string => {
+              return React.Children.toArray(children).reduce((acc: string, child: any) => {
+                  if (typeof child === 'string') {
+                      return acc + child;
+                  } else if (React.isValidElement(child) && child.props && (child.props as { children?: React.ReactNode }).children) {
+                      return acc + extractText((child.props as { children: React.ReactNode }).children);
+                  }
+                  return acc;
+              }, '');
+          };
+          const content = extractText(children);
           return match ? (
             <CodeHighlight
-              language={match[1]}
+                {...rest}
+                language={match[1]}
+                textContent={content}
             >
-              {children}
-            </CodeHighlight>
+                {content}
+            </CodeHighlight >
           ) : (
             <code className={className} {...props}>
               {children}

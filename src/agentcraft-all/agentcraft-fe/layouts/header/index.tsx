@@ -35,13 +35,13 @@ export function Header() {
     }, []);
 
     return <div className={styles['agentcraft-header']}>
-        <Box ml={5}
+        {/* <Box ml={5}
         >
             <Flex align="center">
                 <Anchor href="https://agentcraft.serverless-developer.com/" color="white" target={'_blank'} mr={24}>访问官网</Anchor>
             </Flex>
 
-        </Box>
+        </Box> */}
         {user.username ?
             <div className={styles['user']}>
                 <div className={styles['user-content']}>您好：{user.username}</div>

@@ -2,6 +2,9 @@ body {
     background-color: #F6F7F9 !important;
     overflow: hidden;
 }
+.mantine-AppShell-main {
+    padding-top: 0;
+}
 .page-container {
     height: 100%;
     overflow-y: auto;
@@ -786,7 +789,6 @@ body {
     max-width: 100%;
     padding: 0;
     margin: 0;
-    overflow-x: scroll;
     line-height: inherit;
     word-wrap: normal;
     background-color: transparent;
@@ -1180,4 +1182,10 @@ body {
 
 .markdown-body .hljs-strong {
     font-weight: 700;
+}
+
+a:-webkit-any-link {
+    color: -webkit-link;
+    cursor: pointer;
+    text-decoration: none;
 }

@@ -1,5 +1,5 @@
 import { NavItem } from 'types/nav';
-import { IconHome2, IconArrowBackUp, IconApps, IconVocabulary, IconServer, IconDatabasePlus, IconTrowel, IconRowInsertTop, IconDevicesPc } from '@tabler/icons-react';
+import { IconHome2, IconBrandReactNative, IconTemplate, IconApps, IconVocabulary, IconServer, IconDatabasePlus, IconTrowel, IconRowInsertTop, IconDevicesPc } from '@tabler/icons-react';
 
 export const flattenNavItems = (result: { [key: string]: NavItem }, navItems: NavItem[], parentPath = '', level = 0) => {
     level++;
@@ -26,9 +26,14 @@ export function getNavAndCurrentPath(router: any) {
             icon: IconHome2,
         },
         {
+            name: "Agentic应用🔥",
+            path: "/agentic-app",
+            icon: IconApps,
+        },
+        {
             name: "智能体",
             path: "/agent",
-            icon: IconApps,
+            icon: IconBrandReactNative,
             subNav: [
                 {
                     name: "新建智能助手",
@@ -62,41 +67,7 @@ export function getNavAndCurrentPath(router: any) {
                 }
             ]
         },
-        // {
-        //     name: "应用",
-        //     path: "/app",
-        //     icon: <IconApps size="1rem" stroke={1.5} />,
-        //     subNav: [
-        //         {
-        //             name: "知识库",
-        //             path: "/app/[id]/knowledgeBase",
-        //             icon: <IconVocabulary size="1rem" stroke={1.5} />,
-        //             subNav: [{
-        //                 name: "知识库信息",
-        //                 path: "/app/[id]/knowledgeBase/[knowledgeBaseId]/detail",
-        //                 icon: <IconHome2 size="1rem" stroke={1.5} />,
-        //             }, {
-        //                 name: "知识库系统记录",
-        //                 path: "/app/[id]/knowledgeBase/[knowledgeBaseId]/chatlist",
-        //                 icon: <IconHome2 size="1rem" stroke={1.5} />,
-        //             }]
-        //         },
-        //         {
-        //             name: "智能助手",
-        //             path: "/app/[id]/assistant",
-        //             icon: <IconVocabulary size="1rem" stroke={1.5} />,
-        //             subNav: [{
-        //                 name: "智能助手信息",
-        //                 path: "/app/[id]/assistant/[assistantId]/detail",
-        //                 icon: <IconHome2 size="1rem" stroke={1.5} />,
-        //             }, {
-        //                 name: "智能助手系统记录",
-        //                 path: "/app/[id]/assistant/[assistantId]/chatlist",
-        //                 icon: <IconHome2 size="1rem" stroke={1.5} />,
-        //             }]
-        //         }
-        //     ]
-        // },
+
         {
             name: "数据集",
             path: "/dataset",
@@ -115,6 +86,11 @@ export function getNavAndCurrentPath(router: any) {
         {
             path: '/divider1',
             type: 'divider',
+        },
+        {
+            name: "MCP🔥",
+            path: "/mcp",
+            icon: IconTemplate,
         },
         {
             name: "AI工具",
@@ -171,30 +147,10 @@ export function getNavAndCurrentPath(router: any) {
         {
             path: '/divider3',
             type: 'divider',
-        },
-
-        // {
-        //     path: '/divider',
-        //     type: 'divider',
-        // },
-        // {
-        //     name: "试玩工厂",
-        //     path: "/playground",
-        //     icon: <IconActivity size="1rem" stroke={1.5} />,
-        // },
+        }
     ]
     const navItemsMap = flattenNavItems({}, navItems);
     const currentNav: NavItem = navItemsMap[pathname] || {};
     let renderNavList: NavItem[] = navItems;
-    // if (currentNav.solo) {
-    //     renderNavList = [currentNav]; // 只有一个
-    // } else {
-    //     renderNavList = Object.keys(navItemsMap).filter((key) => {
-    //         const navItem = navItemsMap[key];
-    //         return navItem.level === currentNav.level && navItem.parentPath === currentNav.parentPath;
-    //     }).map((key) => {
-    //         return navItemsMap[key];
-    //     })
-    // }
     return { renderNavList, currentNav }
 }

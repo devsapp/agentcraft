@@ -1,11 +1,13 @@
 
-import { ServerlessBridgeFc, ServerlessBridgeServerlessDevs, ServerlessBridgeFcV3 } from 'infra/alibaba-cloud/open-apis/fc';
-import { ServerlessBridgeRam } from 'infra/alibaba-cloud/open-apis/ram';
-import { ServerlessBridgeSts } from 'infra/alibaba-cloud/open-apis/sts';
-import { ServerlessBridgeVpc } from 'infra/alibaba-cloud/open-apis/vpc';
-import { ServerlessBridgeEventbridge } from 'infra/alibaba-cloud/open-apis/eventbridge';
-import { FC_DEFAULT_ROLE_NAME, ASSUME_ROLE_POLICY_DOCUMENT, SERVERLESS_DEVS_POLICIES } from 'constants/cloud-resources'
-import { OpenApiConfig } from 'infra/alibaba-cloud/open-apis//types';
+import { ServerlessBridgeFc, ServerlessBridgeServerlessDevs, ServerlessBridgeFcV3 } from '@/infra/alibaba-cloud/open-apis/fc';
+import { ServerlessBridgeRam } from '@/infra/alibaba-cloud/open-apis/ram';
+import { ServerlessBridgeSts } from '@/infra/alibaba-cloud/open-apis/sts';
+import { ServerlessBridgeVpc } from '@/infra/alibaba-cloud/open-apis/vpc';
+import { ServerlessBridgeEventbridge } from '@/infra/alibaba-cloud/open-apis/eventbridge';
+import { ServerlessBridgeCap, IServiceCreateProjectRequestData, IServiceDeploymentRequestData } from '@/infra/alibaba-cloud/open-apis/cap';
+import { FC_DEFAULT_ROLE_NAME, ASSUME_ROLE_POLICY_DOCUMENT, SERVERLESS_DEVS_POLICIES } from '@/constants/cloud-resources';
+import { OpenApiConfig } from '@/infra/alibaba-cloud/open-apis//types';
+
 
 export class ServerlessBridgeService {
   serverlessBridgeRam: ServerlessBridgeRam;
@@ -15,9 +17,12 @@ export class ServerlessBridgeService {
   serverlessBridgeFcV3: ServerlessBridgeFcV3;
   serverlessBridgeVpc: ServerlessBridgeVpc;
   serverlessBridgeEb: ServerlessBridgeEventbridge;
+  serverlessBridgeCap: ServerlessBridgeCap;
   config: OpenApiConfig | undefined;
+  accountId: string | undefined;
   constructor(config?: OpenApiConfig, accountId?: string) {
     this.config = config;
+    this.accountId = accountId;
     this.serverlessBridgeRam = new ServerlessBridgeRam(config);
     this.serverlessBridgeSts = new ServerlessBridgeSts(config);
     this.serverlessBridgeServerlessDevs = new ServerlessBridgeServerlessDevs(config);
@@ -25,8 +30,12 @@ export class ServerlessBridgeService {
     this.serverlessBridgeVpc = new ServerlessBridgeVpc(config);
     this.serverlessBridgeFcV3 = new ServerlessBridgeFcV3(config, accountId);
     this.serverlessBridgeEb = new ServerlessBridgeEventbridge(config);
+    this.serverlessBridgeCap = new ServerlessBridgeCap(config, accountId);
   }
 
+  getServerlessBridgeCap(): ServerlessBridgeCap {
+    return this.serverlessBridgeCap;
+  }
   getServerlessBridgeRam(): ServerlessBridgeRam {
     return this.serverlessBridgeRam;
   }
@@ -366,6 +375,11 @@ export class ServerlessBridgeService {
   * @returns 
   */
 
+  async invokeFunctionV3(functionName: string, payload: any): Promise<any> {
+    return await this.serverlessBridgeFcV3.invokeFunction(functionName, payload);
+  }
+
+
   async listFunctionV3(prefix = '', nextToken = '', limit = 100): Promise<any> {
 
     return await this.serverlessBridgeFcV3.listFunction(prefix, nextToken, limit);
@@ -410,8 +424,98 @@ export class ServerlessBridgeService {
     return await this.serverlessBridgeEb.getEventBus(busName);
   }
   async creatEventRule(eventruleData: any) {
-
     return await this.serverlessBridgeEb.creatEventRule(eventruleData);
+  }
+
+  async waitForServicesToFinish(projectName: string, envName: string = 'production') {
+    while (true) {
+
+      await new Promise((resolve, reject) => {
+        setTimeout(() => {
+          resolve('')
+        }, 1000);
+      }); 
+
+      const result = await this.serverlessBridgeCap.getEnvironment(projectName, envName);
+      const serviceInstances = result.body.status.servicesInstances;
+      const latestDeployments = Object.keys(serviceInstances).map((key: string) => {
+        return serviceInstances[key].latestDeployment;
+      });
+
+      const unfinishedDeplyment = latestDeployments.filter((deployment: any) => {
+        return deployment.phase !== 'Finished';
+      });
+      if (unfinishedDeplyment.length === 0) {
+        break;
+      }
+    }
+  }
+  async createCapApp(data: IServiceCreateProjectRequestData) {
+    const { projectName, description, templateName, envName, templateParameters = {}, serviceNameChanges = {} } = data;
+    const envRoleArn = this.serverlessBridgeCap.getEnvRoleArn();
+    let needLock = false;
+    try {
+      await this.serverlessBridgeCap.createProject(projectName, description as string); // 一个uid 有500个项目的限额
+    } catch (e) {
+      needLock = true;
+    }
+
+    const currentEnvironment = await this.serverlessBridgeCap.getEnvironment(projectName, envName);
+    const currentServices = currentEnvironment?.body?.spec?.stagedConfigs?.services;
+    const currentVariables = currentEnvironment?.body?.spec?.stagedConfigs?.variables;
+    const serviceResult = await this.serverlessBridgeCap.renderServicesByTemplate(projectName, serviceNameChanges, templateName, templateParameters);
+
+    const serviceData: any = serviceResult.body;
+    const allServices = Object.assign({}, currentServices, serviceData.services);
+    const allVariables = Object.assign({}, currentVariables, serviceData.variables);
+    // if (needLock) { // 如果有锁，则等待
+    //   await this.waitForServicesToFinish(projectName, envName);
+    // } 
+    await this.serverlessBridgeCap.updateEnvironment(projectName, envName, {
+      name: envName,
+      spec: {
+        stagedConfigs: {
+          services: allServices,
+          variables: allVariables
+        },
+        roleArn: envRoleArn
+      }
+    });
+    let deployedServiceName = '';
+    try {
+      deployedServiceName = Object.keys(serviceData.services)[0];
+    } catch (e) { }
+    await this.serverlessBridgeCap.deployEnvironment(projectName, envName); // 需要返回serviceName
+
+    return { deployedServiceName };
+
+  }
+  async deleteCapApp(projectName: string, envName: string = 'production', services?: any) {
+    const envRoleArn = this.serverlessBridgeCap.getEnvRoleArn();
+    const envResult = await this.serverlessBridgeCap.updateEnvironment(projectName, envName, {
+      name: envName,
+      spec: {
+        stagedConfigs: {
+          services: {},
+          variables: {}
+        },
+        roleArn: envRoleArn
+      }
+    });
+
+    const deploymentResult = await this.serverlessBridgeCap.deployEnvironment(projectName, envName, { deleteProject: true, services });
+    return deploymentResult;
+  }
+  async getCapApp(data: IServiceDeploymentRequestData) {
+    const { projectName, envName = 'production', serviceName, pageNumber = 1, pageSize = 10 } = data;
+    await this.serverlessBridgeCap.listServiceDeployments({
+      projectName,
+      envName,
+      serviceName,
+      pageNumber,
+      pageSize
+    });
+    return await this.serverlessBridgeCap.getEnvironment(projectName, envName);
   }
 }
 

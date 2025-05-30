@@ -213,17 +213,30 @@ const components = {
     code: (props: any) => {
         const { children, className, node, ...rest } = props;
         const match = /language-(\w+)/.exec(className || "");
+        const a = String(children).replace(/\n$/, '');
+        const extractText = (children: React.ReactNode): string => {
+            return React.Children.toArray(children).reduce((acc: string, child: any) => {
+                if (typeof child === 'string') {
+                    return acc + child;
+                } else if (React.isValidElement(child) && child.props && (child.props as { children?: React.ReactNode }).children) {
+                    return acc + extractText((child.props as { children: React.ReactNode }).children);
+                }
+                return acc;
+            }, '');
+        };
+        const content = extractText(children);
+
         return match ? (
             <CodeHighlight
                 {...rest}
                 language={match[1]}
-
+                textContent={content}
             >
-                {children}
+                {content}
             </CodeHighlight >
         ) : (
             <code className={className} {...props}>
-                {children}
+                {content}
             </code>
         );
     },
@@ -387,44 +400,7 @@ export default function MDXContainer({ content, scope = {} }: any) {
                 </SafeMdxRenderer>
             );
             setComponent(MDXComponent);
-            // try {
-            // mdxContent = fixMDXContent(content);
-            // mdxContent = preprocessMDXContent(mdxContent);
-            // mdxContent = remarkThink(mdxContent);
-            // const vf = await compile(mdxContent, {
-            //     outputFormat: "function-body",
-            //     remarkPlugins: [
-            //         [RemarkMath, { strict: false, throwOnError: false, }],
-            //         RemarkGfm,
-            //         RemarkBreaks
-            //     ],
-            //     rehypePlugins: [
-            //         [RehypeKatex, {
-            //             katexOptions: {
-            //                 strict: "ignore",
-            //                 throwOnError: false, // 抑制渲染错误(关键！)
-            //             }
-            //         }],
-            //         [RehypeHighlight, { detect: false, ignoreMissing: true, plainText: ['unknow'] }]]
-            // });
-            // const { default: XComponent } = await run(vf, {
-            //     ...runtime,
-            //     Fragment: MdxLayout
-            // });
-            // const MDXComponent = (
-            //     <SafeMdxRenderer  >
-            //         <XComponent components={components} scope={scope} />
-            //     </SafeMdxRenderer>
-            // );
-            // setComponent(MDXComponent);
-            // } catch (e) {
-            //     const MarkdownComponent = <Code style={{ fontSize: '14px', backgroundColor: 'transparent' }}  >{content}</Code>;
-            //     // content = remarkThink(content);
-            //     // const MarkdownComponent = <Markdown textContent={content} />;
-            //     setComponent(
-            //         MarkdownComponent
-            //     );
-            // }
+
         };
         parseMDX();
     }, [content]);

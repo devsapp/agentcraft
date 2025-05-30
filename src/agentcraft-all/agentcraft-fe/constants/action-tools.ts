@@ -26,14 +26,14 @@ export const ACTION_TOOL_TEMPLATES = [
                     dashscopeApiKey: {
                         type: 'string',
                         title: '百炼API Key',
-                        default: '',
+                        default: '${env.DASHSCOPE_API_KEY}',
                         description: '百炼API key 获取地址https://bailian.console.aliyun.com/?apiKey=1',
                         uiType: 'string'   
                     },
                     bucketName: {
                         type: 'string',
                         title: 'OSS Bucket名称',
-                        default: '',
+                        default: '${env.OSS_BUCKET_NAME}',
                         description: '阿里云OSS的存储桶名称',
                         uiType: 'string'   
                     },
@@ -48,7 +48,7 @@ export const ACTION_TOOL_TEMPLATES = [
                         hiddenUI: true,
                         type: 'string',
                         title: '角色ARN',
-                        default: 'acs:ram::<uid>:role/aliyunfcdefaultrole',
+                        default: 'acs:ram::${env.ACCOUNT_ID}:role/aliyunfcdefaultrole',
                         description: '阿里云角色ARN',
                         uiType: 'string'   
                     }

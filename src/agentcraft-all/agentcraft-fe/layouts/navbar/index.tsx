@@ -45,7 +45,7 @@ export const Nav = (props: NavProps) => {
                             icon={<Box pl={6}>{cloneIconComponent(item.icon)}</Box>}
                             variant="filled"
                             onClick={() => handleClick(item.path)}
-                            active={item.path.indexOf(parentPath) === 0 ? true : false}
+                            active={item.path === parentPath ? true : false}
                         />
                     }
                     return <NavLink key={item.path}
@@ -56,9 +56,6 @@ export const Nav = (props: NavProps) => {
                         active={(pathname === item.path) ? true : false} />
                 }
             })}
-            {/* <div className={styles['nav-bottom-config']} >
-                <IconBrandGithubFilled color='white' className={styles['git']} />
-            </div> */}
         </Navbar>
     )
 }

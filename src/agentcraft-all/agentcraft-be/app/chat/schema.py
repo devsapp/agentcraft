@@ -87,6 +87,10 @@ class ChatRequest(BaseModel):
     messages: List[ChatCompletionRequestMessage] = Field(
         default=[], description="A list of messages to generate completions for."
     )
+    enable_thinking: bool | None = Field(
+        default=None,
+        description="Whether to enable thinking mode. If True, the model will generate a response and then think about the next step. If False, the model will generate a response and stop."
+    )
     stream: bool = stream_field
     session_id: int = agent_session_id_field
     keyword: str = Field(default=None, description="Keyword for the chat")

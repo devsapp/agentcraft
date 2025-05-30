@@ -163,7 +163,7 @@ export function List(props: any) {
     return (
         <Box pos="relative">
             <LoadingOverlay visible={false} overlayOpacity={0.3} />
-            <Flex align={'center'} wrap={'wrap'}>
+            <Flex align={'center'} wrap={'wrap'} gap='sm' >
                 {_list.map((item: any) => {
                     return <AgentCard
                         key={item.key}

@@ -2,7 +2,7 @@ import React from "react";
 
 import { nanoid } from 'nanoid';
 import { modals } from '@mantine/modals';
-import { Paper, Stepper, Anchor, Button, TextInput, Text, LoadingOverlay, Flex } from '@mantine/core';
+import { Paper, Stepper, Anchor, Button, TextInput, Text, LoadingOverlay, Flex, Radio, Group } from '@mantine/core';
 import CopyToClipboard from 'components/CopyToClipboard';
 import { useFoundationModelStore, addFoundationModel, getFoundationModel, APP_STATUS } from 'store/foundationModel';
 import { SYSTEM_AGENTCRAFT_PREFIX, NEW_EMBEDDING_TEMPLATE_NAME, SUPPORT_EMBEDDING_REGIONS } from 'constants/system-config';
@@ -46,6 +46,8 @@ export default function EmbeddingConfig({ form }: any) {
     const completeConfig = useSystemConfigStore().completeConfig;
     const embeddingConfig = useSystemConfigStore().embeddingConfig;
     const setEmbeddingConfing = useSystemConfigStore().setEmbeddingConfig;
+    const modelType = useSystemConfigStore().modelType;
+    const setModelType = useSystemConfigStore().setModelType;
     const setAppName = useFoundationModelStore().setAppName;
     function checkAppStatus(appName: string): Promise<any> {
 
@@ -133,11 +135,30 @@ export default function EmbeddingConfig({ form }: any) {
         <Paper shadow="xs" p="xl">
             <LoadingOverlay loader={<LoadingStepper />} visible={createLoading} overlayOpacity={0.8} overlayBlur={2} />
             <TextInput withAsterisk label="向量维度" description="向量的维度设置，跟使用embedding算法相关，并且在数据库持久化的时候不能修改" defaultValue={'1024'} placeholder="" {...form.getInputProps('EMBEDDING_DIM')} />
-            <Flex align={'center'}>
-                <TextInput label="embedding服务访问地址" description={<div><span>embedding服务访问地址</span><a href="https://fcnext.console.aliyun.com/applications/ai/create?template=55" target="_blank">无法创建？点击此前往单独创建</a></div>} style={{ width: '85%' }} {...form.getInputProps('EMBEDDING_URL')} defaultValue={completeConfig.EMBEDDING_URL || ''} />
-                <Button variant="subtle" mt={42} ml={4} onClick={createEmbeddingService}>快速获取embedding服务</Button>
-            </Flex>
-            {embedding_internet_url ? <Flex align={'flex-start'}>
+            <Radio.Group
+                name="modelType"
+                label="选择模型类型"
+                value={modelType}
+                onChange={setModelType}
+                mt="md"
+            >
+                <Group >
+                    <Radio value="bailian" label="阿里云百炼模型" />
+                    <Radio value="fc" label="自定义模型" />
+                </Group>
+            </Radio.Group>
+            {modelType === 'bailian' && (
+                <Flex align={'center'} mt="md">
+                    <div style={{ fontSize: '12px', fontWeight: 500 }}><span style={{ color: '#212529',marginRight: 12 }}>无需配置，系统自动对接</span><a href="https://bailian.console.aliyun.com/?tab=api#/doc/?type=model&url=https%3A%2F%2Fhelp.aliyun.com%2Fdocument_detail%2F2712515.html" target="_blank">模型api文档</a></div>
+                </Flex>
+            )}
+            {modelType === 'fc' && (
+                <Flex align={'center'} mt="md">
+                    <TextInput label="embedding服务" description={<div><span>embedding服务访问地址</span><a href="https://fcnext.console.aliyun.com/applications/ai/create?template=55" target="_blank">无法创建？点击此前往单独创建</a></div>} style={{ width: '85%' }} {...form.getInputProps('EMBEDDING_URL')} defaultValue={completeConfig.EMBEDDING_URL || ''} />
+                    <Button variant="subtle" mt={42} ml={4} onClick={createEmbeddingService}>快速获取embedding服务</Button>
+                </Flex>
+            )}
+            {embedding_internet_url ? <Flex align={'flex-start'} mt="md">
                 <CopyToClipboard value={getEmbeddingCurlCode(embedding_internet_url)} content="测试embedding服务" />
             </Flex> : null}
         </Paper>

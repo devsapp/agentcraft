@@ -3,7 +3,8 @@ torch
 transformers
 sentence-transformers
 
-fastapi
+fastapi==0.115.11
+typing_extensions==4.12.2
 uvicorn
 requests
 bcrypt

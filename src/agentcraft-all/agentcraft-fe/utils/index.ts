@@ -1,3 +1,4 @@
+import { nanoid } from 'nanoid';
 
 export function delay(milliseconds: number): Promise<void> {
     return new Promise<void>(resolve => {
@@ -21,8 +22,17 @@ export function formatDateTime(dateTimeStr: any): string {
 }
 
 export function obscureString(str: string) {
-    if(!str) {
+    if (!str) {
         return '';
     }
     return str.replace(/./g, '*');
+}
+
+/**
+ * 替换后缀随机函数
+ * @param value 
+ * @returns 
+ */
+export function generateRandomSuffix(value: string) {
+    return value.replace(/\$\{default-suffix\}/g, nanoid().toLocaleLowerCase());
 }

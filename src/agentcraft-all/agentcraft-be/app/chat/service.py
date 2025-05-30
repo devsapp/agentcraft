@@ -336,8 +336,7 @@ def chat(agent_session_id: int, query: str, ip_addr: str, agent_id: int, history
     return model_chat(agent_session_id, **chat_args)
 
 
-async def chat_stream(request, agent_session_id: int, query: str, agent_id: int, history = [], model_name: str = None):
-    """Chat with agent."""
+async def chat_stream(request, agent_session_id: int, query: str, agent_id: int, history = [], model_name: str = None, enable_thinking:bool = None):
     agent = agent_database.get_agent_lite(agent_id)
     agent = SimpleNamespace(**agent)
     if not agent:
@@ -357,7 +356,8 @@ async def chat_stream(request, agent_session_id: int, query: str, agent_id: int,
             "chat_type": 0,
             "uid": uid,
             "model_name": model_name,
-            "created": created
+            "created": created,
+            "enable_thinking": enable_thinking
         }
         async for chunk in model_chat_stream(request, agent_session_id, **chat_args):
             yield chunk
@@ -546,7 +546,7 @@ def model_chat(agent_session_id,
 
 async def model_chat_stream(request, agent_session_id, 
         query: str, prompt: str, history: list,
-        search_choices: list, ip_addr: str, agent, chat_type: int, uid: str, created: int, model_name: str = None):
+        search_choices: list, ip_addr: str, agent, chat_type: int, uid: str, created: int, model_name: str = None, enable_thinking = None):
     """获取大模型的回答"""
 
     answer = [""]*agent.n_sequences
@@ -559,7 +559,7 @@ async def model_chat_stream(request, agent_session_id,
     if not model:
         raise ValueError("model does not exist")
     try:
-        messages.append({"role": "user", "content": "Please make sure to follow the structural conventions of the system prompt words."})
+        # messages.append({"role": "user", "content": "Please make sure to follow the structural conventions of the system prompt words."})
         headers = {
             "Authorization": f"Bearer {llm_token}",
             "Content-Type": "application/json"
@@ -580,6 +580,8 @@ async def model_chat_stream(request, agent_session_id,
                 "include_usage": True
             }
         }
+        if(enable_thinking != None):
+            llm_request_options["enable_thinking"] = enable_thinking
         if(agent.stop != []):
             llm_request_options['stop'] = agent.stop
         request_data = json.dumps(llm_request_options)

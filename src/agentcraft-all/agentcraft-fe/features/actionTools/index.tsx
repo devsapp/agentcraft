@@ -324,7 +324,7 @@ function List() {
     const rows = toolList.map((element: IActionTool) => (
         <tr key={element.id}>
             <td>{element.id}</td>
-            <td>{element.alias}</td>
+            <td >{element.alias}</td>
             <td>{element.name}</td>
             {/* <td >{ACTION_TOOL_STATUS_NAME_MAP[element.status]}</td> */}
             <td style={{ width: 200 }}>{<CopyToClipboard value={element.description} content={element.description} position={"none"} />}</td>
@@ -334,7 +334,7 @@ function List() {
             <td>{element.author}</td>
             <td>{formatDateTime(element.created)}</td>
             <td>{formatDateTime(element.modified)}</td>
-            <td>
+            <td style={{ width: 140 }}>
                 <Button
                     variant="filled"
                     size="xs"
@@ -402,7 +402,7 @@ export function ActionToolsPage() {
     return (
         <>
             {/* <Breadcrumbs>{items}</Breadcrumbs> */}
-            <FeatureDescription title="AI工具" description="AI工具是Agent能力非常核心的部分，当你需要进行高级功能的Agent开发，AI工具是必不可少的" />
+            <FeatureDescription title="AI工具" description="AgentCraft 保留自定义AI工具的能力，搭配MCP生态可以更好的完成智能体的设计" />
             <Box mt={12} >
                 <Button onClick={() => {
                     setEditStatus(false);
