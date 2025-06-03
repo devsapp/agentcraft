@@ -21,10 +21,15 @@ export function getNavAndCurrentPath(router: any) {
     const { pathname } = router;
     const navItems: NavItem[] = [
         {
-            name: "概览",
+            name: "探索发现",
             path: "/overview",
             icon: IconHome2,
         },
+        // {
+        //     name: "探索发现",
+        //     path: "/explore",
+        //     icon: IconHome2,
+        // },
         {
             name: "Agentic应用🔥",
             path: "/agentic-app",
@@ -67,7 +72,6 @@ export function getNavAndCurrentPath(router: any) {
                 }
             ]
         },
-
         {
             name: "数据集",
             path: "/dataset",

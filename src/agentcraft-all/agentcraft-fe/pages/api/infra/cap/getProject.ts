@@ -32,11 +32,18 @@ export default async function handler(
         let custom_domain = ''
         let latestDeploymentName = '';
         let phase = '';
+        let type = 1;
+        let arn = '';
         try {
             const servicesInstances = deploymentsData?.status?.servicesInstances;
             latestEnvironmentDeploymentName = deploymentsData?.status?.latestEnvironmentDeploymentName;
             const serviceData = servicesInstances[`${serviceName}`];
             system_url = serviceData?.outputs?.url?.system_url;
+            if(serviceData?.outputs?.mcpServerConfig) {
+                system_url = serviceData?.outputs?.mcpServerConfig.url;
+                type = serviceData?.outputs?.mcpServerConfig.transportType === 'sse' ? 1 : 2;
+            }
+            arn = serviceData?.outputs?.functionArn;
             custom_domain = serviceData?.outputs?.url?.custom_domain;
             latestDeploymentName = serviceData?.latestDeployment?.name;
             phase = serviceData?.latestDeployment?.phase;
@@ -47,6 +54,8 @@ export default async function handler(
             system_url,
             custom_domain,
             phase,
+            type,
+            arn,
             latestDeploymentName,
             latestEnvironmentDeploymentName
         };

@@ -7,7 +7,7 @@ export default async function handler(
     res: NextApiResponse
 ) {
     const { id } = req.query;
-    const result = await request.delete(`/agentic_app/${id}`);
+    const result = await request.delete(`/mcp/${id}`);
     const token = getTokenFromRequest(req);
     request.defaults.headers.common['Authorization'] = token;
 

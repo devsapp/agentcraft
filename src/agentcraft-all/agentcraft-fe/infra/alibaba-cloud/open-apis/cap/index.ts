@@ -76,36 +76,6 @@ export class ServerlessBridgeCap {
 
     async renderServicesByTemplate(projectName: string, serviceNameChanges: any, templateName: string, templateParameters: any) {
 
-        // const params = new $OpenApi.Params({
-        //     // 接口名称
-        //     action: "RenderServicesByTemplate",
-        //     // 接口版本
-        //     version: "2023-07-14",
-        //     // 接口协议
-        //     protocol: "HTTPS",
-        //     // 接口 HTTP 方法
-        //     method: "POST",
-        //     authType: "AK",
-        //     style: "ROA",
-        //     // 接口 PATH
-        //     pathname: `/2023-07-14/templates/action/renderServices`,
-        //     // 接口请求体内容格式
-        //     reqBodyType: "json",
-        //     // 接口响应体内容格式
-        //     bodyType: "json",
-        // });
-        // let body: { [key: string]: any } = {
-        //     templateName,
-        //     parameters,
-        // };
-        // // runtime options
-        // let runtime = new $Util.RuntimeOptions({});
-        // let request = new $OpenApi.OpenApiRequest({
-        //     body: body,
-        // });
-
-        // await this.clientOpenApi.callApi(params, request, runtime);
-
         let renderServicesByTemplateRequest = new $Devs20230714.RenderServicesByTemplateRequest({
             parameters: templateParameters,
             templateName,

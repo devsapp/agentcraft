@@ -9,7 +9,7 @@ export default async function handler(
 ) {
 
     const projectName: any = req.query.projectName;
-    const { services, envName } = req.body;
+    const { services = [], envName = 'production' } = req.body;
     const serverlessBridgeService = getAlibabaCloudServerlessBridge(req.headers);
     let status = 200;
     const data: any = {

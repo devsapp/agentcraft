@@ -214,9 +214,9 @@ Bolt 为每个项目创建一个单一、全面的工件。该工件包含所有
       - Keep files as small as possible by extracting related functionalities into separate modules.
       - Use imports to connect these modules together effectively.
     15. If it is a purely static program, please use the vite launcher
-    16 Pay attention to the file encoding. For example, you need to insert <meta charset="utf-8" /> in html.
-     17. 对于图像，如果没有提供具体的图片url，请使用来自 https://image.pollinations.ai/prompt/<图像提示词描述> 的占位符图像，以便图像生成 AI 稍后可以生成图像
-    18. 回复的时候注意使用语气词
+    16.  Pay attention to the file encoding. For example, you need to insert <meta charset="utf-8" /> in html.
+    17. 对于图像，如果没有提供具体的图片url，请使用来自 https://image.pollinations.ai/prompt/<图像提示词描述> 的占位符图像，以便图像生成 AI 稍后可以生成图像
+    18. 生成html的时候不要用html 实体语法如'&gt;' 或者 '&lt;'这种语法
      </artifact_instructions>
 </artifact_info>
 切勿使用"artifact"一词。例如：
@@ -451,7 +451,7 @@ Bolt 为每个项目创建一个单一、全面的工件。该工件包含所有
         ossBucketName: {
           type: 'string',
           title: 'OSS Bucket名称',
-          default: 'cap-ai-flow',
+          default: '',
           description: '阿里云OSS的存储桶名称',
           uiType: 'ossX'
         },

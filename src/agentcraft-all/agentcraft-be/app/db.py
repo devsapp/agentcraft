@@ -249,14 +249,14 @@ CREATE_ACTION_TOOLS_TABLE = text(
     );"""
 )
 
-CREATE_MCP_TABLE = text( # 1 sse 2 sdtio
+CREATE_MCP_TABLE = text( 
     """CREATE TABLE IF NOT EXISTS mcp (
     id BIGSERIAL PRIMARY KEY,
     name VARCHAR(255) NOT NULL,
-    alias VARCHAR(255) ,
-    overview VARCHAR(255) ,
+    project_name VARCHAR(255) ,
+    description VARCHAR(255) ,
     content VARCHAR(255) ,
-    server_config VARCHAR(255) NOT NULL,
+    endpoint VARCHAR(255) NOT NULL,
     icon VARCHAR(255) ,
     arn VARCHAR(255) ,
     type INTEGER NOT NULL DEFAULT 1, 
@@ -265,11 +265,11 @@ CREATE_MCP_TABLE = text( # 1 sse 2 sdtio
     user_id BIGINT REFERENCES users(id) ON DELETE CASCADE,
     created TIMESTAMP NOT NULL DEFAULT NOW(),
     modified TIMESTAMP NOT NULL DEFAULT NOW(),
-    UNIQUE (name, user_id)
+    UNIQUE (project_name, user_id)
     );"""
 )
 
-CREATE_AGENTIC_APP_TABLE = text( # 1 sse 2 sdtio
+CREATE_AGENTIC_APP_TABLE = text( 
     """CREATE TABLE IF NOT EXISTS agentic_app (
     id BIGSERIAL PRIMARY KEY,
     name VARCHAR(255) NOT NULL,
@@ -282,9 +282,9 @@ CREATE_AGENTIC_APP_TABLE = text( # 1 sse 2 sdtio
     phase  VARCHAR(255),
     config JSON ,
     user_id BIGINT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
-    created_at TIMESTAMP NOT NULL DEFAULT NOW(),
-    updated_at TIMESTAMP NOT NULL DEFAULT NOW(),
-    UNIQUE (name, project_name)
+    created TIMESTAMP NOT NULL DEFAULT NOW(),
+    modified TIMESTAMP NOT NULL DEFAULT NOW(),
+    UNIQUE (project_name, user_id)
     );"""
 )
 

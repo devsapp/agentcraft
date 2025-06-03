@@ -24,6 +24,7 @@ async def list_mcp(page: int, limit: int, token: JWTData = Depends(validate_toke
 @router.post("/add", response_model=DictResponse)
 async def add_mcp(req: UpsertMCPRequest, token: JWTData = Depends(validate_token)):
     """新增 MCP"""
+    print(req.dict(),'dict')
     mcp_id = service.add_mcp(user_id=token.user_id, **req.dict())
     return {
         "code": 200,

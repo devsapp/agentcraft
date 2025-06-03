@@ -21,3 +21,16 @@ export async function addFunctionAiApp(payload: any) {
     });
     return result;
 }
+
+
+
+export async function deleteFunctionAiApp(projectName:string, payload: any) {
+    const result = await request(`/api/infra/cap/deleteProject?projectName=${projectName}`, {
+        method: "POST",
+        body: JSON.stringify(payload),
+        headers: {
+            "Content-Type": "application/json",
+        },
+    });
+    return result;
+}

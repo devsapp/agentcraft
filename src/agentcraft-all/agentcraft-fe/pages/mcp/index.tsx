@@ -1,8 +1,7 @@
 
-import { MCPPage } from "features/mcp";
+import { McpPage } from "features/mcp";
 export default function IndexPage() {
-
     return (
-        <MCPPage />
+        <McpPage />
     );
 }

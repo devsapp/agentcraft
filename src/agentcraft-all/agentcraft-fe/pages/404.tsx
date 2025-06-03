@@ -12,7 +12,7 @@ export default function Custom404() {
       direction="column"
     >
       <h2>404 Not Found</h2>
-      <p>页面丢失了，跳转到<Link href="/overview">概览</Link>页面</p>
+      <p>页面丢失了，跳转到<Link href="/overview">探索发现</Link>页面</p>
     </Flex>
   );
 }

@@ -24,8 +24,8 @@ class AgenticApp(postgresql.BaseModel):
     phase = mapped_column(String(255), nullable=False)  # COMMENT '应用状态'
     config = mapped_column(JSON, nullable=True)            # COMMENT '应用配置'
     user_id = mapped_column(ForeignKey("users.id", ondelete="cascade"))
-    created_at = mapped_column(TIMESTAMP, default=func.now(), nullable=False)
-    updated_at = mapped_column(TIMESTAMP, default=func.now(), onupdate=func.now(), nullable=False)
+    created = mapped_column(TIMESTAMP, default=func.now(), nullable=False)
+    modified = mapped_column(TIMESTAMP, default=func.now(), onupdate=func.now(), nullable=False)
 
 
 
@@ -67,7 +67,7 @@ def list_agentic_apps(user_id: int, page: int = 0, limit: int = 3000) -> tuple[l
     with Session(postgresql.postgres) as session:
         query = session.query(AgenticApp).filter(AgenticApp.user_id == user_id)
         total = query.count()
-        apps = query.order_by(AgenticApp.updated_at.desc()).offset(page * limit).limit(limit).all()
+        apps = query.order_by(AgenticApp.modified.desc()).offset(page * limit).limit(limit).all()
         return [app.as_dict() for app in apps], total
 
 

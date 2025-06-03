@@ -14,12 +14,12 @@ class MCP(postgresql.BaseModel):
 
     id = mapped_column(Integer, primary_key=True, index=True)
     name = mapped_column(String(255), nullable=False)
-    alias = mapped_column(String(255), nullable=True)
-    overview = mapped_column(String(255), nullable=True)
-    content = mapped_column(String(255), nullable=True)
-    server_config = mapped_column(String(255), nullable=False)
+    project_name = mapped_column(String(255), nullable=True)
+    description = mapped_column(String(255), nullable=True)  # 描述
+    content = mapped_column(String(255), nullable=True)     # mcp 具体内容
+    endpoint = mapped_column(String(255), nullable=False)   # mcp 服务地址
     icon = mapped_column(String(255), nullable=True)
-    arn = mapped_column(String(255), nullable=True)
+    arn = mapped_column(String(255), nullable=True)        # mcp 云地址
     type = mapped_column(Integer, nullable=False, default=1)  # 1: sse, 2: stdio
     tools = mapped_column(JSON, nullable=True)
     template = mapped_column(String, nullable=True)

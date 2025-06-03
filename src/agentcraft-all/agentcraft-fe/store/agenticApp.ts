@@ -63,9 +63,8 @@ export const useAgenticAppStore = create<AgenticAppStore>()(devtools((set) => ({
 })))
 
 
-
 export async function getAgenticAppList() {
-    const {updateAgenticAppList} = useAgenticAppStore.getState();
+    const { updateAgenticAppList } = useAgenticAppStore.getState();
     const result = await request(`/api/agenticApp/list`, {
         method: "GET",
         headers: {
@@ -90,8 +89,6 @@ export async function getAgenticApp(projectName: string, serviceName: string) {
     return result;
 }
 
-
-
 export async function addAgenticApp(payload: UpsertAgenticAppRequest) {
     const result = await request("/api/agenticApp/create", {
         method: "POST",
@@ -103,11 +100,13 @@ export async function addAgenticApp(payload: UpsertAgenticAppRequest) {
     return result;
 }
 
-
-
-
-export async function deleteAgenticApp(appName: string) {
-
+export async function deleteAgenticApp(id: any) {
+    return await request(`/api/agenticApp/delete?id=${id}`, {
+        method: "DELETE",
+        headers: {
+            "Content-Type": "application/json",
+        },
+    });
 }
 
 

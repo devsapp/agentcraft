@@ -9,6 +9,7 @@ import { Model } from 'types/model';
 import { DataSet, DataSetType } from 'types/dataset';
 import { useAssistantStore, addAssistant, refreshToken, updateAssistant, getAssistant } from 'store/assistant';
 import { getToolList, useActionToolStore } from 'store/actionTools';
+import { useMcpStore, getMcpList } from 'store/mcp';
 import { Dataset } from 'types/assistant';
 import { DATA_RETRIVAL_PROMPT_TEMPLATE, DEFAULT_CHAT_INSTRUCTION } from 'constants/instructions';
 import AssistantChat from 'features/assistant/chat';
@@ -23,13 +24,19 @@ interface AssistantProps {
 export function AssistantForm({ workspaceId, form }: { workspaceId: any, form: any }) {
     const dataSetList: DataSet[] = useDataSetStore().dataSetList;
     const { toolList } = useActionToolStore();
+    let { mcpList, updateMcpList } = useMcpStore();
+    const currentFormValue = form.getInputProps('mcp_server').value;
     useEffect(() => {
         getDataSetList();
         getToolList();
+        getMcpList();
     }, []);
     const documentSelectData: any = dataSetList.filter((item: DataSet) => item.dataset_type == DataSetType.DOCUMENT).map((item: DataSet) => { return { label: item.name, value: item.id } });
     const qaSelectData: any = dataSetList.filter((item: DataSet) => item.dataset_type == DataSetType.QUESTION).map((item: DataSet) => { return { label: item.name, value: item.id } });
     let pannelWidth = '100%';
+    if (currentFormValue) {
+        mcpList = [...mcpList, { name: currentFormValue, endpoint: currentFormValue }];
+    }
     return <Flex
         mih={50}
         gap="md"
@@ -90,11 +97,26 @@ export function AssistantForm({ workspaceId, form }: { workspaceId: any, form: a
                     placeholder=""
                     {...form.getInputProps('action_tools')}
                 />
-                <TextInput 
-                    label="MCP 接入点" 
+                {/* <TextInput
+                    label="MCP 接入点"
                     placeholder="请输入MCP接入点(支持SSE 和STDIO)"
                     description="MCP(Model Context Protocol)能够让LLM调用标准协议的AI工具"
-                    {...form.getInputProps('mcp_server')} 
+                    {...form.getInputProps('mcp_server')}
+                /> */}
+                <Select withAsterisk
+                    label="MCP 接入点"
+                    placeholder="请输入MCP接入点(支持SSE 和STDIO)"
+
+                    description="MCP(Model Context Protocol)能够让LLM调用标准协议的AI工具"
+                    data={mcpList.map((item) => { return { label: item.name, value: item.endpoint } })}
+                    searchable
+                    creatable
+                    getCreateLabel={(query) => `${query}`}
+                    onCreate={(query) => {
+                        const item = { label: query, value: query };
+                        return item;
+                    }}
+                    {...form.getInputProps('mcp_server')}
                 />
             </Box>
         </Paper>
