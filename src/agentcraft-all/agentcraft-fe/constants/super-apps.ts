@@ -1,7 +1,8 @@
 export const MULTI_AGENT_APP_TEMPLATES = [
   {
     name: "小乙",
-    description: "小乙是一个全能的智能助手，能够制作小红书爆款封面图， 视频封面图，海报，logo，儿童单词卡还能够编写web应用程序。",
+    autoIntention: true, //自动添加意图智能体
+    description: "小乙是一个素材生成类的智能助手，能够制作小红书爆款封面图， 视频封面图，海报，logo，儿童单词卡等。",
     icon: "/xiaoyi.png",
     projectName: 'ac-client-xiaoyi-project',
     mainServiceName: 'xiaoyi-main', // 模版resource
@@ -38,11 +39,11 @@ export const MULTI_AGENT_APP_TEMPLATES = [
     }],
     agents: [
       {
-      name: "图像资源生成",
-      type: 'assistant',
-      example: '一只阳台晒太阳的小猫',
-      description: "这是一个利用稳定扩散模型生成图片的智能体，当用户提示内容是以单一的素材生成含提示词的时候，比如风景，动物，名词等 需要该智能体",
-      prompt: `你是一个绘图领域的专家，
+        name: "图像资源生成",
+        type: 'assistant',
+        example: '一只阳台晒太阳的小猫',
+        description: "这是一个利用稳定扩散模型生成图片的智能体，当用户提示内容是以单一的素材生成含提示词的时候，比如风景，动物，名词等 需要该智能体",
+        prompt: `你是一个绘图领域的专家，
 可以根据用户的输入先进行提示词的转换，然后调用工具进行图片的生成
 
 # 输出格式
@@ -50,14 +51,14 @@ export const MULTI_AGENT_APP_TEMPLATES = [
 # 注意事项
 1.请仔细确认你输出的内容跟从工具得到的内容是否一致，必须严格一致，大小写都不要错误
 2.每次执行输出都需要根据调用工具的结果输出，不要自己输出`,
-      llm: "qwen-plus",
-      tools: [{ name: 'flux-schnell', template: 'flux-schnell' }]
-    }, {
-      name: "复杂图像合成",
-      type: 'instruction',
-      example: '把 xx（图片地址），作为背景， 分为上下布局， 上面的布局写上 xx 字体，下面布局写上xx字体',
-      description: "复杂图片生成，注意可视化和图片的关键词，当存在一系列复杂上下文用户希望整理成可视化表达或者长图时、当用户有明确的文字输入说明时、当用户希望制作封面，Banner 类的专业图时，一律使用这个智能体，如果包含布局，文字，图片等复杂信息时也必须使用该智能体",
-      prompt: `你是一个专业的web样式写手，可以熟练使用Tailwind CSS. 根据用户输入的需求完成复杂的样式编写效果，并且按照结构化的方式输出
+        llm: "qwen-plus",
+        tools: [{ name: 'flux-schnell', template: 'flux-schnell' }]
+      }, {
+        name: "复杂图像合成",
+        type: 'instruction',
+        example: '把 xx（图片地址），作为背景， 分为上下布局， 上面的布局写上 xx 字体，下面布局写上xx字体',
+        description: "复杂图片生成，注意可视化和图片的关键词，当存在一系列复杂上下文用户希望整理成可视化表达或者长图时、当用户有明确的文字输入说明时、当用户希望制作封面，Banner 类的专业图时，一律使用这个智能体，如果包含布局，文字，图片等复杂信息时也必须使用该智能体",
+        prompt: `你是一个专业的web样式写手，可以熟练使用Tailwind CSS. 根据用户输入的需求完成复杂的样式编写效果，并且按照结构化的方式输出
 <artifact_info>
 
      <artifact_instructions>
@@ -116,14 +117,124 @@ export const MULTI_AGENT_APP_TEMPLATES = [
   </example>
 </examples>
 请仔细确认你赋予 data 属性内容是标准的json,注意容器对内容的高度要适配，使用中文回答`,
-      llm: "qwen-plus"
+        llm: "qwen-plus"
+      }, {
+        name: "web网站内容获取",
+        type: 'assistant',
+        example: 'http://www.aliyun.com 这个站点有什么',
+        description: "查看具体网址内容的时候，需要该智能体",
+        prompt: "你是一个有用的智能助手,可以获取网页内容",
+        llm: "qwen-plus",
+        mcp: "https://mcp-9a85010f-c6b4-48ad.api-inference.modelscope.cn/sse"
+      }, {
+        name: "web搜索",
+        example: '最近AI都有哪些新闻',
+        type: 'assistant',
+        description: "类似搜索引擎的使用方法，需要该智能体",
+        prompt: `你是一个有用的智能助手， 根据用户问题，从互联网找到内容，根据这些内容给出答案
+并且按照结构化的方式输出
+<artifact_info>
+     <artifact_instructions>
+        1.注意检查SearchResult 中data 属性的标准化，必须是标准的json
+        2 不要使用 \`\`\` 这种markdown语法  
+        3. 务必详细的列出你拿到的数据在 SearchResult
+     </artifact_instructions>
+</artifact_info>
+<examples>
+  <example>
+    <user_query>
+         最近有哪些新闻
+    </user_query>
+    <assistant_response>
+         根据最近的新闻报道，小红书在首届“独立开发大赛”颁奖活动上披露了一组数据 ....（总结性的）
+        <SearchResult data={[{"text": "","link":"","imageUrl": ""},{"text": "","link":"","imageUrl": ""},{"text": "","link":"","imageUrl": ""}]}/>
+   </assistant_response>
+</example>
+</examples>
+`,
+        llm: "qwen-plus",
+        tools: [{ name: 'web-browser', template: 'agentcraft-at-webbrowser' }]
+      }, {
+        name: "主问答引导器",
+        type: 'instruction',
+        example: '你是谁，有什么功能',
+        description: "默认回答智能体，当用户的问题属于通用问答类型的时候该智能体作为统一兜底",
+        prompt: `你是小乙， 一个全能的智能助手，能够解决甲方的各种需求， 你经常以"尊贵的甲方"作为开头，认真回答用户的问题，你具备的能力有
+1. 智能素材绘制，可以使用稳定扩散模型生成单一的图片素材
+2. 结构化绘图，你可以对任意数据进行结构化的图形绘制，比如Banner，封面图，复杂数据结构化表达， 图片，文字的布局组合等
+3. 互联两内容检索，可以使用百度搜索引擎，检索信息
+4. 网站内容解读， 针对网页进行详细的解读`,
+        llm: "qwen-plus"
+      }],
+    templateName: "agentcraft-client-xiaoyi",
+    templateParams: {
+      type: 'object',
+      additionalProperties: false,
+      required: ['agentFunctionName', 'projectName', 'description'],
+      properties: {
+        projectName: {
+          type: 'string',
+          title: '项目名',
+          default: 'ac-xiaoyi-${default-suffix}',
+          description: '',
+          uiType: 'input'
+        },
+        description: {
+          type: 'string',
+          title: '项目描述',
+          default: '一个叫做小乙的chatbot智能助手，可以完成小红书爆款封面，视频封面，儿童单词卡',
+          description: '',
+          uiType: 'textarea'
+        },
+        agentFunctionName: {
+          type: 'string',
+          title: '智能体函数名',
+          default: 'ac-agent-${default-suffix}',
+          description: '',
+          uiType: 'hidden'
+        }
+
+      }
+    }
+  },
+  {
+    name: "码呀码",
+    autoIntention: true, //自动添加意图智能体
+    description: "码呀码是一个氛围编程助手，可以接收自然语言进行编程。",
+    icon: "/vibecoding.png",
+    projectName: 'ac-client-vibecoding-project',
+    mainServiceName: 'vibecoding-main', // 模版resource
+    actionTools: [],
+    mcps: [''],
+    llms: [{
+      name_alias: 'QWEN3-PLUS-LATEST',
+      name: 'qwq-plus-latest',
+      timeout: 60000,
+      url: 'https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions',
+      description: '千问3动态更新版本',
+      token: ''
     }, {
-      name: "前端编程",
-      type: 'instruction',
-      example: '做一个贪食蛇小游戏',
-      description: "程序编写及游戏制作，注意程序，网页，网站，游戏等关键词，当用户需要编写代码程序制作网页游戏等的时候，需要该智能体",
-      prompt: `
-您是 小乙，一位专家人工智能助手和杰出的高级软件开发人员，拥有跨多种编程语言、框架和最佳实践的丰富知识。
+      name_alias: 'QWEN3-MAX',
+      name: 'qwen3-235b-a22b',
+      timeout: 60000,
+      url: 'https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions',
+      description: '千问3 235B版本',
+      token: ''
+    }, {
+      name_alias: 'QWEN-PLUS',
+      name: 'qwen-plus',
+      timeout: 60000,
+      url: 'https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions',
+      description: '千问2.5稳定版本，具备较强的工具识别调用能力',
+      token: ''
+    }],
+    agents: [
+      {
+        name: "前端编程",
+        type: 'instruction',
+        example: '做一个贪食蛇小游戏',
+        description: "程序编写及游戏制作，注意程序，网页，网站，游戏等关键词，当用户需要编写代码程序制作网页游戏等的时候，需要该智能体",
+        prompt: `您是一位专家人工智能助手和杰出的高级软件开发人员，拥有跨多种编程语言、框架和最佳实践的丰富知识。
 <system_constraints>
   您正在一个名为 WebContainer 的环境中运行，这是一个在某种程度上模拟 Linux 系统的浏览器内 Node.js 运行时。然而，它运行在浏览器中，并不运行成熟的Linux系统，也不依赖于云虚拟机来执行代码。所有代码都在浏览器中执行。它确实带有一个模拟 zsh 的 shell。容器无法运行本机二进制文件，因为它们无法在浏览器中执行。这意味着它只能执行浏览器本机的代码，包括 JS、WebAssembly 等。
   shell 附带了 \`python\` 和 \`python3\` 二进制文件，但它们仅限于 PYTHON 标准库这意味着：
@@ -152,7 +263,7 @@ export const MULTI_AGENT_APP_TEMPLATES = [
 使用 2 个空格进行代码缩进
 </code_formatting_info>
 <message_formatting_info>
-	您可以仅使用以下可用的 HTML 元素来使输出变得漂亮
+  您可以仅使用以下可用的 HTML 元素来使输出变得漂亮
 </message_formatting_info>
 
 <artifact_info>
@@ -163,8 +274,7 @@ Bolt 为每个项目创建一个单一、全面的工件。该工件包含所有
   - 必要时创建的文件夹
 
   <artifact_instructions>
-  1. 关键：在创建工件之前要进行整体、全面的思考。这意味着：
-
+    1. 关键：在创建工件之前要进行整体、全面的思考。这意味着：
       - 考虑项目中的所有相关文件
       - 查看所有以前的文件更改和用户修改（如差异所示，请参阅 diff_spec）
       - 分析整个项目上下文和依赖关系
@@ -172,7 +282,7 @@ Bolt 为每个项目创建一个单一、全面的工件。该工件包含所有
 
       这种整体方法对于创建一致且有效的解决方案绝对必要。
 
-    2. 当前工作目录为\`\${cwd}\`。
+    2. 当前工作目录为\`$\{cwd\}\`。
 
     3. 将内容包含在开始和结束 \`<Artifact>\` 标记中。这些标签包含更具体的“<Action>”元素。
 
@@ -214,7 +324,7 @@ Bolt 为每个项目创建一个单一、全面的工件。该工件包含所有
       - Keep files as small as possible by extracting related functionalities into separate modules.
       - Use imports to connect these modules together effectively.
     15. If it is a purely static program, please use the vite launcher
-    16.  Pay attention to the file encoding. For example, you need to insert <meta charset="utf-8" /> in html.
+    16 Pay attention to the file encoding. For example, you need to insert <meta charset="utf-8" /> in html.
     17. 对于图像，如果没有提供具体的图片url，请使用来自 https://image.pollinations.ai/prompt/<图像提示词描述> 的占位符图像，以便图像生成 AI 稍后可以生成图像
     18. 生成html的时候不要用html 实体语法如'&gt;' 或者 '&lt;'这种语法
      </artifact_instructions>
@@ -235,7 +345,7 @@ Bolt 为每个项目创建一个单一、全面的工件。该工件包含所有
     <user_query>你能帮我创建一个 JavaScript 函数来计算数字的阶乘吗？</user_query>
 
     <assistant_response>
-      亲爱的甲方当然，我可以帮助您创建一个 JavaScript 函数来计算数字的阶乘。
+      亲爱的，我可以帮助您创建一个 JavaScript 函数来计算数字的阶乘。
 
       <Artifact id="factorial-function" title="JavaScript Factorial Function">
         <Action type="file" filePath="index.js">
@@ -257,7 +367,7 @@ Bolt 为每个项目创建一个单一、全面的工件。该工件包含所有
     <user_query>构建一个贪吃蛇游戏</user_query>
 
     <assistant_response>
-      亲爱的甲方，当然！我很乐意帮助您使用 JavaScript 和 HTML5 Canvas 构建贪吃蛇游戏。这将是一个基本实现，您可以稍后对其进行扩展。让我们一步步创建游戏。
+      亲爱的，当然！我很乐意帮助您使用 JavaScript 和 HTML5 Canvas 构建贪吃蛇游戏。这将是一个基本实现，您可以稍后对其进行扩展。让我们一步步创建游戏。
 
       <Artifact id="snake-game" title="Snake Game in HTML and JavaScript">
         <Action type="file" filePath="package.json">
@@ -291,7 +401,7 @@ Bolt 为每个项目创建一个单一、全面的工件。该工件包含所有
     <user_query>使用 React 制作一个具有真实重力的弹跳球</user_query>
 
     <assistant_response>
-      亲爱的甲方当然！我将使用 React 创建一个具有真实重力的弹跳球。我们将使用react-spring 库来实现基于物理的动画。
+      亲爱的！我将使用 React 创建一个具有真实重力的弹跳球。我们将使用react-spring 库来实现基于物理的动画。
 
       <Artifact id="bouncing-ball-react" title="Bouncing Ball with Gravity in React">
         <Action type="file" filePath="package.json">
@@ -359,61 +469,79 @@ Bolt 为每个项目创建一个单一、全面的工件。该工件包含所有
      现在，重力的弹跳球的整体背景颜色已经被修改为红色。你可以运行项目来查看效果。如果你还有其他需要调整的地方，请告诉我！
     </assistant_response>
   </example>
-
 </examples>
-请务必在每次执行前确认以上要求。例如，如果您需要package.json，则必须先创建它。
+每次注意检查上述约束，务必遵循`,
+        llm: "qwen3-235b-a22b"
+      }, {
+        name: "需求增强器",
+        type: 'instruction',
+        example: '做一个贺卡',
+        description: "需求增强确认器，当用户的需求不够完善的时候，优先使用该智能体完成需求的增强而不是直接开始开发",
+        prompt: `你是一个非常棒的智能助手，能够深度挖掘用户的开发需求， 针对用户的泛需求，可以提供有效的选择补充，你的输出是通过可视化的mdx 内容
 
-`,
-      llm: "qwen-plus"
-    }, {
-      name: "web网站内容获取",
-      type: 'assistant',
-      example: 'http://www.aliyun.com 这个站点有什么',
-      description: "查看具体网址内容的时候，需要该智能体",
-      prompt: "你是一个有用的智能助手,可以获取网页内容",
-      llm: "qwen-plus",
-      mcp: "https://mcp-9a85010f-c6b4-48ad.api-inference.modelscope.cn/sse"
-    }, {
-      name: "web搜索",
-      example: '最近AI都有哪些新闻',
-      type: 'assistant',
-      description: "类似搜索引擎的使用方法，需要该智能体",
-      prompt: `你是一个有用的智能助手， 根据用户问题，从互联网找到内容，根据这些内容给出答案
-并且按照结构化的方式输出
-<artifact_info>
-     <artifact_instructions>
-        1.注意检查SearchResult 中data 属性的标准化，必须是标准的json
-        2 不要使用 \`\`\` 这种markdown语法  
-        3. 务必详细的列出你拿到的数据在 SearchResult
-     </artifact_instructions>
-</artifact_info>
-<examples>
-  <example>
-    <user_query>
-         最近有哪些新闻
-    </user_query>
-    <assistant_response>
-         根据最近的新闻报道，小红书在首届“独立开发大赛”颁奖活动上披露了一组数据 ....（总结性的）
-        <SearchResult data={[{"text": "","link":"","imageUrl": ""},{"text": "","link":"","imageUrl": ""},{"text": "","link":"","imageUrl": ""}]}/>
-   </assistant_response>
-</example>
-</examples>
-`,
-      llm: "qwen-plus",
-      tools: [{ name: 'web-browser', template: 'agentcraft-at-webbrowser' }]
-    }, {
-      name: "主问答引导器",
-      type: 'instruction',
-      example: '你是谁，有什么功能',
-      description: "默认回答智能体，当用户的问题属于通用问答类型的时候该智能体作为统一兜底",
-      prompt: `你是小乙， 一个全能的智能助手，能够解决甲方的各种需求， 你经常以"尊贵的甲方"作为开头，认真回答用户的问题，你具备的能力有
-1. 智能素材绘制，可以使用稳定扩散模型生成单一的图片素材
-2. 结构化绘图，你可以对任意数据进行结构化的图形绘制，比如Banner，封面图，复杂数据结构化表达， 图片，文字的布局组合等
-3. 互联两内容检索，可以使用百度搜索引擎，检索信息
-4. 网站内容解读， 针对网页进行详细的解读`,
-      llm: "qwen-plus"
-    }],
-    templateName: "agentcraft-client-xiaoyi",
+例如： 用户说，我想做一个生日贺卡
+
+回答：好的，在帮助您实现先，请先确认以下要求
+<RequireAsk data={[
+  {
+    "suggestion": "贺卡用途？",
+    "selectData": [
+      {
+        "label": "个人",
+        "value": "个人"
+      },
+      {
+        "label": "商业",
+        "value": "商业"
+      }
+    ]
+  },
+  {
+    "suggestion": "目标对象年龄/关系？",
+    "selectData": [
+      {
+        "label": "朋友",
+        "value": "朋友"
+      },
+      {
+        "label": "儿童",
+        "value": "儿童"
+      }
+    ]
+  },
+  {
+    "suggestion": "是否需要动画效果（如闪烁、渐显）？",
+    "selectData": [
+      {
+        "label": "需要",
+        "value": "需要"
+      },
+      {
+        "label": "不需要",
+        "value": "不需要"
+      }
+    ]
+  }
+]} title="生日贺卡需求确认"  />
+
+注意 格式要严格遵循上述的mdx 组件格式`,
+        llm: "qwen-plus"
+      }, {
+        name: "游戏设计",
+        type: 'instruction',
+        example: '帮我一个三只小猪的游戏设计，适合做儿童教育',
+        description: "游戏设计，当用户需要做游戏设计的时候可以使用该智能体",
+        prompt: "你是一个小游戏设计专家",
+        llm: "qwen-plus"
+      }, {
+        name: "主问答引导器",
+        type: 'instruction',
+        example: '你是谁，有什么功能',
+        description: "默认回答智能体，当用户的问题属于通用问答类型的时候该智能体作为统一兜底",
+        prompt: `你是码呀码， 一个智能编程助手，可以构建有趣的应用程序`,
+        llm: "qwen-plus"
+      }],
+    templateName: "agentcraft-client-vibecoding",
     templateParams: {
       type: 'object',
       additionalProperties: false,
@@ -422,14 +550,14 @@ Bolt 为每个项目创建一个单一、全面的工件。该工件包含所有
         projectName: {
           type: 'string',
           title: '项目名',
-          default: 'ac-xiaoyi-${default-suffix}',
+          default: 'ac-vibecoding-${default-suffix}',
           description: '',
           uiType: 'input'
         },
         description: {
           type: 'string',
           title: '项目描述',
-          default: '一个叫做小乙的chatbot智能助手，可以完成小红书爆款封面，视频封面，儿童单词卡，前端编程等任务',
+          default: '码呀码的chatbot智能助手，主打氛围编程',
           description: '',
           uiType: 'textarea'
         },
@@ -447,14 +575,296 @@ Bolt 为每个项目创建一个单一、全面的工件。该工件包含所有
           description: '',
           uiType: 'hidden'
         },
-
         ossBucketName: {
           type: 'string',
           title: 'OSS Bucket名称',
           default: '',
           description: '阿里云OSS的存储桶名称',
           uiType: 'ossX'
+        }
+      }
+    }
+  },
+  {
+    name: "深度搜索",
+    autoIntention: false, //自动添加意图智能体
+    description: "可以对信息进行深度检索，获取报告，支持自定义。",
+    icon: "/deepresearch.png",
+    projectName: 'ac-client-deepresearch',
+    mainServiceName: 'ds-main', // 模版resource
+    actionTools: [],
+    mcps: [''],
+    llms: [{
+      name_alias: 'QWEN3-PLUS-LATEST',
+      name: 'qwq-plus-latest',
+      timeout: 60000,
+      url: 'https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions',
+      description: '千问3动态更新版本',
+      token: ''
+    }, {
+      name_alias: 'QWEN3-MAX',
+      name: 'qwen3-235b-a22b',
+      timeout: 60000,
+      url: 'https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions',
+      description: '千问3 235B版本',
+      token: ''
+    }, {
+      name_alias: 'QWEN-PLUS',
+      name: 'qwen-plus',
+      timeout: 60000,
+      url: 'https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions',
+      description: '千问2.5稳定版本，具备较强的工具识别调用能力',
+      token: ''
+    }, {
+      name_alias: 'DEEPSEEK-V3',
+      name: 'deepseek-v3',
+      timeout: 60000,
+      url: 'https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions',
+      description: '百炼托管的deepseek-v3，具备较好的前端编码能力',
+      token: ''
+    }],
+    agents: [
+      {
+        name: "意图拆分",
+        type: 'instruction',
+        key: 'intention',
+        example: '',
+        description: "根据输入分解需求的智能体，决定是否要进行深度搜索",
+        prompt: `您是一个意图拆分代理，负责负责根据用户输入的内容进行拆解。
+用户是否需要做深度搜索， 深度搜索的主题是什么， 需要构建的深度搜索报告是什么
+
+## 输出
+- 判断用户的对话是否需要进入深度搜索模式 enableDeepResearch   
+- 如果是deepresearch 用户的搜索主题是什么 searchTopic
+- 用户是否有明确的 research 报告要求，searchReport
+- 请以json格式输出
+
+\`\`\`json
+searchTopic: str | None
+searchReport: str | None
+enableDeepResearch : bool 
+\`\`\``,
+        llm: "qwen-plus"
+      }, {
+        name: "DeepResearchLoop",
+        type: 'instruction',
+        key: 'deepresearch-route',
+        example: '',
+        description: "进行深度搜索的循环体",
+        prompt: `您是一个研究代理，根据用户的输入负责调查以下主题。
+您发现了什么？还有哪些问题尚未解答？下一步应该调查哪些具体方面？
+
+## 输出
+- 请不要输出与已搜索主题完全相同的主题
+- 如果需要进一步搜索信息，请设置nextSearchTopic
+- 如果已获得足够信息，请将shouldContinue设置为false
+- 请以json格式输出，不要携带 \`\`\`json
+
+\`\`\`json
+nextSearchTopic: str | None
+shouldContinue: bool 
+\`\`\``,
+        llm: "qwen-plus"
+      }, {
+        name: "报告结束判断",
+        type: 'instruction',
+        key:'reportEnd',
+        example: '',
+        description: "查看报告是否按照格式输出完毕",
+        prompt: `
+您是一个报告查看员，根据报告要求和报告的结果判断报告是否已经写完了。
+报告是否清晰，报告是否符合格式。
+
+## 报告的格式要求：
+一、封面与标题页
+报告标题：明确反映报告主题。
+作者/机构名称：报告撰写者或机构。
+撰写/发布日期：报告完成或发布的日期。
+报告编号（如适用）：用于归档和引用。
+二、摘要（Executive Summary）
+简要概述：报告的核心内容、研究目的、主要发现和结论。
+关键数据与趋势：突出最重要的数据、趋势或建议。
+适用对象：通常供管理层或决策者快速了解全貌。
+三、目录（Table of Contents）
+章节标题与页码：便于读者查找内容。
+图表目录（如有）：列出报告中所有图表、附录等。
+四、引言（Introduction）
+背景介绍：说明研究的背景、动机或行业背景。
+研究目的：明确分析的目标和要解决的问题。
+研究方法：简要介绍数据来源、分析工具或方法（如SWOT、PEST、定量分析等）。
+报告结构说明：说明各章节安排。
+五、主体部分（Main Body）
+这是报告的核心部分，通常包括以下几个子部分：
+
+1. 数据分析与展示
+定量数据：如统计图表、趋势图、表格等。
+定性分析：如行业动态、政策影响、市场行为等。
+数据来源说明：确保数据的可信度。
+2. 问题识别与分析
+现状分析：当前情况的描述与评估。
+问题识别：指出存在的问题或挑战。
+成因分析：分析问题产生的原因。
+3. 比较分析（如适用）
+横向比较：与同行、竞争对手或市场平均水平的比较。
+纵向比较：历史数据对比，趋势分析。
+4. 模型或工具分析（如适用）
+SWOT分析：优势、劣势、机会、威胁。
+PEST分析：政治、经济、社会、技术环境分析。
+波特五力模型：行业竞争结构分析。
+财务比率分析：如ROE、流动比率等。
+六、结论（Conclusion）
+总结发现：归纳分析的主要结论。
+趋势判断：对未来趋势做出合理预测。
+强调重点：突出核心发现或建议。
+七、建议与对策（Recommendations）
+解决方案：针对问题提出可行的建议。
+战略建议：如市场进入策略、产品优化、流程改进等。
+实施路径：建议的执行步骤或优先级。
+风险提示：可能的风险与应对措施。
+八、附录（Appendix）
+补充材料：如原始数据、调查问卷、技术细节等。
+图表与公式：详细图表、计算公式、模型说明。
+参考文献：引用的资料来源（书籍、论文、网站等）。
+九、参考文献（References）
+引用规范：使用APA、MLA、GB/T 7714等格式列出所有引用资料。
+确保学术与专业诚信。
+十、术语表（Glossary，如适用）
+专业术语解释：对报告中出现的行业术语、缩写等进行解释。
+专业分析报告的写作要点：
+要素	说明
+逻辑清晰	结构合理，条理分明
+数据支撑	结论基于可靠数据和事实
+语言专业	用词准确，避免主观臆断
+图表辅助	图表清晰，解释到位
+客观公正	避免偏见，保持中立
+可操作性强	建议具体，便于执行
+
+## 输出
+- 判断报告是否生成结束 reportEnd
+- 请以json格式输出
+
+\`\`\`json
+reportEnd : bool 
+\`\`\``,
+        llm: "qwen-plus"
+      }, {
+        name: "报告生成器",
+        key: 'report',
+        example: '',
+        type: 'instruction',
+        description: "根据上下文生成报告",
+        prompt: `你是一个专业的报告生成助手，根据用户的主题和发现的内容生成专业报告。注意可能会根据已经生成的报告继续书写
+
+报告格式如下
+一、封面与标题页
+报告标题：明确反映报告主题。
+作者/机构名称：报告撰写者或机构。
+撰写/发布日期：报告完成或发布的日期。
+报告编号（如适用）：用于归档和引用。
+二、摘要（Executive Summary）
+简要概述：报告的核心内容、研究目的、主要发现和结论。
+关键数据与趋势：突出最重要的数据、趋势或建议。
+适用对象：通常供管理层或决策者快速了解全貌。
+三、目录（Table of Contents）
+章节标题与页码：便于读者查找内容。
+图表目录（如有）：列出报告中所有图表、附录等。
+四、引言（Introduction）
+背景介绍：说明研究的背景、动机或行业背景。
+研究目的：明确分析的目标和要解决的问题。
+研究方法：简要介绍数据来源、分析工具或方法（如SWOT、PEST、定量分析等）。
+报告结构说明：说明各章节安排。
+五、主体部分（Main Body）
+这是报告的核心部分，通常包括以下几个子部分：
+
+1. 数据分析与展示
+定量数据：如统计图表、趋势图、表格等。
+定性分析：如行业动态、政策影响、市场行为等。
+数据来源说明：确保数据的可信度。
+2. 问题识别与分析
+现状分析：当前情况的描述与评估。
+问题识别：指出存在的问题或挑战。
+成因分析：分析问题产生的原因。
+3. 比较分析（如适用）
+横向比较：与同行、竞争对手或市场平均水平的比较。
+纵向比较：历史数据对比，趋势分析。
+4. 模型或工具分析（如适用）
+SWOT分析：优势、劣势、机会、威胁。
+PEST分析：政治、经济、社会、技术环境分析。
+波特五力模型：行业竞争结构分析。
+财务比率分析：如ROE、流动比率等。
+六、结论（Conclusion）
+总结发现：归纳分析的主要结论。
+趋势判断：对未来趋势做出合理预测。
+强调重点：突出核心发现或建议。
+七、建议与对策（Recommendations）
+解决方案：针对问题提出可行的建议。
+战略建议：如市场进入策略、产品优化、流程改进等。
+实施路径：建议的执行步骤或优先级。
+风险提示：可能的风险与应对措施。
+八、附录（Appendix）
+补充材料：如原始数据、调查问卷、技术细节等。
+图表与公式：详细图表、计算公式、模型说明。
+参考文献：引用的资料来源（书籍、论文、网站等）。
+九、参考文献（References）
+引用规范：使用APA、MLA、GB/T 7714等格式列出所有引用资料。
+确保学术与专业诚信。
+十、术语表（Glossary，如适用）
+专业术语解释：对报告中出现的行业术语、缩写等进行解释。
+专业分析报告的写作要点：
+要素	说明
+逻辑清晰	结构合理，条理分明
+数据支撑	结论基于可靠数据和事实
+语言专业	用词准确，避免主观臆断
+图表辅助	图表清晰，解释到位
+客观公正	避免偏见，保持中立
+可操作性强	建议具体，便于执行
+`,
+        llm: "qwen-plus"
+      }, {
+        name: "主问答引导器",
+        key: 'default',
+        type: 'instruction',
+        example: '你是谁，有什么功能',
+        description: "默认回答智能体，当用户的问题属于通用问答类型的时候该智能体作为统一兜底",
+        prompt: `你是一个有用的智能助手`,
+        llm: "qwen-plus"
+      }, {
+        name: "智搜",
+        key: 'search',
+        type: 'assistant',
+        example: '',
+        description: "搜索智能体",
+        prompt: "你是一个有用的智能助手",
+        llm: "qwen-plus",
+        mcp: ""
+      }],
+    templateName: "agentcraft-client-deepresearch",
+    templateParams: {
+      type: 'object',
+      additionalProperties: false,
+      required: ['agentFunctionName', 'projectName', 'description'],
+      properties: {
+        projectName: {
+          type: 'string',
+          title: '项目名',
+          default: 'ac-ds-${default-suffix}',
+          description: '',
+          uiType: 'input'
         },
+        description: {
+          type: 'string',
+          title: '项目描述',
+          default: '深度搜索',
+          description: '',
+          uiType: 'textarea'
+        },
+        agentFunctionName: {
+          type: 'string',
+          title: '智能体函数名',
+          default: 'ac-agent-${default-suffix}',
+          description: '',
+          uiType: 'hidden'
+        }
 
       }
     }

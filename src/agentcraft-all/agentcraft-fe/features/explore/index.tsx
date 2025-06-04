@@ -144,7 +144,7 @@ async function createWorkspace(name: string, description: string) {
 }
 
 
-async function createAgents(agents: any[], dependencies: any) {
+async function createAgents(agents: any[], dependencies: any, autoIntention: boolean) {
     const { workspaceId, llmDenpendencies, toolDenpendencies } = dependencies;
     let agentTokenMap: any = {};
     const is_public: IIsPublic = 0;
@@ -180,6 +180,7 @@ async function createAgents(agents: any[], dependencies: any) {
     let examplePrompts = '';
     let agentIndex = 1;
     for (const agent of agents) {
+        let agentKey = agent.key; // 可以指定具体的token键值
         agentFormValues['name'] = agent.name;
         agentFormValues['description'] = agent.description;
         agentFormValues['system_message'] = agent.prompt;
@@ -191,7 +192,12 @@ async function createAgents(agents: any[], dependencies: any) {
             const instructionChatId = result.id;
             if (instructionChatId) {
                 const { token } = await refreshToken(instructionChatId);
-                agentTokenMap[`agent-${agentIndex}`] = { token, type: 'v1' };
+                if (agentKey) {
+                    agentTokenMap[agentKey] = { token, type: 'v1' };
+                } else {
+                    agentTokenMap[`agent-${agentIndex}`] = { token, type: 'v1' };
+                }
+
             }
         }
         if (agent.type === 'assistant') {
@@ -212,33 +218,42 @@ async function createAgents(agents: any[], dependencies: any) {
             const assistantId = result.id;
             if (assistantId) {
                 const { token } = await refreshAssistenToken(assistantId);
-                agentTokenMap[`agent-${agentIndex}`] = { token, type: 'v2' };
+                if (agentKey) {
+                    agentTokenMap[agentKey] = { token, type: 'v2' };
+                } else {
+                    agentTokenMap[`agent-${agentIndex}`] = { token, type: 'v2' };
+                }
             }
         }
         agentIndex++;
     }
-    const artifact_info = ['<artifact_info>',
-        '\t<artifact_instructions>',
-        '\t\t1. 根据用户的需求辨别智能体，返回对应的数字编号',
-        '\t\t2. 不明意图一律返回默认智能体的编号',
-        '\t\t3. 无需进行其他的解释',
-        '\t</artifact_instructions>',
-        '</artifact_info>'].join('\n');
-    const finalIntentionPrompt = [
-        intentionPrompt,
-        artifact_info,
-        `<examples>\n\t<example>\n${examplePrompts}\n</example>\n\t</examples>`,
-        '注意结合上下文，注意仔细甄别内容不要出现误判'
-    ].join('\n');
-    intentionAgentFrom['name'] = '意图识别器';
-    intentionAgentFrom['description'] = '意图识别';
-    intentionAgentFrom['system_message'] = finalIntentionPrompt;
-    intentionAgentFrom['model_id'] = llmDenpendencies['qwen-plus'];
-    const result = await addKnowledgeBase(intentionAgentFrom);
-    const instructionChatId = result.id;
-    if (instructionChatId) {
-        const { token } = await refreshToken(instructionChatId);
-        agentTokenMap["intention"] = { token, type: 'v1' };
+    if (autoIntention) {
+        const artifact_info = [
+            '<artifact_info>',
+            '\t<artifact_instructions>',
+            '\t\t1. 根据用户的需求辨别智能体，返回对应的数字编号',
+            '\t\t2. 不明意图一律返回默认智能体的编号',
+            '\t\t3. 无需进行其他的解释',
+            '\t</artifact_instructions>',
+            '</artifact_info>'
+        ].join('\n');
+        const finalIntentionPrompt = [
+            intentionPrompt,
+            artifact_info,
+            `<examples>\n\t<example>\n${examplePrompts}\n</example>\n\t</examples>`,
+            '注意结合上下文，注意仔细甄别内容不要出现误判'
+        ].join('\n');
+
+        intentionAgentFrom['name'] = '意图识别器';
+        intentionAgentFrom['description'] = '意图识别';
+        intentionAgentFrom['system_message'] = finalIntentionPrompt;
+        intentionAgentFrom['model_id'] = llmDenpendencies['qwen-plus'];
+        const result = await addKnowledgeBase(intentionAgentFrom);
+        const instructionChatId = result.id;
+        if (instructionChatId) {
+            const { token } = await refreshToken(instructionChatId);
+            agentTokenMap["intention"] = { token, type: 'v1' };
+        }
     }
     return agentTokenMap;
 }
@@ -378,7 +393,7 @@ function AgenticAppForm() {
                             const llmMap = await createLLMs(llms);
                             setAppStatus(AgenticAppStatus.CREATE_WORKSPACE_AGENTS);
                             const workspaceId = await createWorkspace(AgenticAppTemplate.name, AgenticAppTemplate.description);
-                            const agentTokenMap = await createAgents(agents, { workspaceId, llmDenpendencies: llmMap, toolDenpendencies: toolsMap });
+                            const agentTokenMap = await createAgents(agents, { workspaceId, llmDenpendencies: llmMap, toolDenpendencies: toolsMap }, AgenticAppTemplate.autoIntention);
                             const projectName = AgenticAppTemplate.projectName;
                             const AgenticAppPayload = {
                                 projectName,
@@ -697,6 +712,7 @@ export function ExplorePage() {
                                 color="dimmed"
                                 title={item.description}
                                 mb={12}
+                                h={80}
                             >
                                 {item.description}
                             </Text>
