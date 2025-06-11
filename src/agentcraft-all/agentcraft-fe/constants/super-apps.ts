@@ -30,7 +30,7 @@ export const MULTI_AGENT_APP_TEMPLATES = [
       description: '千问2.5稳定版本，具备较强的工具识别调用能力',
       token: ''
     }, {
-      name_alias: 'DEEPSEEK-V3',
+      name_alias: 'DEEPSEEK-V3【百炼】',
       name: 'deepseek-v3',
       timeout: 60000,
       url: 'https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions',
@@ -117,7 +117,7 @@ export const MULTI_AGENT_APP_TEMPLATES = [
   </example>
 </examples>
 请仔细确认你赋予 data 属性内容是标准的json,注意容器对内容的高度要适配，使用中文回答`,
-        llm: "qwen-plus"
+        llm: "deepseek-v3"
       }, {
         name: "web网站内容获取",
         type: 'assistant',
@@ -226,6 +226,20 @@ export const MULTI_AGENT_APP_TEMPLATES = [
       timeout: 60000,
       url: 'https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions',
       description: '千问2.5稳定版本，具备较强的工具识别调用能力',
+      token: ''
+    }, {
+      name_alias: 'DEEPSEEK-V3【百炼】',
+      name: 'deepseek-v3',
+      timeout: 60000,
+      url: 'https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions',
+      description: '百炼托管的deepseek-v3，具备较好的前端编码能力',
+      token: ''
+    }, {
+      name_alias: 'DEEPSEEK-R1【百炼】',
+      name: 'deepseek-r1',
+      timeout: 60000,
+      url: 'https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions',
+      description: '百炼托管的deepseek-r1，具备深度推理能力',
       token: ''
     }],
     agents: [
@@ -470,62 +484,8 @@ Bolt 为每个项目创建一个单一、全面的工件。该工件包含所有
     </assistant_response>
   </example>
 </examples>
-每次注意检查上述约束，务必遵循`,
-        llm: "qwen3-235b-a22b"
-      }, {
-        name: "需求增强器",
-        type: 'instruction',
-        example: '做一个贺卡',
-        description: "需求增强确认器，当用户的需求不够完善的时候，优先使用该智能体完成需求的增强而不是直接开始开发",
-        prompt: `你是一个非常棒的智能助手，能够深度挖掘用户的开发需求， 针对用户的泛需求，可以提供有效的选择补充，你的输出是通过可视化的mdx 内容
-
-例如： 用户说，我想做一个生日贺卡
-
-回答：好的，在帮助您实现先，请先确认以下要求
-<RequireAsk data={[
-  {
-    "suggestion": "贺卡用途？",
-    "selectData": [
-      {
-        "label": "个人",
-        "value": "个人"
-      },
-      {
-        "label": "商业",
-        "value": "商业"
-      }
-    ]
-  },
-  {
-    "suggestion": "目标对象年龄/关系？",
-    "selectData": [
-      {
-        "label": "朋友",
-        "value": "朋友"
-      },
-      {
-        "label": "儿童",
-        "value": "儿童"
-      }
-    ]
-  },
-  {
-    "suggestion": "是否需要动画效果（如闪烁、渐显）？",
-    "selectData": [
-      {
-        "label": "需要",
-        "value": "需要"
-      },
-      {
-        "label": "不需要",
-        "value": "不需要"
-      }
-    ]
-  }
-]} title="生日贺卡需求确认"  />
-
-注意 格式要严格遵循上述的mdx 组件格式`,
-        llm: "qwen-plus"
+每次注意检查上述约束，以及程序逻辑，确保不会出现逻辑错误以及非遵循约束的行为`,
+        llm: "deepseek-r1"
       }, {
         name: "游戏设计",
         type: 'instruction',
@@ -668,7 +628,7 @@ shouldContinue: bool
       }, {
         name: "报告结束判断",
         type: 'instruction',
-        key:'reportEnd',
+        key: 'reportEnd',
         example: '',
         description: "查看报告是否按照格式输出完毕",
         prompt: `

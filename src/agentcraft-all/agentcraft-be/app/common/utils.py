@@ -1,7 +1,7 @@
 """Utils Model"""
 import requests
 import os
-from app.config.common import EMBEDDING_URL, EMBEDDING_TOKEN, EMBEDDING_TIMEOUT, RERANK_URL
+from app.config.common import EMBEDDING_URL, EMBEDDING_MODEL, EMBEDDING_TOKEN, EMBEDDING_TIMEOUT, RERANK_URL
 
 
 embedding_session = requests.Session()
@@ -21,7 +21,7 @@ def embed(sentences: list[str]) -> list[list[float]]:
             "Content-Type": "application/json"
         }
         data = {
-            "model": "text-embedding-v3",
+            "model": EMBEDDING_MODEL,
             "input": sentences,
             "dimension": "1024",
             "encoding_format": "float"

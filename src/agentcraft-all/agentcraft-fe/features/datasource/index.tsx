@@ -164,10 +164,11 @@ function UploadDataSource() {
         <Modal size="70%" opened={open} onClose={() => { setOpen(false); setIsEdit(false) }} title="上传数据集文档" centered>
             <FileInput withAsterisk accept=".md,.txt,.html,.pdf,.pptx,.xlsx,.docx,.jpg,.jpeg,.png" name="file" label="选择文档" description="选择本地文件上传，支持 .pdf,.txt,.md,.html,docx,pptx,xslx,jpg,jpeg,png文件" placeholder="点击上传文档" icon={<IconUpload size={rem(14)} />} {...form.getInputProps('file')} />
             <TextInput withAsterisk label="标题" description="标题内容作为检索的数据来源，用来展示检索结果" placeholder="" {...form.getInputProps('title')} />
+           
             <NumberInput withAsterisk label="文档切片大小" description="" placeholder="" {...form.getInputProps('chunk_size')} />
+            <Textarea  label="同类标记文本" description="对同一类内容进行标记，该内容会注入到文档中，方便同类检索"  minRows={4}  placeholder="" {...form.getInputProps('contentTags')} />
             <TextInput label="来源url" placeholder="" {...form.getInputProps('url')} />
             <Box mx="auto" pt={12} style={{ textAlign: 'right' }}>
-
                 <Button onClick={async () => {
                     form.validate();
                     if (form.isValid()) {
@@ -179,6 +180,7 @@ function UploadDataSource() {
                             formData.append('title', values.title);
                             formData.append('chunk_size', values.chunk_size);
                             formData.append('url', values.url);
+                            formData.append('contentTags', values.contentTags);
                             await addDataSourceByUploadFile({ dataSetId }, formData);
                             await getDataSourceList(dataSetId, dataSetType);
                         } catch (e) {

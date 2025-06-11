@@ -30,7 +30,8 @@ interface NextApiRequestWithFormData extends NextApiRequest {
 interface DocProperty {
     title: string,
     chunk_size: string,
-    url: string
+    url: string,
+    contentTags?: string
 }
 
 interface FileProperty {
@@ -187,7 +188,7 @@ async function processTables(graphicFrames: any[]) {
         const graphic = frame['a:graphic']?.[0];
         const graphicData = graphic?.['a:graphicData']?.[0];
         const table = graphicData?.['a:tbl']?.[0];
-        
+
         if (table) {
             content += 'Table Content:\n';
             const rows = table['a:tr'] || [];
@@ -302,6 +303,7 @@ router.post(async (req: any, res: any) => {
     const bodyData: DocProperty = req.body;
     const extName = getFileExtension(file.originalname);
     const chunkSize = parseInt(bodyData.chunk_size);
+    const contentTags = bodyData.contentTags;
     const token = getTokenFromRequest(req);
     request.defaults.headers.common['Authorization'] = token;
     let output: any = [];
@@ -319,7 +321,9 @@ router.post(async (req: any, res: any) => {
     if (extName === '.html') {
         const splitter = RecursiveCharacterTextSplitter.fromLanguage("html", {
             chunkSize,
-            chunkOverlap: 100
+            chunkOverlap: 100,
+            keepSeparator: false,
+            separators: [""]
         });
         output = await splitter.createDocuments([file.buffer.toString()]);
     }
@@ -327,7 +331,9 @@ router.post(async (req: any, res: any) => {
     if (extName === '.md') {
         const splitter = RecursiveCharacterTextSplitter.fromLanguage("markdown", {
             chunkSize,
-            chunkOverlap: 100
+            chunkOverlap: 100,
+            keepSeparator: false,
+            separators: [""]
         });
         output = await splitter.createDocuments([file.buffer.toString()]);
     }
@@ -392,7 +398,10 @@ router.post(async (req: any, res: any) => {
     }
 
     for (const splitData of output) {
-        const data = splitData.pageContent;
+        let data = splitData.pageContent;
+        if(contentTags) { // 注入同类标签
+            data = contentTags + data;
+        }
         const documentData: RequestDocumentData = {
             title: bodyData.title,
             url: bodyData.url,
@@ -440,11 +449,11 @@ async function processPdfBuffer(pdfBuffer: Buffer, chunkSize: number) {
             console.log(`正在转换第 ${pageNumber} 页为 base64 图片...`);
             // const { base64 } = await convertPageToBase64(pdfBuffer, pageNumber, options);
             const base64 = await renderPdfPageToBase64(pdfBuffer, pageNumber)
-            if(base64) {
+            if (base64) {
                 const textData = await read(base64 as string);
                 totalContent += (textData + separator);
             }
-            
+
         }
     }
 
@@ -497,13 +506,13 @@ async function renderPdfPageToBase64(pdfBuffer: Buffer, pageNumber: number): Pro
     const viewport = page.getViewport({ scale: 2.0 });
     const canvas = createCanvas(viewport.width, viewport.height);
     const context = canvas.getContext('2d');
-   
+
     await page.render({
         // @ts-ignore
         canvasContext: context,
         viewport: viewport,
     }).promise;
-    const dataUrl =  canvas.toDataURL('image/png');
+    const dataUrl = canvas.toDataURL('image/png');
     const base64Data = dataUrl.replace(/^data:image\/png;base64,/, '');
     return base64Data// 返回 base64 格式的 PNG 图片
 }
@@ -512,7 +521,7 @@ async function convertPageToBase64(pdfBuffer: Buffer, pageNumber: number, option
     const convert = fromBuffer(pdfBuffer, options);
     convert.setGMClass(true);
     const response = await convert(pageNumber, { responseType: "base64" });
-    return response; 
+    return response;
 }
 
 export default router.handler({

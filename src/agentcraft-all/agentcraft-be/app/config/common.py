@@ -6,6 +6,7 @@ UPLOAD_ROOT_DIR = os.path.join(WORK_DIR, "upload")
 TEMP_ROOT_DIR = os.path.join(WORK_DIR, "temp")
 EMBEDDING_URL=os.environ.get('EMBEDDING_URL', '')
 RERANK_URL=os.environ.get('RERANK_URL', '')
+EMBEDDING_MODEL=os.environ.get('EMBEDDING_MODEL', 'text-embedding-v3')
 EMBEDDING_TOKEN=os.environ.get('EMBEDDING_TOKEN', '')
 EMBEDDING_TIMEOUT=int(os.environ.get('EMBEDDING_TIMEOUT', 600))
 

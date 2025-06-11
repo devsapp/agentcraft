@@ -51,6 +51,7 @@ resources:
         EMBEDDING_TOKEN: ''
         CREATE_TABLES: '1'
         EMBEDDING_URL: ''
+        EMBEDDING_MODEL: 'text-embedding-v4'
         EMBEDDING_DIM: ''
         JWT_SECRET: ${vars.JWT_SECRET}
         REGION: ${vars.region}

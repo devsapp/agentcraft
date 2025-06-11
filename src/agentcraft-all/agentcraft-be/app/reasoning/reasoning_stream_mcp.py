@@ -524,13 +524,13 @@ class ReasoningStreamMcp:
                 reasoning_log += f"Action: {action} Action Input: {action_input}\n"
                 plugin_output = await self.call_plugin(action, action_input)
                 logger.info(f"{CYAN}Tool Output: {plugin_output}{RESET}")
-                yield json.dumps({
-                            "id": uid,
-                            "action_input": action_input,
-                            "action": action,
-                            "action_result": plugin_output,
-                            "created": created,
-                        })
+                # yield json.dumps({
+                #             "id": uid,
+                #             "action_input": action_input,
+                #             "action": action,
+                #             "action_result": plugin_output,
+                #             "created": created,
+                #         })
                 if "ERROR" in plugin_output:
                     error_message = plugin_output["ERROR"]
                     yield json.dumps({
