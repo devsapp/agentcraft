@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Request, Depends, HTTPException
 from app.config import common as config
-
+import re
 
 def validate_message_roles(messages: list):
     """验证消息角色交替合法性"""
@@ -11,7 +11,17 @@ def validate_message_roles(messages: list):
         if i % 2 == 1 and msg.role != "assistant":
             raise HTTPException(
                 status_code=400, detail=f"Message {i} should be assistant role")
-
+def remove_think_content(text: str) -> str:
+    """移除文本中的思考过程内容
+    
+    Args:
+        text: 包含可能思考过程的文本
+    Returns:
+        清理后的文本
+    """
+    # 使用非贪婪模式匹配<think>标签之间的内容
+    cleaned_text = re.sub(r'<think>.*?</think>', '', text, flags=re.DOTALL)
+    return cleaned_text.strip()
 
 def process_history(req_messages: list, db_history: list, limit: int = config.MAX_REQUEST_GROUPS):
     """合并处理请求消息与数据库历史
@@ -21,6 +31,7 @@ def process_history(req_messages: list, db_history: list, limit: int = config.MA
         db_history: 数据库查询的历史记录（格式：[{"user":str, "assistant":str}...]）
         limit: 请求历史最大保留组数（每组包含1问1答）
     """
+
     raw_request_history = req_messages[:-1]
     recent_history = raw_request_history[-limit*2:]  # 每组包含2条消息
 
@@ -33,7 +44,7 @@ def process_history(req_messages: list, db_history: list, limit: int = config.MA
             continue  # 跳过不成对的最后一条
         req_history_dict.insert(0, {  # 保持时间正序
             "user": recent_history[i].content,
-            "assistant": recent_history[i+1].content
+            "assistant": remove_think_content(recent_history[i+1].content)
         })
 
     # 合并策略（请求历史优先）
@@ -49,7 +60,8 @@ def process_history(req_messages: list, db_history: list, limit: int = config.MA
 
     # 2. 补充数据库历史（保留未被覆盖的）
     for item in reversed(db_history):  # 数据库历史本身是时间正序
-        key = (item["user"], item["assistant"])
+        clean_assistant = remove_think_content(item["assistant"])
+        key = (item["user"], clean_assistant)
         if key not in seen_pairs:
             seen_pairs.add(key)
             combined.append(item)

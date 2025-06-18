@@ -17,6 +17,7 @@ from app.model.router import router as model_router
 from app.assistant.router import router as assistant_router
 from app.assistant_session.router import router as assistant_session_router
 from app.action_tools.router import router as action_tools_router
+from app.multiagent.router import router as multiagent_router
 from app.common.logger import logger
 from app.common.constants import RED, YELLOW, RESET
 
@@ -64,3 +65,4 @@ app.include_router(model_router, prefix="/model", tags=["Model"])
 app.include_router(document_router, prefix="/document", tags=["Document"])
 app.include_router(question_router, prefix="/question", tags=["Question"])
 app.include_router(app_router, prefix="/app", tags=["App"])
+app.include_router(multiagent_router, prefix="/multiagent", tags=["MultiAgent"])

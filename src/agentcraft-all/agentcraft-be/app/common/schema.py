@@ -1,6 +1,6 @@
 """Common Schema"""
 # pylint: disable = too-few-public-methods, no-self-argument
-from typing import List
+from typing import List, Any
 from pydantic import BaseModel  # pylint: disable = no-name-in-module
 
 
@@ -29,3 +29,7 @@ class DictListResponse(BasicResponse):
     """Response with List of Dict Data"""
     data: List[dict]
     total: int
+    
+class ListResponse(BasicResponse):
+    """Response with List of Dict Data"""
+    data: List[Any]

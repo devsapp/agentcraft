@@ -34,8 +34,8 @@ resources:
       runtime: custom.debian10
       instanceConcurrency: 100
       role: ${vars.fcRole}
-      cpu: 8
-      memorySize: 16384
+      cpu: 2
+      memorySize: 3072
       diskSize: 512
       environmentVariables:
         PATH: >-
