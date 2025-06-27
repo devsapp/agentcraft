@@ -24,6 +24,7 @@ class AgenticApp(postgresql.BaseModel):
     phase = mapped_column(String(255), nullable=False)  # COMMENT '应用状态'
     config = mapped_column(JSON, nullable=True)            # COMMENT '应用配置'
     user_id = mapped_column(ForeignKey("users.id", ondelete="cascade"))
+    workspace_id = mapped_column(ForeignKey("app.id", ondelete="cascade"))
     created = mapped_column(TIMESTAMP, default=func.now(), nullable=False)
     modified = mapped_column(TIMESTAMP, default=func.now(), onupdate=func.now(), nullable=False)
 
@@ -36,6 +37,7 @@ def add_agentic_app(**kwargs):
     :param kwargs: 模型字段参数
     :return: 新增记录的 ID
     """
+    print(kwargs,'kwargs')
     with Session(postgresql.postgres) as session:
         app = AgenticApp(**kwargs)
         session.add(app)

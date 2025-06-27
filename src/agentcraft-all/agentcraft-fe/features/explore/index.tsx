@@ -22,7 +22,7 @@ import { UpsertMcpRequest } from 'types/mcp';
 
 
 
-
+const AGENTIC_AI_APP_NAME_KEY = 'agenticAiAppName';
 function findActionToolByTemplate(templateList: any[], tool: any) {
     return templateList.find(item => item.functionConfig.template === tool.template);
 }
@@ -47,7 +47,7 @@ function extractDefaults(toolProperties: any) {
 function LoadingStepper() {
     const appStatus = useAgenticAppStore().appStatus;
 
-    return <div>
+    return <div style={{ padding: 24 }}>
         <Stepper active={appStatus} breakpoint="sm">
             <Stepper.Step label="创建工具&MCP" description="" loading={appStatus === AgenticAppStatus.CREATE_TOOL_MCP} />
             <Stepper.Step label="创建LLM代理服务" description="" loading={appStatus === AgenticAppStatus.CREATE_LLM} />
@@ -335,7 +335,6 @@ function AgenticAppForm() {
                     const { system_url, phase, custom_domain } = result.data;
 
                     if (phase === FunctionAiAppStatus.FINISHED || phase === FunctionAiAppStatus.FAILED) {
-                        console.log(`Final phase: ${phase}`);
                         resolve({ system_url, phase, custom_domain });
                         return;
                     }
@@ -364,7 +363,7 @@ function AgenticAppForm() {
                 accumulator[currentKey] = generateRandomSuffix(agentTemplateParams.properties[currentKey].default);
                 return accumulator;
             }, {});
-
+            initFormData[AGENTIC_AI_APP_NAME_KEY] = AgenticAppTemplate.name;
             form.setValues(initFormData);
         }
     }, [AgenticAppTemplate])
@@ -372,6 +371,7 @@ function AgenticAppForm() {
     return (
         <>
             <Box maw={'95%'} mx="auto">
+                <TextInput withAsterisk label={'AgenticAI应用名称'} placeholder="" {...form.getInputProps(AGENTIC_AI_APP_NAME_KEY)} description={'AgenticAI应用描述'} />
                 {AgenticAppTemplate.templateParams.properties && Object.keys(AgenticAppTemplate?.templateParams?.properties).map((key: string) => {
                     return <div key={key}>{renderFormUi(key, AgenticAppTemplate?.templateParams?.properties[key])}</div>
                 })}
@@ -382,19 +382,19 @@ function AgenticAppForm() {
                     if (form.isValid()) {
                         try {
                             setCreateLoading(true);
-                            const functionAiApp = form.values;
+                            const functionAiApp: any = form.values;
                             const actionTools = AgenticAppTemplate.actionTools;
                             const llms = AgenticAppTemplate.llms;
                             const agents = AgenticAppTemplate.agents;
-                            // 创建一个 app
-                            setAppStatus(AgenticAppStatus.CREATE_TOOL_MCP);
+        
+                            setAppStatus(AgenticAppStatus.CREATE_TOOL_MCP); // 创建AI恭工具
                             const toolsMap = await createActionTools(actionTools);
-                            setAppStatus(AgenticAppStatus.CREATE_LLM);
+                            setAppStatus(AgenticAppStatus.CREATE_LLM); // 创建LLM
                             const llmMap = await createLLMs(llms);
-                            setAppStatus(AgenticAppStatus.CREATE_WORKSPACE_AGENTS);
+                            setAppStatus(AgenticAppStatus.CREATE_WORKSPACE_AGENTS); // 创建工作区
                             const workspaceId = await createWorkspace(AgenticAppTemplate.name, AgenticAppTemplate.description);
                             const agentTokenMap = await createAgents(agents, { workspaceId, llmDenpendencies: llmMap, toolDenpendencies: toolsMap }, AgenticAppTemplate.autoIntention);
-                            const projectName = AgenticAppTemplate.projectName;
+                            const projectName = functionAiApp.projectName;
                             const AgenticAppPayload = {
                                 projectName,
                                 templateName: AgenticAppTemplate.templateName,
@@ -407,12 +407,14 @@ function AgenticAppForm() {
                                 variableValues: {},
                                 serviceNameChanges: {}
                             }
-                            setAppStatus(AgenticAppStatus.CREATE_APP);
+                            setAppStatus(AgenticAppStatus.CREATE_APP); // 创建FunctionAI AgenticAI应用
                             const agenticAppResData = await addFunctionAiApp(AgenticAppPayload);
                             const { deployedServiceName } = agenticAppResData.data;
                             const { system_url, custom_domain, phase } = await pollAgenticAppStatus(projectName, AgenticAppTemplate.mainServiceName || deployedServiceName);
+                            const agenticAiAppName = functionAiApp[AGENTIC_AI_APP_NAME_KEY];
                             const agenticAppPaylpad: UpsertAgenticAppRequest = {
-                                name: AgenticAppTemplate.name,
+                                name: agenticAiAppName,
+                                workspace_id: workspaceId,
                                 description: AgenticAppTemplate.description,
                                 template: AgenticAppTemplate.templateName,
                                 domain: custom_domain,
@@ -422,7 +424,7 @@ function AgenticAppForm() {
                                 config: AgenticAppTemplate,
                                 icon: AgenticAppTemplate.icon,
                             }
-                            await addAgenticApp(agenticAppPaylpad);
+                            await addAgenticApp(agenticAppPaylpad); // 保存AgentCraft AgenticAI 元数据
 
                         } catch (e) {
                         }
@@ -585,8 +587,8 @@ function McpForm() {
                     if (form.isValid()) {
                         try {
                             setCreateLoading(true);
-                            const functionAiApp = form.values;
-                            const projectName = mcpTemplate.package.name;
+                            const functionAiApp: any = form.values;
+                            const projectName = functionAiApp.projectName;
                             const templateName = mcpTemplate.version.name;
                             const description = mcpTemplate.version.description;
                             const mcpPayload = {

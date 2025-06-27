@@ -3,6 +3,7 @@ import { create } from "zustand";
 import { devtools } from "zustand/middleware";
 import { request } from 'utils/clientRequest';
 import { AgenticAppStatus, UpsertAgenticAppRequest } from '@/types/agenticApp';
+import { deleteWorkspace } from "./workspace";
 
 
 
@@ -10,11 +11,19 @@ interface AgenticAppStore {
     loading: boolean,
     createLoading: boolean,
     open: boolean,
+    isDeleteWorkspace: boolean,
+    currentDeleteApp: any,
+    isDeleteModalOpen: boolean,
     appName: string,
     agenticAppList: any[],
     AgenticAppTemplate: any,
+    editingApp: any | null; // 新增编辑状态
     appStatus: AgenticAppStatus,
     currentFoundationModel: any,
+    setEditingApp: (app: any) => void; 
+    setIsDeleteWorkspace: (isDeleteWorkspace: boolean) => void;
+    setIsDeleteModalOpen: (isDeleteModalOpen: boolean) => void;
+    setCurrentDeleteApp: (app: any) => void;
     setAppName: (appName: string) => void;
     setCreateLoading: (loading: boolean) => void;
     setAppStatus: (appStatus: number) => void,
@@ -30,13 +39,21 @@ interface AgenticAppStore {
 
 export const useAgenticAppStore = create<AgenticAppStore>()(devtools((set) => ({
     agenticAppList: [],
+    editingApp: null, // 初始状态
     loading: false,
     createLoading: false,
+    isDeleteWorkspace: false as boolean,
+    isDeleteModalOpen: false as boolean,
+    currentDeleteApp: null,
     open: false,
     AgenticAppTemplate: {},
     appName: '',
     appStatus: AgenticAppStatus.CREATE_TOOL_MCP,
     currentFoundationModel: {},
+    setIsDeleteModalOpen: (isDeleteModalOpen) => set({ isDeleteModalOpen }),
+    setCurrentDeleteApp: (currentDeleteApp) => set({ currentDeleteApp }),
+    setIsDeleteWorkspace: (isDeleteWorkspace) => set({ isDeleteWorkspace }),
+    setEditingApp: (editingApp) => set({ editingApp }),
     setCurrentAgenticApp: (currentAgenticApp: any) => set((_state) => {
         return ({ currentFoundationModel: currentAgenticApp })
     }),
@@ -109,4 +126,13 @@ export async function deleteAgenticApp(id: any) {
     });
 }
 
+export async function updateAgenticApp(id: number, payload: any) {
 
+    return await request(`/api/agenticApp/update?id=${id}`, {
+        method: "POST",
+        body: JSON.stringify(payload),
+        headers: {
+            "Content-Type": "application/json",
+        },
+    });
+}

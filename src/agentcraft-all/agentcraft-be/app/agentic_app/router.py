@@ -3,7 +3,7 @@ from fastapi import APIRouter, Depends
 from app.agentic_app import service
 from app.auth.schema import JWTData
 from app.common.schema import BasicResponse, DictResponse, DictListResponse
-from app.agentic_app.schema import UpsertAgenticAppRequest
+from app.agentic_app.schema import UpdateAgenticAppRequest, AddAgenticAppRequest
 from app.auth.security import validate_token
 
 router = APIRouter()
@@ -22,7 +22,7 @@ async def list_agentic_apps(page: int, limit: int, token: JWTData = Depends(vali
 
 
 @router.post("/add", response_model=DictResponse)
-async def add_agentic_app(req: UpsertAgenticAppRequest, token: JWTData = Depends(validate_token)):
+async def add_agentic_app(req: AddAgenticAppRequest, token: JWTData = Depends(validate_token)):
     """新增 AgenticApp"""
     app_id = service.add_agentic_app(user_id=token.user_id, **req.dict())
     return {
@@ -54,7 +54,7 @@ async def get_agentic_app(app_id: int, token: JWTData = Depends(validate_token))
 
 
 @router.put("/{app_id}", response_model=BasicResponse)
-async def update_agentic_app(app_id: int, req: UpsertAgenticAppRequest, token: JWTData = Depends(validate_token)):
+async def update_agentic_app(app_id: int, req: UpdateAgenticAppRequest, token: JWTData = Depends(validate_token)):
     """更新指定的 AgenticApp"""
     service.update_agentic_app(app_id, user_id=token.user_id, **req.dict())
     return {

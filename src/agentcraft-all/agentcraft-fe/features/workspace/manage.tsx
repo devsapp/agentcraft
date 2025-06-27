@@ -14,6 +14,8 @@ import {
   getWorkspaceListAndSetCurrent
 } from 'store/workspace';
 
+const DEFAULT_WORKSPACE_NAME = '默认工作空间';
+
 interface ModalProps {
   opened: boolean;
   close: () => void;
@@ -154,11 +156,11 @@ export default function ({
                 <td>{formatDateTime(item.modified)}</td>
                 <td>
                   <Group>
-                    <Button disabled={!!editingItem || showAdd} variant="subtle" onClick={() => onEdit(item)}>
+                    <Button disabled={!!editingItem || showAdd || item.name === DEFAULT_WORKSPACE_NAME }  variant="subtle" onClick={() => onEdit(item)}>
                       编辑
                     </Button>
                     <Button
-                      disabled={!!editingItem || currentWorkspace === item.id}
+                      disabled={!!editingItem || currentWorkspace === item.id || item.name === DEFAULT_WORKSPACE_NAME}
                       onClick={() => onDelete(item)}
                       variant="subtle"
                       color='red'

@@ -177,7 +177,7 @@ export const MULTI_AGENT_APP_TEMPLATES = [
           title: '项目名',
           default: 'ac-xiaoyi-${default-suffix}',
           description: '',
-          uiType: 'input'
+          uiType: 'hidden'
         },
         description: {
           type: 'string',
@@ -502,14 +502,14 @@ export const MULTI_AGENT_APP_TEMPLATES = [
       properties: {
         projectName: {
           type: 'string',
-          title: '项目名',
+          title: '项目名（FunctionAI专用）',
           default: 'ac-vibecoding-${default-suffix}',
           description: '',
-          uiType: 'input'
+          uiType: 'hidden'
         },
         description: {
           type: 'string',
-          title: '项目描述',
+          title: '应用描述',
           default: '码呀码的chatbot智能助手，主打氛围编程',
           description: '',
           uiType: 'textarea'
@@ -534,6 +534,13 @@ export const MULTI_AGENT_APP_TEMPLATES = [
           default: '',
           description: '阿里云OSS的存储桶名称',
           uiType: 'ossX'
+        },
+        ossBucketPath: {
+          type: 'string',
+          title: 'OSS 存储桶路径',
+          default: 'mayama_${default-suffix}',
+          description: 'OSS存储桶路径,不允许使用表情符，请使用符合要求的 UTF-8 字符，总长度控制在 1~254 个字符',
+          uiType: 'string'
         }
       }
     }
@@ -802,7 +809,7 @@ PEST分析：政治、经济、社会、技术环境分析。
           title: '项目名',
           default: 'ac-ds-${default-suffix}',
           description: '',
-          uiType: 'input'
+          uiType: 'hidden'
         },
         description: {
           type: 'string',

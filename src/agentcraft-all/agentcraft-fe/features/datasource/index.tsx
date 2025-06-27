@@ -151,6 +151,7 @@ function UploadDataSource() {
             url: '',
             chunk_size: DEFAULT_CHUNK_SIZE,
             ext: 'txt',
+            contentTags: '',
             tag: dataSetId
         },
         validate: {
@@ -180,7 +181,9 @@ function UploadDataSource() {
                             formData.append('title', values.title);
                             formData.append('chunk_size', values.chunk_size);
                             formData.append('url', values.url);
-                            formData.append('contentTags', values.contentTags);
+                            if(values.contentTags) {
+                                formData.append('contentTags', values.contentTags);
+                            }
                             await addDataSourceByUploadFile({ dataSetId }, formData);
                             await getDataSourceList(dataSetId, dataSetType);
                         } catch (e) {
@@ -312,7 +315,6 @@ export function Datasource() {
     const setOpenUploadModel = useDataSourceStore().setOpenUploadModel;
     return (
         <>
-            {/* <Breadcrumbs>{items}</Breadcrumbs> */}
             <Flex justify={'flex-start'} align={'center'} mt={12} >
                 <Flex align={'center'} h={'100%'} >
                     <ActionIcon onClick={() => {

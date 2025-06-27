@@ -19,6 +19,7 @@ export enum FunctionAiAppStatus {
 
 export interface UpsertAgenticAppRequest {
   name: string;
+  workspace_id?: string; 
   project_name: string;
   description?: string | null;
   template?: string | null;

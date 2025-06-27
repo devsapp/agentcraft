@@ -43,7 +43,7 @@ resources:
         PYTHONPATH: /opt/python:/code
         EMBEDDING_TIMEOUT: '600'
         DASHSCOPE_API_KEY: ${vars.dashscopeApiKey}
-        WORKERS: '16'
+        WORKERS: '4'
         POSTGRES_HOST: ''
         POSTGRES_DATABASE: ''
         POSTGRES_USER: ''

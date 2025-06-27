@@ -94,8 +94,6 @@ export async function updateWorkspace(id: number, payload: WorkspaceRequestPaylo
             "Content-Type": "application/json",
         },
     });
-
-
 }
 
 export async function addWorkspace(payload: WorkspaceRequestPayload) {

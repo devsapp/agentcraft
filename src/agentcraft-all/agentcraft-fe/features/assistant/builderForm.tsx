@@ -48,7 +48,7 @@ export function AssistantForm({ workspaceId, form }: { workspaceId: any, form: a
             <Title order={5} size="h5">智能助手信息</Title>
             <Box pl={4} pr={4} >
                 <TextInput withAsterisk label="名称" placeholder="输入智能助手名称" {...form.getInputProps('name')} />
-                <TextInput label="描述" placeholder="输入关于智能助手的简单描述" description="请输入智能助手的描述信息" {...form.getInputProps('description')} />
+                <Textarea  label="描述" placeholder="输入关于智能助手的简单描述" description="请输入智能助手的描述信息" {...form.getInputProps('description')} />
             </Box>
         </Paper>
         <Paper shadow="xs" p="md" withBorder style={{ width: pannelWidth }}>

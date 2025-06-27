@@ -1,5 +1,6 @@
 """Main Server"""
 from fastapi import FastAPI, HTTPException
+import traceback
 from fastapi.responses import RedirectResponse, JSONResponse
 from app.auth.router import router as auth_router
 from app.chat.router import router as chat_router
@@ -43,6 +44,20 @@ async def http_exception_handler(request, exc) -> JSONResponse:
         content={"detail": exc.detail}
     )
 
+
+@app.exception_handler(Exception)
+async def global_exception_handler(request, exc: Exception):
+    # 打印完整堆栈到日志
+    logger.error(f"Unhandled exception: {str(exc)}\n{traceback.format_exc()}") 
+    
+    # 生产环境建议不返回详细堆栈给客户端
+    return JSONResponse(
+        status_code=500,
+        content={
+            "error": "Internal server error",
+            "detail": str(exc)  # 可根据环境决定是否包含更多细节
+        }
+    )
 @app.get('/')
 def index():
     """Redirect to Docs"""

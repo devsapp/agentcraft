@@ -70,7 +70,17 @@ export function List() {
             <td style={{ width: 200 }}>{element.token ? <CopyToClipboard value={element.token} content={'******************'} width={100} /> : null}</td>
             <td>{formatDateTime(element.created)}</td>
             <td>{formatDateTime(element.modified)}</td>
-            <td style={{ width: 180 }}> <Button variant="filled" size="xs" onClick={() => { setEditStatus(true); setCurrentModel(element); setOpen(true); }} mr={4}>编辑</Button><Button variant="filled" color="red" size="xs" onClick={() => removeModel(element)}>删除</Button></td>
+            <td style={{ width: 180 }}> 
+                <Button 
+                    variant="filled" 
+                    size="xs" 
+                    onClick={() => { 
+                        setEditStatus(true); 
+                        setCurrentModel(element); 
+                        setOpen(true); 
+                    }} mr={4}>编辑</Button>
+                <Button variant="filled" color="red" size="xs" onClick={() => removeModel(element)}>删除</Button>
+            </td>
         </tr>
     ));
     useEffect(() => {
@@ -129,49 +139,39 @@ function AddOrUpdate() {
             url: (value) => (/(http|https):\/\/(\w+:{0,1}\w*@)?(\S+)(:[0-9]+)?(\/|\/([\w#!:.?+=&%@!\-\/]))?/.test(value) ? null : '请输入合法的访问地址'),
         },
     });
-    // function supplementCustomModelNameAndUrl(modelName: string, url: string) {
-    //     let modelNameExist = false;
-    //     let modelUrlExist = false;
-    //     data.forEach((item) => {
-    //         if (item.value === modelName) {
-    //             modelNameExist = true;
-    //         }
-    //     });
-    //     fmData.forEach((item: any) => {
-    //         if (item.value === url) {
-    //             modelUrlExist = true;
-    //         };
-    //     });
-    //     if (!modelNameExist) {
-    //         data.push({
-    //             label: modelName,
-    //             value: modelName,
-    //             group: '用户自定义'
-    //         });
-    //         setData(data);
-    //     };
-    //     if (!modelUrlExist) {
-    //         fmData.push({
-    //             label: url,
-    //             value: url
-    //         });
-    //         setFmData(fmData);
-    //     };
-    // }
-    // useEffect(() => {
-    //     const fmSelectData = fmList.map((item: FM_INFO) => ({ label: `[${FM_NAME_MAP[item.app_template]}] ${item.system_internet_url}${CHAT_API_SUFIX} `, value: `${item.system_internet_url}${CHAT_API_SUFIX}` }));
-    //     setFmData(fmSelectData);
-    // }, [fmList]);
+    
     useEffect(() => {
         if (isEdit && open) {
+            const currentLLMUrl = currentModel?.url || '';
+            const currentModelName = currentModel?.name || '';
             form.setValues({
-                name: currentModel?.name || '',
+                name: currentModelName,
                 name_alias: currentModel?.name_alias || '',
-                url: currentModel?.url || '',
+                url: currentLLMUrl,
                 token: currentModel?.token || '',
                 timeout: currentModel?.timeout || DEFAULT_MODEL_REQUEST_TIMEOUT,
                 description: currentModel?.description || ''
             });
+            let isNewFmUrl =  true;
+            let isNewModel = true;
+            fmData.forEach((item:any)=> {
+                if(item.value === currentLLMUrl) {
+                    isNewFmUrl = false;
+                }
+            })
+            if(isNewFmUrl) {
+                setFmData((current: any) => [...current, {label: currentLLMUrl, value: currentLLMUrl}]);
+            }
+
+            data.forEach((item:any)=> {
+                if(item.value === currentModelName) {
+                    isNewModel = false;
+                }
+            });
+            if(isNewModel) {
+                setData((current: any) => [...current, {label: currentModelName, value: currentModelName}]);
+            }
+
             // supplementCustomModelNameAndUrl(currentModel?.name || '', currentModel?.url || '');
         }
 
@@ -220,7 +220,8 @@ function AddOrUpdate() {
                             setFmData((current: any) => [...current, item]);
                             return item;
                         }}
-                    /></Box>
+                    />
+                </Box>
 
                 {/* <TextInput withAsterisk label={<span>基础模型服务访问地址<a href="/foundationModel/create" target="_blank">还没有基础模型服务？去创建</a></span>} placeholder="" {...form.getInputProps('url')} description="基础模型服务原始地址，可以通过基础模型菜单访问创建,创建成功后粘贴基础模服务访问地址在此" /> */}
                 <PasswordInput

@@ -5,14 +5,17 @@ import { DataSource, DocumentRequestPayload, QuestionRequestPayload } from "type
 import { request } from 'utils/clientRequest';
 
 
+
 interface DataSourceStore {
     loading: boolean,
     open: boolean,
     isEdit: boolean,
+    pagination: any,
     currentDataSource: any,
     openUploadModel: boolean,
     dataSourceList: DataSource[],
     setIsEdit: (isEdit: boolean) => void;
+    setPagination: (pagination: any) => void;
     setLoading: (loading: boolean) => void;
     setOpen: (open: boolean) => void;
     setOpenUploadModel: (open: boolean) => void;
@@ -29,10 +32,18 @@ export const useDataSourceStore = create<DataSourceStore>()(devtools((set) => ({
     open: false,
     isEdit: false,
     openUploadModel: false,
+    pagination: {
+        page: 1,
+        pageSize: 20,
+        total: 0
+    },
     currentDataSource: {
     },
     setCurrentDataSource: (currentDataSource: any) => set((_state) => {
         return ({ currentDataSource })
+    }),
+    setPagination: (pagination: any) => set((_state) => {
+        return ({ pagination })
     }),
     setIsEdit: (isEdit: boolean) => set((_state) => {
         return ({ isEdit })
