@@ -47,7 +47,6 @@ export default function MermaidRenderer({ chart, index }: { chart: string, index
             
             setError(null)
         } catch (error) {
-            console.error('Failed to render mermaid chart:', error)
             setError(error instanceof Error ? error.message : 'Failed to render chart')
         }
     }, [chart, chartId])

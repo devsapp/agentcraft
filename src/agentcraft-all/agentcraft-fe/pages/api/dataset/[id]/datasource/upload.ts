@@ -410,7 +410,6 @@ router.post(async (req: any, res: any) => {
             content: data,
             chunk_size: chunkSize
         }
-        console.log(documentData,'sssss');
         await request.post('/document/add', documentData);
     }
 

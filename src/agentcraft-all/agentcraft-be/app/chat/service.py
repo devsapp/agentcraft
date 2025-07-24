@@ -520,7 +520,7 @@ def model_chat(agent_session_id,
     resp_data = resp.json()
     if isinstance(resp_data, str):
         resp_data = json.loads(resp_data)
-    logger.info(resp_data)
+    logger.info(f"{RED}Response Data:{resp_data}{RESET}")
     answer = [ans["message"]["content"]
               for ans in resp_data["choices"] if ans["message"]["role"] == "assistant"]
     resp_data["id"] = uid

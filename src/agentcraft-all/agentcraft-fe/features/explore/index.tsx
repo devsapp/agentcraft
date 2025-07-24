@@ -148,7 +148,7 @@ async function createAgents(agents: any[], dependencies: any, autoIntention: boo
     const { workspaceId, llmDenpendencies, toolDenpendencies } = dependencies;
     let agentTokenMap: any = {};
     const is_public: IIsPublic = 0;
-    const agentFormValues: any = {
+    let baseAgentFormValues: any = {
         name: '',
         description: '',
         prompt_template: '',
@@ -175,12 +175,21 @@ async function createAgents(agents: any[], dependencies: any, autoIntention: boo
         fuzzy_search_limit: 3,
         is_public
     }
-    const intentionAgentFrom = JSON.parse(JSON.stringify(agentFormValues));
+    const intentionAgentFrom = JSON.parse(JSON.stringify(baseAgentFormValues));
+     
     let intentionPrompt = `你是一个专业的意图识别器，请一步一步思考，仔细根据上下文以及用户最后问题的的意图识别用户想要咨询的服务是哪个智能体，已知智能体如下:\n`;
     let examplePrompts = '';
     let agentIndex = 1;
     for (const agent of agents) {
+        let agentFormValues = JSON.parse(JSON.stringify(baseAgentFormValues));
         let agentKey = agent.key; // 可以指定具体的token键值
+        try {
+            if (agent.agentParams) { // 部分需要修正默认参数的智能体
+                agentFormValues = Object.assign({}, agentFormValues, agent.agentParams)
+            }
+        } catch (e) {
+
+        }
         agentFormValues['name'] = agent.name;
         agentFormValues['description'] = agent.description;
         agentFormValues['system_message'] = agent.prompt;
@@ -193,9 +202,9 @@ async function createAgents(agents: any[], dependencies: any, autoIntention: boo
             if (instructionChatId) {
                 const { token } = await refreshToken(instructionChatId);
                 if (agentKey) {
-                    agentTokenMap[agentKey] = { token, type: 'v1' };
+                    agentTokenMap[agentKey] = { token, type: 'v1', agentId: instructionChatId };
                 } else {
-                    agentTokenMap[`agent-${agentIndex}`] = { token, type: 'v1' };
+                    agentTokenMap[`agent-${agentIndex}`] = { token, type: 'v1', agentId: instructionChatId };
                 }
 
             }
@@ -219,9 +228,9 @@ async function createAgents(agents: any[], dependencies: any, autoIntention: boo
             if (assistantId) {
                 const { token } = await refreshAssistenToken(assistantId);
                 if (agentKey) {
-                    agentTokenMap[agentKey] = { token, type: 'v2' };
+                    agentTokenMap[agentKey] = { token, type: 'v2', agentId: assistantId };
                 } else {
-                    agentTokenMap[`agent-${agentIndex}`] = { token, type: 'v2' };
+                    agentTokenMap[`agent-${agentIndex}`] = { token, type: 'v2', agentId: assistantId };
                 }
             }
         }
@@ -383,16 +392,17 @@ function AgenticAppForm() {
                         try {
                             setCreateLoading(true);
                             const functionAiApp: any = form.values;
+                            const agenticAiAppName = functionAiApp[AGENTIC_AI_APP_NAME_KEY];
                             const actionTools = AgenticAppTemplate.actionTools;
                             const llms = AgenticAppTemplate.llms;
                             const agents = AgenticAppTemplate.agents;
-        
+
                             setAppStatus(AgenticAppStatus.CREATE_TOOL_MCP); // 创建AI恭工具
                             const toolsMap = await createActionTools(actionTools);
                             setAppStatus(AgenticAppStatus.CREATE_LLM); // 创建LLM
                             const llmMap = await createLLMs(llms);
                             setAppStatus(AgenticAppStatus.CREATE_WORKSPACE_AGENTS); // 创建工作区
-                            const workspaceId = await createWorkspace(AgenticAppTemplate.name, AgenticAppTemplate.description);
+                            const workspaceId = await createWorkspace(agenticAiAppName || AgenticAppTemplate.name, AgenticAppTemplate.description);
                             const agentTokenMap = await createAgents(agents, { workspaceId, llmDenpendencies: llmMap, toolDenpendencies: toolsMap }, AgenticAppTemplate.autoIntention);
                             const projectName = functionAiApp.projectName;
                             const AgenticAppPayload = {
@@ -411,7 +421,7 @@ function AgenticAppForm() {
                             const agenticAppResData = await addFunctionAiApp(AgenticAppPayload);
                             const { deployedServiceName } = agenticAppResData.data;
                             const { system_url, custom_domain, phase } = await pollAgenticAppStatus(projectName, AgenticAppTemplate.mainServiceName || deployedServiceName);
-                            const agenticAiAppName = functionAiApp[AGENTIC_AI_APP_NAME_KEY];
+                           
                             const agenticAppPaylpad: UpsertAgenticAppRequest = {
                                 name: agenticAiAppName,
                                 workspace_id: workspaceId,

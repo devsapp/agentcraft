@@ -11,6 +11,18 @@ export const BASE_LLM_URL = [
 ]
 
 export const MODEL_NAME_LIST = [{
+    label: 'qwen3-coder-plus(编码最强)',
+    value: 'qwen3-coder-plus',
+    group: '百炼通义系列'
+},{
+    label: 'qwen3-235b-a22b-instruct-2507(推理，Agent)',
+    value: 'qwen3-235b-a22b-instruct-2507',
+    group: '百炼通义系列'
+},{
+    label: 'qwen-coder-turbo',
+    value: 'qwen-coder-turbo',
+    group: '百炼通义系列'
+},{
     label: 'qwen-max-latest(最新模型qwen3)',
     value: 'qwen-max-latest',
     group: '百炼通义系列'
@@ -44,6 +56,17 @@ export const MODEL_NAME_LIST = [{
     value: 'qwen-max-longcontext',
     group: '百炼通义系列'
 }, {
+    label: 'deepseek-r1-0528',
+    value: 'deepseek-r1-0528',
+    group: '百炼deepseek系列'
+},
+{
+    label: 'Moonshot-Kimi-K2-Instruct',
+    value: 'Moonshot-Kimi-K2-Instruct',
+    group: '百炼Kimi K2'
+},
+
+{
     label: 'deepseek-r1',
     value: 'deepseek-r1',
     group: '百炼deepseek系列'
