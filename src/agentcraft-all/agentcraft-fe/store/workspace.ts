@@ -60,7 +60,12 @@ export async function getWorkspaceListAndSetCurrent() {
     const { currentWorkspace, setCurrentWorkspace } = _localState;
     const data = await getWorkspaceList();
     if (data) {
-        if (!currentWorkspace) {
+        if (data.length === 0) {
+            const res = await addWorkspace({ name: 'default', description: 'default' });
+            if (res.code === 200) {
+                setCurrentWorkspace(res.data.id);
+            }
+        } else if (!currentWorkspace) {
             setCurrentWorkspace(data[0].id);
         } else {
             setCurrentWorkspace(currentWorkspace);
