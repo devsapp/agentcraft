@@ -8,10 +8,16 @@ import { useFoundationModelStore, addFoundationModel, getFoundationModel, APP_ST
 import { SYSTEM_AGENTCRAFT_PREFIX, NEW_EMBEDDING_TEMPLATE_NAME, SUPPORT_EMBEDDING_REGIONS } from 'constants/system-config';
 
 import { useSystemConfigStore } from 'store/systemConfig';
-import { getCorrectRegionAddress } from 'utils/cloudInfra';
-// import styles from './index.module.scss';
 
 
+
+
+export function getCorrectRegionAddress(supportRegions: string[],currentRegion: string) {
+    if(!supportRegions.includes(currentRegion)) {
+        return supportRegions[0];
+    }
+    return currentRegion;
+}
 
 function getEmbeddingCurlCode(embeddingUrl: string) {
     return `curl -X 'POST' \

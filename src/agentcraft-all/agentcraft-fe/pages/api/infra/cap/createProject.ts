@@ -1,5 +1,5 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
-import { getAlibabaCloudServerlessBridge } from 'utils/cloudInfra';
+import { getAlibabaCloudServerlessBridge } from 'infra/utils/cloudInfra';
 
 export interface IServiceCreateProjectRequestData {
     projectName: string,  // cap 项目名

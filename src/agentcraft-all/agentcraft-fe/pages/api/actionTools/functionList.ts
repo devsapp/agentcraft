@@ -2,7 +2,7 @@ import type { NextApiRequest, NextApiResponse } from 'next'
 // import { ServerlessBridgeService } from 'infra/alibaba-cloud/services/serverless-app';
 import request from 'utils/serverRequest';
 import { getTokenFromRequest } from 'utils/token';
-import { getAlibabaCloudServerlessBridge } from 'utils/cloudInfra';
+import { getAlibabaCloudServerlessBridge } from 'infra/utils/cloudInfra';
 
 export default async function handler(
     req: NextApiRequest,

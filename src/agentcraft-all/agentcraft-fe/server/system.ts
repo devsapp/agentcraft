@@ -1,4 +1,4 @@
-import { getAlibabaCloudServerlessBridge, addVswitchIdV3 } from 'utils/cloudInfra';
+import { getAlibabaCloudServerlessBridge, addVswitchIdV3 } from 'infra/utils/cloudInfra';
 export async function init(
     req: any
 ) {

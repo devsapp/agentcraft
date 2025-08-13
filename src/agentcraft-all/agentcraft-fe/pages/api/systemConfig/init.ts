@@ -1,5 +1,5 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
-import { getAlibabaCloudServerlessBridge, addVswitchIdV3 } from 'utils/cloudInfra';
+import { getAlibabaCloudServerlessBridge, addVswitchIdV3 } from 'infra/utils/cloudInfra';
 import THEME from 'constants/theme';
 
 export default async function handler(

@@ -1,5 +1,5 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
-import { getAlibabaCloudServerlessBridge } from 'utils/cloudInfra';
+import { getAlibabaCloudServerlessBridge } from 'infra/utils/cloudInfra';
 import { DEFAULT_EMBEDDING_DIM } from 'constants/system-config';
 export default async function handler(
     req: NextApiRequest,

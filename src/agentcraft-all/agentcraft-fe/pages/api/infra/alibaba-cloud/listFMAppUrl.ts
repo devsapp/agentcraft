@@ -1,5 +1,5 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
-import { getAlibabaCloudServerlessBridge } from 'utils/cloudInfra';
+import { getAlibabaCloudServerlessBridge } from 'infra/utils/cloudInfra';
 function getServerlessDevsAppSystemUrl(data: any) {
     let system_intranet_url;
     let app_template;

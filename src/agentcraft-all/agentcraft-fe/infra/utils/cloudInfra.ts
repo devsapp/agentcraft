@@ -39,9 +39,3 @@ export function getAlibabaCloudServerlessBridge(credentialMap: any) {
     return serverlessBridgeService;
 }
 
-export function getCorrectRegionAddress(supportRegions: string[],currentRegion: string) {
-    if(!supportRegions.includes(currentRegion)) {
-        return supportRegions[0];
-    }
-    return currentRegion;
-}
