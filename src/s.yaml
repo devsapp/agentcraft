@@ -55,6 +55,7 @@ resources:
         EMBEDDING_DIM: ''
         JWT_SECRET: ${vars.JWT_SECRET}
         REGION: ${vars.region}
+        MAIN_ACCOUNT_ID: ${config("AccountID")}
       functionName: ${vars.beFunctionName}
       code: ./agentcraft-all/agentcraft-be
       triggers:
@@ -112,6 +113,7 @@ resources:
         beFunctionName: ${vars.beFunctionName}
         NODE_PATH: /opt/nodejs/node_modules
         Region: ${vars.region}
+        MAIN_ACCOUNT_ID: ${config("AccountID")}
         DASHSCOPE_API_KEY: ${vars.dashscopeApiKey}
         JWT_SECRET: ${vars.JWT_SECRET}
         PATH: >-

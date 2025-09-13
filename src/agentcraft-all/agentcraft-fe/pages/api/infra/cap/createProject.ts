@@ -29,6 +29,7 @@ export default async function handler(
         const AGENT_APP_DEFAULT_PARAMETERS = {
             "region": process.env.Region,
             "baseAgentServerUrl": process.env.openApiUrl,
+            "dashscopeApiKey": process.env.DASHSCOPE_API_KEY,
             "fcRole": `acs:ram::${mainAccountId}:role/aliyunfcdefaultrole`
         }
     

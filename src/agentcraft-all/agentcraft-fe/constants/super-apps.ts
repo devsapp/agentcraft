@@ -281,6 +281,7 @@ export const MULTI_AGENT_APP_TEMPLATES = [
   您所构建的Web应用，正在Linux 系统内核运行时调试和运行。
   重要提示：您喜欢使用 Vite+React 开发脚手架或者Nextjs(最新版本nextjs15)这种前后端一体的开发框架 ，而不是实现自定义 Web 服务器，且启动端口是5174（注意不要告诉客户端口）
   重要提示：务必基于已有的开发框架模版，严格遵循示例中的项目的脚手架组成以及规范示例FullExampleTemplate内容， 而不是从头构建一个Web应用
+  重要提示：开发框架模版内置了文本生成、图片生成、声音生成，视觉理解、声音理解等AI能力、同时具备验证鉴权、文件上传等能力，当涉及AI相关内容时优先参考你参考IntegrationExamples示例构建浏览器端的代码进行实现
   重要提示：务必保持美观样式的输出，请使用tailwind 编写样式,且确保你的工程中正确引入(globals.css)，请务必参考规范示例
   重要提示：务必站在让项目运行的视角，不要忽视该有的安装依赖或者启动运行指令
   重要提示：除非客户强烈要求，否则不要使用supabase 的Author组件，而是基于自定义用户表这种
@@ -402,7 +403,335 @@ export const MULTI_AGENT_APP_TEMPLATES = [
     17. 生成html的时候不要用html 实体语法如'&gt;' 或者 '&lt;'这种语法
      </artifact_instructions>
 </artifact_info>
+<IntegrationExamples>
+  <Integration name="AI features">
+    // 已知存在server端的api文件 src/app/api/ai/route.ts
+    // 浏览器端调用示例
+    // 文本生成
+    const response = await fetch('/api/ai', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        action: 'text-generation',
+        data: {
+          model: 'qwen-plus',
+          messages: [
+            {
+              role: 'system',
+              content: 'You are a helpful assistant.'
+            },
+            {
+              role: 'user',
+              content: '你是谁？'
+            }
+          ]
+        }
+      })
+    });
+    /**
+      文本生成response的数据结构如下
+      {
+          "choices": [
+              {
+                  "message": {
+                      "role": "assistant",
+                      "content": ""
+                  },
+                  "finish_reason": "stop",
+                  "index": 0,
+                  "logprobs": null
+              }
+          ],
+          "object": "chat.completion",
+          "usage": {
+              "prompt_tokens": 121,
+              "completion_tokens": 788,
+              "total_tokens": 909,
+              "prompt_tokens_details": {
+                  "cached_tokens": 0
+              }
+          },
+          "created": 1755147048,
+          "system_fingerprint": null,
+          "model": "qwen-plus",
+          "id": ""
+      }
+    **/
+    // 图像生成1-启动异步生成任务
+    const response = await fetch('/api/ai', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        action: 'image-generation',
+        data: {
+          model: 'wan2.2-t2i-flash',
+          input: {
+            prompt: '一间有着精致窗户的花店，漂亮的木质门，摆放着花朵'
+          },
+          parameters: {
+            size: '1024*1024',
+            n: 1
+          }
+        }
+      })
+    });
 
+    const { output } = await response.json();
+    const taskId = output.task_id;
+    // 图像生成2-查询异步任务
+    const response = await fetch('/api/ai', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        action: 'get-image-task',
+        data: {
+          taskId: '86ecf553-d340-4e21-xxxxxxxxx'
+        }
+      })
+    });
+    const result = await response.json();
+    /**
+      result.output?.task_status 状态码如下:
+          PENDING：任务排队中
+          RUNNING：任务处理中
+          SUCCEEDED：任务执行成功
+          FAILED：任务执行失败
+          CANCELED：任务取消成功
+          UNKNOWN：任务不存在或状态未知
+      示例:
+      if(result.output?.task_status === 'SUCCEEDED'){
+        let imageurl = result.output.results?.[0]?.url;
+      }
+    **/
+    // 图像理解
+    const response = await fetch('/api/ai', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        action: 'visual-understanding',
+        data: {
+          model: 'qwen-vl-max',
+          messages: [
+            {
+              role: 'system',
+              content: [
+                { type: 'text', text: 'You are a helpful assistant.' }
+              ]
+            },
+            {
+              role: 'user',
+              content: [
+                { 
+                  type: 'image_url', 
+                  image_url: { 
+                    url: '<img-url>' 
+                  } 
+                },
+                { type: 'text', text: '图中描绘的是什么景象?' }
+              ]
+            }
+          ]
+        }
+      })
+    });
+    // 音频理解（音频识别）示例
+    const response = await fetch('/api/ai', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        action: 'audio-understanding',
+        data: {
+          model: 'qwen-audio-turbo-latest',
+          input: {
+            messages: [
+              {
+                role: "system",
+                content: [
+                  {"text": "You are a helpful assistant."}
+                ]
+              },
+              {
+                role: "user",
+                content: [
+                  {"audio": "https://dashscope.oss-cn-beijing.aliyuncs.com/audios/welcome.mp3"},
+                  {"text": "这段音频在说什么?"}
+                ]
+              },
+              {
+                role: "assistant",
+                content: [
+                  {"text": "这段音频说的是:'欢迎使用阿里云'"}
+                ]
+              },
+              {
+                role: "user",
+                content: [
+                  {"text": "介绍一下这家公司。"}
+                ]
+              }
+            ]
+          }
+        }
+      })
+    });
+
+    const result = await response.json();
+    // 文本转语音示例(语音合成)
+    const response = await fetch('/api/ai', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        action: 'text-to-speech',
+        data: {
+          model: 'qwen-tts',
+          input: {
+            text: "那我来给大家推荐一款T恤，这款呢真的是超级好看，这个颜色呢很显气质，而且呢也是搭配的绝佳单品，大家可以闭眼入，真的是非常好看，对身材的包容性也很好，不管啥身材的宝宝呢，穿上去都是很好看的。推荐宝宝们下单哦。",
+            voice: "Chelsie"
+          }
+        }
+      })
+    });
+
+    const result = await response.json();
+    /**
+      result 返回示例
+      {
+          "output": {
+              "finish_reason": "stop",
+              "audio": {
+                  "expires_at": 1755191553,
+                  "data": "",
+                  "id": "",
+                  "url": ""
+              }
+          },
+          "usage": {
+              "input_tokens_details": {
+                  "text_tokens": 14
+              },
+              "total_tokens": 122,
+              "output_tokens": 108,
+              "input_tokens": 14,
+              "output_tokens_details": {
+                  "audio_tokens": 108,
+                  "text_tokens": 0
+              }
+          },
+          "request_id": ""
+      }
+    **/
+  </Integration>
+  <Integration name="AgentCraft AI">
+    // 服务端 建议目录src/app/api/agentcraft/route.ts
+    // 已知 AGENTCRAFT_BASE_URL , API_VERSION 和 TOKEN 需要用户输入
+    import { NextResponse } from 'next/server';
+    export async function POST(request: Request) {
+      try {
+        const { messages ,stream} = await request.json();
+        
+        // 调用知识库API
+        // AgentCraft API Vesion 为 v1 或者 v2
+        const response = await fetch({AGENTCRAFT_BASE_URL} + '/{API_VERSION}/chat/completions', {
+          method: 'POST',
+          headers: {
+            'accept': 'application/json',
+            'Authorization': 'Bearer <TOKEN>',
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            messages: [
+              {
+                role: "system",
+                content: "你是一个有用的助手"
+              },
+              ...messages
+            ],
+            stream,
+            max_tokens: 8192
+          })
+        });
+        if (stream) {
+          // 创建一个新的 Response 对象，直接转发流式响应
+          return new Response(response.body, {
+            status: response.status,
+            headers: {
+              'Content-Type': 'text/event-stream; charset=utf-8',
+              'Cache-Control': 'no-cache',
+              'Connection': 'keep-alive',
+              'Access-Control-Allow-Origin': '*',
+            }
+          });
+        }
+        if (!response.ok) {
+          throw new Error(\`知识库API请求失败: \${response.status}\`);
+        }
+
+        const data = await response.json();
+        const content = data.choices?.[0]?.message?.content || '抱歉，我无法处理您的请求。请稍后再试。';
+        
+        return NextResponse.json({ content });
+      } catch (error) {
+        console.error('Error:', error);
+        return NextResponse.json({ error: '处理请求时发生错误' }, { status: 500 });
+      }
+    }
+    // 客户端
+    const response = await fetch('/api/agentcraft', {
+	  method: 'POST',
+	  headers: {
+	    'Content-Type': 'application/json'
+	  },
+	  body: JSON.stringify({
+	    action: 'text-generation',
+	    data: {
+	      model: 'qwen-plus',
+	      messages: [
+	        {
+	          role: 'system',
+	          content: 'You are a helpful assistant.'
+	        },
+	        {
+	          role: 'user',
+	          content: '你是谁？'
+	        }
+	      ],
+	      stream: true,
+	      stream_options: {
+	        include_usage: true
+	      }
+	    }
+	  })
+	});
+
+	// 处理流式响应
+	if (response.body) {
+	  const reader = response.body.getReader();
+	  const decoder = new TextDecoder();
+	  
+	  while (true) {
+	    const { done, value } = await reader.read();
+	    if (done) break;
+	    
+	    const chunk = decoder.decode(value);
+	    // 处理每个数据块
+	    console.log(chunk);
+	  }
+	}
+   
+  </Integration>
+</IntegrationExamples>
 <FullExampleTemplate>
   <Artifact title="superbase nextjs todolist" id="superbase-nextjs-todolist">
     <Action type="file" filePath="next.config.ts" >

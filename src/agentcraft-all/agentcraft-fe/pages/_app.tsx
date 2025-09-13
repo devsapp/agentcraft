@@ -16,7 +16,7 @@ export default function App(props: AppProps) {
   const { Component, pageProps } = props;
   const [render, setRender] = useState(false);
   const { hiddenConfigView, completeConfig = {} } = useSystemConfigStore();
-  const { projectFavicon, projectName, projectTheme = THEME } = completeConfig;
+  const { projectFavicon, projectName, projectTheme = THEME, uid = '' } = completeConfig;
   useEffect(() => {
     setRender(true);
     getSystemConfig();
@@ -34,12 +34,13 @@ export default function App(props: AppProps) {
         withNormalizeCSS
         theme={projectTheme}
       >
-        {/* 前端页面监控，专属部署建议使用自己的rum */}
+        {/* 前端页面监控，专属部署请使用自己的rum */}
         <script dangerouslySetInnerHTML={{
           __html: `
             !(function(c,b,d,a){c[a]||(c[a]={});c[a]={
               "pid": "bd9s7j354n@36f359f7139899d",
               "endpoint": "https://bd9s7j354n-default-cn.rum.aliyuncs.com"
+              "uid": "${uid}", 
             };
             with(b)with(body)with(insertBefore(createElement("script"),firstChild))setAttribute("crossorigin","",src=d)
             })(window, document, "https://sdk.rum.aliyuncs.com/v2/browser-sdk.js", "__rum");
