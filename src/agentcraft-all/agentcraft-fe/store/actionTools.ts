@@ -92,7 +92,7 @@ export async function deleteTool(id: any) {
     return await request(`/api/actionTools/delete?id=${id}`, {
         method: "DELETE",
         headers: {
-            "Content-Type": "actionTools/json",
+            "Content-Type": "application/json",
         },
     });
 
@@ -104,7 +104,7 @@ export async function addTool(payload: any) {
         method: "POST",
         body: JSON.stringify(payload),
         headers: {
-            "Content-Type": "actionTools/json",
+            "Content-Type": "application/json",
         },
     });
 
@@ -118,7 +118,7 @@ export async function updateTool(toolId: any, payload: any) {
         method: "POST",
         body: JSON.stringify(payload),
         headers: {
-            "Content-Type": "actionTools/json",
+            "Content-Type": "application/json",
         },
     });
 
@@ -131,7 +131,7 @@ export async function getFunctionList(payload: any) {
         method: "POST",
         body: JSON.stringify(payload),
         headers: {
-            "Content-Type": "actionTools/json",
+            "Content-Type": "application/json",
         },
     });
 

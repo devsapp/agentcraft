@@ -133,7 +133,7 @@ function AddOrUpdate() {
 
 function ActionToolModelForm() {
     const { openToolForm, setOpenToolForm, currentToolForm, setLoadingForChoose, setOpenToChoose } = useActionToolStore();
-    const atTemplate: TemplateParams & { template: string, description: string } = Object.assign({}, currentToolForm.functionConfig.templateParams, { template: currentToolForm.functionConfig.template, description: currentToolForm.description });
+    const atTemplate: TemplateParams & { template: string, description: string } = Object.assign({}, currentToolForm?.functionConfig?.templateParams || {}, { template: currentToolForm?.functionConfig?.template || '', description: currentToolForm?.description || '' });
     let validate = {};
     let initialValues = {};
     const formParams: any = {};
@@ -199,22 +199,22 @@ function ActionToolModelForm() {
                         setOpenToolForm(false);
                         setLoadingForChoose(true);
                         const createAppPayload = {
-                            description: currentToolForm.description,
-                            name: currentToolForm.functionConfig.functionName,
+                            description: currentToolForm?.description || '',
+                            name: currentToolForm?.functionConfig?.functionName || '',
                             ...form.values
                         }
                         try {
-                            const appName: any = await createServerlessApp(currentToolForm.functionConfig.template, createAppPayload);
+                            const appName: any = await createServerlessApp(currentToolForm?.functionConfig?.template || '', createAppPayload);
                             if (appName) {
                                 await checkAppStatus(appName);
                             }
                         } catch (e) {
                         }
                         const data = await addTool({
-                            name: currentToolForm.functionConfig.functionName,
-                            alias: currentToolForm.name,
-                            description: currentToolForm.description,
-                            input_schema: currentToolForm.input_schema,
+                            name: currentToolForm?.functionConfig?.functionName || '',
+                            alias: currentToolForm?.name || '',
+                            description: currentToolForm?.description || '',
+                            input_schema: currentToolForm?.input_schema || '',
                             type: 1,
                             status: 2,
                             output_schema: '',
